@@ -1,0 +1,25 @@
+# Data 
+*.osm.pbf
+*.gpkg
+data/*
+incoming_data/*
+figures/*
+processed_data/*
+.bak/*
+
+# Editor config
+.vscode
+config.json
+
+# Filesystem
+*DS_Store
+._*
+
+# Python
+__pycache__
+*.pyd
+*.pyc
+.ipynb_checkpoints
+
+# Docs
+docs/_build
