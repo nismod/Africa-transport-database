@@ -7,7 +7,7 @@ import json
 import pandas as pd
 import igraph as ig
 import geopandas as gpd
-from utils import *
+from utils_new import *
 from tqdm import tqdm
 tqdm.pandas()
 
@@ -18,32 +18,14 @@ def main(config):
     processed_data_path = config['paths']['data']
     
     epsg_meters = 3395 # To convert geometries to measure distances in meters
+
     # Read the different location data from different extracts
+
     location_attributes = [
-                            {
-                                'type':'mine',
-                                'data_path':os.path.join(incoming_data_path,
-                                                    "mines_spatial_locations",
-                                                    "all_mines_adm.gpkg"),
-                                'layer_name':None,
-                                'id_column':'mine_id',
-                                'iso_column': "shapeGroup_primary_admin0",
-                                'geometry_type':'Polygon'
-                            },
-                            {
-                                'type':'mine_s_p',
-                                'data_path':os.path.join(processed_data_path,
-                                                        "Minerals",
-                                                        "s_and_p_mines_global_all.gpkg"),
-                                'layer_name':None,
-                                'id_column':'property_ID',
-                                'iso_column': "ISO_A3",
-                                'geometry_type':'Polygon'
-                            },
                             {
                                 'type':'population',
                                 'data_path':os.path.join(processed_data_path,
-                                                        "admin_boudaries",
+                                                        "admin_boundaries",
                                                         "un_urban_population",
                                                         "un_pop_df.gpkg"),
                                 'layer_name':None,
@@ -52,26 +34,14 @@ def main(config):
                                 'geometry_type':'Point'
                             },
                             {
-                                'type':'active processing site',
-                                'data_path':os.path.join(
-                                                    processed_data_path,
-                                                    "Minerals",
-                                                    "africa_mineral_processing_sites_active.gpkg"
-                                                    ),
+                                'type':'airports',
+                                'data_path':os.path.join(processed_data_path,
+                                                        "infrastructure",
+                                                        "africa_airport_network.gpkg"),
+                                'node_type_column':'infra',
                                 'layer_name':'nodes',
-                                'id_column':'FeatureUID',
-                                'iso_column': "iso3",
-                                'geometry_type':'Point'
-                            },
-                            {
-                                'type':'inactive processing site',
-                                'data_path':os.path.join(
-                                                    processed_data_path,
-                                                    "Minerals",
-                                                    "africa_mineral_processing_sites_inactive.gpkg"
-                                                    ),
-                                'layer_name':'nodes',
-                                'id_column':'FeatureUID',
+                                'node_type':['airport'],
+                                'id_column':'node_id',
                                 'iso_column': "iso3",
                                 'geometry_type':'Point'
                             },
@@ -111,7 +81,7 @@ def main(config):
                                                     "africa_railways_network.gpkg"
                                                     ),
                                 'layer_name':'nodes',
-                                'node_type_column':'type',
+                                'node_type_column':'infra',
                                 'node_type':['stop','station'],
                                 'id_column':'id',
                                 'iso_column': "iso3",
@@ -120,8 +90,12 @@ def main(config):
 
 
                         ]
-
+   
+    print(location_attributes)
+    
+   
     # Read the road edges data for Africa
+
     road_id_column = "id"
     node_id_column = "road_id"
     road_type_column = "tag_highway"
@@ -139,25 +113,23 @@ def main(config):
                         road_edges[road_type_column].isin(main_road_types)
                         ][road_id_column].values.tolist() 
 
-    # We assume all the mines intersect the networks of the countries they are within
-    # Seems like only a few mines are border mines, so our assumption is fine
+    
     countries = []
     for location in location_attributes:
         location_df = gpd.read_file(location['data_path'],layer=location['layer_name'])
-        if location['type'] in ('maritime ports','inland ports','railways'):
+        if location['type'] in ('airports','maritime ports','inland ports','railways'):
             location_df = location_df[
                                 location_df[
                                     location['node_type_column']
                                     ].isin(location['node_type'])
                                 ]
-        elif location['type'] == "mine":
-            location_df = location_df[location_df["continent"] == "Africa"]
-        elif location['type'] in ("mine_s_p","population"):
+        elif location['type'] in ("population"):
             location_df = location_df[location_df["CONTINENT"] == "Africa"]
         location_df = location_df.to_crs(epsg=epsg_meters)
         location['gdf'] = location_df
         countries += list(set(location_df[location['iso_column']].values.tolist()))
     countries = list(set(countries))
+
 
     nearest_roads = []
     for m_c in countries[0]:
@@ -175,7 +147,9 @@ def main(config):
             del connected_edges, connected_nodes, graph
             """Proximity to different kinds of locations of interest
             """
-            # We just need access to one road in the main roud network, since the rest are connected
+            
+            # We just need access to one road in the main road network, since the rest are connected
+
             source = country_roads[country_roads[road_type_column].isin(main_road_types)].from_id.values[0]
             for l in location_attributes:
                 id_col = l['id_column']
@@ -184,13 +158,13 @@ def main(config):
                 location_df = location_df[location_df[iso_col] == m_c]
                 if len(location_df.index) > 0:
                     if l['geometry_type'] == "Polygon":
-                        # intersect mines with roads first to find which mines have roads on them
+                        # intersect pop and other infrastructures with roads first to find which other infrastructures have roads on them
                         loc_intersects = gpd.sjoin_nearest(location_df[[id_col,"geometry"]],
                                             country_roads[[road_id_column,road_type_column,"geometry"]],
                                             how="left").reset_index()
                         # get the intersected roads which are not the main roads
-                        # intersected_roads_df = loc_intersects[~loc_intersects[road_type_column].isin(main_road_types)]
-                        # selected_edges = list(set(intersected_roads_df[road_id_column].values.tolist()))
+                        intersected_roads_df = loc_intersects[~loc_intersects[road_type_column].isin(main_road_types)]
+                        selected_edges = list(set(intersected_roads_df[road_id_column].values.tolist()))
                         selected_edges = list(set(loc_intersects[road_id_column].values.tolist()))
                         mining_roads = country_roads[country_roads[road_id_column].isin(selected_edges)]
                         targets = list(set(mining_roads.from_id.values.tolist() + mining_roads.to_id.values.tolist()))
@@ -206,7 +180,7 @@ def main(config):
                     n_r, _ = network_od_path_estimations(A[0],source, targets,"length_m",road_id_column)
                     connected_roads = list(set([item for sublist in n_r for item in sublist]))
                 
-                    # nearest_roads.append(country_roads[country_roads[road_id_column].isin(connected_roads)])
+                    nearest_roads.append(country_roads[country_roads[road_id_column].isin(connected_roads)])
                     nearest_roads += connected_roads
 
         print (f"* Done with country - {m_c}")
@@ -251,7 +225,7 @@ def main(config):
                             "infrastructure",
                             "africa_roads_edges.geoparquet"))
 
-    nearest_roads.to_file(os.path.join(
+    nearest_nodes.to_file(os.path.join(
                             incoming_data_path,
                             "africa_roads",
                             "africa_main_roads.gpkg"),

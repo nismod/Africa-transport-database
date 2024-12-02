@@ -8,42 +8,24 @@ import pandas as pd
 import geopandas as gpd
 import igraph as ig
 from shapely.geometry import LineString
-from updated_utils import *
+from utils_new import *
 from tqdm import tqdm
 tqdm.pandas()
 
-def add_iso_code(df,df_id_column,incoming_data_path,epsg=4326):
-    # Insert countries' ISO CODE
-    africa_boundaries = gpd.read_file(os.path.join(
-                            incoming_data_path,
-                            "Africa_GIS Supporting Data",
-                            "a. Africa_GIS Shapefiles",
-                            "AFR_Political_ADM0_Boundaries.shp",
-                            "AFR_Political_ADM0_Boundaries.shp"))
-    africa_boundaries.rename(columns={"DsgAttr03":"iso3","Country":"country"},inplace=True)
-    africa_boundaries = africa_boundaries.to_crs(epsg=epsg)
-    # Spatial join
-    for c in ['iso3','country']:
-        if c in df.columns.values.tolist():
-            df.drop(c,axis=1,inplace=True)
-    m = gpd.sjoin(df, 
-                    africa_boundaries[['geometry', 'iso3','country']], 
-                    how="left", predicate='within').reset_index()
-    m = m[~m["iso3"].isna()]        
-    un = df[~df[df_id_column].isin(m[df_id_column].values.tolist())]
-    un = gpd.sjoin_nearest(un,
-                            africa_boundaries[['geometry', 'iso3','country']], 
-                            how="left").reset_index()
-    m = pd.concat([m,un],axis=0,ignore_index=True)
-    return m
+
+
 
 def main(config):
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
     
     epsg_meters = 3395 # To convert geometries to measure distances in meters
-    # We first took some data on IWW ports from different datasets and combined them
-    # We produced a final version of the selected ports by manual cleaning
+    
+# IWW_ports: IWW ports data from different datasets were taken and combined, 
+# then we produced a final version of the selected ports and routes between them by manual cleaning
+      
+# IWW ports 
+      
     df_ports = pd.read_excel(os.path.join(incoming_data_path,
                                     "IWW_ports",
                                     "africa_IWW_ports.xlsx"),
@@ -51,18 +33,16 @@ def main(config):
     df_ports["geometry"] = gpd.points_from_xy(
                             df_ports["lon"],df_ports["lat"])
     df_ports["infra"] = "IWW port"
-    # df_ports["id"] = df_ports.index.values.tolist()
-    # df_ports["id"] = df_ports.progress_apply(lambda x: f"iwwn{x.id}",axis=1)
+  
     df_ports = gpd.GeoDataFrame(df_ports,geometry="geometry",crs="EPSG:4326")
-    # df_ports.to_file(os.path.join(incoming_data_path,
-    #                             "IWW_ports",
-    #                             "africa_IWW_ports.gpkg"),layer="nodes",driver="GPKG")
 
-    # Add lines from known known connections between Lake ports
+# known lake routes connecting ports - merge ports and routing files
+    
     df_lake_routes = pd.read_excel(os.path.join(incoming_data_path,
                                     "IWW_ports",
                                     "africa_IWW_ports.xlsx"),
                             sheet_name="known_connections")
+    
     df_lake_routes = pd.merge(df_lake_routes,
                     df_ports[["name","geometry"]],
                     how="left",left_on=["from_port"],right_on=["name"])
@@ -78,19 +58,23 @@ def main(config):
                                     axis=1)
     df_lake_routes.drop(["from_geometry","to_geometry"],axis=1,inplace=True)
     
-    # Add lines for Congo ports based on the routing along the rivers
+# Add lines for Congo ports based on the routing along the rivers
+
     df_congo_rivers = gpd.read_file(os.path.join(incoming_data_path,
                             "IWW_ports",
                             "edges_port_IWW_af.gpkg"))
-    # df_congo_ports = df_ports[df_ports["iso3"].isin(["CAF","COD","COG"])]
-    # lake_ids = list(set(df_lake_routes["from_id"].values.tolist() + df_lake_routes["to_id"].values.tolist())) 
-    # df_congo_ports = df_congo_ports[~df_congo_ports["id"].isin(lake_ids)]
-
+    
+    df_congo_ports = df_ports[df_ports["iso3"].isin(["CAF","COD","COG"])]
+    lake_ids = list(set(df_lake_routes["from_port"].values.tolist() + df_lake_routes["to_port"].values.tolist())) 
+    df_congo_ports = df_congo_ports[~df_congo_ports["name"].isin(lake_ids)]
+    
     df_south_sudan = gpd.read_file(os.path.join(incoming_data_path,
                             "IWW_ports",
                             "hotosm_ssd_waterways.gpkg"))
     df_south_sudan = df_south_sudan.loc[df_south_sudan.geometry.geometry.type =='LineString']
     df_south_sudan = df_south_sudan[df_south_sudan["waterway"] == "river"]
+
+# Create a geo dataframe with all the elements analyzed until now and create a network
 
     df_routes = gpd.GeoDataFrame(pd.concat([df_lake_routes[["geometry"]],
                         df_congo_rivers[["geometry"]],
@@ -108,13 +92,13 @@ def main(config):
                                 from_node_column="from_node",
                                 to_node_column="to_node")
 
-    # Get the specific routes that connect IWW ports in Congo basin
-    # Reject other routes
+# Get the specific routes that connect IWW ports in Congo basin, reject other routes???
+
     routing_edges = edges[["from_node","to_node","edge_id","component","geometry"]]
     routing_edges["distance"] = routing_edges.geometry.length
-    G = ig.Graph.TupleList(routing_edges.itertuples(index=False), edge_attrs=list(routing_edges.columns)[2:])
-    # print (G)
+    G = ig.Graph.TupleList(routing_edges.itertuples(index=False), edge_attrs=list(routing_edges.columns)[2:]) #could just go?
 
+# Minimize the edges?
     all_edges = []
     ports = nodes[nodes["infra"] == "IWW port"]["node_id"].values.tolist()
     for o in range(len(ports)-1):
@@ -132,23 +116,23 @@ def main(config):
     africa_nodes["infra"] = np.where(africa_nodes["infra"] == "IWW port",
                                     africa_nodes["infra"],
                                     "IWW route")
+    
+# Adding missing iso3 codes
+
     missing_isos = africa_nodes[africa_nodes["iso3"].isna()]
-    print (missing_isos)
     missing_isos = add_iso_code(missing_isos,"node_id",incoming_data_path,epsg=epsg_meters)
     for del_col in ["index","index_right","lat","lon"]:
         if del_col in missing_isos.columns.values.tolist():
             missing_isos.drop(del_col,axis=1,inplace=True) 
     iso_nodes = africa_nodes[~africa_nodes["iso3"].isna()]
-    print (iso_nodes)
-    print (missing_isos)
+
+# Clean and create final Africa nodes and edges
 
     africa_nodes = pd.concat([iso_nodes,missing_isos],axis=0,ignore_index=True)
     africa_nodes.drop(["lat","lon"],axis=1,inplace=True)
     africa_nodes = gpd.GeoDataFrame(africa_nodes[["node_id","name","country",
                             "iso3","infra","component","geometry"]],
                             geometry="geometry",crs=f"EPSG:{epsg_meters}")
-    print (africa_nodes)
-    print (africa_edges)
 
     africa_edges = pd.merge(africa_edges,
                         africa_nodes[["node_id","iso3","infra"]],
@@ -163,7 +147,8 @@ def main(config):
     africa_edges["length_m"] = africa_edges.geometry.length
     africa_edges.rename(columns={"edge_id":"id","from_node":"from_id","to_node":"to_id"},inplace=True)
     africa_nodes.rename(columns={"node_id":"id"},inplace=True)
-    print (africa_edges)
+
+# Save nodes and edges
 
     africa_edges = africa_edges.to_crs(epsg=4326)
     africa_nodes = africa_nodes.to_crs(epsg=4326)
