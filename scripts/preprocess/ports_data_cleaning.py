@@ -10,7 +10,7 @@ import igraph as ig
 from shapely.geometry import Point
 from math import radians, cos, sin, asin, sqrt
 from haversine import haversine
-from utils import *
+from utils_new import *
 from tqdm import tqdm
 tqdm.pandas()
 
@@ -164,7 +164,7 @@ def main(config):
     prt = df_global_ports[df_global_ports["infra"] == "port"]
     max_port_id = max([int(re.findall(r'\d+',v)[0]) for v in prt["id"].values.tolist()])
     new_ports["id"] = list(max_port_id + 1 + new_ports.index.values)
-    new_ports["id"] = new_ports.progress_apply(lambda x: f"port{x.id}",axis=1)
+    new_ports["id"] = new_ports.progress_apply(lambda x: f"port_{x.id}",axis=1)
     new_ports["Continent_Code"] = "AF"
     new_ports["infra"] = "port"
     
@@ -209,24 +209,28 @@ def main(config):
     # Remove maritime nodes and add Suez Canal
     remove_nodes = ["maritime2926","maritime2927"]
     port_nodes = port_nodes[~port_nodes["id"].isin(remove_nodes)]
+    
     port_edges = port_edges[~(port_edges["from_id"].isin(remove_nodes) | port_edges["to_id"].isin(remove_nodes))]
     # Add the suez canal
     suez_canal_nodes = gpd.read_file(os.path.join(
-                                        incoming_data_path,
-                                        "egypt-latest-free.shp",
+                                        incoming_data_path,                                        
                                         "suez_canal_network.gpkg"),layer="nodes")
     suez_canal_edges = gpd.read_file(os.path.join(
-                                        incoming_data_path,
-                                        "egypt-latest-free.shp",
+                                        incoming_data_path,                                        
                                         "suez_canal_network.gpkg"),layer="edges")
     nodes = suez_canal_nodes.copy()
-    nodes.rename(columns={"id":"to_id","infra":"to_infra"},inplace=True)
-    edges = [port_edges,
-            suez_canal_edges[["from_id","to_id","from_infra","to_infra","geometry"]]]
+    nodes.rename(columns={"node_id":"to_id","infra":"to_infra"},inplace=True)
 
+   
+    edges = [port_edges,
+            suez_canal_edges[["from_node","to_node","geometry"]]]
+    
+    print(port_nodes.columns)
+    print(nodes.columns)
+    
     # Join some pre-selected ports/maritime points to the Suez canal points
     m = ckdnearest(port_nodes[['id','infra','geometry']].to_crs(epsg=epsg_meters),
-                    suez_canal_nodes[['id','geometry']].to_crs(epsg=epsg_meters))
+                    suez_canal_nodes[['node_id','geometry']].to_crs(epsg=epsg_meters))
     m = m.sort_values(by="dist",ascending=True)
 
     connect_pairs = [("port1440","maritime16265","port","maritime"),
@@ -237,13 +241,17 @@ def main(config):
                         ("maritime1606","maritime16247","maritime","maritime"),
                         ("maritime1606","maritime16265","maritime","maritime")]
     # Create lines between nearest nodes
-    suez_lines = pd.DataFrame(connect_pairs,columns=["id","to_id","from_infra","to_infra"])
+    suez_lines = pd.DataFrame(connect_pairs,columns=["from_id","to_id","from_infra","to_infra"])
+
+    print(suez_lines)
     suez_lines["geometry"] = suez_lines.progress_apply(
                                 lambda x:add_lines(
-                                    x,port_nodes,nodes,from_node_id,to_node_id
+                                    x,port_nodes,nodes,"id","to_id"
                                     ),
                                 axis=1)
     suez_lines.rename(columns={from_node_id:"from_id"},inplace=True)
+
+    
     edges.append(suez_lines[["from_id","to_id","from_infra","to_infra","geometry"]])
 
     port_edges = gpd.GeoDataFrame(
@@ -271,7 +279,7 @@ def main(config):
                             "infrastructure",
                             "global_maritime_network.gpkg"),layer="nodes",driver="GPKG")
 
-    Get the ports for Africa
+    # Get the ports for Africa
     port_edges = gpd.read_file(os.path.join(processed_data_path,
                             "infrastructure",
                             "global_maritime_network.gpkg"),layer="edges")

@@ -86,27 +86,19 @@ def main(config):
 
 
     print(df_airports_nodes)
+    
 
-     
-    network = create_network_from_nodes_and_edges(df_airports_nodes.to_crs(epsg=epsg_meters), 
-                                                  df_airports_flow.to_crs(epsg=epsg_meters),
-                                                  "airports",
-                                snap_distance=6000,
-                                geometry_precision=True)
+    df_airports_nodes["id"] = df_airports_nodes.index.values.tolist()
+    df_airports_nodes["id"] = df_airports_nodes.progress_apply(lambda x:f"airportn_{x.id}",axis=1)
+    df_airports_flow["id"] = df_airports_flow.index.values.tolist()
+    df_airports_flow["id"] = df_airports_flow.progress_apply(lambda x:f"airporte_{x.id}",axis=1)
 
-    edges = network.edges.set_crs(epsg=epsg_meters)
-    nodes = network.nodes.set_crs(epsg=epsg_meters)
-    edges, nodes = components(edges,nodes,
-                                node_id_column="node_id",
-                                edge_id_column="edge_id",
-                                from_node_column="from_node",
-                                to_node_column="to_node")
-    nodes.to_file(os.path.join(
+    df_airports_nodes.to_file(os.path.join(
                             processed_data_path,
                             "infrastructure",
                             "global_airport_network.gpkg"),
                         layer="nodes",driver="GPKG")
-    edges.to_file(os.path.join(processed_data_path,
+    df_airports_flow.to_file(os.path.join(processed_data_path,
                             "infrastructure",
                             "global_airport_network.gpkg"),
                         layer="edges",driver="GPKG")
