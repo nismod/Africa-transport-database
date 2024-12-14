@@ -82,11 +82,15 @@ def main(config):
     roads_with_corridors = []
     corridor_name_column = "corridor_name"
     for row in corridor_df.itertuples():            
-        connected_roads = graph.get_shortest_paths(
+        path = graph.get_shortest_paths(
                                         row.source, 
                                         row.target, 
                                         weights="length_m", output="epath")[0]
-        corridor_names = [getattr(row,corridor_name_column)]*len(connected_nodes)
+        connected_roads = []
+        if path:
+            for n in path:
+                connected_roads.append(graph.es[n]["id"])
+        corridor_names = [getattr(row,corridor_name_column)]*len(connected_roads)
         roads_with_corridors += list(zip(connected_roads,corridor_names))
 
 
