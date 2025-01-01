@@ -375,3 +375,22 @@ def match_ports(df1,df2,df1_id_column,df2_id_column,cutoff_distance):
     selection = selection.drop_duplicates(subset=df2_id_column,keep='first')
     matched_ids = list(set(selection[df1_id_column].values.tolist()))
     return matches, df1[~(df1[df1_id_column].isin(matched_ids))]
+
+
+def create_igraph_from_dataframe(graph_dataframe, directed=False, simple=False):
+    graph = ig.Graph.TupleList(
+        graph_dataframe.itertuples(index=False),
+        edge_attrs=list(graph_dataframe.columns)[2:],
+        directed=directed
+    )
+    if simple:
+        graph.simplify()
+
+    es, vs, simple = graph.es, graph.vs, graph.is_simple()
+    d = "directed" if directed else "undirected"
+    s = "simple" if simple else "multi"
+    print(
+        "Created {}, {} {}: {} edges, {} nodes.".format(
+            s, d, "igraph", len(es), len(vs)))
+
+    return graph

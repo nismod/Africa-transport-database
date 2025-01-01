@@ -103,15 +103,18 @@ def main():
                             "id","id",
                             "iso3","iso3",
                             f_m,t_m)
+        f_t_df = f_t_df.rename(columns={"from_iso_a3":"from_iso3","to_iso_a3":"to_iso3"})
+        print(f_t_df)
+
         if len(f_t_df) > 0:
             multi_df.append(f_t_df)
             c_t_df = f_t_df[["from_id","to_id","from_infra",
-                        "to_infra","from_iso_a3","to_iso_a3",
+                        "to_infra","from_iso3","to_iso3",
                         "link_type","length_m","geometry"]].copy()
             c_t_df.columns = ["to_id","from_id",
                         "to_infra","from_infra",
-                        "to_iso_a3",
-                        "from_iso_a3",
+                        "to_iso3",
+                        "from_iso3",
                         "link_type","length_m","geometry"]
             multi_df.append(c_t_df)
 

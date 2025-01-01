@@ -33,18 +33,18 @@ def main(config):
                                 'iso_column': "ISO_A3",
                                 'geometry_type':'Point'
                             },
-                            {
-                                'type':'airports',
-                                'data_path':os.path.join(processed_data_path,
-                                                        "infrastructure",
-                                                        "africa_airport_network.gpkg"),
-                                'node_type_column':'infra',
-                                'layer_name':'nodes',
-                                'node_type':['airport'],
-                                'id_column':'node_id',
-                                'iso_column': "iso3",
-                                'geometry_type':'Point'
-                            },
+                            # {
+                            #     'type':'airports',
+                            #     'data_path':os.path.join(processed_data_path,
+                            #                             "infrastructure",
+                            #                             "africa_airport_network.gpkg"),
+                            #     'node_type_column':'infra',
+                            #     'layer_name':'nodes',
+                            #     'node_type':['airport'],
+                            #     'id_column':'id',
+                            #     'iso_column': "iso3",
+                            #     'geometry_type':'Point'
+                            # },
                             {
                                 'type':'maritime ports',
                                 'data_path':os.path.join(
@@ -69,7 +69,7 @@ def main(config):
                                 'layer_name':'nodes',
                                 'node_type_column':'infra',
                                 'node_type':['IWW port'],
-                                'id_column':'node_id',
+                                'id_column':'id',
                                 'iso_column': "iso3",
                                 'geometry_type':'Point'
                             },
@@ -117,7 +117,7 @@ def main(config):
     countries = []
     for location in location_attributes:
         location_df = gpd.read_file(location['data_path'],layer=location['layer_name'])
-        if location['type'] in ('airports','maritime ports','inland ports','railways'):
+        if location['type'] in ('maritime ports','inland ports','railways'):
             location_df = location_df[
                                 location_df[
                                     location['node_type_column']
@@ -132,7 +132,9 @@ def main(config):
 
 
     nearest_roads = []
+    
     for m_c in countries[0]:
+        # country_roads = road_edges.copy()
         country_roads = road_edges[(
                     road_edges["from_iso_a3"] == m_c
                     ) & (road_edges["to_iso_a3"] == m_c)]
@@ -163,8 +165,8 @@ def main(config):
                                             country_roads[[road_id_column,road_type_column,"geometry"]],
                                             how="left").reset_index()
                         # get the intersected roads which are not the main roads
-                        intersected_roads_df = loc_intersects[~loc_intersects[road_type_column].isin(main_road_types)]
-                        selected_edges = list(set(intersected_roads_df[road_id_column].values.tolist()))
+                        # intersected_roads_df = loc_intersects[~loc_intersects[road_type_column].isin(main_road_types)]
+                        # selected_edges = list(set(intersected_roads_df[road_id_column].values.tolist()))
                         selected_edges = list(set(loc_intersects[road_id_column].values.tolist()))
                         mining_roads = country_roads[country_roads[road_id_column].isin(selected_edges)]
                         targets = list(set(mining_roads.from_id.values.tolist() + mining_roads.to_id.values.tolist()))
@@ -180,7 +182,6 @@ def main(config):
                     n_r, _ = network_od_path_estimations(A[0],source, targets,"length_m",road_id_column)
                     connected_roads = list(set([item for sublist in n_r for item in sublist]))
                 
-                    nearest_roads.append(country_roads[country_roads[road_id_column].isin(connected_roads)])
                     nearest_roads += connected_roads
 
         print (f"* Done with country - {m_c}")
