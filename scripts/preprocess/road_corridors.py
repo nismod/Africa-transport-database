@@ -139,10 +139,17 @@ def main(config):
 
     for row in corridor_df.itertuples():            
         path = graph.get_shortest_paths(
+        path = graph.get_shortest_paths(
                                         row.source, 
                                         row.target, 
                                         weights="length_m",output="epath")[0]
         
+        connected_roads = []
+        if path:
+            for n in path:
+                connected_roads.append(graph.es[n]["id"])
+        corridor_names = [getattr(row,corridor_name_column)]*len(connected_roads)
+                                        weights="length_m", output="epath")[0]
         connected_roads = []
         if path:
             for n in path:
