@@ -79,7 +79,7 @@ def get_mode_dataframe(mode,rail_status=["open"],rail_to_road_connection=False):
         nodes = gpd.read_parquet(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_roads_nodes.geoparquet"))
+                                "africa_roads_nodes_FINAL.geoparquet"))
         nodes.rename(columns={"iso_a3":"iso3"},inplace=True)
 
     return nodes

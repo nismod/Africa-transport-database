@@ -33,18 +33,18 @@ def main(config):
                                 'iso_column': "ISO_A3",
                                 'geometry_type':'Point'
                             },
-                            # {
-                            #     'type':'airports',
-                            #     'data_path':os.path.join(processed_data_path,
-                            #                             "infrastructure",
-                            #                             "africa_airport_network.gpkg"),
-                            #     'node_type_column':'infra',
-                            #     'layer_name':'nodes',
-                            #     'node_type':['airport'],
-                            #     'id_column':'id',
-                            #     'iso_column': "iso3",
-                            #     'geometry_type':'Point'
-                            # },
+                            {
+                                'type':'airports',
+                                'data_path':os.path.join(processed_data_path,
+                                                        "infrastructure",
+                                                        "africa_airport_network.gpkg"),
+                                'node_type_column':'infra',
+                                'layer_name':'nodes',
+                                'node_type':['airport'],
+                                'id_column':'id',
+                                'iso_column': "iso3",
+                                'geometry_type':'Point'
+                            },
                             {
                                 'type':'maritime ports',
                                 'data_path':os.path.join(
@@ -117,7 +117,7 @@ def main(config):
     countries = []
     for location in location_attributes:
         location_df = gpd.read_file(location['data_path'],layer=location['layer_name'])
-        if location['type'] in ('maritime ports','inland ports','railways'):
+        if location['type'] in ('maritime ports','inland ports','railways','airports'):
             location_df = location_df[
                                 location_df[
                                     location['node_type_column']
@@ -129,15 +129,14 @@ def main(config):
         location['gdf'] = location_df
         countries += list(set(location_df[location['iso_column']].values.tolist()))
     countries = list(set(countries))
-
-
+    
     nearest_roads = []
     
-    for m_c in countries[0]:
-        # country_roads = road_edges.copy()
-        country_roads = road_edges[(
-                    road_edges["from_iso_a3"] == m_c
-                    ) & (road_edges["to_iso_a3"] == m_c)]
+    for m_c in countries:
+        country_roads = road_edges.copy()
+        # country_roads = road_edges[(
+        #             road_edges["from_iso_a3"] == m_c
+        #             ) & (road_edges["to_iso_a3"] == m_c)]
         if len(country_roads.index) > 0:
             graph = create_igraph_from_dataframe(
                     country_roads[["from_id","to_id",road_id_column,"length_m"]])
