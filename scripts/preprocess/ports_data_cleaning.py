@@ -242,15 +242,19 @@ def main(config):
                         ("maritime1606","maritime16265","maritime","maritime")]
     # Create lines between nearest nodes
     suez_lines = pd.DataFrame(connect_pairs,columns=["from_id","to_id","from_infra","to_infra"])
-
+    
     print(suez_lines)
+    print(port_nodes)
+    print(nodes)
+    
+
     suez_lines["geometry"] = suez_lines.progress_apply(
                                 lambda x:add_lines(
                                     x,port_nodes,nodes,"id","to_id"
                                     ),
                                 axis=1)
-    suez_lines.rename(columns={from_node_id:"from_id"},inplace=True)
-
+    suez_lines.rename(columns={"id":"from_id"},inplace=True)
+    breakpoint()
     
     edges.append(suez_lines[["from_id","to_id","from_infra","to_infra","geometry"]])
 

@@ -92,13 +92,12 @@ def main(config):
                                 from_node_column="from_node",
                                 to_node_column="to_node")
 
-# Get the specific routes that connect IWW ports in Congo basin, reject other routes???
+# Get the specific routes that connect IWW ports in Congo basin, reject other routes
 
     routing_edges = edges[["from_node","to_node","edge_id","component","geometry"]]
     routing_edges["distance"] = routing_edges.geometry.length
     G = ig.Graph.TupleList(routing_edges.itertuples(index=False), edge_attrs=list(routing_edges.columns)[2:]) #could just go?
 
-# Minimize the edges?
     all_edges = []
     ports = nodes[nodes["infra"] == "IWW port"]["node_id"].values.tolist()
     for o in range(len(ports)-1):
