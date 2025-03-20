@@ -249,6 +249,62 @@ def plot_africa_basemap(ax):
             zorder=3)
     return ax
 
+def plot_africa_basemap2(ax):
+    data_path = load_config()['paths']['data']
+    
+    # Load country and lake shapefiles
+    global_map_df = gpd.read_file(os.path.join(data_path, "admin_boundaries",
+                                               "ne_10m_admin_0_countries",
+                                               "ne_10m_admin_0_countries.shp"))
+    global_lake_df = gpd.read_file(os.path.join(data_path, "admin_boundaries",
+                                                "ne_10m_lakes",
+                                                "ne_10m_lakes.shp"))
+    
+    # Get list of African countries
+    africa_df = global_map_df[global_map_df["CONTINENT"] == "Africa"]
+    
+    # Plot African basemap
+    africa_isos = list(set(africa_df["ADM0_A3_US"].values.tolist()))
+    ax = plot_global_basemap(ax, include_countries=africa_isos)
+    
+    # Plot lakes
+    for lake in global_lake_df.itertuples():
+        ax.add_geometries(
+            [lake.geometry],
+            crs=ccrs.PlateCarree(),
+            edgecolor="#c6e0ff",
+            facecolor="#c6e0ff",
+            zorder=3
+        )
+    
+     # Add country names with larger, dark grey font
+    for _, country in africa_df.iterrows():
+        if country.geometry.is_empty:
+            continue
+        
+        # Get centroid to position the label
+        centroid = country.geometry.centroid
+        ax.text(centroid.x, centroid.y,
+                country['NAME'],  # Country name column
+                horizontalalignment='center',
+                fontsize=9,  # Increased font size
+                color='darkgrey',  # Dark grey color
+                fontweight='bold',  # Bold for emphasis
+                transform=ccrs.PlateCarree(),
+                zorder=5)
+    
+    # Get bounds and set equal white space on left and right
+    bounds = africa_df.total_bounds  # [minx, miny, maxx, maxy]
+    width = bounds[2] - bounds[0]
+    height = bounds[3] - bounds[1]
+    
+    # Add padding for equal white space
+    padding = width * 0.05  # 5% padding on each side
+    ax.set_extent([bounds[0] - padding, bounds[2] + padding,
+                   bounds[1], bounds[3]], crs=ccrs.PlateCarree())
+    
+    return ax
+
 def plot_point_assets(ax,nodes,colors,size,marker,zorder,label):
     proj_lat_lon = ccrs.PlateCarree()
     ax.scatter(

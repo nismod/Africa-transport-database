@@ -15,15 +15,22 @@ def main(config):
     
     processed_data_path = config['paths']['data']
 
-    maritime_nodes = gpd.read_file(os.path.join(processed_data_path,
-                            "infrastructure",
-                            "africa_maritime_network.gpkg"),
-                            layer="nodes")
+    # maritime_nodes = gpd.read_file(os.path.join(processed_data_path,
+    #                         "infrastructure",
+    #                         "africa_maritime_network.gpkg"),
+    #                         layer="nodes")
     
     maritime_edges = gpd.read_file(os.path.join(processed_data_path,
                             "infrastructure",
                             "africa_maritime_network.gpkg"),
                             layer="edges")
+    # multimodal_edges = gpd.read_file(os.path.join(processed_data_path,
+    #                         "infrastructure",
+    #                         "africa_multimodal.gpkg"),
+    #                         layer="edges")
+    # print(multimodal_edges.columns)
+    # multimodal_edges = multimodal_edges[["id","from_id","to_id","from_infra","to_infra","from_iso3","to_iso3","link_type","length_m","geometry"]]
+
     
    
 
@@ -32,12 +39,12 @@ def main(config):
     # maritime_nodes = maritime_nodes.drop(columns={"id"})
     #  maritime_nodes = maritime_nodes.rename(columns={"new_id":"id"})
 
-    maritime_nodes["id"] = maritime_nodes["id"].str.replace('maritime', 'maritime_')
-    maritime_nodes["id"] = maritime_nodes["id"].str.replace('port', 'port_')
-    maritime_edges["from_id"] = maritime_edges["from_id"].str.replace('maritime', 'maritime_')
-    maritime_edges["to_id"] = maritime_edges["to_id"].str.replace('maritime', 'maritime_')
-    maritime_edges["from_id"] = maritime_edges["from_id"].str.replace('port', 'port_')
-    maritime_edges["to_id"] = maritime_edges["to_id"].str.replace('port', 'port_')
+    # maritime_nodes["id"] = maritime_nodes["id"].str.replace('maritime', 'maritime_')
+    # maritime_nodes["id"] = maritime_nodes["id"].str.replace('port', 'port_')
+    # maritime_edges["from_id"] = maritime_edges["from_id"].str.replace('maritime', 'maritime_')
+    # maritime_edges["to_id"] = maritime_edges["to_id"].str.replace('maritime', 'maritime_')
+    # maritime_edges["from_id"] = maritime_edges["from_id"].str.replace('port', 'port_')
+    # maritime_edges["to_id"] = maritime_edges["to_id"].str.replace('port', 'port_')
 
 
     # maritime_edges["new_from_id"] = maritime_edges.progress_apply(lambda x:f"maritime_{x.from_id}",axis=1)
@@ -46,13 +53,13 @@ def main(config):
     # print(maritime_edges)
 
     # maritime_edges = maritime_edges.drop(columns={"to_id","id"})
-    # maritime_edges = maritime_edges.rename(columns={"new_from_id":"from_id","new_to_id":"to_id","new_id":"id"})
+    maritime_edges = maritime_edges.rename(columns={"length_m":"length_km"})
+    maritime_edges = maritime_edges.rename(columns={"distance":"length_m"})
 
-    maritime_nodes = maritime_nodes[["id","iso3","name","infra","geometry"]]
-    maritime_edges = maritime_edges[["id","from_id","to_id","from_infra","to_infra","distance","length","geometry"]]
-
-    print(maritime_edges)
-    print(maritime_nodes)
+    # maritime_nodes = maritime_nodes[["id","iso3","name","infra","geometry"]]
+    # maritime_edges = maritime_edges[["id","from_id","to_id","from_infra","to_infra","distance","length","geometry"]]
+    # print(maritime_edges)
+    # print(maritime_nodes)
 
     # roads_nodes = gpd.read_parquet(os.path.join(processed_data_path,
     #                         "infrastructure",
@@ -61,14 +68,22 @@ def main(config):
     #                         "infrastructure",
     #                         "africa_roads_edges_FINAL.geoparquet"))
     
-    # print(roads_edges.columns)
-    # roads_edges = roads_edges[["id","from_id","to_id","from_iso3","to_iso3","component","border_road", "corridor_name","width_m","length_m","con_cost_2010_USD","con_cost_2024_USD","rec_cost_2024_USD","osm_way_id","tag_highway","tag_surface","tag_bridge", "tag_maxspeed","tag_lanes","bridge","paved","material","lanes","geometry"]]
-    # print(roads_edges.columns)
+    # roads_edges = roads_edges.rename(columns={"from_iso_a3":"from_iso3","to_iso_a3":"to_iso3"})
+    # roads_nodes = roads_nodes.rename(columns={"iso_a3":"iso3"})
 
-    # print(roads_nodes.columns)
-    # roads_nodes = roads_nodes[["id","iso3","component","geometry"]]
-    # print(roads_nodes.columns)
+    # roads_edges = roads_edges.sort_values(by='id')
+    # mask = roads_edges['lanes'] > 8
 
+
+    # for i in roads_edges.index[mask]:  # Iterate over indices where "lanes" > 8
+    #    if i > 0:  # Ensure it's not the first row
+    #       roads_edges.at[i, 'lanes'] = roads_edges.at[i - 1, 'lanes']
+    #       roads_edges.at[i, 'width_m'] = roads_edges.at[i - 1, 'width_m']
+
+    # print(roads_edges)
+    # print("Max lanes:", max(roads_edges['lanes']))
+                
+             
     # IWW_edges = gpd.read_file(os.path.join(processed_data_path,
     #                         "infrastructure",
     #                         "africa_iww_network.gpkg"),
@@ -95,7 +110,6 @@ def main(config):
     
     
     # # print(airport_edges.columns)
-     
     # airport_edges = airport_edges.rename(columns={"Name":"name1","NAme_1":"name2"})
     
     # airport_edges = airport_edges.drop(columns={"index"})
@@ -122,6 +136,7 @@ def main(config):
     #                         "infrastructure",
     #                         "africa_railways_network.gpkg"),
     #                         layer="edges")
+    # rail_edges['country'] = rail_edges['country'].replace('DRC', 'Democratic Republic of the Congo')
     # rail_nodes = gpd.read_file(os.path.join(processed_data_path,
     #                         "infrastructure",
     #                         "africa_railways_network.gpkg"),
@@ -150,7 +165,7 @@ def main(config):
     # roads_edges["con_cost_2010_USD"] = roads_edges["length_m"]*roads_edges["lanes"]*1200 
     # roads_edges["con_cost_2024_USD"] = roads_edges["length_m"]*roads_edges["lanes"]*1200*pow(1.03,14) # assuming 3% discount rate
 
-    # # reconstruction/upgrade
+    # # # reconstruction/upgrade
 
     # roads_edges["rec_cost_2024_USD"] = roads_edges["length_m"]*roads_edges["lanes"]*200*pow(1.03,14) # assuming 3% discount rate
 
@@ -168,7 +183,13 @@ def main(config):
     #                         layer="edges")
     # multimodal_edges = multimodal_edges[["id","from_iso3","to_iso3","from_infra", "to_infra","link_type","length_m","geometry"]]
     
+    # print(roads_edges.columns)
+    # roads_edges = roads_edges[["id","from_id","to_id","from_iso3","to_iso3","component","border_road", "corridor_name","width_m","length_m","con_cost_2010_USD","con_cost_2024_USD","rec_cost_2024_USD","osm_way_id","tag_highway","tag_surface","tag_bridge", "tag_maxspeed","tag_lanes","bridge","paved","material","lanes","asset_type","geometry"]]
+    # print(roads_edges.columns)
 
+    # print(roads_nodes.columns)
+    # roads_nodes = roads_nodes[["id","iso3","component","geometry"]]
+    # print(roads_nodes.columns)
 
     # Save files
     # multimodal_edges.to_file(os.path.join(processed_data_path,
@@ -215,10 +236,10 @@ def main(config):
     #                         "africa_roads_edges_FINAL.geoparquet"))
    
     
-    maritime_nodes.to_file(os.path.join(processed_data_path,
-                                    "infrastructure",
-                                    "africa_maritime_network.gpkg"),
-                            layer="nodes",driver="GPKG")
+    # maritime_nodes.to_file(os.path.join(processed_data_path,
+    #                                 "infrastructure",
+    #                                 "africa_maritime_network.gpkg"),
+    #                         layer="nodes",driver="GPKG")
     maritime_edges.to_file(os.path.join(processed_data_path,
                                     "infrastructure",
                                     "africa_maritime_network.gpkg"),
