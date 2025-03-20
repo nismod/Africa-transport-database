@@ -191,10 +191,10 @@ def plot_global_basemap(ax,include_countries=None,
     proj = ccrs.PlateCarree() # See more on projections here: https://scitools.org.uk/cartopy/docs/v0.15/crs/projections.html#cartopy-projections
     bounds = boundary_gdp.geometry.total_bounds # this gives your boundaries of the map as (xmin,ymin,xmax,ymax)
     if include_countries is not None:
-        xmin = bounds[0]+2.0
-        xmax = bounds[2]+6.0
-        ymin = bounds[1]+4.0
-        ymax = bounds[3]+2.0
+        xmin = bounds[0]
+        xmax = bounds[2]+50.0
+        ymin = bounds[1]
+        ymax = bounds[3]+50.0
     else:
         xmin = bounds[0]
         xmax = bounds[2]
@@ -300,8 +300,8 @@ def plot_africa_basemap2(ax):
     
     # Add padding for equal white space
     padding = width * 0.05  # 5% padding on each side
-    ax.set_extent([bounds[0] - padding, bounds[2] + padding,
-                   bounds[1], bounds[3]], crs=ccrs.PlateCarree())
+    ax.set_extent([bounds[0] - padding, bounds[2] + 1.8*padding,
+                   bounds[1], bounds[3] + 1.0*padding], crs=ccrs.PlateCarree())
     
     return ax
 

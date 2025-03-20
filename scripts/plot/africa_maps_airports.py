@@ -19,13 +19,18 @@ tqdm.pandas()
 
 def main(config):
     data_path = config['paths']['data']
-    output_path = config['paths']['results']
     figure_path = config['paths']['figures']
 
     figures = os.path.join(figure_path)
-    if os.path.exists(figures) is False:
-        os.mkdir(figures)
+    os.makedirs(figures,exist_ok=True)
 
+    marker_size_max = 2000
+    air_nodes = gpd.read_file(os.path.join(
+                 data_path,
+                 "infrastructure",
+                 "africa_airport_network.gpkg"
+                 ), layer = 'nodes')
+    tmax = air_nodes["TotalSeats"].max()
     map_epsg = 4326
     ax_proj = get_projection(epsg=map_epsg)
     fig, ax_plots = plt.subplots(1,1,
@@ -33,77 +38,38 @@ def main(config):
                     figsize=(12,12),
                     dpi=500)
     
-    # save_fig(os.path.join(figures,"africa_basemap.png"))
-    #plt.close()
+    ax = plot_africa_basemap2(ax_plots)
+    # air_nodes.plot(ax=ax,zorder=4, column='TotalSeats', cmap='YlOrRd',markersize=15,legend=True, scheme="quantiles", label="Airport total seats")
+    air_nodes["markersize"] = marker_size_max*(air_nodes["TotalSeats"]/tmax)**0.5
+    air_nodes = air_nodes.sort_values(by="TotalSeats",ascending=False)
+    air_nodes.geometry.plot(
+        ax=ax, 
+        color="#3690c0", 
+        edgecolor='none',
+        markersize=air_nodes["markersize"],
+        alpha=0.7,
+        zorder=10)
 
-    
-    air_nodes = gpd.read_file(os.path.join(
-                 data_path,
-                 "infrastructure",
-                 "africa_airport_network.gpkg"
-                 ), layer = 'nodes')
-    air_edges = gpd.read_file(os.path.join(
-                 data_path,
-                 "infrastructure",
-                 "africa_airport_network.gpkg"
-                 ), layer = 'edges')
-    
-    
-    air_nodes["geometry"] = air_nodes.geometry.centroid
-    
-
-    
-    
-    
-    # ax_proj = get_projection(epsg=4326)
-    # fig, ax_plots = plt.subplots(1,1,
-    #                      subplot_kw={'projection': ax_proj},
-    #                      figsize=(12,12),
-    #                      dpi=500)
-    # ax_plots = ax_plots.flatten()
-    
-    ax = plot_africa_basemap(ax_plots)
-    
-    #save_fig(os.path.join(figures,"roads_test.png"))
-    #plt.close()
-    # ax = point_map_plotting_colors_width(ax,roads_df,
-    #                                 output_column,
-    #                                 values_range,
-    #                                 point_classify_column="length_m",
-    #                                 #point_categories=["Unrefined","Refined"],
-    #                                 #point_colors=["#e31a1c","#41ae76"],
-    #                                 #point_labels=[s.upper() for s in ["Unrefined","Refined"]],
-    #                                 #point_zorder=[6,7,8,9],
-    #                                 #point_steps=8,
-    #                                 #width_step = 40.0,
-    #                                 #interpolation = 'fisher-jenks',
-    #                                 legend_label="Road Corridors",
-    #                                 legend_size=16,
-    #                                 legend_weight=2.0,
-    #                                 no_value_label="No value",
-    #                               )
-
-   
-    
-    
-    # colors = ['darkblue','mediumblue']
-    # colors2 = ['blue','royalblue']
-    
-    # lines = [Line2D([0], [0], color=c, linewidth=3, linestyle='-') for c in colors]
-    # points =[Line2D([0], [0], color=c, markersize=5, linestyle='dotted') for c in colors2]
-    # labels = ['maritime route','IWW route']
-    # labels2 = ['maritime port','IWW port']
-
-    # plt.legend([lines,points], [labels,labels2])
-
-    ax = plot_africa_basemap(ax_plots)
-    # colors1 = ['black','blue','blue','red']
-    air_nodes.plot(ax=ax,zorder=4, column='TotalSeats', cmap='YlOrRd',markersize=15,legend=True, scheme="quantiles", label="Airport total seats")
-    # air_edges.plot(ax=ax,zorder=1, color='cornflowerblue',linewidth=2,label="air route", linestyles='dotted')
-    
-    
-    # corridors.plot(ax=ax,zorder=2,column=output_column, cmap='tab20',linewidth=5)
-   
+    ins = ax.inset_axes([0.02,-0.2,0.2,0.8])
+    ins.spines[['top','right','bottom','left']].set_visible(False)
+    ins.set_xticks([])
+    ins.set_yticks([])
+    ins.set_ylim([-3,2])
+    ins.set_xlim([-1,1.5])
+    ins.set_facecolor("#c6e0ff")
+    xk = -0.6
+    xt = -0.95
+    t_key = 10**np.arange(1,np.ceil(np.log10(tmax)),1)[:-1]
+    t_key = t_key[::-1]
+    Nk = t_key.size
+    yk = np.linspace(-2.45,0.8,Nk)
+    yt = 1.0
+    size_key = marker_size_max*(t_key/tmax)**0.5
+    key = gpd.GeoDataFrame(geometry=gpd.points_from_xy(np.ones(Nk)*xk, yk))
+    key.geometry.plot(ax=ins,markersize=size_key,color="#3690c0")
+    ins.text(xt,yt,'Total Seats (annual)',weight='bold',va='center',fontsize=12)
+    for k in range(Nk):
+        ins.text(xk,yk[k],'       {:,.0f}'.format(t_key[k]),va='center',fontsize=12)
     plt.tight_layout()
     save_fig(os.path.join(figures,"airports.png"))
     plt.close()
