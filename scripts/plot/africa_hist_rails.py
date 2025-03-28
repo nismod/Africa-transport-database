@@ -41,6 +41,7 @@ def main(config):
     grouped_data = rail_df.groupby(['country', 'status'])['length_km'].sum().reset_index()
 
     # Pivot the data to prepare for stacked bar plot
+    grouped_data['status'] = grouped_data['status'].str.capitalize()
     pivot_data = grouped_data.pivot(index='country', columns='status', values='length_km').fillna(0)
     # Preview the pivot table
     print(pivot_data.head())
@@ -48,10 +49,10 @@ def main(config):
     # Create a font property for bold text
     bold_font = font_manager.FontProperties(weight='bold')
     # Select a colormap (e.g., 'viridis', 'plasma', 'tab20', 'Set1', etc.)
-    colormap = cm.get_cmap('Pastel1')
+    colormap = ['#9e0142','#d53e4f','#f46d43','#fdae61','#e6f598','#abdda4','#66c2a5','#3288bd','#5e4fa2','#d9d9d9']
     # Get color values from the colormap
     num_colors = len(pivot_data.columns)
-    colors = [colormap(i / num_colors) for i in range(num_colors)]
+    colors = [colormap[i] for i in range(num_colors)]
 
     # Plot with colormap
     pivot_data.plot(kind='bar', stacked=True, figsize=(12, 8), color=colors)
@@ -63,13 +64,11 @@ def main(config):
     # Adjust x-axis labels
     plt.xticks(rotation=30, ha='right')
     plt.legend(title='Status',title_fontproperties=bold_font, fontsize='small')
+    
     plt.subplots_adjust(bottom=0.1)
     plt.tight_layout()
 
-    # Show the plot
-    plt.show()
-    plt.close()
-    save_fig(os.path.join(figures,"rail_hist.png"))
+    save_fig(os.path.join(figures,"rail_hist_cap.png"))
     
     
 

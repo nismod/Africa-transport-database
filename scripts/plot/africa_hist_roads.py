@@ -45,7 +45,8 @@ def main(config):
 
     # Group by the single corridor and tag_highway, then sum length_km
     grouped_data = gdf_exploded.groupby(['corridor_name', 'tag_highway'])['length_km'].sum().reset_index()
-
+    grouped_data['tag_highway'] = grouped_data['tag_highway'].str.capitalize()
+    grouped_data['tag_highway'] = grouped_data['tag_highway'].str.replace('_', ' ')
     # Pivot the data for stacked bar plot
     pivot_data = grouped_data.pivot(index='corridor_name', columns='tag_highway', values='length_km').fillna(0)
 
@@ -53,10 +54,10 @@ def main(config):
     # Create a font property for bold text
     bold_font = font_manager.FontProperties(weight='bold')
     # Select a colormap (e.g., 'viridis', 'plasma', 'tab20', 'Set1', etc.)
-    colormap = cm.get_cmap('Pastel1')
+    colormap =  ['#9e0142','#d53e4f','#f46d43','#fdae61','#fee08b','#ffffbf','#e6f598','#abdda4','#66c2a5','#3288bd','#5e4fa2','#d9d9d9']
     # Get color values from the colormap
     num_colors = len(pivot_data.columns)
-    colors = [colormap(i / num_colors) for i in range(num_colors)]
+    colors = [colormap[i] for i in range(num_colors)]
 
     # Plot with colormap
     pivot_data.plot(kind='bar', stacked=True, figsize=(12, 8), color=colors)
@@ -71,10 +72,7 @@ def main(config):
     plt.subplots_adjust(bottom=0.1)
     plt.tight_layout()
 
-    # Show the plot
-    plt.show()
-    plt.close()
-    save_fig(os.path.join(figures,"roads_hist.png"))
+    save_fig(os.path.join(figures,"roads_hist_cap.png"))
     
     
 

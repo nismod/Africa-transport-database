@@ -15,6 +15,8 @@ from map_plotting_utils import *
 from tqdm import tqdm
 from matplotlib import cm
 tqdm.pandas()
+from matplotlib import font_manager
+import matplotlib.ticker as mticker
 
 
 def main(config):
@@ -47,7 +49,7 @@ def main(config):
 
     print(rail_df.columns)
     
-    output_column = "line"
+    output_column = "status"
     # values_range = roads_df[output_column].values.tolist()
     # null_types = ["NULL"]
     # main_rails = rail_df[
@@ -70,41 +72,49 @@ def main(config):
     
     ax = plot_africa_basemap(ax_plots)
     
-    #save_fig(os.path.join(figures,"roads_test.png"))
-    #plt.close()
-    # ax = point_map_plotting_colors_width(ax,roads_df,
-    #                                 output_column,
-    #                                 values_range,
-    #                                 point_classify_column="length_m",
-    #                                 #point_categories=["Unrefined","Refined"],
-    #                                 #point_colors=["#e31a1c","#41ae76"],
-    #                                 #point_labels=[s.upper() for s in ["Unrefined","Refined"]],
-    #                                 #point_zorder=[6,7,8,9],
-    #                                 #point_steps=8,
-    #                                 #width_step = 40.0,
-    #                                 #interpolation = 'fisher-jenks',
-    #                                 legend_label="Road Corridors",
-    #                                 legend_size=16,
-    #                                 legend_weight=2.0,
-    #                                 no_value_label="No value",
-    #                               )
-
    
-    colors = ['orange','grey']
-    lines = [Line2D([0], [0], color=c, linewidth=3, linestyle='-') for c in colors]
-    labels = ['lines','other (disused)']
-    plt.legend(lines, labels)
+
+    # Create a font property for bold text
+    bold_font = font_manager.FontProperties(weight='bold',size=18)
+    # colors = ['orange','grey']
+    # lines = [Line2D([0], [0], color=c, linewidth=3, linestyle='-') for c in colors]
+    # labels = ['Lines','Other (disused)']
+    
     ax = plot_africa_basemap2(ax_plots)
 
     # colors1 = ['black','blue','blue','red']
     # main_rails.plot(ax=ax,zorder=4, column=output_column, color='black', linewidth=3)
     # main_rails2.plot(ax=ax,zorder=4, column=output_column, color='blue', linewidth=3)
     # main_rails3.plot(ax=ax,zorder=4, column=output_column, color='red', linewidth=3)
-    rail_df.plot(ax=ax,zorder=5,column=output_column, cmap='tab20b',linewidth=3, missing_kwds={'color': 'lightgrey', 'linewidth': 1})
+    
    
+    rail_df.plot(
+    ax=ax,
+    zorder=5,
+    column=output_column,  # The column you're using for coloring
+    cmap='twilight_shifted',
+    linewidth=3,
+    legend=True,  # Add legend directly here
+    legend_kwds={
+        'title': "Railway Status",
+        'title_fontproperties': bold_font,
+        'fontsize': 14,
+        'loc': (0.1, 0.1) ,
+        'fancybox': True,
+        'frameon': True,
+        'edgecolor': 'black',
+        'facecolor': 'white'
+        },
+    missing_kwds={'color': 'lightgrey', 'linewidth': 1}
+    )
+    # Get the legend and modify labels to uppercase
+    leg = ax.get_legend()
+    for text in leg.get_texts():
+        text.set_text(text.get_text().capitalize()) 
+    
     plt.tight_layout()
-    save_fig(os.path.join(figures,"rail_test3.png"))
-    plt.close()
+    save_fig(os.path.join(figures,"rail_test2.png"))
+    
     
 
 if __name__ == '__main__':

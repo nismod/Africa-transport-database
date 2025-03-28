@@ -300,8 +300,8 @@ def plot_africa_basemap2(ax):
     
     # Add padding for equal white space
     padding = width * 0.05  # 5% padding on each side
-    ax.set_extent([bounds[0] - padding, bounds[2] + 1.8*padding,
-                   bounds[1], bounds[3] + 1.0*padding], crs=ccrs.PlateCarree())
+    ax.set_extent([bounds[0] - padding, bounds[2] + 2.6*padding,
+                   bounds[1], bounds[3] + 1.1*padding], crs=ccrs.PlateCarree())
     
     return ax
 

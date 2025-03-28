@@ -50,7 +50,7 @@ def main(config):
         alpha=0.7,
         zorder=10)
 
-    ins = ax.inset_axes([0.02,-0.2,0.2,0.8])
+    ins = ax.inset_axes([0.02,-0.2,0.15,0.8])
     ins.spines[['top','right','bottom','left']].set_visible(False)
     ins.set_xticks([])
     ins.set_yticks([])
@@ -63,7 +63,7 @@ def main(config):
     t_key = t_key[::-1]
     Nk = t_key.size
     yk = np.linspace(-2.45,0.8,Nk)
-    yt = 1.0
+    yt = 1.5
     size_key = marker_size_max*(t_key/tmax)**0.5
     key = gpd.GeoDataFrame(geometry=gpd.points_from_xy(np.ones(Nk)*xk, yk))
     key.geometry.plot(ax=ins,markersize=size_key,color="#3690c0")
