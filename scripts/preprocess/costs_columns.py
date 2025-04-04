@@ -1,13 +1,14 @@
 import sys
 import os
 import re
+import json
 import pandas as pd
-import geopandas as gpd
 import igraph as ig
-from shapely.geometry import LineString
+import geopandas as gpd
 from utils_new import *
 from tqdm import tqdm
 tqdm.pandas()
+
 
 def main(config):
 
@@ -66,6 +67,11 @@ def main(config):
                             "infrastructure",
                             "africa_roads_FINAL.gpkg"),
                              layer="edges",driver="GPKG")
+    # roads_edges = gpd.read_parquet(os.path.join(
+    #              processed_data_path,
+    #              "infrastructure",
+    #              "africa_roads_edges_FINAL.geoparquet"
+    #              ))
    
     # roads_nodes = roads_nodes.rename(columns={"iso_a3":"iso3"})
 
@@ -97,14 +103,14 @@ def main(config):
     
     
 
-    airport_nodes = gpd.read_file(os.path.join(processed_data_path,
-                            "infrastructure",
-                            "africa_airport_network.gpkg"),
-                            layer="nodes")
-    airport_edges = gpd.read_file(os.path.join(processed_data_path,
-                            "infrastructure",
-                            "africa_airport_network.gpkg"),
-                            layer="edges")
+    # airport_nodes = gpd.read_file(os.path.join(processed_data_path,
+    #                         "infrastructure",
+    #                         "africa_airport_network.gpkg"),
+    #                         layer="nodes")
+    # airport_edges = gpd.read_file(os.path.join(processed_data_path,
+    #                         "infrastructure",
+    #                         "africa_airport_network.gpkg"),
+    #                         layer="edges")
     
     
     # # print(airport_edges.columns)
@@ -130,18 +136,18 @@ def main(config):
     
     # # RAILWAYS -----------------------------------------------------------------------------------------------------------------------
         
-    rail_edges = gpd.read_file(os.path.join(processed_data_path,
-                            "infrastructure",
-                            "africa_railways_network.gpkg"),
-                            layer="edges")
+    # rail_edges = gpd.read_file(os.path.join(processed_data_path,
+    #                         "infrastructure",
+    #                         "africa_railways_network.gpkg"),
+    #                         layer="edges")
     # rail_edges['country'] = rail_edges['country'].replace('DRC', 'Democratic Republic of the Congo')
     # rail_nodes = gpd.read_file(os.path.join(processed_data_path,
     #                         "infrastructure",
     #                         "africa_railways_network.gpkg"),
     #                         layer="nodes")
     
-    rail_edges = rail_edges[["id","from_id","to_id","country","from_iso3","to_iso3","component","length_m","line", "status","mode","infra","gauge","structure","speed_freight","speed_passenger", "time_freight","electrified","comment","geometry"]]
-    # rail_nodes = rail_nodes[["id","iso3","name","name_arabic","infra","component","facility", "gauge","status","comment","geometry"]]
+    # rail_edges = rail_edges[["id","from_id","to_id","country","from_iso3","to_iso3","component","length_m","line", "status","mode","infra","gauge","structure","speed_freight","speed_passenger", "time_freight","electrified","comment","geometry"]]
+    # # rail_nodes = rail_nodes[["id","iso3","name","name_arabic","infra","component","facility", "gauge","status","comment","geometry"]]
     
     
     # print(rail_edges.columns)
@@ -172,8 +178,8 @@ def main(config):
     # construction
 
     # airport_nodes["con_cost_2024_MUSD"] = airport_nodes["TotalSeats"]*449.24*pow(10,-6) 
-    airport_edges = airport_edges[["id","Orig","Dest","from_iso3","to_iso3","name1", "name2","TotalSeats","geometry"]]
-    airport_nodes = airport_nodes[["id","iso3","name","infra","TotalSeats","geometry"]]
+    # airport_edges = airport_edges[["id","Orig","Dest","from_iso3","to_iso3","name1", "name2","TotalSeats","geometry"]]
+    # airport_nodes = airport_nodes[["id","iso3","name","infra","TotalSeats","geometry"]]
     
     # multimodal_edges = gpd.read_file(os.path.join(processed_data_path,
     #                         "infrastructure",
@@ -195,11 +201,11 @@ def main(config):
     #                         "africa_multimodal.gpkg"),
     #                         layer="edges",driver="GPKG")
 
-    rail_edges.to_file(os.path.join(processed_data_path,
-                            "infrastructure",
-                            "africa_railways_network.gpkg"),
-                            layer="edges",driver="GPKG")
-    # rail_nodes.to_file(os.path.join(processed_data_path,
+    # rail_edges.to_file(os.path.join(processed_data_path,
+    #                         "infrastructure",
+    #                         "africa_railways_network.gpkg"),
+    #                         layer="edges",driver="GPKG")
+    # # rail_nodes.to_file(os.path.join(processed_data_path,
     #                         "infrastructure",
     #                         "africa_railways_network.gpkg"),
     #                         layer="nodes",driver="GPKG")
@@ -215,12 +221,12 @@ def main(config):
     #                                "africa_iww_network.gpkg"),
     #                   layer="nodes",driver="GPKG")
     
-    airport_nodes.to_file(os.path.join(processed_data_path,
-                                       "infrastructure",
-                                       "africa_airport_network.gpkg"),
-                          layer="nodes",driver="GPKG")
-    # airport_edges.to_file(os.path.join(processed_data_path,
-    #                                   "infrastructure",
+    # airport_nodes.to_file(os.path.join(processed_data_path,
+    #                                    "infrastructure",
+    #                                    "africa_airport_network.gpkg"),
+    #                       layer="nodes",driver="GPKG")
+    # # airport_edges.to_file(os.path.join(processed_data_path,
+    # #                                   "infrastructure",
     #                                   "africa_airport_network.gpkg"),
     #                         layer="edges",driver="GPKG")
     
@@ -229,12 +235,19 @@ def main(config):
     #                         "infrastructure",
     #                         "africa_roads_FINAL.gpkg"),
     #                          layer="nodes",driver="GPKG")
-    roads_edges.to_file(os.path.join(
-                            processed_data_path,
-                            "infrastructure",
-                            "africa_roads_FINAL.gpkg"),
-                             layer="edges",driver="GPKG")
-   
+    # roads_edges.to_file(os.path.join(
+    #                         processed_data_path,
+    #                         "infrastructure",
+    #                         "africa_roads_FINAL.gpkg"),
+    #                          layer="edges",driver="GPKG")
+    roads_edges = gpd.GeoDataFrame(roads_edges,
+                    geometry="geometry",
+                    crs="EPSG:4326")
+    roads_edges.to_parquet(os.path.join(
+                 processed_data_path,
+                 "infrastructure",
+                 "africa_roads_edges_FINAL.geoparquet"
+                 ))
     
     # maritime_nodes.to_file(os.path.join(processed_data_path,
     #                                 "infrastructure",

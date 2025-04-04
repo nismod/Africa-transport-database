@@ -111,7 +111,7 @@ def main(config):
 
 # Add labels only once at the centroid of each group
     for idx, row in grouped_gdf.iterrows():
-        if idx != 1:
+        if idx != 1 and idx != 7:
             if row.geometry is not None and not row.geometry.is_empty:
                 centroid = row.geometry.centroid  # Get average centroid
                 ax.annotate(
@@ -125,20 +125,35 @@ def main(config):
                 bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
                 zorder=8
                 )
-        else:
+        elif idx == 1:
+                if row.geometry is not None and not row.geometry.is_empty:
+                    centroid = row.geometry.centroid  # Get average centroid
+                    ax.annotate(
+                    text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                    xy=(centroid.x, centroid.y),
+                    xytext=(3, 50),  # Small offset for visibility
+                    textcoords="offset points",
+                    fontsize=9,
+                    color="black",
+                    alpha=1,
+                    bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                    zorder=8
+                    )
+        elif idx == 7:
             if row.geometry is not None and not row.geometry.is_empty:
-                centroid = row.geometry.centroid  # Get average centroid
-                ax.annotate(
-                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
-                xy=(centroid.x, centroid.y),
-                xytext=(3, 50),  # Small offset for visibility
-                textcoords="offset points",
-                fontsize=9,
-                color="black",
-                alpha=1,
-                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
-                zorder=8
-                )
+                    centroid = row.geometry.centroid  # Get average centroid
+                    ax.annotate(
+                    text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                    xy=(centroid.x, centroid.y),
+                    xytext=(1, 180),  # Small offset for visibility
+                    textcoords="offset points",
+                    fontsize=9,
+                    color="black",
+                    alpha=1,
+                    bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                    zorder=8
+                    )
+
 
     plt.tight_layout()
     save_fig(os.path.join(figures,"roads_corridors2.png"))

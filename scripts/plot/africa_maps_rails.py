@@ -17,7 +17,7 @@ from matplotlib import cm
 tqdm.pandas()
 from matplotlib import font_manager
 import matplotlib.ticker as mticker
-
+from matplotlib.colors import ListedColormap
 
 def main(config):
     data_path = config['paths']['data']
@@ -47,9 +47,23 @@ def main(config):
     
     # roads_df["geometry"] = roads_df.geometry.centroid
 
-    print(rail_df.columns)
     
-    output_column = "status"
+    output_column = "gauge"
+    # Convert to categorical first (if not already)
+    rail_df[output_column] = pd.Categorical(rail_df[output_column])
+
+    # Add "Not Known" as a category and fill NaN values
+    rail_df[output_column] = rail_df[output_column].cat.add_categories("Not Known")
+    rail_df[output_column] = rail_df[output_column].fillna("Not Known")
+    # rail_df.status = pd.Categorical(
+    #         rail_df.status, 
+    #         categories=["abandoned", "disused", "razed", "suspended", "open", 
+    #             "planned", "proposed", "construction", "rehabilitation", "unknown"],
+    #         ordered=True
+    #         )
+
+# Sort the DataFrame based on the ordered category
+    # rail_df = rail_df.sort_values(by="status")
     # values_range = roads_df[output_column].values.tolist()
     # null_types = ["NULL"]
     # main_rails = rail_df[
@@ -62,7 +76,6 @@ def main(config):
     #                     rail_df[output_column].isin(['disused'])
     #                     ]
     
-
     # ax_proj = get_projection(epsg=4326)
     # fig, ax_plots = plt.subplots(1,1,
     #                      subplot_kw={'projection': ax_proj},
@@ -70,10 +83,6 @@ def main(config):
     #                      dpi=500)
     # ax_plots = ax_plots.flatten()
     
-    ax = plot_africa_basemap(ax_plots)
-    
-   
-
     # Create a font property for bold text
     bold_font = font_manager.FontProperties(weight='bold',size=18)
     # colors = ['orange','grey']
@@ -86,17 +95,22 @@ def main(config):
     # main_rails.plot(ax=ax,zorder=4, column=output_column, color='black', linewidth=3)
     # main_rails2.plot(ax=ax,zorder=4, column=output_column, color='blue', linewidth=3)
     # main_rails3.plot(ax=ax,zorder=4, column=output_column, color='red', linewidth=3)
+    num_colors = len(rail_df["gauge"].unique())
+    colormap = ['#9e0142','#d53e4f','#f46d43','#fdae61','#abdda4','#66c2a5','#3288bd','#5e4fa2','lightgrey']
+    custom_cmap = ListedColormap(colormap[:num_colors])
+    # Get color values from the colormap
+    
     
    
     rail_df.plot(
     ax=ax,
     zorder=5,
-    column=output_column,  # The column you're using for coloring
-    cmap='twilight_shifted',
+    column=output_column,  
+    cmap=custom_cmap,  
     linewidth=3,
-    legend=True,  # Add legend directly here
+    legend=True, 
     legend_kwds={
-        'title': "Railway Status",
+        'title': "Railway Gauges",
         'title_fontproperties': bold_font,
         'fontsize': 14,
         'loc': (0.1, 0.1) ,
@@ -113,7 +127,7 @@ def main(config):
         text.set_text(text.get_text().capitalize()) 
     
     plt.tight_layout()
-    save_fig(os.path.join(figures,"rail_test2.png"))
+    save_fig(os.path.join(figures,"rail_test_gauge.png"))
     
     
 
