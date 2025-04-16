@@ -17,6 +17,7 @@ from matplotlib import cm
 tqdm.pandas()
 from matplotlib import font_manager
 import matplotlib.patches as mpatches
+from shapely.geometry import LineString
 
 def main(config):
     data_path = config['paths']['data']
@@ -107,11 +108,46 @@ def main(config):
     grouped_gdf = gdf_exploded.dissolve(by='corridor_id')
     grouped_gdf = grouped_gdf[~grouped_gdf['corridor_name'].isna()]
 
+    label_spacing = 1000  # distance in meters/units between labels (adjust as needed)
+    max_labels = 5  # optional: cap number of labels to avoid overplotting
 
+    # for idx, row in grouped_gdf.iterrows():
+    #     geom = row.geometry
+
+    #     line_length = geom.length
+
+    #     if line_length > label_spacing:
+    #         num_labels = min(int(line_length // label_spacing), max_labels)
+    #         for i in range(1, num_labels + 1):
+    #             point = geom.interpolate(i * line_length / (num_labels + 1))
+    #             ax.annotate(
+    #                 text=str(idx + 1),
+    #                 xy=(point.x, point.y),
+    #                 xytext=(3, 10),
+    #                 textcoords="offset points",
+    #                 fontsize=9,
+    #                 color="black",
+    #                 alpha=1,
+    #                 bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+    #                 zorder=8
+    #             )
+    #     else:
+    #         centroid = geom.centroid
+    #         ax.annotate(
+    #             text=str(idx + 1),
+    #             xy=(centroid.x, centroid.y),
+    #             xytext=(3, 10),
+    #             textcoords="offset points",
+    #             fontsize=9,
+    #             color="black",
+    #             alpha=1,
+    #             bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+    #             zorder=8
+    #         )
 
 # Add labels only once at the centroid of each group
     for idx, row in grouped_gdf.iterrows():
-        if idx != 1 and idx != 7:
+        if idx != 1 and idx != 27 and idx != 34 and idx != 31 and idx != 29  and idx != 7 and idx != 18 and idx != 2 and idx != 4 and idx != 5 and idx != 6 and idx != 3 and idx != 8 and idx != 9 and idx != 16 and idx != 26:
             if row.geometry is not None and not row.geometry.is_empty:
                 centroid = row.geometry.centroid  # Get average centroid
                 ax.annotate(
@@ -125,13 +161,217 @@ def main(config):
                 bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
                 zorder=8
                 )
+        elif idx == 9:
+            if row.geometry is not None and not row.geometry.is_empty:
+                centroid = row.geometry.centroid  # Get average centroid
+                ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(-60, -40),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                zorder=8
+                )
+        elif idx == 29:
+            if row.geometry is not None and not row.geometry.is_empty:
+                centroid = row.geometry.centroid  # Get average centroid
+                ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(3, 30),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                zorder=8
+                )
+        elif idx == 34:
+            if row.geometry is not None and not row.geometry.is_empty:
+                centroid = row.geometry.centroid  # Get average centroid
+                ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(3, -10),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                zorder=8
+                )
+        elif idx == 31:
+            if row.geometry is not None and not row.geometry.is_empty:
+                centroid = row.geometry.centroid  # Get average centroid
+                ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(20, 2),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                zorder=8
+                )
+        elif idx == 27:
+            if row.geometry is not None and not row.geometry.is_empty:
+                centroid = row.geometry.centroid  # Get average centroid
+                ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(20, -20),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                zorder=8
+                )
+                ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(3, 40),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                zorder=8
+                )
+        elif idx == 8:
+            if row.geometry is not None and not row.geometry.is_empty:
+                centroid = row.geometry.centroid  # Get average centroid
+                ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(-15, 5),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                zorder=8
+                )
+        elif idx == 16:
+            if row.geometry is not None and not row.geometry.is_empty:
+                centroid = row.geometry.centroid  # Get average centroid
+                ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(-15, 10),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                zorder=8
+                )
+        elif idx == 26:
+            if row.geometry is not None and not row.geometry.is_empty:
+                centroid = row.geometry.centroid  # Get average centroid
+                ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(-10, 10),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                zorder=8
+                )
+        elif idx == 4:
+            if row.geometry is not None and not row.geometry.is_empty:
+                centroid = row.geometry.centroid  # Get average centroid
+                ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(-25, 5),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                zorder=8
+                )
+        elif idx == 3:
+            if row.geometry is not None and not row.geometry.is_empty:
+                centroid = row.geometry.centroid  # Get average centroid
+                ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(-20, 10),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                zorder=8
+                )
+        elif idx == 5:
+            if row.geometry is not None and not row.geometry.is_empty:
+                centroid = row.geometry.centroid  # Get average centroid
+                ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(3, -10),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                zorder=8
+                )
+        elif idx == 6:
+            if row.geometry is not None and not row.geometry.is_empty:
+                centroid = row.geometry.centroid  # Get average centroid
+                ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(3,30),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                zorder=8
+                )
         elif idx == 1:
                 if row.geometry is not None and not row.geometry.is_empty:
                     centroid = row.geometry.centroid  # Get average centroid
                     ax.annotate(
                     text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
                     xy=(centroid.x, centroid.y),
-                    xytext=(3, 50),  # Small offset for visibility
+                    xytext=(150, -5),  # Small offset for visibility
+                    textcoords="offset points",
+                    fontsize=9,
+                    color="black",
+                    alpha=1,
+                    bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                    zorder=8
+                    )
+                    ax.annotate(
+                    text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                    xy=(centroid.x, centroid.y),
+                    xytext=(-100, 10),  # Small offset for visibility
+                    textcoords="offset points",
+                    fontsize=9,
+                    color="black",
+                    alpha=1,
+                    bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                    zorder=8
+                    )
+        elif idx == 2:
+                if row.geometry is not None and not row.geometry.is_empty:
+                    centroid = row.geometry.centroid  # Get average centroid
+                    ax.annotate(
+                    text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                    xy=(centroid.x, centroid.y),
+                    xytext=(3, -5),  # Small offset for visibility
                     textcoords="offset points",
                     fontsize=9,
                     color="black",
@@ -153,10 +393,50 @@ def main(config):
                     bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
                     zorder=8
                     )
+                    # Second label (below)
+                    ax.annotate(
+                        text=str(idx + 1),
+                        xy=(centroid.x, centroid.y),
+                        xytext=(10, -250),  # This pushes the label down
+                        textcoords="offset points",
+                        fontsize=9,
+                        color="black",
+                        alpha=1,
+                        bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                        zorder=8
+                    )
+                    
+        elif idx == 18:
+            if row.geometry is not None and not row.geometry.is_empty:
+                    centroid = row.geometry.centroid  # Get average centroid
+                    ax.annotate(
+                    text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                    xy=(centroid.x, centroid.y),
+                    xytext=(3, 180),  # Small offset for visibility
+                    textcoords="offset points",
+                    fontsize=9,
+                    color="black",
+                    alpha=1,
+                    bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                    zorder=8
+                    )
+                    # Second label (below)
+                    ax.annotate(
+                        text=str(idx + 1),
+                        xy=(centroid.x, centroid.y),
+                        xytext=(-70, -250),  # This pushes the label down
+                        textcoords="offset points",
+                        fontsize=9,
+                        color="black",
+                        alpha=1,
+                        bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
+                        zorder=8
+                    )
 
 
     plt.tight_layout()
-    save_fig(os.path.join(figures,"roads_corridors2.png"))
+    
+    save_fig(os.path.join(figures,"roads_corridors_prova.png"))
     plt.close()
     
     

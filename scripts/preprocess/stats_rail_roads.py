@@ -61,8 +61,18 @@ def main(config):
     gdf_exploded.loc[~gdf_exploded['tag_highway'].isin(valid_highways), 'tag_highway'] = 'Other'
 
     grouped_data = gdf_exploded.groupby([ 'corridor_name','paved'], as_index=False).agg({'length_km': 'sum'})
+
+    # Calculate total length per corridor
+    grouped_data['total_km'] = grouped_data['length_km'].sum()
+
+# Calculate percentage for each paved/unpaved group
+    grouped_data['percentage'] = (grouped_data['length_km'] / grouped_data['total_km']) * 100
+    total_lengths = gdf_exploded.groupby('paved')['length_km'].sum()
+    total = total_lengths.sum()
+    percentages = (total_lengths / total) * 100
+
+    print(percentages)
     
-    # Calculate the percentage
     
     print(grouped_data)
 

@@ -478,23 +478,21 @@ def main(config):
         edges["source"] = edges.progress_apply(lambda x:f"railn_{x.source}",axis=1)
         edges["target"] = edges.progress_apply(lambda x:f"railn_{x.target}",axis=1)
         edges.rename(columns={"oid":"id","source":"from_id","target":"to_id","type":"infra"},inplace=True)
-        print(edges.columns)
-        print(nodes.columns)
-        print(rail_edges.columns)
-        # gpd.GeoDataFrame(nodes,
-        #         geometry="geometry",
-        #         crs=rail_edges.crs).to_file(os.path.join(
-        #                 processed_data_path,
-        #                 "infrastructure",
-        #                 "africa_railways_network.gpkg"),
-        #                 layer="nodes",driver="GPKG")
-        # gpd.GeoDataFrame(edges,
-        #         geometry="geometry",
-        #         crs=rail_edges.crs).to_file(os.path.join(
-        #                         processed_data_path,
-        #                         "infrastructure",
-        #                         "africa_railways_network.gpkg"),
-        #                     layer="edges",driver="GPKG")
+        
+        gpd.GeoDataFrame(nodes,
+                geometry="geometry",
+                crs=rail_edges.crs).to_file(os.path.join(
+                        processed_data_path,
+                        "infrastructure",
+                        "africa_railways_network.gpkg"),
+                        layer="nodes",driver="GPKG")
+        gpd.GeoDataFrame(edges,
+                geometry="geometry",
+                crs=rail_edges.crs).to_file(os.path.join(
+                                processed_data_path,
+                                "infrastructure",
+                                "africa_railways_network.gpkg"),
+                            layer="edges",driver="GPKG")
  
 
 
