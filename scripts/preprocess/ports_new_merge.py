@@ -1,21 +1,39 @@
 #!/usr/bin/env python
 # coding: utf-8
-# (1) Merge three datasets; (2)Add ISO3 (4) extract non_intersected
+
 import sys
 import os
 import re
 import pandas as pd
 import geopandas as gpd
 import igraph as ig
-from shapely.geometry import Point
+from shapely.geometry import Point, LineString, Polygon
 from math import radians, cos, sin, asin, sqrt
 from haversine import haversine
 from utils_new import *
 from tqdm import tqdm
-import matplotlib.pyplot as plt
-import networkx as nx
-import numpy as np
 tqdm.pandas()
+
+
+
+
+def add_lines2(x, nodes_df, from_col, to_col):
+    from_id = x[from_col]
+    to_id = x[to_col]
+
+    from_point = nodes_df[nodes_df["id"] == from_id]
+    to_point = nodes_df[nodes_df["id"] == to_id]
+
+    if from_point.empty:
+        print(f"Missing from_id: {from_id}")
+    if to_point.empty:
+        print(f"Missing to_id: {to_id}")
+
+    if not from_point.empty and not to_point.empty:
+        return LineString([from_point.geometry.values[0], to_point.geometry.values[0]])
+    else:
+        return None
+
 
 def haversine_distance(point1, point2):
     """
@@ -145,102 +163,191 @@ def main(config):
     merged_gdf = merged_gdf.merge(maritime_values_cap, on='portid', how='left', suffixes=('', '_csv'))
     merged_gdf = merged_gdf.merge(maritime_values_turn, on='portid', how='left', suffixes=('', '_csv'))
 
-    df[df["id"].duplicated(keep=False)] #see if there are duplicates
+    #df[df["id"].duplicated(keep=False)] #see if there are duplicates
 
-    
-
+   
 
     # Standardize merged_gdf
     merged_gdf = merged_gdf.rename(columns={"port_name": "name", "ISO3": "iso3"})
     merged_gdf["infra"] = "port"
     merged_gdf.drop(columns=["country_csv", "ISO3_csv"], inplace=True, errors="ignore")
 
-    merged_attributes = merged_gdf.set_index("portid")
+    # Ensure both GeoDataFrames are in the same CRS
+    merged_gdf = merged_gdf.to_crs(epsg=epsg_meters)
+    df = df.to_crs(epsg=epsg_meters)
 
-    # Match ports spatially
-    mapping, new_ports_matched = match_ports(
-        df.to_crs(epsg=epsg_meters),
-        merged_gdf.to_crs(epsg=epsg_meters),
-        "id", "portid",
-        cutoff_distance
-    )
+    # Perform spatial join: 'left' to keep all rows from df
+    left_join = gpd.sjoin_nearest(df, merged_gdf, how="left", max_distance= 3000)
 
-    mapping_dict = dict(zip(mapping["id"], mapping["portid"]))
-    mapping_df = pd.DataFrame(list(mapping_dict.items()), columns=["id", "portid"])
+    # Perform spatial join: 'right' to keep all rows from merged_gdf
+    right_join = gpd.sjoin_nearest(merged_gdf, df, how="left", max_distance= 3000)
 
-    # Merge df with mapping
-    matched_df_subset = df.merge(mapping_df, on="id", how="left")
+    # Now union the two (include only unmatched rows from the right join)
+    # Filter rows in right_join where df index is missing => unmatched
+    unmatched_right = right_join[right_join.index_right.isna()].drop(columns='index_right')
 
-    # Join attributes from merged_gdf
-    matched_with_attrs = matched_df_subset.join(merged_attributes, on="portid", rsuffix="_merged")
-    matched_with_attrs["infra"] = matched_df_subset["infra"]
-    matched_with_attrs.drop(columns=["portid"], inplace=True)
+    # Combine both sets
+    nodes_merged = pd.concat([left_join, unmatched_right], ignore_index=True)
+    
 
-    # unmatched new ports
-    matched_portids = set(mapping_dict.values())
-    unmatched = merged_gdf[~merged_gdf["portid"].isin(matched_portids)].copy()
-    unmatched["id"] = None
+    # Convert to GeoDataFrame again with correct CRS
+    nodes_merged = gpd.GeoDataFrame(nodes_merged, geometry="geometry", crs=epsg_meters)
+    nodes_merged["infra_left"] = nodes_merged["infra_left"].fillna(nodes_merged["infra_right"])
+    nodes_merged["iso3_left"] = nodes_merged["iso3_left"].fillna(nodes_merged["iso3_right"])
+    nodes_merged["portname"] = nodes_merged["portname"].fillna(nodes_merged["name"])
+    nodes_merged.drop(columns=["name", "iso3_right", "infra_right"], inplace=True, errors="ignore")
+    nodes_merged.rename(columns={"infra_left":"infra","portname": "name", "iso3_left": "iso3"}, inplace=True)
+    
+    source_geom = nodes_merged.loc[nodes_merged["name"] == "Sidi Kerir_Egypt", "geometry"].values[0]
+    nodes_merged.loc[nodes_merged["name"] == "Sidi Kerir", "geometry"] = source_geom
+    nodes_merged = nodes_merged[nodes_merged["name"] != "Sidi Kerir_Egypt"]
+    # Clean up
+    # nodes_merged.drop(columns=["geometry_merged", "index_right", "index_left"], inplace=True, errors="ignore")
 
-    # Assign new IDs to unmatched
-    existing_ids = df[df["infra"] == "port"]["id"].tolist()
-    existing_nums = [int(re.findall(r"\d+", v)[0]) for v in existing_ids if re.match(r"port_\d+", v)]
-    max_existing = max(existing_nums) if existing_nums else 0
-    new_ids = [f"port_{i}" for i in range(max_existing + 1, max_existing + 1 + len(unmatched))]
+   
 
-    unmatched["id"] = new_ids
-    unmatched["infra"] = "port"
+   # Step 1: Get max port ID number
+    prt = nodes_merged[nodes_merged["infra"] == "port"]
+    max_port_id = max([
+        int(re.findall(r'\d+', v)[0]) 
+        for v in prt["id"].values 
+        if isinstance(v, str) and v.startswith("port") and re.search(r'\d+', v)
+    ], default=0)
 
-    # Combine
-    combined_ports = pd.concat([matched_with_attrs, unmatched], ignore_index=True)
-    combined_ports = gpd.GeoDataFrame(combined_ports, geometry="geometry", crs="EPSG:4326")
+    # Step 2: Create a closure with a mutable counter
+    def make_id_assigner(start_count):
+        counter = [start_count]  # list used as mutable integer
 
-    # Merge with unmatched original df
-    original_unmatched_df = df[~df["id"].isin(mapping_dict.keys())]
-    final_ports = pd.concat([original_unmatched_df, combined_ports], ignore_index=True)
-    final_ports = gpd.GeoDataFrame(final_ports, geometry="geometry", crs="EPSG:4326")
+        def assign_id(row):
+            if row["infra"] == "port":
+                if pd.isna(row["id"]):
+                    new_id = f"port{counter[0]}"
+                    counter[0] += 1
+                    return new_id
+                else:
+                    return row["id"]  # keep existing
+            else:
+                return row["id"]  # leave other infra types untouched
 
-    # Clean ID format and check for duplicates
-    final_ports["id"] = final_ports["id"].apply(lambda x: re.sub(r'([a-zA-Z]+)(\d+)', r'\1_\2', str(x)) if '_' not in str(x) else str(x))
-    duplicate_ids = final_ports["id"][final_ports["id"].duplicated()]
-    if not duplicate_ids.empty:
-        raise ValueError(f"Duplicate port IDs found in final_ports: {duplicate_ids.tolist()}")
+        return assign_id
 
-    # Drop temp geometry columns
-    final_ports.drop(columns=["geometry_attr", "geometry_merged"], inplace=True, errors='ignore')
+    # Step 3: Apply the function
+    id_assigner = make_id_assigner(max_port_id + 1)
+    nodes_merged = nodes_merged.reset_index(drop=True)
+    nodes_merged["id"] = nodes_merged.progress_apply(id_assigner, axis=1)
 
-    # Save result
-    final_ports.to_file(os.path.join(
-        processed_data_path,
-        "infrastructure",
-        "global_maritime_network_UPDATED.gpkg"),
-        layer="nodes",
-        driver="GPKG"
-    )
+    nodes_merged["id"] = nodes_merged["id"].str.replace('maritime', 'maritime_')
+    nodes_merged["id"] = nodes_merged["id"].str.replace('port', 'port_')
 
-        
-    # Need to create the edges for the new ports once I know I have no duplicates and create the edges layer too, then get the ports only for Africa
+    # Add continent code
+   
+    nodes_merged = gpd.GeoDataFrame(nodes_merged, geometry="geometry", crs=epsg_meters)
+    df_edges = gpd.GeoDataFrame(df_edges, geometry="geometry", crs=epsg_meters)
 
-    # Get the ports for Africa
-    port_edges = gpd.read_file(os.path.join(processed_data_path,
-                                    "infrastructure",
-                                    "global_maritime_network_UPDATED.gpkg"),layer = 'edges') 
-    port_nodes = gpd.read_file(os.path.join(processed_data_path,
+
+    nodes_merged.to_file(os.path.join(
+                            processed_data_path,
                             "infrastructure",
-                            "global_maritime_network_UPDATED.gpkg"),layer="nodes")
-    # global_edges = port_edges[["from_id","to_id","id","from_infra","to_infra","geometry"]].to_crs(epsg_meters)
-    # global_edges["distance"] = global_edges.geometry.length
-    global_edges = port_edges[["from_id","to_id","id","distance"]]
-    africa_ports = port_nodes[port_nodes["Continent_Code"] == "AF"]
-    G = ig.Graph.TupleList(global_edges.itertuples(index=False), edge_attrs=list(global_edges.columns)[2:])
+                            "africa_maritime_network_PROVA_NEW.gpkg"),
+                        layer="nodes",driver="GPKG")
+
+    ids_to_check = {
+    "port_1620", "maritime_2700", "port_1512", "maritime_1613",
+    "port_1617", "maritime_2599", "port_1573", "maritime_64",
+    "port_1598", "maritime_675", "port_1712", "maritime_385",
+    "port_1641", "maritime_1"
+    }
+
+    print(nodes_merged[nodes_merged["id"].isin(ids_to_check)])
+    
+    nodes_merged["id"] = nodes_merged["id"].astype(str).str.strip()
+    connect_pairs = [("port_1512","maritime_1613","port","maritime"),
+                            ("port_1620","maritime_2700","port","maritime"),
+                            ("port_1617","maritime_2599","port","maritime"),
+                            ("port_1573","maritime_64","port","maritime"),
+                            ("port_1598","maritime_675","maritime","maritime"),
+                            ("port_1712","maritime_385","maritime","maritime"),
+                            ("port_1641","maritime_1","maritime","maritime")
+                            ]
+    
+    
+    
+    nodes_merged2 = nodes_merged.copy()
+    nodes_merged2.rename(columns={"id":"from_id"},inplace=True)
+    from_node='from_id'
+    to_node='to_id'
+    additional_lines = pd.DataFrame(connect_pairs,columns=["from_id","to_id","from_infra","to_infra"])
+    additional_lines["from_id"] = additional_lines["from_id"].astype(str).str.strip()
+    additional_lines["to_id"] = additional_lines["to_id"].astype(str).str.strip()
+    nodes_merged2["from_id"] = nodes_merged2["from_id"].astype(str).str.strip()
+    
+    additional_lines["geometry"] = additional_lines.progress_apply(
+                                                    lambda x:add_lines2(
+                                                    x,nodes_merged,"from_id", "to_id"
+                                                    ), axis=1)
+    print(additional_lines)
+
+    df_edges["from_id"] = df_edges["from_id"].str.replace('maritime', 'maritime_')
+    df_edges["from_id"] = df_edges["from_id"].str.replace('port', 'port_')
+
+    df_edges["to_id"] = df_edges["to_id"].str.replace('maritime', 'maritime_')
+    df_edges["to_id"] = df_edges["to_id"].str.replace('port', 'port_')
+
+    
+    df_edges = pd.concat([df_edges, additional_lines[["from_id", "to_id", "from_infra", "to_infra", "geometry"]]], ignore_index=True)
+
+    port_edges = gpd.GeoDataFrame(df_edges,geometry="geometry",crs="EPSG:4326")
+    
+
+    port_edges["id"] = port_edges.index.values.tolist()
+    port_edges["id"] = port_edges.progress_apply(lambda x:f"maritimeroute_{x.id}",axis=1)
+    port_edges["length_degree"] = port_edges.geometry.length
+    port_edges = port_edges.to_crs('+proj=cea')
+    port_edges["distance"] = 0.001*port_edges.geometry.length
+    port_edges = port_edges.to_crs(epsg=4326)
+    #port_edges["distance_km"] = port_edges.progress_apply(lambda x:modify_distance(x),axis=1)
+    port_edges.to_file(os.path.join(processed_data_path,
+                            "infrastructure",
+                            "global_maritime_network_PROVA_NEW.gpkg"),layer="edges",driver="GPKG")
+    
+    
+    #nodes_merged= add_iso_code(nodes_merged,"country",incoming_data_path)
+    
+    nodes_merged.to_file(os.path.join(processed_data_path,
+                            "infrastructure",
+                            "global_maritime_network_PROVA_NEW.gpkg"),layer="nodes",driver="GPKG")
+    
+    africa_nodes = nodes_merged[nodes_merged["continent"] == "Africa"]
+    africa_nodes["Continent_Code"] = "AF"
+    africa_nodes.drop(columns = "index_right", inplace=True)
+    africa_nodes.rename(columns={"iso3":"iso3_old"},inplace=True)
+    africa_nodes= add_iso_code(africa_nodes,"country",incoming_data_path)
+    africa_nodes.drop(columns=["iso3_old"],inplace=True,errors="ignore")
+
+    print(africa_nodes)
+    print(port_edges)
+    
+    G = ig.Graph.TupleList(port_edges.itertuples(index=False), edge_attrs=list(port_edges.columns)[2:])
     # print (G)
 
     all_edges = []
-    africa_nodes = port_nodes[port_nodes["Continent_Code"] == "AF"]["id"].values.tolist()
+    africa_nodes = africa_nodes[africa_nodes["Continent_Code"] == "AF"]["id"].values.tolist()
+
+    
+
+      
+    
+
+
+
     for o in range(len(africa_nodes)-1):
         origin = africa_nodes[o]
         destinations = africa_nodes[o+1:]
         e,_ = network_od_path_estimations(G,origin,destinations,"distance","id")
         all_edges += e
+
+    breakpoint()
+    
 
     all_edges = list(set([item for sublist in all_edges for item in sublist]))
     all_edges += port_edges[port_edges.index > 9390]["id"].values.tolist()
@@ -259,31 +366,19 @@ def main(config):
                         geometry="geometry",crs="EPSG:4326")
     
     all_nodes = list(set(africa_edges["from_id"].values.tolist() + africa_edges["to_id"].values.tolist()))
-    africa_nodes = port_nodes[port_nodes["id"].isin(all_nodes)] 
+    africa_nodes = africa_nodes[africa_nodes["id"].isin(all_nodes)] 
 
-    africa_nodes.to_file(os.path.join(
-                            processed_data_path,
-                            "infrastructure",
-                            "africa_maritime_network_UPDATED.gpkg"),
-                        layer="nodes",driver="GPKG")
-    africa_edges.to_file(os.path.join(processed_data_path,
-                            "infrastructure",
-                            "africa_maritime_network_UPDATED.gpkg"),
-                        layer="edges",driver="GPKG")
+    
 
-
-    port_edges = gpd.read_file(os.path.join(processed_data_path,
-                            "infrastructure",
-                            "global_maritime_network_UPDATED.gpkg"),layer="edges")
-    port_edges["from_infra"] = port_edges.progress_apply(
+    africa_edges["from_infra"] = africa_edges.progress_apply(
                                 lambda x:re.sub('[^a-zA-Z]+', '',x["from_id"]),
                                 axis=1)
-    port_edges["to_infra"] = port_edges.progress_apply(
+    africa_edges["to_infra"] = africa_edges.progress_apply(
                                 lambda x:re.sub('[^a-zA-Z]+', '',x["to_id"]),
                                 axis=1)
-    port_edges["id"] = port_edges.index.values.tolist()
-    port_edges["id"] = port_edges.progress_apply(lambda x:f"maritimeroute_{x.id}",axis=1)
-    port_edges['duplicates'] = pd.DataFrame(
+    africa_edges["id"] = africa_edges.index.values.tolist()
+    africa_edges["id"] = africa_edges.progress_apply(lambda x:f"maritimeroute_{x.id}",axis=1)
+    africa_edges['duplicates'] = pd.DataFrame(
                                     np.sort(port_edges[['from_id','to_id']])
                                     ).duplicated(keep=False).astype(int)
     u_df = port_edges[port_edges['duplicates'] == 0]
@@ -292,39 +387,18 @@ def main(config):
                     pd.concat([port_edges,u_df],axis=0,ignore_index=True),
                     geometry="geometry",crs="EPSG:4326")
     port_edges.drop("duplicates",axis=1,inplace=True)
-    # port_edges["length"] = port_edges.geometry.length
-    # port_edges = port_edges.to_crs('+proj=cea')
-    # port_edges["distance"] = 0.001*port_edges.geometry.length
-    # port_edges = port_edges.to_crs(epsg=4326)
-    # port_edges["distance"] = port_edges.progress_apply(lambda x:modify_distance(x),axis=1)
-    port_edges.to_csv("test2.csv")
-    port_edges.to_file(os.path.join(processed_data_path,
-                            "infrastructure",
-                            "global_maritime_network_UPDATED.gpkg"),layer="edges",driver="GPKG")
 
-
-    # port_edges['duplicates'] = pd.DataFrame(
-    #                                 np.sort(port_edges[['from_id','to_id']])
-    #                                 ).duplicated(keep=False).astype(int)
-    # u_df = port_edges[port_edges['duplicates'] == 0]
-    # u_df[["to_id","from_id"]] = u_df[["from_id","to_id"]]
-    # port_edges = gpd.GeoDataFrame(
-    #                 pd.concat([port_edges,u_df],axis=0,ignore_index=True),
-    #                 geometry="geometry",crs="EPSG:4326")
-    # port_edges.drop("duplicates",axis=1,inplace=True)
-    # # port_edges["length"] = port_edges.geometry.length
-    # # port_edges = port_edges.to_crs('+proj=cea')
-    # # port_edges["distance"] = 0.001*port_edges.geometry.length
-    # # port_edges = port_edges.to_crs(epsg=4326)
-    # # print (port_edges)
-    port_edges.to_file(os.path.join(processed_data_path,
+    africa_nodes.to_file(os.path.join(
+                            processed_data_path,
                             "infrastructure",
-                            "africa_maritime_network_UPDATED.gpkg"),
+                            "africa_maritime_network_NEW_PROVA.gpkg"),
+                        layer="nodes",driver="GPKG")
+    africa_edges.to_file(os.path.join(processed_data_path,
+                            "infrastructure",
+                            "africa_maritime_network_NEW_PROVA.gpkg"),
                         layer="edges",driver="GPKG")
 
-
-
-
+    breakpoint()
 
 
 
