@@ -12,6 +12,8 @@ from math import radians, cos, sin, asin, sqrt
 from haversine import haversine
 from utils_new import *
 from tqdm import tqdm
+import igraph as ig
+import networkx
 tqdm.pandas()
 
 
@@ -180,9 +182,6 @@ def main(config):
     merged_gdf = df_new.merge(maritime_values_calls, on='portid', how='left', suffixes=('', '_csv'))
     merged_gdf = merged_gdf.merge(maritime_values_cap, on='portid', how='left', suffixes=('', '_csv'))
     merged_gdf = merged_gdf.merge(maritime_values_turn, on='portid', how='left', suffixes=('', '_csv'))
-
-    #df[df["id"].duplicated(keep=False)] #see if there are duplicates
-
    
 
     # Standardize merged_gdf
@@ -235,54 +234,9 @@ def main(config):
                                     "continent_left":"continent"}, 
                         inplace=True)
     
-    # source_geom = nodes_merged.loc[nodes_merged["name"] == "Sidi Kerir_Egypt", "geometry"].values[0]
-    # nodes_merged.loc[nodes_merged["name"] == "Sidi Kerir", "geometry"] = source_geom
-    # nodes_merged = nodes_merged[nodes_merged["name"] != "Sidi Kerir_Egypt"]
-    # Clean up
-    # nodes_merged.drop(columns=["geometry_merged", "index_right", "index_left"], inplace=True, errors="ignore")
-
-   
-
-   # # Step 1: Get max port ID number
-   #  prt = nodes_merged[nodes_merged["infra"] == "port"]
-   #  max_port_id = max([
-   #      int(re.findall(r'\d+', v)[0]) 
-   #      for v in prt["id"].values 
-   #      if isinstance(v, str) and v.startswith("port") and re.search(r'\d+', v)
-   #  ], default=0)
-
-   #  # Step 2: Create a closure with a mutable counter
-   #  def make_id_assigner(start_count):
-   #      counter = [start_count]  # list used as mutable integer
-
-   #      def assign_id(row):
-   #          if row["infra"] == "port":
-   #              if pd.isna(row["id"]):
-   #                  new_id = f"port{counter[0]}"
-   #                  counter[0] += 1
-   #                  return new_id
-   #              else:
-   #                  return row["id"]  # keep existing
-   #          else:
-   #              return row["id"]  # leave other infra types untouched
-
-   #      return assign_id
-
-   #  # Step 3: Apply the function
-   #  id_assigner = make_id_assigner(max_port_id + 1)
-   #  nodes_merged = nodes_merged.reset_index(drop=True)
-   #  nodes_merged["id"] = nodes_merged.progress_apply(id_assigner, axis=1)
-
-    # Add continent code
+    
    
     nodes_merged = gpd.GeoDataFrame(nodes_merged, geometry="geometry", crs=epsg_meters)
-    # df_edges = gpd.GeoDataFrame(df_edges, geometry="geometry", crs=epsg_meters)
-
-    # nodes_merged.to_file(os.path.join(
-    #                         processed_data_path,
-    #                         "infrastructure",
-    #                         "africa_maritime_network_PROVA_NEW.gpkg"),
-    #                     layer="nodes",driver="GPKG")
 
     """Remove the edges which contain nodes not found in the node list 
     """
@@ -334,42 +288,6 @@ def main(config):
 
     print (df_edges)
 
-    # ids_to_check = {
-    # "port_1620", "maritime_2700", "port_1512", "maritime_1613",
-    # "port_1617", "maritime_2599", "port_1573", "maritime_64",
-    # "port_1598", "maritime_675", "port_1712", "maritime_385",
-    # "port_1641", "maritime_1"
-    # }
-
-    # print(nodes_merged[nodes_merged["id"].isin(ids_to_check)])
-    
-    # nodes_merged["id"] = nodes_merged["id"].astype(str).str.strip()
-    # connect_pairs = [("port_1512","maritime_1613","port","maritime"),
-    #                         ("port_1620","maritime_2700","port","maritime"),
-    #                         ("port_1617","maritime_2599","port","maritime"),
-    #                         ("port_1573","maritime_64","port","maritime"),
-    #                         ("port_1598","maritime_675","maritime","maritime"),
-    #                         ("port_1712","maritime_385","maritime","maritime"),
-    #                         ("port_1641","maritime_1","maritime","maritime")
-    #                         ]
-    
-    
-    
-    # nodes_merged2 = nodes_merged.copy()
-    # nodes_merged2.rename(columns={"id":"from_id"},inplace=True)
-    # from_node='from_id'
-    # to_node='to_id'
-    # additional_lines = pd.DataFrame(connect_pairs,columns=["from_id","to_id","from_infra","to_infra"])
-    # additional_lines["from_id"] = additional_lines["from_id"].astype(str).str.strip()
-    # additional_lines["to_id"] = additional_lines["to_id"].astype(str).str.strip()
-    # nodes_merged2["from_id"] = nodes_merged2["from_id"].astype(str).str.strip()
-    
-    # additional_lines["geometry"] = additional_lines.progress_apply(
-    #                                                 lambda x:add_lines2(
-    #                                                 x,nodes_merged,"from_id", "to_id"
-    #                                                 ), axis=1)
-    # print(additional_lines)
-
     df_edges["from_id"] = df_edges["from_id"].str.replace('maritime', 'maritime_')
     df_edges["from_id"] = df_edges["from_id"].str.replace('port', 'port_')
 
@@ -384,103 +302,90 @@ def main(config):
     port_edges = port_edges.to_crs('+proj=cea')
     port_edges["distance"] = 0.001*port_edges.geometry.length
     port_edges = port_edges.to_crs(epsg=4326)
-    #port_edges["distance_km"] = port_edges.progress_apply(lambda x:modify_distance(x),axis=1)
+    port_edges["distance_km"] = port_edges.progress_apply(lambda x:modify_distance(x),axis=1)
     port_edges.to_file(os.path.join(processed_data_path,
                             "infrastructure",
                             "global_maritime_network_PROVA_NEW.gpkg"),layer="edges",driver="GPKG")
     
     
-    # #nodes_merged= add_iso_code(nodes_merged,"country",incoming_data_path)
+    
     nodes_merged["id"] = nodes_merged["id"].str.replace('maritime', 'maritime_')
     nodes_merged["id"] = nodes_merged["id"].str.replace('port', 'port_')
     nodes_merged.to_file(os.path.join(processed_data_path,
                             "infrastructure",
                             "global_maritime_network_PROVA_NEW.gpkg"),layer="nodes",driver="GPKG")
+   
+
+    # Get the ports for AFRICA
     
-    # africa_nodes = nodes_merged[nodes_merged["continent"] == "Africa"]
-    # africa_nodes["Continent_Code"] = "AF"
-    # africa_nodes.drop(columns = "index_right", inplace=True)
-    # africa_nodes.rename(columns={"iso3":"iso3_old"},inplace=True)
-    # africa_nodes= add_iso_code(africa_nodes,"country",incoming_data_path)
-    # africa_nodes.drop(columns=["iso3_old"],inplace=True,errors="ignore")
+    port_edges = gpd.read_file(os.path.join(processed_data_path,
+                            "infrastructure",
+                            "global_maritime_network_PROVA_NEW.gpkg"),layer="edges")
+    port_nodes = gpd.read_file(os.path.join(processed_data_path,
+                            "infrastructure",
+                            "global_maritime_network_PROVA_NEW.gpkg"),layer="nodes")
+    # global_edges = port_edges[["from_id","to_id","id","from_infra","to_infra","geometry"]].to_crs(epsg_meters)
+    # global_edges["distance"] = global_edges.geometry.length
+    global_edges = port_edges[["from_id","to_id","id","distance"]]
+    africa_ports = port_nodes[port_nodes["continent"] == "Africa"]
+    G = ig.Graph.TupleList(global_edges.itertuples(index=False), edge_attrs=list(global_edges.columns)[2:])
+    # print (G)
 
-    # print(africa_nodes)
-    # print(port_edges)
-    
-    # G = ig.Graph.TupleList(port_edges.itertuples(index=False), edge_attrs=list(port_edges.columns)[2:])
-    # # print (G)
+    all_edges = []
+    africa_nodes = africa_ports[africa_ports["infra"]=="port"]["id"].values.tolist()
 
-    # all_edges = []
-    # africa_nodes = africa_nodes[africa_nodes["Continent_Code"] == "AF"]["id"].values.tolist()
+    for o in range(len(africa_nodes)-1):
+        origin = africa_nodes[o]
+        destinations = africa_nodes[o+1:]
+        e,_ = network_od_path_estimations(G,origin,destinations,"distance","id")
+        all_edges += e
 
-    
-
-      
-    
-
-
-
-    # for o in range(len(africa_nodes)-1):
-    #     origin = africa_nodes[o]
-    #     destinations = africa_nodes[o+1:]
-    #     e,_ = network_od_path_estimations(G,origin,destinations,"distance","id")
-    #     all_edges += e
-
-    # breakpoint()
-    
-
-    # all_edges = list(set([item for sublist in all_edges for item in sublist]))
+    all_edges = list(set([item for sublist in all_edges for item in sublist]))
     # all_edges += port_edges[port_edges.index > 9390]["id"].values.tolist()
-    # all_edges = list(set(all_edges))
-    # # africa_edges = port_edges[port_edges["id"].isin(all_edges)]
-    # africa_edges = port_edges[port_edges["id"].isin(all_edges)][["from_id","to_id"]]
-    # dup_df = africa_edges.copy()
-    # dup_df[["from_id","to_id"]] = dup_df[["to_id","from_id"]]
-    # africa_edges = pd.concat([africa_edges,dup_df],axis=0,ignore_index=True)
-    # africa_edges = africa_edges.drop_duplicates(subset=["from_id","to_id"],keep="first")
-    # africa_edges = gpd.GeoDataFrame(
-    #                     pd.merge(
-    #                             africa_edges,port_edges,
-    #                             how="left",on=["from_id","to_id"]
-    #                             ),
-    #                     geometry="geometry",crs="EPSG:4326")
+    all_edges = list(set(all_edges))
+    # africa_edges = port_edges[port_edges["id"].isin(all_edges)]
+    africa_edges = port_edges[port_edges["id"].isin(all_edges)][["from_id","to_id"]]
+    dup_df = africa_edges.copy()
+    dup_df[["from_id","to_id"]] = dup_df[["to_id","from_id"]]
+    africa_edges = pd.concat([africa_edges,dup_df],axis=0,ignore_index=True)
+    africa_edges = africa_edges.drop_duplicates(subset=["from_id","to_id"],keep="first")
+    africa_edges = gpd.GeoDataFrame(
+                        pd.merge(
+                                africa_edges,port_edges,
+                                how="left",on=["from_id","to_id"]
+                                ),
+                        geometry="geometry",crs="EPSG:4326")
     
-    # all_nodes = list(set(africa_edges["from_id"].values.tolist() + africa_edges["to_id"].values.tolist()))
-    # africa_nodes = africa_nodes[africa_nodes["id"].isin(all_nodes)] 
+    all_nodes = list(set(africa_edges["from_id"].values.tolist() + africa_edges["to_id"].values.tolist()))
+    africa_nodes = port_nodes[port_nodes["id"].isin(all_nodes)]
 
+
+
+    africa_edges = africa_edges[["id","from_id","to_id","from_infra","to_infra","distance","geometry"]]
     
+    africa_nodes = africa_nodes[['id', 'name', 'fullname', 'infra', 'country', 'iso3',
+       'vessel_cou', 'vessel_c_1', 'vessel_c_2', 'vessel_c_3', 'vessel_c_4',
+       'vessel_c_5', 'industry_t', 'industry_1', 'industry_2', 'share_coun',
+       'share_co_1', 'call_container', 'call_drybulk', 'call_generalcargo', 'call_roro',
+       'call_tanker', 'capacity_container', 'capacity_drybulk',
+       'capacity_generalcargo', 'capacity_roro', 'capacity_tanker',
+       'time_container', 'time_drybulk', 'time_generalcargo', 'time_roro',
+       'time_tanker', 'geometry']]
+    africa_nodes = africa_nodes.rename(columns={"vessel_cou": "vessel_count_total","vessel_c_1": "vessel_count_container","vessel_c_2": "vessel_count_drybulk",
+                                                "vessel_c_3": "vessel_count_generalcargo","vessel_c_4": "vessel_count_roro","vessel_c_5": "vessel_count_tanker",
+                                                "industry_t": "industry_top1","industry_1": "industry_top2","industry_2": "industry_top3",
+                                                "share_coun": "share_country_maritime_import","share_co_1": "share_country_maritime_export"})   
 
-    # africa_edges["from_infra"] = africa_edges.progress_apply(
-    #                             lambda x:re.sub('[^a-zA-Z]+', '',x["from_id"]),
-    #                             axis=1)
-    # africa_edges["to_infra"] = africa_edges.progress_apply(
-    #                             lambda x:re.sub('[^a-zA-Z]+', '',x["to_id"]),
-    #                             axis=1)
-    # africa_edges["id"] = africa_edges.index.values.tolist()
-    # africa_edges["id"] = africa_edges.progress_apply(lambda x:f"maritimeroute_{x.id}",axis=1)
-    # africa_edges['duplicates'] = pd.DataFrame(
-    #                                 np.sort(port_edges[['from_id','to_id']])
-    #                                 ).duplicated(keep=False).astype(int)
-    # u_df = port_edges[port_edges['duplicates'] == 0]
-    # u_df[["to_id","from_id"]] = u_df[["from_id","to_id"]]
-    # port_edges = gpd.GeoDataFrame(
-    #                 pd.concat([port_edges,u_df],axis=0,ignore_index=True),
-    #                 geometry="geometry",crs="EPSG:4326")
-    # port_edges.drop("duplicates",axis=1,inplace=True)
-
-    # africa_nodes.to_file(os.path.join(
-    #                         processed_data_path,
-    #                         "infrastructure",
-    #                         "africa_maritime_network_NEW_PROVA.gpkg"),
-    #                     layer="nodes",driver="GPKG")
-    # africa_edges.to_file(os.path.join(processed_data_path,
-    #                         "infrastructure",
-    #                         "africa_maritime_network_NEW_PROVA.gpkg"),
-    #                     layer="edges",driver="GPKG")
-
-    # breakpoint()
-
-
+    africa_nodes.to_file(os.path.join(
+                            processed_data_path,
+                            "infrastructure",
+                            "africa_maritime_network_PROVA_NEW.gpkg"),
+                        layer="nodes",driver="GPKG")
+    africa_edges.to_file(os.path.join(processed_data_path,
+                            "infrastructure",
+                            "africa_maritime_network_PROVA_NEW.gpkg"),
+                        layer="edges",driver="GPKG")
+    print("Africa maritime network created successfully.")    
 
 if __name__ == '__main__':
     CONFIG = load_config()
