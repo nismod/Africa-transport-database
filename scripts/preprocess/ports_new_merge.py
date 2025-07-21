@@ -162,7 +162,7 @@ def main(config):
     df_new = gpd.read_file(os.path.join(incoming_data_path,
                                     "Global port supply-chains",
                                     "Ports Updated 2025",
-                                    "global_ports_up.gpkg"))
+                                    "Ports.shp"))
     maritime_values_calls = pd.read_csv(os.path.join(
                  incoming_data_path,
                  "Global port supply-chains",
@@ -237,19 +237,32 @@ def main(config):
     
    
     nodes_merged = gpd.GeoDataFrame(nodes_merged, geometry="geometry", crs=epsg_meters)
+    nodes_merged["vessel_cou"] = nodes_merged["vessel_cou"].fillna(0)
+    nodes_merged = nodes_merged.sort_values(by="vessel_cou", ascending=False)
+    nodes_merged = nodes_merged.drop_duplicates(subset=["id"], keep='first')
+    # print (nodes_merged)
 
     """Remove the edges which contain nodes not found in the node list 
     """
-    nodes = nodes_merged["id"].values.tolist()
+    # nodes = nodes_merged["id"].values.tolist()
+    nodes = nodes_merged[(nodes_merged["infra"] == "port") & (nodes_merged["continent"] == "Africa")]["id"].values.tolist()
+    print (len(nodes))
     from_to_nodes = list(set(df_edges["from_id"].values.tolist() + df_edges["to_id"].values.tolist()))
     extra_nodes = [n for n in from_to_nodes if n not in nodes] 
-    new_nodes = [n for n in nodes if n not in from_to_nodes]
+    # new_nodes = [n for n in nodes if n not in from_to_nodes]
+    new_nodes = nodes
+    print (df_edges)
+    df_edges = df_edges[~(df_edges["from_id"].isin(nodes) | df_edges["to_id"].isin(nodes))]
+    print (df_edges)
+    # df_edges = df_edges[~(df_edges["from_id"].isin(nodes) | df_edges["to_id"].isin(nodes))]
 
-    df_edges = df_edges[~(df_edges["from_id"].isin(extra_nodes) | df_edges["to_id"].isin(extra_nodes))]
-
+    # df_origins = nodes_merged[
+    #                         nodes_merged["infra"] == "port"
+    #                         ][nodes_merged["id"].isin(new_nodes)][["id","infra","geometry"]]
     df_origins = nodes_merged[
                             nodes_merged["infra"] == "port"
                             ][nodes_merged["id"].isin(new_nodes)][["id","infra","geometry"]]
+    print (df_origins)
     df_origins.rename(columns={"id":"from_id"},inplace=True)
     left_join = gpd.sjoin_nearest(
                             df_origins,
@@ -281,9 +294,13 @@ def main(config):
 
     left_join = gpd.GeoDataFrame(left_join,geometry="geometry",crs=f"EPSG:{epsg_meters}")
     left_join = left_join.to_crs(epsg=4326)
+    print(left_join)
+
+    right_join = left_join.copy()
+    right_join.columns = ["to_id","to_infra","from_id","from_infra","geometry"]
     print (left_join.crs)
     print (df_edges.crs)
-    df_edges = pd.concat([df_edges,left_join],axis=0,ignore_index=True)
+    df_edges = pd.concat([df_edges,left_join,right_join],axis=0,ignore_index=True)
     df_edges.drop("id",axis=1,inplace=True)
 
     print (df_edges)
@@ -303,9 +320,12 @@ def main(config):
     port_edges["distance"] = 0.001*port_edges.geometry.length
     port_edges = port_edges.to_crs(epsg=4326)
     port_edges["distance_km"] = port_edges.progress_apply(lambda x:modify_distance(x),axis=1)
+    # id_to_iso3 = nodes_merged.set_index("id")["iso3"]
+    # port_edges["from_iso3"] = port_edges["from_id"].map(id_to_iso3)
+    # port_edges["to_iso3"] = port_edges["to_id"].map(id_to_iso3)
     port_edges.to_file(os.path.join(processed_data_path,
                             "infrastructure",
-                            "global_maritime_network_PROVA_NEW.gpkg"),layer="edges",driver="GPKG")
+                            "global_maritime_network_PROVA_NEW1.gpkg"),layer="edges",driver="GPKG")
     
     
     
@@ -313,17 +333,17 @@ def main(config):
     nodes_merged["id"] = nodes_merged["id"].str.replace('port', 'port_')
     nodes_merged.to_file(os.path.join(processed_data_path,
                             "infrastructure",
-                            "global_maritime_network_PROVA_NEW.gpkg"),layer="nodes",driver="GPKG")
+                            "global_maritime_network_PROVA_NEW1.gpkg"),layer="nodes",driver="GPKG")
    
 
     # Get the ports for AFRICA
     
     port_edges = gpd.read_file(os.path.join(processed_data_path,
                             "infrastructure",
-                            "global_maritime_network_PROVA_NEW.gpkg"),layer="edges")
+                            "global_maritime_network_PROVA_NEW1.gpkg"),layer="edges")
     port_nodes = gpd.read_file(os.path.join(processed_data_path,
                             "infrastructure",
-                            "global_maritime_network_PROVA_NEW.gpkg"),layer="nodes")
+                            "global_maritime_network_PROVA_NEW1.gpkg"),layer="nodes")
     # global_edges = port_edges[["from_id","to_id","id","from_infra","to_infra","geometry"]].to_crs(epsg_meters)
     # global_edges["distance"] = global_edges.geometry.length
     global_edges = port_edges[["from_id","to_id","id","distance"]]
@@ -358,10 +378,13 @@ def main(config):
     
     all_nodes = list(set(africa_edges["from_id"].values.tolist() + africa_edges["to_id"].values.tolist()))
     africa_nodes = port_nodes[port_nodes["id"].isin(all_nodes)]
-
+    # id_to_iso3 = africa_nodes.set_index("id")["iso3"]
+    # africa_edges["from_iso3"] = africa_edges["from_id"].map(id_to_iso3)
+    # africa_edges["to_iso3"] = africa_edges["to_id"].map(id_to_iso3)
 
 
     africa_edges = africa_edges[["id","from_id","to_id","from_infra","to_infra","distance","geometry"]]
+    africa_edges = africa_edges.rename(columns={"distance":"distance_km"})
     
     africa_nodes = africa_nodes[['id', 'name', 'fullname', 'infra', 'country', 'iso3',
        'vessel_cou', 'vessel_c_1', 'vessel_c_2', 'vessel_c_3', 'vessel_c_4',
@@ -374,16 +397,20 @@ def main(config):
     africa_nodes = africa_nodes.rename(columns={"vessel_cou": "vessel_count_total","vessel_c_1": "vessel_count_container","vessel_c_2": "vessel_count_drybulk",
                                                 "vessel_c_3": "vessel_count_generalcargo","vessel_c_4": "vessel_count_roro","vessel_c_5": "vessel_count_tanker",
                                                 "industry_t": "industry_top1","industry_1": "industry_top2","industry_2": "industry_top3",
-                                                "share_coun": "share_country_maritime_import","share_co_1": "share_country_maritime_export"})   
+                                                "share_coun": "share_country_maritime_import","share_co_1": "share_country_maritime_export",
+                                                'capacity_container':'capacity_container_tons', 'capacity_drybulk': 'capacity_drybulk_tons',
+                                                'capacity_generalcargo':'capacity_generalcargo_tons', 'capacity_roro':'capacity_roro_tons', 
+                                                'capacity_tanker':'capacity_tanker_tons', 'time_container':'time_container_h', 'time_drybulk':'time_drybulk_h', 
+                                                'time_generalcargo':'time_generalcargo_h', 'time_roro':'time_roro_h','time_tanker':'time_tanker_h'})   
 
     africa_nodes.to_file(os.path.join(
                             processed_data_path,
                             "infrastructure",
-                            "africa_maritime_network_PROVA_NEW.gpkg"),
+                            "africa_maritime_network_PROVA_NEW1.gpkg"),
                         layer="nodes",driver="GPKG")
     africa_edges.to_file(os.path.join(processed_data_path,
                             "infrastructure",
-                            "africa_maritime_network_PROVA_NEW.gpkg"),
+                            "africa_maritime_network_PROVA_NEW1.gpkg"),
                         layer="edges",driver="GPKG")
     print("Africa maritime network created successfully.")    
 
