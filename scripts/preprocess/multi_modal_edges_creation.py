@@ -13,7 +13,12 @@ incoming_data_path = config['paths']['incoming_data']
 processed_data_path = config['paths']['data']
 
 
-def get_mode_dataframe(mode,rail_status=["open"],rail_to_road_connection=False):
+def get_mode_dataframe(
+                        mode,
+                        rail_status=["open","planned","construction"],
+                        rail_to_mode_connection=False,
+                        rail_facilities=None,
+                        node_degree=None):
     if mode == "air":
         nodes =  gpd.read_file(os.path.join(
                                 processed_data_path,
@@ -58,23 +63,22 @@ def get_mode_dataframe(mode,rail_status=["open"],rail_to_road_connection=False):
         degree_df = rail_edges[["from_id","to_id"]].stack().value_counts().rename_axis('id').reset_index(name='degree')
         nodes = pd.merge(nodes,degree_df,how="left",on=["id"])
 
-        if rail_to_road_connection is True:
-            freight_facility_types = ["port","port (dry)",
-                                        "port (inland)",
-                                        "port (river)",
-                                        "road-rail transfer",
-                                        "container terminal",
-                                        "freight terminal",
-                                        "freight marshalling yard",
-                                        "mining",
-                                        "refinery"]
-            nodes = nodes[
-                                            (
-                                                nodes["facility"].isin(freight_facility_types)
-                                            ) | (
-                                                nodes["degree"] == 1
-                                            )
-                                        ]
+        if rail_to_mode_connection is True:
+            freight_facility_types = rail_facilities
+            if node_degree is None:
+                nodes = nodes[
+                                                (
+                                                    nodes["facility"].isin(freight_facility_types)
+                                                )
+                                            ]
+            else:
+                nodes = nodes[
+                                                (
+                                                    nodes["facility"].isin(freight_facility_types)
+                                                ) | (
+                                                    nodes["degree"] == node_degree
+                                                )
+                                            ]
     elif mode == "road": 
         nodes = gpd.read_parquet(os.path.join(
                                 processed_data_path,
@@ -88,11 +92,39 @@ def main():
     epsg_meters = 3395 # To convert geometries to measure distances in meters
     from_modes = ["sea","sea","IWW","IWW","rail", "air","air"]
     to_modes = ["rail","road","rail","road","road","rail","road"]
+    rail_facility_types = {
+                                "air":["airport"]
+                            ,
+                                "sea":["port"]
+                            ,
+                                "IWW":["port","port (inland)","port (river)"]
+                            ,
+                                "road":[
+                                        "port","port (dry)",
+                                        "port (inland)",
+                                        "port (river)",
+                                        "road-rail transfer",
+                                        "container terminal",
+                                        "freight terminal",
+                                        "freight marshalling yard"
+                                        ]
+                            }
 
+    distance_threshold = 8100   # Found this by manual check
     multi_df = []
     for idx,(f_m,t_m) in enumerate(zip(from_modes,to_modes)):
-        if f_m == "rail" and t_m == "road":
-            f_df = get_mode_dataframe(f_m,rail_to_road_connection=True)
+        if f_m == "rail" or t_m == "rail":
+            rl_fc_typ  = [typ for typ in (f_m,t_m) if typ != "rail"][0]
+            if rl_fc_typ != "road":
+                node_degree = None
+            else:
+                node_degree = 1
+            f_df = get_mode_dataframe(
+                                        f_m,
+                                        rail_to_mode_connection=True,
+                                        rail_facilities=rail_facility_types[rl_fc_typ],
+                                        node_degree=None
+                                    )
         else:
             f_df = get_mode_dataframe(f_m)
 
@@ -102,7 +134,7 @@ def main():
                             t_df.to_crs(epsg=epsg_meters),
                             "id","id",
                             "iso3","iso3",
-                            f_m,t_m)
+                            f_m,t_m,distance_threshold=distance_threshold)
         f_t_df = f_t_df.rename(columns={"from_iso_a3":"from_iso3","to_iso_a3":"to_iso3"})
         print(f_t_df)
 
