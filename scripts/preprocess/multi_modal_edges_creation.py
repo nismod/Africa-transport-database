@@ -97,7 +97,7 @@ def main():
                             ,
                                 "sea":["port"]
                             ,
-                                "IWW":["port","port (inland)","port (river)"]
+                                "IWW":["port (inland)","port (river)"]
                             ,
                                 "road":[
                                         "port","port (dry)",
