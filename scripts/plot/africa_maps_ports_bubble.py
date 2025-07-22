@@ -27,6 +27,7 @@ def main(config):
     os.makedirs(figures,exist_ok=True)
 
     marker_size_max = 2000
+
     maritime_nodes = gpd.read_file(os.path.join(
                  data_path,
                  "infrastructure",
@@ -37,17 +38,8 @@ def main(config):
                  "infrastructure",
                  "africa_maritime_network.gpkg"
                  ), layer = 'edges')
-    maritime_values = pd.read_csv(os.path.join(
-                 data_path,
-                 "port_statistics",
-                 "port_vessel_types_and_capacities.csv"
-                 ))
     
-
-   
     
-    merged_gdf = maritime_nodes.merge(maritime_values, on=['id'])
-    print(merged_gdf['annual_vessel_capacity_tons'])
     
 
     IWW_nodes = gpd.read_file(os.path.join(
@@ -64,10 +56,17 @@ def main(config):
     IWW_nodes = IWW_nodes[
                         IWW_nodes['infra'].isin(['IWW port'])
                         ]
+    maritime_nodes = maritime_nodes[
+                        maritime_nodes['infra'].isin(['port'])
+                        ]
     
-    tmax = merged_gdf["annual_vessel_capacity_tons"].max()
-    print(type(tmax))
-    print(type(merged_gdf["annual_vessel_capacity_tons"]))
+    tmax = maritime_nodes["vessel_count_total"].max()
+    target_crs = "EPSG:4326"
+    maritime_nodes = maritime_nodes.to_crs(target_crs)
+    IWW_nodes = IWW_nodes.to_crs(target_crs)
+    IWW_edges = IWW_edges.to_crs(target_crs)
+    maritime_edges = maritime_edges.to_crs(target_crs)
+    print(maritime_nodes.head())
     
 
     map_epsg = 4326
@@ -78,14 +77,24 @@ def main(config):
                     dpi=500)
     
     ax = plot_africa_basemap2(ax_plots)
+
+    # Expand limits a bit
+    bounds = maritime_nodes.total_bounds  # [minx, miny, maxx, maxy]
+    pad_x = (bounds[2] - bounds[0]) * 0.05
+    pad_y = (bounds[3] - bounds[1]) * 0.2
+
+    ax.set_extent([bounds[0] - pad_x, bounds[2] + pad_x,
+                bounds[1] - pad_y, bounds[3] + pad_y],
+                crs=ccrs.PlateCarree())  # Because data is now in EPSG:4326
     # merged_gdf.plot(ax=ax,zorder=4, column='TotalSeats', cmap='YlOrRd',markersize=15,legend=True, scheme="quantiles", label="Airport total seats")
-    merged_gdf["markersize"] = marker_size_max*(merged_gdf["annual_vessel_capacity_tons"]/tmax)**0.5
-    merged_gdf = merged_gdf.sort_values(by="annual_vessel_capacity_tons",ascending=False)
-    merged_gdf.geometry.plot(
+    maritime_nodes["markersize"] = marker_size_max*(maritime_nodes["vessel_count_total"]/tmax)**0.5
+    maritime_nodes["markersize"].describe()
+    maritime_nodes = maritime_nodes.sort_values(by="vessel_count_total",ascending=False)
+    maritime_nodes.geometry.plot(
         ax=ax, 
         color="#3690c0", 
         edgecolor='none',
-        markersize=merged_gdf["markersize"],
+        markersize=maritime_nodes["markersize"],
         alpha=0.7,
         zorder=10)
     
@@ -98,7 +107,10 @@ def main(config):
     ins.set_facecolor("#c6e0ff")
     xk = -0.6
     xt = -0.95
-    t_key = 10**np.arange(1,np.ceil(np.log10(tmax)),1)[:-1]
+    
+    t_key = 10**np.arange(0.7,np.ceil(np.log10(tmax)),0.6)[:-1]
+    
+    # t_key = maritime_nodes["vessel_count_total"].quantile([0.25, 0.5, 0.75, 1.0]).values
     t_key = t_key[::-1]
     Nk = t_key.size
     yk = np.linspace(-2.45,0.8,Nk)
@@ -106,15 +118,17 @@ def main(config):
     size_key = marker_size_max*(t_key/tmax)**0.5
     key = gpd.GeoDataFrame(geometry=gpd.points_from_xy(np.ones(Nk)*xk, yk))
     key.geometry.plot(ax=ins,markersize=size_key,color="#3690c0")
-    ins.text(xt,yt,'Port annual vessel capacity (tons)',weight='bold',va='center',fontsize=12)
+    ins.text(xt,yt,'Port annual vessel count',weight='bold',va='center',fontsize=12)
     for k in range(Nk):
         ins.text(xk,yk[k],'       {:,.0f}'.format(t_key[k]),va='center',fontsize=12)
 
     IWW_edges.plot(ax=ax, zorder=3, color='#01665e', linewidth=1, label="IWW route")
     
-    IWW_nodes.plot(ax=ax, zorder=4, color='#01665e', markersize=30, label="IWW port")
+    IWW_nodes.plot(ax=ax, zorder=4, color='#01665e', markersize=25, label="IWW port")
     
     maritime_edges.plot(ax=ax, zorder=3, color='#3690c0', linewidth=1, label="Maritime route")
+    
+    maritime_nodes.plot(ax=ax, zorder=4, color='#3690c0', markersize=25, label="Maritime port")
 
     # Add legend manually
     bold_font = font_manager.FontProperties(weight='bold',size=12)
@@ -123,7 +137,7 @@ def main(config):
 
     plt.tight_layout()
     
-    save_fig(os.path.join(figures,"ports_with_edges.png"))
+    save_fig(os.path.join(figures,"ports_with_edges_v2.png"))
     plt.close()
     
 
