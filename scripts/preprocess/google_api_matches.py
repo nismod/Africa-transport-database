@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.gridspec as gridspec
-from new_utils import *
+from utils_new import *
 from tqdm import tqdm
 tqdm.pandas()
 
