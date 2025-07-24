@@ -129,7 +129,7 @@ def main(config):
         location_df = location_df.to_crs(epsg=epsg_meters)
         location_df = location_df[[id_col,iso_col,'geometry']]
         location_df.rename(columns={id_col:"location_id",iso_col:"location_iso"},inplace=True)
-        countries += list(set(location_df[iso_col].values.tolist()))
+        countries += list(set(location_df["location_iso"].values.tolist()))
         if location["geometry_type"] == "Point":
             all_point_locations_df.append(location_df)
         elif location["geometry_type"] == "Polygon":
