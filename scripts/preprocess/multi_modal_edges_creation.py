@@ -106,7 +106,16 @@ def main():
                                         "road-rail transfer",
                                         "container terminal",
                                         "freight terminal",
-                                        "freight marshalling yard"
+                                        "freight marshalling yard",
+                                        "agriculture",
+                                        "coal terminal",
+                                        "food storage",
+                                        "food production",
+                                        "fuel storage",
+                                        "industrial area",
+                                        "manufacturing",
+                                        "military",
+                                        "storage"
                                         ]
                             }
 
