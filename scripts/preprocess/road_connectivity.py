@@ -176,7 +176,7 @@ def main(config):
             targets = []
             for key,location_df in connection_type.items():
                 if len(location_df.index) > 0:
-                    location_df = location_df[location_df[iso_col] == m_c]
+                    location_df = location_df[location_df["location_iso"] == m_c]
                     if len(location_df.index) > 0:
                         if key == "Polygon":
                             # intersect pop and other infrastructures with roads first to find which other infrastructures have roads on them
