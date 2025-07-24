@@ -150,7 +150,7 @@ def main(config):
 
     nearest_roads = []
     # We just need access to one road in the main road network, since the rest are connected
-    source = country_roads[country_roads[road_type_column].isin(main_road_types)].from_id.values[0]
+    source = road_edges[road_edges[road_type_column].isin(main_road_types)].from_id.values[0]
     targets = []
     for key,location_df in connection_type.items():
         if len(location_df.index) > 0:
@@ -167,7 +167,7 @@ def main(config):
                 del selected_edges, polygon_roads
             else:
                 loc_intersects = ckdnearest(location_df,
-                                        country_nodes[[node_id_column,"geometry"]])
+                                        road_nodes[[node_id_column,"geometry"]])
                 targets += list(set(loc_intersects[node_id_column].tolist()))
             del loc_intersects
 
