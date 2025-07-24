@@ -194,10 +194,11 @@ def main(config):
                                                     country_nodes[[node_id_column,"geometry"]])
                             targets += list(set(loc_intersects[node_id_column].tolist()))
                         del loc_intersects
-       
+            
+            targets = list(set(targets))
             n_r, _ = network_od_path_estimations(A[0],source,targets,"length_m",road_id_column)
             connected_roads = list(set([item for sublist in n_r for item in sublist]))
-            nearest_roads += connected_nodes
+            nearest_roads += connected_roads
         print (f"* Done with country - {m_c}")
 
     # print (nearest_roads)
