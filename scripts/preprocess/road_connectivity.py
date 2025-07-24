@@ -113,8 +113,10 @@ def main(config):
     
     all_point_locations_df = []
     all_polygon_locations_df = []
+    countries = []
     for location in location_attributes:
         id_col = location['id_column']
+        iso_col = location['iso_column']
         location_df = gpd.read_file(location['data_path'],layer=location['layer_name'])
         if location['type'] in ('maritime ports','inland ports','railways','airports'):
             location_df = location_df[
@@ -125,8 +127,9 @@ def main(config):
         elif location['type'] in ("population"):
             location_df = location_df[location_df["CONTINENT"] == "Africa"]
         location_df = location_df.to_crs(epsg=epsg_meters)
-        location_df = location_df[[id_col,'geometry']]
-        location_df.rename(columns={id_col:"location_id"},inplace=True)
+        location_df = location_df[[id_col,iso_col,'geometry']]
+        location_df.rename(columns={id_col:"location_id",iso_col:"location_iso"},inplace=True)
+        countries += list(set(location_df[iso_col].values.tolist()))
         if location["geometry_type"] == "Point":
             all_point_locations_df.append(location_df)
         elif location["geometry_type"] == "Polygon":
@@ -148,33 +151,54 @@ def main(config):
                                         )
         connection_type["Polygon"] = all_polygon_locations_df
 
+    countries = list(set(countries))
     nearest_roads = []
-    # We just need access to one road in the main road network, since the rest are connected
-    source = road_edges[road_edges[road_type_column].isin(main_road_types)].from_id.values[0]
-    targets = []
-    for key,location_df in connection_type.items():
-        if len(location_df.index) > 0:
-            if l['geometry_type'] == "Polygon":
-                # intersect pop and other infrastructures with roads first to find which other infrastructures have roads on them
-                loc_intersects = gpd.sjoin_nearest(location_df,
-                                    road_edges[[road_id_column,road_type_column,"geometry"]],
-                                    how="left").reset_index()
-                # get the intersected roads which are not the main roads
-                selected_edges = list(set(loc_intersects[road_id_column].values.tolist()))
-                polygon_roads = road_edges[road_edges[road_id_column].isin(selected_edges)]
-                targets += list(set(polygon_roads.from_id.values.tolist() + polygon_roads.to_id.values.tolist()))
+    for m_c in countries:
+        country_roads = road_edges[(
+                    road_edges["from_iso_a3"] == m_c
+                    ) & (road_edges["to_iso_a3"] == m_c)]
+        if len(country_roads.index) > 0:
+            graph = create_igraph_from_dataframe(
+                                country_roads[["from_id","to_id",road_id_column,"length_m"]]
+                                )
+            A = sorted(graph.connected_components().subgraphs(),key=lambda l:len(l.es[road_id_column]),reverse=True)
+            connected_edges = A[0].es[road_id_column]
+            country_roads = country_roads[country_roads[road_id_column].isin(connected_edges)]
+            connected_nodes = list(set(country_roads.from_id.values.tolist() + country_roads.to_id.values.tolist()))
+            country_nodes = road_nodes[road_nodes[node_id_column].isin(connected_nodes)]
+            del connected_edges, connected_nodes, graph
+            """Proximity to different kinds of locations of interest
+            """
+            
+            # We just need access to one road in the main road network, since the rest are connected
 
-                del selected_edges, polygon_roads
-            else:
-                loc_intersects = ckdnearest(location_df,
-                                        road_nodes[[node_id_column,"geometry"]])
-                targets += list(set(loc_intersects[node_id_column].tolist()))
-            del loc_intersects
+            source = country_roads[country_roads[road_type_column].isin(main_road_types)].from_id.values[0]
+            targets = []
+            for key,location_df in connection_type.items():
+                if len(location_df.index) > 0:
+                    location_df = location_df[location_df[iso_col] == m_c]
+                    if len(location_df.index) > 0:
+                        if key == "Polygon":
+                            # intersect pop and other infrastructures with roads first to find which other infrastructures have roads on them
+                            loc_intersects = gpd.sjoin_nearest(location_df,
+                                                country_roads[[road_id_column,road_type_column,"geometry"]],
+                                                how="left").reset_index()
+                            # get the intersected roads which are not the main roads
+                            selected_edges = list(set(loc_intersects[road_id_column].values.tolist()))
+                            polygon_roads = country_roads[country_roads[road_id_column].isin(selected_edges)]
+                            targets += list(set(polygon_roads.from_id.values.tolist() + polygon_roads.to_id.values.tolist()))
 
-    graph = create_igraph_from_dataframe(
-                    road_edges[["from_id","to_id",road_id_column,"length_m"]])            
-    n_r, _ = network_od_path_estimations(graph,source, targets,"length_m",road_id_column)
-    nearest_roads = list(set([item for sublist in n_r for item in sublist]))
+                            del selected_edges, polygon_roads
+                        else:
+                            loc_intersects = ckdnearest(location_df,
+                                                    country_nodes[[node_id_column,"geometry"]])
+                            targets += list(set(loc_intersects[node_id_column].tolist()))
+                        del loc_intersects
+       
+            n_r, _ = network_od_path_estimations(A[0],source,targets,"length_m",road_id_column)
+            connected_roads = list(set([item for sublist in n_r for item in sublist]))
+            nearest_roads += connected_nodes
+        print (f"* Done with country - {m_c}")
 
     # print (nearest_roads)
     nearest_roads = list(set(nearest_roads + main_roads))
