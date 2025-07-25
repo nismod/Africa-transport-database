@@ -21,13 +21,6 @@ def main(config):
 
     for gpkg_path in gpkg_files:
         try:
-            # Get the layer name from the first file (assuming same layer in all)
-            if layer_name is None:
-                layers = fiona.listlayers(gpkg_path)
-                if len(layers) != 1:
-                    raise ValueError(f"Expected 1 layer, found {len(layers)} in {gpkg_path}")
-                layer_name = layers[0]
-
             # Read GeoDataFrame
             gdf = gpd.read_file(gpkg_path, layer=layer_name)
             country_code = os.path.basename(gpkg_path).split('_')[1]
