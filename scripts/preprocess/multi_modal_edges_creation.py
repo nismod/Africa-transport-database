@@ -123,27 +123,17 @@ def main():
     multi_df = []
     for idx,(f_m,t_m) in enumerate(zip(from_modes,to_modes)):
         if f_m == "rail":
-            if t_m != "road":
-                node_degree = None
-            else:
-                node_degree = 1
             f_df = get_mode_dataframe(
                                         f_m,
                                         rail_to_mode_connection=True,
-                                        rail_facilities=rail_facility_types[t_m],
-                                        node_degree=node_degree
+                                        rail_facilities=rail_facility_types[t_m]
                                     )
             t_df = get_mode_dataframe(t_m)
         elif t_m == "rail":
-            if f_m != "road":
-                node_degree = None
-            else:
-                node_degree = 1
             t_df = get_mode_dataframe(
                                         t_m,
                                         rail_to_mode_connection=True,
-                                        rail_facilities=rail_facility_types[f_m],
-                                        node_degree=node_degree
+                                        rail_facilities=rail_facility_types[f_m]
                                     )
             f_df = get_mode_dataframe(f_m)
         else:
