@@ -122,22 +122,33 @@ def main():
     distance_threshold = 8100   # Found this by manual check
     multi_df = []
     for idx,(f_m,t_m) in enumerate(zip(from_modes,to_modes)):
-        if f_m == "rail" or t_m == "rail":
-            rl_fc_typ  = [typ for typ in (f_m,t_m) if typ != "rail"][0]
-            if rl_fc_typ != "road":
+        if f_m == "rail"::
+            if t_m != "road":
                 node_degree = None
             else:
                 node_degree = 1
             f_df = get_mode_dataframe(
                                         f_m,
                                         rail_to_mode_connection=True,
-                                        rail_facilities=rail_facility_types[rl_fc_typ],
-                                        node_degree=None
+                                        rail_facilities=rail_facility_types[t_m],
+                                        node_degree=node_degree
                                     )
+            t_df = get_mode_dataframe(t_m)
+        elif t_m == "rail":
+            if f_m != "road":
+                node_degree = None
+            else:
+                node_degree = 1
+            t_df = get_mode_dataframe(
+                                        t_m,
+                                        rail_to_mode_connection=True,
+                                        rail_facilities=rail_facility_types[f_m],
+                                        node_degree=node_degree
+                                    )
+            f_df = get_mode_dataframe(f_m)
         else:
             f_df = get_mode_dataframe(f_m)
-
-        t_df = get_mode_dataframe(t_m)
+            t_df = get_mode_dataframe(t_m)
         f_t_df = create_edges_from_nearest_node_joins(
                             f_df.to_crs(epsg=epsg_meters),
                             t_df.to_crs(epsg=epsg_meters),
