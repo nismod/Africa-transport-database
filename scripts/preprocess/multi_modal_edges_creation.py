@@ -122,7 +122,7 @@ def main():
     distance_threshold = 8100   # Found this by manual check
     multi_df = []
     for idx,(f_m,t_m) in enumerate(zip(from_modes,to_modes)):
-        if f_m == "rail"::
+        if f_m == "rail":
             if t_m != "road":
                 node_degree = None
             else:
