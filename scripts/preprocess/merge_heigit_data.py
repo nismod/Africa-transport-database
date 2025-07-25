@@ -10,11 +10,11 @@ def main(config):
     
     output_file = 'merged_roadsurface_lines.gpkg'
 
-   # Match all GPKG files
-    gpkg_files = glob.glob(os.path.join(input_folder,"Randhawaetal_2025_Locations",'height_*_roadsurface_lines.gpkg'))
+    # Match all GPKG files
+    gpkg_files = glob.glob(os.path.join(input_folder,"Randhawaetal_2025_Locations",'heigit_*_roadsurface_lines.gpkg'))
 
     if not gpkg_files:
-        raise FileNotFoundError(f"No files found in '{input_folder}' matching pattern 'height_*_roadsurface_lines.gpkg'.")
+        raise FileNotFoundError(f"No files found in '{input_folder}' matching pattern 'heigit_*_roadsurface_lines.gpkg'.")
 
     merged_gdf = []
     layer_name = None
