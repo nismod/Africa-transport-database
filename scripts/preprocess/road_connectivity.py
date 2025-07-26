@@ -156,23 +156,10 @@ def main(config):
     for m_c in countries:
         country_roads = road_edges[(
                     road_edges["from_iso_a3"] == m_c
-                    ) & (road_edges["to_iso_a3"] == m_c)]
+                    ) | (road_edges["to_iso_a3"] == m_c)]
+        connected_nodes = list(set(country_roads.from_id.values.tolist() + country_roads.to_id.values.tolist()))
+        country_nodes = road_nodes[road_nodes[node_id_column].isin(connected_nodes)] 
         if len(country_roads.index) > 0:
-            graph = create_igraph_from_dataframe(
-                                country_roads[["from_id","to_id",road_id_column,"length_m"]]
-                                )
-            A = sorted(graph.connected_components().subgraphs(),key=lambda l:len(l.es[road_id_column]),reverse=True)
-            connected_edges = A[0].es[road_id_column]
-            country_roads = country_roads[country_roads[road_id_column].isin(connected_edges)]
-            connected_nodes = list(set(country_roads.from_id.values.tolist() + country_roads.to_id.values.tolist()))
-            country_nodes = road_nodes[road_nodes[node_id_column].isin(connected_nodes)]
-            del connected_edges, connected_nodes, graph
-            """Proximity to different kinds of locations of interest
-            """
-            
-            # We just need access to one road in the main road network, since the rest are connected
-
-            source = country_roads[country_roads[road_type_column].isin(main_road_types)].from_id.values[0]
             targets = []
             for key,location_df in connection_type.items():
                 if len(location_df.index) > 0:
@@ -194,11 +181,29 @@ def main(config):
                                                     country_nodes[[node_id_column,"geometry"]])
                             targets += list(set(loc_intersects[node_id_column].tolist()))
                         del loc_intersects
-            
-            targets = list(set(targets))
-            n_r, _ = network_od_path_estimations(A[0],source,targets,"length_m",road_id_column)
-            connected_roads = list(set([item for sublist in n_r for item in sublist]))
-            nearest_roads += connected_roads
+
+            if len(targets) > 0:
+                targets = list(set(targets))
+                graph = create_igraph_from_dataframe(
+                                    country_roads[["from_id","to_id",road_id_column,"length_m"]]
+                                    )
+                A = sorted(graph.connected_components().subgraphs(),key=lambda l:len(l.es[road_id_column]),reverse=True)
+                for j in range(len(A)):
+                    connected_edges = A[j].es[road_id_column]
+                    connected_roads_df = country_roads[country_roads[road_id_column].isin(connected_edges)]
+                    connected_nodes = list(set(connected_roads_df.from_id.values.tolist() + connected_roads_df.to_id.values.tolist()))
+                    sinks = [t for t in targets if t in connected_nodes]
+                    if len(sinks) > 0:
+                        source_df = connected_roads_df[connected_roads_df[road_type_column].isin(main_road_types)]
+                        if len(source_df.index) > 0:
+                            source = source_df.from_id.values[0]
+                            n_r, _ = network_od_path_estimations(A[j],source,sinks,"length_m",road_id_column)
+                            connected_roads = list(set([item for sublist in n_r for item in sublist]))
+                            nearest_roads += connected_roads
+                        else:
+                            nearest_nodes += connected_edges
+
+        
         print (f"* Done with country - {m_c}")
 
     # print (nearest_roads)

@@ -119,9 +119,13 @@ def main():
                                         ]
                             }
 
-    distance_threshold = 8100   # Found this by manual check
     multi_df = []
     for idx,(f_m,t_m) in enumerate(zip(from_modes,to_modes)):
+        if f_m == "road" or t_m == "road":
+            distance_threshold = 1e6   # Set some big threshold to map all assets to roads
+        else:
+            distance_threshold = 8100   # Found this by manual check
+
         if f_m == "rail":
             f_df = get_mode_dataframe(
                                         f_m,
