@@ -201,7 +201,7 @@ def main(config):
                             connected_roads = list(set([item for sublist in n_r for item in sublist]))
                             nearest_roads += connected_roads
                         else:
-                            nearest_nodes += connected_edges
+                            nearest_roads += connected_edges
 
         
         print (f"* Done with country - {m_c}")
