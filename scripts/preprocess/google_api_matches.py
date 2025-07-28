@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import matplotlib.gridspec as gridspec
-from map_plotting_utils import *
+from utils_new import *
 from tqdm import tqdm
 tqdm.pandas()
 
@@ -75,6 +75,7 @@ def main(config):
                         rail_nodes,
                         google_matches[["id","displayName.text","google","point_distance"]],
                         how="left",on=["id"])
+    matches_dataframe["point_distance"] = matches_dataframe["point_distance"].fillna(1e9)
     tuple_columns.append(["displayName.text","google","point_distance"])
 
     # Get the mines layers
@@ -112,6 +113,24 @@ def main(config):
                                 name_column="FeatureNam",
                                 type_column="FeatureTyp"
                                 )
+    # Get the google API matches
+    airports = gpd.read_file(os.path.join(
+                        processed_data_path,
+                        "infrastructure",
+                        "africa_airport_network.gpkg"),
+                    layer="nodes")
+    airports["infra_air"] = "air"
+    airports["air_name"] = airports["Name"]
+    airports = airports.to_crs(epsg=epsg_meters)
+    matches_dataframe, tuple_columns = match_and_merge(
+                                rail_nodes,
+                                airports,
+                                matches_dataframe,
+                                tuple_columns,
+                                distance_column="distance_airports",
+                                name_column="air_name",
+                                type_column="infra_air")
+
     ports = gpd.read_file(
                     os.path.join(
                         processed_data_path,
@@ -157,7 +176,7 @@ def main(config):
                         os.path.join(
                             incoming_data_path,
                             "africa-station-google-points",
-                            "location_proximity.gpkg"),
+                            "location_proximity_initial.gpkg"),
                         driver="GPKG")
     
 
