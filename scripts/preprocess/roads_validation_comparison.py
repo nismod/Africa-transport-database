@@ -8,6 +8,7 @@ def main(config):
     input_folder = config['paths']['incoming_data']
     output_folder = config['paths']['data']
 
+    epsg_meters = 3395
     # Write to a new GeoPackage
     heigit_lines=gpd.read_parquet(os.path.join(
                             output_folder,
@@ -17,42 +18,83 @@ def main(config):
                             output_folder,
                             "infrastructure",
                             "africa_roads_edges_FINAL_last.geoparquet"))
+    global_boundaries = gpd.read_file(os.path.join(output_folder,
+                                    "admin_boundaries",
+                                    "gadm36_levels_gpkg",
+                                    "gadm36_levels_continents.gpkg"))
+    countries = list(set(database_lines["from_iso_a3"].values.tolist() + database_lines["to_iso_a3"].values.tolist()))
+    global_boundaries = global_boundaries[global_boundaries["ISO_A3"].isin(countries)]
 
-    # 1. Ensure both GeoDataFrames use the same CRS
-    heigit_lines = heigit_lines.to_crs(epsg=4326)
-    database_lines = database_lines.to_crs(epsg=4326)
+    # 1. Ensure all GeoDataFrames use the same CRS
+    heigit_lines = heigit_lines.to_crs(epsg=epsg_meters)
+    database_lines = database_lines.to_crs(epsg=epsg_meters)
+    global_boundaries = global_boundaries.to_crs(epsg=epsg_meters)
 
     # 2. Drop duplicate geometries (as you already had)
     heigit_lines = heigit_lines.drop_duplicates(subset=['geometry','osm_id'])
 
-    # 3. Calculate length in meters using an appropriate projected CRS (since EPSG:4326 gives degrees)
-    # Reproject temporarily to a metric CRS (like EPSG:3857)
-    heigit_lines_metric = heigit_lines.to_crs(epsg=3395)
-    heigit_lines['length'] = heigit_lines_metric.geometry.length
+    # Heigit data is big, so we only select the roads which occur in our database
+    select_osm_ids = list(set(database_lines["osm_way_id"].values.tolist()))
+    heigit_lines = heigit_lines[heigit_lines["osm_id"].isin(select_osm_ids)]
+    heigit_lines["country"] = heigit_lines["country"].str.upper()
+
+    heigit_clipped_df = []
+    database_clipped_df = []
+    for country in countries:
+        boundary_df = global_boundaries[global_boundaries["ISO_A3"] == country]
+        # Select and clip HEIGIT lines for each country boundary
+        b_df = b_df[b_df["country"] == country]
+        if len(b_df.index) > 0:
+            df = gpd.clip(b_df,boundary_df)
+            if len(df.index) > 0:
+                df["length"] = df.geometry.length
+                df["country_iso_a3"] = country
+                heigit_clipped_df.append(df)
+        # Clip the database road based on the identification of border roads
+        b_df = database_lines[
+                            (
+                                database_lines["from_iso_a3"] == country
+                            ) | (
+                                database_lines["to_iso_a3"] == country
+                            )]
+        b_df["country_iso_a3"] = country
+        database_clipped_df.append(b_df[b_df["border_road"] == 0])
+        b_df = b_df[b_df["border_road"] == 1]
+        df = gpd.clip(b_df,boundary_df)
+        if len(df.index) > 0:
+            df["length_m"] = df.geometry.length
+            database_clipped_df.append(df)
+
+    heigit_lines = pd.concat(heigit_clipped_df,axis=0,ignore_index=True)
+    database_lines = pd.concat(database_lines,axis=0,ignore_index=True)
 
     # 4. Group database_lines to get summed lengths per osm_id/paved
-    database_lines = database_lines.groupby(['osm_way_id', 'paved'])['length_m'].sum().reset_index()
+    database_lines = database_lines.groupby(['osm_way_id','country_iso_a3', 'paved'])['length_m'].sum().reset_index()
+    database_lines["paved"
+        ] = np.where(database_lines["paved"] == 'TRUE',"paved","unpaved")
     database_lines.rename(columns={'osm_way_id': 'osm_id'}, inplace=True)
 
+    heigit_lines = heigit_lines.groupby(['osm_id','country_iso_a3', 'combined_surface_DL_priority'])['length'].sum().reset_index()
+
     # 5. Merge the two datasets on osm_id 
-    merged = heigit_lines.merge(database_lines, on='osm_id', suffixes=('_heigit', '_db'))
+    merged = heigit_lines.merge(database_lines, on=['osm_id','country_iso_a3'], suffixes=('_heigit', '_db'))
     
     # Make sure surface and paved are in consistent format (e.g., lowercase strings)
     merged['combined_surface_DL_priority'] = merged['combined_surface_DL_priority'].str.lower()
-    merged['paved'] = merged['paved'].astype(str).str.lower()
+    # merged['paved'] = merged['paved'].astype(str).str.lower()
 
     # Now create 'paved_match' column using vectorized logic
-    merged['paved_match'] = np.where(
-        ((merged['combined_surface_DL_priority'] == 'paved') & (merged['paved'] == 'true')) |
-        ((merged['combined_surface_DL_priority'] == 'unpaved') & (merged['paved'] == 'false')),
-        1,
-        0
-    )
+    # merged['paved_match'] = np.where(
+    #     ((merged['combined_surface_DL_priority'] == 'paved') & (merged['paved'] == 'true')) |
+    #     ((merged['combined_surface_DL_priority'] == 'unpaved') & (merged['paved'] == 'false')),
+    #     1,
+    #     0
+    # )
 
     merged.rename(columns={'length': 'length_heigit_m', 'length_m': 'length_db_m'}, inplace=True)
 
     # Filter only matches
-    matches = merged[merged['paved_match'] == 1]
+    # matches = merged[merged['paved_match'] == 1]
 
     # Group by ISO3 and surface class
     summary = matches.groupby(['country_iso_a3', 'combined_surface_DL_priority'])[['length_heigit_m', 'length_db_m']].sum().reset_index()
