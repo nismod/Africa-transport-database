@@ -54,7 +54,7 @@ def main(config):
     
     df_airports_flow= df_airports_flow.to_crs(epsg=4326)
     df_airports_flow = df_airports_flow.drop_duplicates(subset=['from_id', 'to_id'], keep='first')
-    df_airports_nodes = df_airports_nodes.drop(['from_iso3','to_iso3'], axis=1, inplace=True)
+    df_airports_flow.drop(['from_iso3','to_iso3'], axis=1, inplace=True)
     id_to_geom = df_airports_nodes.set_index('id')['geometry'].to_dict()
 
     def create_linestring(row):
@@ -67,8 +67,29 @@ def main(config):
     # Apply the function to each row in flows
     df_airports_flow['geometry'] = df_airports_flow.apply(create_linestring, axis=1)
 
+    # First merge: from_id → from_iso3
+    df_airports_flow = df_airports_flow.merge(
+        df_airports_nodes[['id', 'iso3']].rename(columns={'id': 'from_node_id', 'iso3': 'from_iso3'}),
+        left_on='from_id',
+        right_on='from_node_id',
+        how='left'
+    ).drop(columns='from_node_id')
+
+    # Second merge: to_id → to_iso3
+    df_airports_flow = df_airports_flow.merge(
+        df_airports_nodes[['id', 'iso3']].rename(columns={'id': 'to_node_id', 'iso3': 'to_iso3'}),
+        left_on='to_id',
+        right_on='to_node_id',
+        how='left'
+    ).drop(columns='to_node_id')
+
+
+
+    print(df_airports_flow.head())
+
     # Convert to GeoDataFrame
     df_airports_flow = gpd.GeoDataFrame(df_airports_flow, geometry='geometry', crs="EPSG:4326")
+    df_airports_flow = df_airports_flow[df_airports_flow.geometry.notnull()]
     
     df_airports_nodes.to_file(os.path.join(
                             processed_data_path,
