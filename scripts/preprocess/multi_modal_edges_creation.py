@@ -23,7 +23,7 @@ def get_mode_dataframe(
         nodes =  gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_airport_network.gpkg"
+                                "africa_airport_network_last.gpkg"
                                     ), layer="nodes"
                                 )  
         nodes = nodes[nodes["infra"] == "airport"]   
@@ -31,7 +31,7 @@ def get_mode_dataframe(
         nodes =  gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_maritime_network.gpkg"
+                                "africa_maritime_network_last.gpkg"
                                     ), layer="nodes"
                                 )  
         nodes = nodes[nodes["infra"] == "port"]
@@ -83,7 +83,7 @@ def get_mode_dataframe(
         nodes = gpd.read_parquet(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_roads_nodes_FINAL.geoparquet"))
+                                "africa_roads_nodes_FINAL_last.geoparquet"))
         nodes.rename(columns={"iso_a3":"iso3"},inplace=True)
 
     return nodes
@@ -175,7 +175,7 @@ def main():
     multi_df.to_file(os.path.join(
                             processed_data_path,
                             "infrastructure",
-                            "africa_multimodal.gpkg"
+                            "africa_multimodal_last.gpkg"
                                 ), 
                             layer="edges",
                             driver="GPKG"

@@ -34,6 +34,8 @@ def add_iso_code(df,df_id_column,incoming_data_path):
     m = pd.concat([m,un],axis=0,ignore_index=True)
     return m
 
+    
+
 def main(config):
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
@@ -41,95 +43,112 @@ def main(config):
     epsg_meters = 3395 # To convert geometries to measure distances in meters
     cutoff_distance = 6600 # We assume airports within 6.6km are the same
 
-    df_airports_flow = gpd.read_file(os.path.join(incoming_data_path,
-                                    "airports",
-                                    "airport_flows.shp"))
+    df_airports_flow = gpd.read_file(os.path.join(processed_data_path,
+                                    "infrastructure",
+                                    "africa_airport_network.gpkg"), layer="edges")
     
-    df_airports_nodes = gpd.read_file(os.path.join(incoming_data_path,
-                                    "airports",
-                                    "airport_volume_airport_location.gpkg"))
+    df_airports_nodes = gpd.read_file(os.path.join(processed_data_path,
+                                    "infrastructure",
+                                    "africa_airport_network.gpkg"), layer="nodes")
     
-    # This contains geometry is wrong, which we will have to convert to Point from Latitude and Longitude values
     
     df_airports_flow= df_airports_flow.to_crs(epsg=4326)
+    df_airports_flow = df_airports_flow.drop_duplicates(subset=['from_id', 'to_id'], keep='first')
+    df_airports_nodes = df_airports_nodes.drop(['from_iso3','to_iso3'], axis=1, inplace=True)
+    id_to_geom = df_airports_nodes.set_index('id')['geometry'].to_dict()
 
-    df_airports_flow= add_iso_code(df_airports_flow,"Country1",incoming_data_path)
-    df_airports_flow.rename(columns={"iso3": "iso3_1"},inplace=True)  
-    df_airports_flow.drop(columns=["index_right"], inplace = True)  
+    def create_linestring(row):
+            from_geom = id_to_geom.get(row['from_id'])
+            to_geom = id_to_geom.get(row['to_id'])
+            if from_geom and to_geom:
+                return LineString([from_geom, to_geom])
+            return None
+
+    # Apply the function to each row in flows
+    df_airports_flow['geometry'] = df_airports_flow.apply(create_linestring, axis=1)
+
+    # Convert to GeoDataFrame
+    df_airports_flow = gpd.GeoDataFrame(df_airports_flow, geometry='geometry', crs="EPSG:4326")
     
-    df_airports_flow = add_iso_code(df_airports_flow,"Country2",incoming_data_path)
-    df_airports_flow.rename(columns={"iso3": "iso3_2"},inplace=True) 
-    
-    df_airports_flow.drop(columns = ["level_0"], inplace=True)
-
-    cc = coco.CountryConverter()
-    df_airports_flow["continent1"]  = cc.pandas_convert(df_airports_flow["Country1"], to='Continent')  
-    df_airports_flow["continent2"]  = cc.pandas_convert(df_airports_flow["Country2"], to='Continent')  
-
-    print(df_airports_flow)
-    
-
-    df_airports_nodes["geom"] = gpd.points_from_xy(
-                            df_airports_nodes["Airport1Longitude"],df_airports_nodes["Airport1Latitude"])
-    df_airports_nodes.drop("geometry",axis=1,inplace=True)
-    df_airports_nodes.rename(columns={"geom":"geometry"},inplace=True)
-
-    df_airports_nodes = gpd.GeoDataFrame(df_airports_nodes,geometry="geometry",crs="EPSG:4326")
-
-    df_airports_nodes= df_airports_nodes.to_crs(epsg=4326)
-    
-    df_airports_nodes = add_iso_code(df_airports_nodes,"Country Name",incoming_data_path)
-
-    df_airports_nodes["infra"] = "airport"
-
-    df_airports_nodes["continent"]  = cc.pandas_convert(df_airports_nodes["Country Name"], to='Continent')  
-
-
-    print(df_airports_nodes)
-    
-
-    df_airports_nodes["id"] = df_airports_nodes.index.values.tolist()
-    df_airports_nodes["id"] = df_airports_nodes.progress_apply(lambda x:f"airportn_{x.id}",axis=1)
-    df_airports_flow["id"] = df_airports_flow.index.values.tolist()
-    df_airports_flow["id"] = df_airports_flow.progress_apply(lambda x:f"airporte_{x.id}",axis=1)
-
     df_airports_nodes.to_file(os.path.join(
                             processed_data_path,
                             "infrastructure",
-                            "global_airport_network.gpkg"),
+                            "africa_airport_network_last.gpkg"),
                         layer="nodes",driver="GPKG")
     df_airports_flow.to_file(os.path.join(processed_data_path,
                             "infrastructure",
-                            "global_airport_network.gpkg"),
+                            "africa_airport_network_last.gpkg"),
                         layer="edges",driver="GPKG")
+    
+
+
+    
+   
+    
+
+    
+
+
+    # df_airports_flow= add_iso_code(df_airports_flow,"Country1",incoming_data_path)
+    # df_airports_flow.rename(columns={"iso3": "iso3_1"},inplace=True)  
+    # df_airports_flow.drop(columns=["index_right"], inplace = True)  
+    
+    # df_airports_flow = add_iso_code(df_airports_flow,"Country2",incoming_data_path)
+    # df_airports_flow.rename(columns={"iso3": "iso3_2"},inplace=True) 
+    
+    # df_airports_flow.drop(columns = ["level_0"], inplace=True)
+
+    # cc = coco.CountryConverter()
+    # df_airports_flow["continent1"]  = cc.pandas_convert(df_airports_flow["Country1"], to='Continent')  
+    # df_airports_flow["continent2"]  = cc.pandas_convert(df_airports_flow["Country2"], to='Continent')  
+
+    # print(df_airports_flow)
+    
+
+    # df_airports_nodes["geom"] = gpd.points_from_xy(
+    #                         df_airports_nodes["Airport1Longitude"],df_airports_nodes["Airport1Latitude"])
+    # df_airports_nodes.drop("geometry",axis=1,inplace=True)
+    # df_airports_nodes.rename(columns={"geom":"geometry"},inplace=True)
+
+    # df_airports_nodes = gpd.GeoDataFrame(df_airports_nodes,geometry="geometry",crs="EPSG:4326")
+
+    # df_airports_nodes= df_airports_nodes.to_crs(epsg=4326)
+    
+    # df_airports_nodes = add_iso_code(df_airports_nodes,"Country Name",incoming_data_path)
+
+    # df_airports_nodes["infra"] = "airport"
+
+    # df_airports_nodes["continent"]  = cc.pandas_convert(df_airports_nodes["Country Name"], to='Continent')  
+
+
+    # print(df_airports_nodes)
+    
+
+    
     
     
     
     # Get the airports for Africa
 
 
-    airport_edges = gpd.read_file(os.path.join(processed_data_path,
-                            "infrastructure",
-                            "global_airport_network.gpkg"),layer="edges")
-    airport_nodes = gpd.read_file(os.path.join(processed_data_path,
-                            "infrastructure",
-                            "global_airport_network.gpkg"),layer="nodes")
+    # airport_edges = gpd.read_file(os.path.join(processed_data_path,
+    #                         "infrastructure",
+    #                         "global_airport_network.gpkg"),layer="edges")
+    # airport_nodes = gpd.read_file(os.path.join(processed_data_path,
+    #                         "infrastructure",
+    #                         "global_airport_network.gpkg"),layer="nodes")
    
-    africa_airports = airport_nodes[airport_nodes["continent"] == "Africa"]
+    # africa_airports = airport_nodes[airport_nodes["continent"] == "Africa"]
    
-    africa_air_tracks = airport_edges[airport_edges["continent1" or "continent2"] == "Africa"]
+    # africa_air_tracks = airport_edges[airport_edges["continent1" or "continent2"] == "Africa"]
     
-    print(africa_airports)
+    # print(africa_airports)
     
-    africa_airports.to_file(os.path.join(
-                            processed_data_path,
-                            "infrastructure",
-                            "africa_airport_network.gpkg"),
-                        layer="nodes",driver="GPKG")
-    africa_air_tracks.to_file(os.path.join(processed_data_path,
-                            "infrastructure",
-                            "africa_airport_network.gpkg"),
-                        layer="edges",driver="GPKG")
+    
+    # df_airports_nodes.to_file(os.path.join(processed_data_path,
+    #                         "infrastructure",
+    #                         "africa_airport_network.gpkg"),
+    #                     layer="nodes",driver="GPKG")
 
 
 if __name__ == '__main__':
