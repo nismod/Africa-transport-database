@@ -43,9 +43,9 @@ def main(config):
     for country in countries:
         boundary_df = global_boundaries[global_boundaries["ISO_A3"] == country]
         # Select and clip HEIGIT lines for each country boundary
-        b_df = b_df[b_df["country"] == country]
-        if len(b_df.index) > 0:
-            df = gpd.clip(b_df,boundary_df)
+        heigit_lines = heigit_lines[heigit_lines["country"] == country]
+        if len(heigit_lines.index) > 0:
+            df = gpd.clip(heigit_lines,boundary_df)
             if len(df.index) > 0:
                 df["length"] = df.geometry.length
                 df["country_iso_a3"] = country
@@ -65,19 +65,19 @@ def main(config):
             df["length_m"] = df.geometry.length
             database_clipped_df.append(df)
 
-    heigit_lines = pd.concat(heigit_clipped_df,axis=0,ignore_index=True)
-    database_lines = pd.concat(database_lines,axis=0,ignore_index=True)
+    heigit_lines = pd.concat(heigit_clipped_df, axis=0, ignore_index=True)
+    database_lines = pd.concat(database_clipped_df, axis=0, ignore_index=True)
 
     # 4. Group database_lines to get summed lengths per osm_id/paved
     database_lines = database_lines.groupby(['osm_way_id','country_iso_a3', 'paved'])['length_m'].sum().reset_index()
     database_lines["paved"
-        ] = np.where(database_lines["paved"] == 'TRUE',"paved","unpaved")
+        ] = np.where(database_lines["paved"] == 'true',"paved","unpaved")
     database_lines.rename(columns={'osm_way_id': 'osm_id'}, inplace=True)
 
     heigit_lines = heigit_lines.groupby(['osm_id','country_iso_a3', 'combined_surface_DL_priority'])['length'].sum().reset_index()
 
     # 5. Merge the two datasets on osm_id 
-    merged = heigit_lines.merge(database_lines, on=['osm_id','country_iso_a3'], suffixes=('_heigit', '_db'))
+    merged = heigit_lines.merge(database_lines, on=['osm_id'], suffixes=('_heigit', '_db'))
     
     # Make sure surface and paved are in consistent format (e.g., lowercase strings)
     merged['combined_surface_DL_priority'] = merged['combined_surface_DL_priority'].str.lower()
@@ -97,14 +97,25 @@ def main(config):
     # matches = merged[merged['paved_match'] == 1]
 
     # Group by ISO3 and surface class
-    summary = matches.groupby(['country_iso_a3', 'combined_surface_DL_priority'])[['length_heigit_m', 'length_db_m']].sum().reset_index()
-    
-    # Optional: Pivot the table to have 'paved' and 'unpaved' as rows under each ISO3
-    pivot_table = summary.pivot(index='country_iso_a3', columns='combined_surface_DL_priority', values=['length_heigit_m', 'length_db_m'])
+    # Heigit grouping
+    heigit_summary = (
+        merged.groupby(['country_iso_a3', 'combined_surface_DL_priority'])['length_heigit_m']
+        .sum()
+        .unstack(fill_value=0)
+        .add_prefix('length_heigit_m_')
+    )
 
-    # Flatten the MultiIndex columns
-    pivot_table.columns = [f'{metric}_{surface}' for metric, surface in pivot_table.columns]
-    pivot_table = pivot_table.reset_index()
+    # DB grouping
+    db_summary = (
+        merged.groupby(['country_iso_a3', 'paved'])['length_db_m']
+        .sum()
+        .unstack(fill_value=0)
+        .add_prefix('length_db_m_')
+    )
+
+    # Merge both
+    pivot_table = heigit_summary.join(db_summary, how='outer').fillna(0).reset_index()
+    
 
     pivot_table
     # 7. Select the columns you're interested in
