@@ -85,6 +85,7 @@ def main(config):
     pivot_data.plot(kind='bar', stacked=True, figsize=(12, 8), color=colors)
 
     # Add labels and title
+    plt.grid(axis='y', linestyle='--', linewidth=0.5, alpha=0.7)
     plt.title('Length by corridor and typology')
     plt.xlabel('Corridor')
     plt.ylabel('Total Length (km)')
@@ -94,7 +95,7 @@ def main(config):
     plt.subplots_adjust(bottom=0.1)
     plt.tight_layout()
 
-    save_fig(os.path.join(figures,"roads_hist_cap2.png"))
+    save_fig(os.path.join(figures,"roads_hist_cap2_grid.png"))
     
     
 
