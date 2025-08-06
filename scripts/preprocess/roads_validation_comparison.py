@@ -77,7 +77,7 @@ def main(config):
     heigit_lines = heigit_lines.groupby(['osm_id','country_iso_a3', 'combined_surface_DL_priority'])['length'].sum().reset_index()
 
     # 5. Merge the two datasets on osm_id 
-    merged = heigit_lines.merge(database_lines, on=['osm_id'], suffixes=('_heigit', '_db'))
+    merged = heigit_lines.merge(database_lines, on=['osm_id','country_iso_a3'], suffixes=('_heigit', '_db'))
     
     # Make sure surface and paved are in consistent format (e.g., lowercase strings)
     merged['combined_surface_DL_priority'] = merged['combined_surface_DL_priority'].str.lower()
