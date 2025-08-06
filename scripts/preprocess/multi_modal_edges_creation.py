@@ -39,7 +39,7 @@ def get_mode_dataframe(
         nodes = gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_iww_network.gpkg"
+                                "africa_iww_network_last.gpkg"
                                     ), layer="nodes"
                                 ) 
         nodes = nodes[nodes["infra"] == "IWW port"]
@@ -47,7 +47,7 @@ def get_mode_dataframe(
         rail_edges = gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_railways_network.gpkg"
+                                "africa_railways_network_last.gpkg"
                                     ), layer="edges"
                         )
         rail_edges = rail_edges[rail_edges["status"].isin(rail_status)]
@@ -55,7 +55,7 @@ def get_mode_dataframe(
         nodes = gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_railways_network.gpkg"
+                                "africa_railways_network_last.gpkg"
                                     ), layer="nodes"
                         )
         nodes = nodes[(nodes["id"].isin(rail_node_ids)) & (nodes["infra"].isin(['stop','station']))]
@@ -83,7 +83,7 @@ def get_mode_dataframe(
         nodes = gpd.read_parquet(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_roads_nodes_FINAL_last.geoparquet"))
+                                "africa_roads_nodes_FINAL.geoparquet"))
         nodes.rename(columns={"iso_a3":"iso3"},inplace=True)
 
     return nodes
@@ -122,9 +122,9 @@ def main():
     multi_df = []
     for idx,(f_m,t_m) in enumerate(zip(from_modes,to_modes)):
         if f_m == "road" or t_m == "road":
-            distance_threshold = 1e6   # Set some big threshold to map all assets to roads
+            distance_threshold = 4000   # Found this by manual check
         else:
-            distance_threshold = 8100   # Found this by manual check
+            distance_threshold = 3000   # Found this by manual check
 
         if f_m == "rail":
             f_df = get_mode_dataframe(

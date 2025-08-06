@@ -120,7 +120,7 @@ def main(config):
                         "africa_airport_network.gpkg"),
                     layer="nodes")
     airports["infra_air"] = "air"
-    airports["air_name"] = airports["Name"]
+    airports["air_name"] = airports["name"]
     airports = airports.to_crs(epsg=epsg_meters)
     matches_dataframe, tuple_columns = match_and_merge(
                                 rail_nodes,
@@ -172,11 +172,75 @@ def main(config):
     matches_dataframe.drop([x for xs in tuple_columns for x in xs] + ["closest_matches"],axis=1,inplace=True)
     matches_dataframe = gpd.GeoDataFrame(matches_dataframe,geometry="geometry",crs=f"EPSG:{epsg_meters}")
     matches_dataframe = matches_dataframe.to_crs(epsg=4326)
+    final_matches = gpd.read_file(os.path.join(
+                            output_path,
+                            "africa-station-google-points",
+                            "location_proximity_final.gpkg")
+                            )
+    final_matches.rename(
+                    columns={
+                                "closest_type":"closest_type_final",
+                                "closest_distance":"closest_distance_final"},
+                    inplace=True
+                    )
+    matches_dataframe = pd.merge(
+                        matches_dataframe,
+                        final_matches[["id","closest_type_final","closest_distance_final"]],
+                        how="left",on=["id"]).fillna(1e9)
+    matches_dataframe["closest_distance"
+        ] = np.where(matches_dataframe["closest_type"] == matches_dataframe["closest_type_final"],
+            matches_dataframe[["closest_distance","closest_distance_final"]].min(axis=1),
+            matches_dataframe["closest_distance"])
+    matches_dataframe["closest_distance"
+        ] = np.where(
+                    matches_dataframe["closest_type_final"] == "manual check",
+                    matches_dataframe["closest_distance_final"],
+                    matches_dataframe["closest_distance"]
+                    )
+    matches_dataframe["closest_type"
+        ] = np.where(
+                    matches_dataframe["closest_type_final"] == "manual check",
+                    matches_dataframe["closest_type_final"],
+                    matches_dataframe["closest_type"]
+                    )
+    matches_dataframe["closest_distance"
+        ] = np.where(
+                    (
+                        ~matches_dataframe["closest_type"].isin(["port","air","IWW port"])
+                    ) & (
+                        matches_dataframe["closest_type_final"] == "google"
+                        ),
+                    matches_dataframe["closest_distance_final"],
+                    matches_dataframe["closest_distance"]
+                    )
+    matches_dataframe["closest_type"
+        ] = np.where(
+                    (
+                        ~matches_dataframe["closest_type"].isin(["port","air","IWW port"])
+                    ) & (
+                        matches_dataframe["closest_type_final"] == "google"
+                        ),
+                    matches_dataframe["closest_type_final"],
+                    matches_dataframe["closest_type"]
+                    )
+    matches_dataframe["closest_type"
+        ] = np.where(
+                    matches_dataframe["closest_distance_final"] < matches_dataframe["closest_distance"],
+                    matches_dataframe["closest_type_final"],
+                    matches_dataframe["closest_type"]
+                    )
+    matches_dataframe["closest_distance"
+        ] = np.where(
+                    matches_dataframe["closest_distance_final"] < matches_dataframe["closest_distance"],
+                    matches_dataframe["closest_distance_final"],
+                    matches_dataframe["closest_distance"]
+                    )
+    matches_dataframe.drop(["closest_type_final","closest_distance_final"],axis=1,inplace=True)
     matches_dataframe.to_file(
                         os.path.join(
                             incoming_data_path,
                             "africa-station-google-points",
-                            "location_proximity_initial.gpkg"),
+                            "location_proximity_final.gpkg"),
                         driver="GPKG")
     
 
