@@ -43,9 +43,9 @@ def main(config):
     for country in countries:
         boundary_df = global_boundaries[global_boundaries["ISO_A3"] == country]
         # Select and clip HEIGIT lines for each country boundary
-        heigit_lines = heigit_lines[heigit_lines["country"] == country]
-        if len(heigit_lines.index) > 0:
-            df = gpd.clip(heigit_lines,boundary_df)
+        b_df = heigit_lines[heigit_lines["country"] == country]
+        if len(b_df.index) > 0:
+            df = gpd.clip(b_df,boundary_df)
             if len(df.index) > 0:
                 df["length"] = df.geometry.length
                 df["country_iso_a3"] = country
