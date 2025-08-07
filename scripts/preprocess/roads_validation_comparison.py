@@ -43,14 +43,14 @@ def main(config):
     for country in countries:
         boundary_df = global_boundaries[global_boundaries["ISO_A3"] == country]
         # Select and clip HEIGIT lines for each country boundary
-        b_df = heigit_lines[heigit_lines["country"] == country]
-        if len(b_df.index) > 0:
+        h_df = heigit_lines[heigit_lines["country"] == country]
+        if len(h_df.index) > 0:
             # df = gpd.clip(b_df,boundary_df)
-            df = b_df.intersection(boundary_df)
+            hf = h_df.intersection(boundary_df)
             if len(df.index) > 0:
-                df["length"] = df.geometry.length
-                df["country_iso_a3"] = country
-                heigit_clipped_df.append(df)
+                hf["length"] = hf.geometry.length
+                hf["country_iso_a3"] = country
+                heigit_clipped_df.append(hf)
         # Clip the database road based on the identification of border roads
         b_df = database_lines[
                             (
@@ -77,6 +77,7 @@ def main(config):
     database_lines.rename(columns={'osm_way_id': 'osm_id'}, inplace=True)
     print (database_lines)
 
+    print (heigit_lines)
     heigit_lines = heigit_lines.groupby(['osm_id','country_iso_a3', 'combined_surface_DL_priority'])['length'].sum().reset_index()
     print (heigit_lines)
     # 5. Merge the two datasets on osm_id 
