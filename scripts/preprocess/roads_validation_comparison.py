@@ -45,7 +45,8 @@ def main(config):
         # Select and clip HEIGIT lines for each country boundary
         b_df = heigit_lines[heigit_lines["country"] == country]
         if len(b_df.index) > 0:
-            df = gpd.clip(b_df,boundary_df)
+            # df = gpd.clip(b_df,boundary_df)
+            df = b_df.intersection(boundary_df)
             if len(df.index) > 0:
                 df["length"] = df.geometry.length
                 df["country_iso_a3"] = country
@@ -60,7 +61,8 @@ def main(config):
         b_df["country_iso_a3"] = country
         database_clipped_df.append(b_df[b_df["border_road"] == 0])
         b_df = b_df[b_df["border_road"] == 1]
-        df = gpd.clip(b_df,boundary_df)
+        # df = gpd.clip(b_df,boundary_df)
+        df = b_df.intersection(boundary_df)
         if len(df.index) > 0:
             df["length_m"] = df.geometry.length
             database_clipped_df.append(df)
