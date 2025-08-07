@@ -38,6 +38,9 @@ def main(config):
     heigit_lines = heigit_lines[heigit_lines["osm_id"].isin(select_osm_ids)]
     heigit_lines["country"] = heigit_lines["country"].str.upper()
 
+    # Identify paved and unpave roads in database
+    database_lines["paved"] = database_lines["paved"].astype(str)
+
     heigit_clipped_df = []
     database_clipped_df = []
     for country in countries:
