@@ -47,7 +47,7 @@ def main(config):
         if len(h_df.index) > 0:
             # df = gpd.clip(b_df,boundary_df)
             hf = h_df.intersection(boundary_df)
-            if len(df.index) > 0:
+            if len(hf.index) > 0:
                 hf["length"] = hf.geometry.length
                 hf["country_iso_a3"] = country
                 heigit_clipped_df.append(hf)
