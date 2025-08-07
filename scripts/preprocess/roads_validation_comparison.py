@@ -73,9 +73,10 @@ def main(config):
     database_lines["paved"
         ] = np.where(database_lines["paved"] == 'true',"paved","unpaved")
     database_lines.rename(columns={'osm_way_id': 'osm_id'}, inplace=True)
+    print (database_lines)
 
     heigit_lines = heigit_lines.groupby(['osm_id','country_iso_a3', 'combined_surface_DL_priority'])['length'].sum().reset_index()
-
+    print (heigit_lines)
     # 5. Merge the two datasets on osm_id 
     merged = heigit_lines.merge(database_lines, on=['osm_id','country_iso_a3'], suffixes=('_heigit', '_db'))
     
