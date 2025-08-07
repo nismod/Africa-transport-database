@@ -38,9 +38,6 @@ def main(config):
     heigit_lines = heigit_lines[heigit_lines["osm_id"].isin(select_osm_ids)]
     heigit_lines["country"] = heigit_lines["country"].str.upper()
 
-    # Identify paved and unpave roads in database
-    database_lines["paved"] = database_lines["paved"].astype(str)
-
     heigit_clipped_df = []
     database_clipped_df = []
     for country in countries:
@@ -76,9 +73,9 @@ def main(config):
     database_lines = pd.concat(database_clipped_df, axis=0, ignore_index=True)
 
     # 4. Group database_lines to get summed lengths per osm_id/paved
-    database_lines = database_lines.groupby(['osm_way_id','country_iso_a3', 'paved'])['length_m'].sum().reset_index()
-    database_lines["paved"
-        ] = np.where(database_lines["paved"] == 'true',"paved","unpaved")
+    database_lines["paved_type"
+        ] = np.where(database_lines["asset_type"] == 'road_paved',"paved","unpaved")
+    database_lines = database_lines.groupby(['osm_way_id','country_iso_a3', 'paved_type'])['length_m'].sum().reset_index()
     database_lines.rename(columns={'osm_way_id': 'osm_id'}, inplace=True)
     print (database_lines)
 
@@ -116,7 +113,7 @@ def main(config):
 
     # DB grouping
     db_summary = (
-        merged.groupby(['country_iso_a3', 'paved'])['length_db_m']
+        merged.groupby(['country_iso_a3', 'paved_type'])['length_db_m']
         .sum()
         .unstack(fill_value=0)
         .add_prefix('length_db_m_')
