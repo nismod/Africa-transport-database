@@ -32,7 +32,7 @@ def main(config):
     heigit_clipped_df = []
     database_clipped_df = []
     for country in countries:
-        h_df = gpd.read_parquet(os.path.join(
+        h_df = gpd.read_file(os.path.join(
                             heigit_folder,
                             f"heigit_{country.lower()}_roadsurface_lines.gpkg"))
         # Drop duplicate geometries (as you already had)
