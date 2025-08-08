@@ -32,24 +32,26 @@ def main(config):
     heigit_clipped_df = []
     database_clipped_df = []
     for country in countries:
-        h_df = gpd.read_file(os.path.join(
+        heigit_file = os.path.join(
                             heigit_folder,
-                            f"heigit_{country.lower()}_roadsurface_lines.gpkg"))
-        # Drop duplicate geometries (as you already had)
-        h_df = h_df.drop_duplicates(subset=['geometry','osm_id'])
-        h_df = h_df.to_crs(epsg=epsg_meters)
-        h_df = h_df[h_df["osm_id"].isin(select_osm_ids)]
-        
-        boundary_df = global_boundaries[global_boundaries["ISO_A3"] == country]
-        # Select and clip HEIGIT lines for each country boundary
-        if len(h_df.index) > 0:
-            # df = gpd.clip(b_df,boundary_df)
-            # hf = h_df.intersection(boundary_df)
-            hf = gpd.overlay(h_df,boundary_df,how="intersection")
-            if len(hf.index) > 0:
-                hf["length"] = hf.geometry.length
-                hf["country_iso_a3"] = country
-                heigit_clipped_df.append(hf)
+                            f"heigit_{country.lower()}_roadsurface_lines.gpkg")
+        if os.path.exists(heigit_file):
+            h_df = gpd.read_file(heigit_file)
+            # Drop duplicate geometries (as you already had)
+            h_df = h_df.drop_duplicates(subset=['geometry','osm_id'])
+            h_df = h_df.to_crs(epsg=epsg_meters)
+            h_df = h_df[h_df["osm_id"].isin(select_osm_ids)]
+            
+            boundary_df = global_boundaries[global_boundaries["ISO_A3"] == country]
+            # Select and clip HEIGIT lines for each country boundary
+            if len(h_df.index) > 0:
+                # df = gpd.clip(b_df,boundary_df)
+                # hf = h_df.intersection(boundary_df)
+                hf = gpd.overlay(h_df,boundary_df,how="intersection")
+                if len(hf.index) > 0:
+                    hf["length"] = hf.geometry.length
+                    hf["country_iso_a3"] = country
+                    heigit_clipped_df.append(hf)
         # Clip the database road based on the identification of border roads
         b_df = database_lines[
                             (
