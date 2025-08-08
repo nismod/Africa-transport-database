@@ -80,7 +80,13 @@ def main(config):
     print (database_lines)
 
     print (heigit_lines)
-    heigit_lines = heigit_lines.groupby(['osm_id','country_iso_a3', 'combined_surface_DL_priority'])['length'].sum().reset_index()
+    heigit_lines["osm_class"
+        ] = np.where(
+                heigit_lines["osm_surface_class"].isin(["paved","unpaved"]),
+                heigit_lines["osm_surface_class"],
+                "untagged"
+                )
+    heigit_lines = heigit_lines.groupby(['osm_id','country_iso_a3',"osm_class", 'combined_surface_DL_priority'])['length'].sum().reset_index()
     print (heigit_lines)
     # 5. Merge the two datasets on osm_id 
     merged = heigit_lines.merge(database_lines, on=['osm_id','country_iso_a3'], suffixes=('_heigit', '_db'))
