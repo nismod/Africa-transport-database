@@ -10,10 +10,7 @@ def main(config):
 
     epsg_meters = 3395
     # Write to a new GeoPackage
-    heigit_lines=gpd.read_parquet(os.path.join(
-                            output_folder,
-                            "infrastructure",
-                            "validation_file_merge.geoparquet"))
+    heigit_folder = os.path.join(input_folder,"Randhawaetal_2025_Locations")
     database_lines=gpd.read_parquet(os.path.join(
                             output_folder,
                             "infrastructure",
@@ -26,24 +23,25 @@ def main(config):
     global_boundaries = global_boundaries[global_boundaries["ISO_A3"].isin(countries)]
 
     # 1. Ensure all GeoDataFrames use the same CRS
-    heigit_lines = heigit_lines.to_crs(epsg=epsg_meters)
     database_lines = database_lines.to_crs(epsg=epsg_meters)
     global_boundaries = global_boundaries.to_crs(epsg=epsg_meters)
 
-    # 2. Drop duplicate geometries (as you already had)
-    heigit_lines = heigit_lines.drop_duplicates(subset=['geometry','osm_id'])
-
     # Heigit data is big, so we only select the roads which occur in our database
     select_osm_ids = list(set(database_lines["osm_way_id"].values.tolist()))
-    heigit_lines = heigit_lines[heigit_lines["osm_id"].isin(select_osm_ids)]
-    heigit_lines["country"] = heigit_lines["country"].str.upper()
 
     heigit_clipped_df = []
     database_clipped_df = []
     for country in countries:
+        h_df = gpd.read_parquet(os.path.join(
+                            heigit_folder,
+                            f"heigit_{country.lower()}_roadsurface_lines.gpkg"))
+        # Drop duplicate geometries (as you already had)
+        h_df = h_df.drop_duplicates(subset=['geometry','osm_id'])
+        h_df = h_df.to_crs(epsg=epsg_meters)
+        h_df = h_df[h_df["osm_id"].isin(select_osm_ids)]
+        
         boundary_df = global_boundaries[global_boundaries["ISO_A3"] == country]
         # Select and clip HEIGIT lines for each country boundary
-        h_df = heigit_lines[heigit_lines["country"] == country]
         if len(h_df.index) > 0:
             # df = gpd.clip(b_df,boundary_df)
             # hf = h_df.intersection(boundary_df)
