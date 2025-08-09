@@ -4,11 +4,21 @@ import os
 from utils_new import *
 import numpy as np
 
+def create_tag(x):
+    if (x["osm_class"] == x["combined_surface_DL_priority"]) & (x["osm_class"] == x["paved"]):
+        return 0
+    elif (x["paved"] == x["osm_class"]):
+        return 1
+    elif (x["paved"] == x["combined_surface_DL_priority"]):
+        return 2
+    else:
+        return 3
+
 def main(config):
     input_folder = config['paths']['incoming_data']
     output_folder = config['paths']['data']
 
-    epsg_meters = 3395
+    epsg_meters = 32736
     # Write to a new GeoPackage
     heigit_folder = os.path.join(input_folder,"Randhawaetal_2025_Locations")
     database_lines=gpd.read_parquet(os.path.join(
@@ -73,13 +83,11 @@ def main(config):
     database_lines = pd.concat(database_clipped_df, axis=0, ignore_index=True)
 
     # 4. Group database_lines to get summed lengths per osm_id/paved
-    database_lines["paved_type"
-        ] = np.where(database_lines["asset_type"] == 'road_paved',"paved","unpaved")
-    database_lines = database_lines.groupby(['osm_way_id','country_iso_a3', 'paved_type'])['length_m'].sum().reset_index()
+    database_lines["paved"] = database_lines['paved'].astype(str).str.lower()
+    database_lines["paved"
+        ] = np.where(database_lines["paved"] == 'true',"paved","unpaved")
+    database_lines = database_lines.groupby(['osm_way_id','country_iso_a3', 'paved'])['length_m'].sum().reset_index()
     database_lines.rename(columns={'osm_way_id': 'osm_id'}, inplace=True)
-    print (database_lines)
-
-    print (heigit_lines)
     heigit_lines["osm_class"
         ] = np.where(
                 heigit_lines["osm_surface_class"].isin(["paved","unpaved"]),
@@ -94,14 +102,6 @@ def main(config):
     # Make sure surface and paved are in consistent format (e.g., lowercase strings)
     merged['combined_surface_DL_priority'] = merged['combined_surface_DL_priority'].str.lower()
     # merged['paved'] = merged['paved'].astype(str).str.lower()
-
-    # Now create 'paved_match' column using vectorized logic
-    # merged['paved_match'] = np.where(
-    #     ((merged['combined_surface_DL_priority'] == 'paved') & (merged['paved'] == 'true')) |
-    #     ((merged['combined_surface_DL_priority'] == 'unpaved') & (merged['paved'] == 'false')),
-    #     1,
-    #     0
-    # )
 
     merged.rename(columns={'length': 'length_heigit_m', 'length_m': 'length_db_m'}, inplace=True)
 
@@ -143,8 +143,15 @@ def main(config):
                             "infrastructure",
                             "merged_validation_datasets.csv"))   
 
-    print(merged.head())
-    print(pivot_table.head())
+    merged["check"] = merged.apply(lambda x:create_tag(x),axis=1)
+    merged = merged.value_counts(subset=['country_iso_a3','check'], sort=False).reset_index()
+    merged["country_total"] = merged.groupby(["country_iso_a3"])["count"].transform("sum")
+    merged["proportion"] = 100.0*merged["count"]/merged["country_total"]
+
+    merged.to_parquet(os.path.join(
+                            output_folder,
+                            "infrastructure",
+                            "merged_validation_datasets_counts.parquet"))
    
 
     
