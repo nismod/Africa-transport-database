@@ -148,10 +148,10 @@ def main(config):
     merged["country_total"] = merged.groupby(["country_iso_a3"])["count"].transform("sum")
     merged["proportion"] = 100.0*merged["count"]/merged["country_total"]
 
-    merged.to_parquet(os.path.join(
+    merged.to_csv(os.path.join(
                             output_folder,
                             "infrastructure",
-                            "merged_validation_datasets_counts.parquet"))
+                            "merged_validation_datasets_counts.csv"))
    
 
     
