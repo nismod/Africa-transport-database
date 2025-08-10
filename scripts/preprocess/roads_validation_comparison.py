@@ -119,7 +119,7 @@ def main(config):
 
     # DB grouping
     db_summary = (
-        merged.groupby(['country_iso_a3', 'paved_type'])['length_db_m']
+        merged.groupby(['country_iso_a3', 'paved'])['length_db_m']
         .sum()
         .unstack(fill_value=0)
         .add_prefix('length_db_m_')
