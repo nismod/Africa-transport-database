@@ -45,6 +45,7 @@ def main(config):
         heigit_file = os.path.join(
                             heigit_folder,
                             f"heigit_{country.lower()}_roadsurface_lines.gpkg")
+        boundary_df = global_boundaries[global_boundaries["ISO_A3"] == country]
         if os.path.exists(heigit_file):
             h_df = gpd.read_file(heigit_file)
             # Drop duplicate geometries (as you already had)
@@ -52,7 +53,6 @@ def main(config):
             h_df = h_df.to_crs(epsg=epsg_meters)
             h_df = h_df[h_df["osm_id"].isin(select_osm_ids)]
             
-            boundary_df = global_boundaries[global_boundaries["ISO_A3"] == country]
             # Select and clip HEIGIT lines for each country boundary
             if len(h_df.index) > 0:
                 # df = gpd.clip(b_df,boundary_df)
