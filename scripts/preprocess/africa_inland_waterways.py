@@ -18,10 +18,13 @@ def main(config):
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
     
-    edges = json.load(open(os.path.join(incoming_data_path,
-                            "Africa_osm_rivers",
-                            "OpenStreetMap_Waterways_for_Africa.geojson")))
-    edges = convert_json_geopandas(edges)
+    edges = gpd.read_parquet(
+            os.path.join(
+                incoming_data_path,
+                "Africa_osm_rivers",
+                "OpenStreetMap_Waterways_for_Africa.geoparquet")
+            )
+
     network = create_network_from_nodes_and_edges(None,edges,"iww")
     edges = gpd.GeoDataFrame(network.edges,geometry="geometry",crs="EPSG:4326")
     nodes = gpd.GeoDataFrame(network.nodes,geometry="geometry",crs="EPSG:4326")
