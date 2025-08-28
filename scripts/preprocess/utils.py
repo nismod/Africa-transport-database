@@ -187,12 +187,15 @@ def create_network_from_nodes_and_edges(nodes,edges,node_edge_prefix,
     network = snkit.network.add_endpoints(network)   
     print ('* Done with adding endpoints')
 
-    network.nodes = snkit.network.drop_duplicate_geometries(network.nodes)
-    print ('* Done with dropping same geometries')
+    # network.nodes = snkit.network.drop_duplicate_geometries(network.nodes)
+    # print ('* Done with dropping same geometries')
 
-    network = snkit.network.split_edges_at_nodes(network,tolerance=1e-20)
+    network = snkit.network.split_edges_at_nodes(network)
     print ('* Done with splitting edges at nodes')
     
+    # check we have only linestrings
+    assert set(network.edges.geometry.type.values) == {"LineString"}
+
     network = snkit.network.add_ids(network, 
                             edge_prefix=f"{node_edge_prefix}e", 
                             node_prefix=f"{node_edge_prefix}n")
@@ -203,11 +206,11 @@ def create_network_from_nodes_and_edges(nodes,edges,node_edge_prefix,
         network = snkit.network.merge_edges(network,by=by)
         print ('* Done with merging network')
 
-    # network.edges.rename(columns={'from_id':'from_node',
-    #                             'to_id':'to_node',
-    #                             'id':'edge_id'},
-    #                             inplace=True)
-    # network.nodes.rename(columns={'id':'node_id'},inplace=True)
+    network.edges.rename(columns={'from_id':'from_node',
+                                'to_id':'to_node',
+                                'id':'edge_id'},
+                                inplace=True)
+    network.nodes.rename(columns={'id':'node_id'},inplace=True)
     
     return network
 

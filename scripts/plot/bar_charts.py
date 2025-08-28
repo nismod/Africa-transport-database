@@ -139,7 +139,7 @@ def main(config):
         road_colors = [
                     ["#d53e4f","#f46d43"],["#014636","#a6bddb"]
                 ]
-        road_labels = [["Heigit - Paved","Heigit - Unpaved"],["Our database - Paved","Our database - Unpaved"]]
+        road_labels = [["Our database - Paved","Our database - Unpaved"],["HeiGIT - Paved","HeiGIT - Unpaved"]]
     
         fig, ax = plt.subplots(1,1,figsize=(18,9),dpi=500)
         data_df = pd.read_csv(results_file)
@@ -166,6 +166,41 @@ def main(config):
         plt.tight_layout()
         save_fig(os.path.join(figure_path,
                     "heigit_comparison.png"))
+        plt.close()
+
+        road_columns = [["length_paved_diff"],["length_unpaved_diff"]]
+        road_colors = [
+                    ["#d53e4f"],["#014636"]
+                ]
+        road_labels = [["Paved"],["Unpaved"]]
+
+        data_df["length_paved_diff"
+            ] = np.where(data_df["length_db_m_paved"] > 0,
+                    100.0*(data_df["length_heigit_m_paved"] - data_df["length_db_m_paved"])/data_df["length_db_m_paved"],0)
+        data_df["length_unpaved_diff"
+            ] = np.where(data_df["length_db_m_unpaved"] > 0,
+                    100.0*(data_df["length_heigit_m_unpaved"] - data_df["length_db_m_unpaved"])/data_df["length_db_m_unpaved"],0)
+
+        data_df.to_csv(os.path.join(output_data_path,
+                                    "merged_validation_datasets_differences.csv"))
+        fig, ax = plt.subplots(1,1,figsize=(18,9),dpi=500)
+        multiply_factor = 1.0
+        dfall = []
+        for rt in road_columns:
+            df = data_df[["country_name_full"] + rt]
+            df[rt] = multiply_factor*df[rt]
+            dfall.append(df.set_index(["country_name_full"]))
+        ax = plot_clustered_stacked(
+                                    fig,ax,dfall,road_colors,
+                                    labels=road_labels,
+                                    ylabel="Length difference (%)", 
+                                    legend_title = "$\\bf{Road \, types}$",
+                                    H=None,
+                                    title="Heigit vs Our database - Length differences between paved and unpaved roads")
+        plt.grid()
+        plt.tight_layout()
+        save_fig(os.path.join(figure_path,
+                    "heigit_difference.png"))
         plt.close()
 
     
