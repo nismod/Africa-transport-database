@@ -59,7 +59,7 @@ def main(config):
     # Step 2: Select the big connected rivers across Africa based on the largest component sizes
     step = True
     if step is True:
-        component_size_threshold = 1000 # We checked this from the reuslt of the previous step
+        component_size_threshold = 750 # We checked this from the reuslt of the previous step
         snap_distance_threshold = 6000
         epsg_meters = 3395
         edges = gpd.read_parquet(
