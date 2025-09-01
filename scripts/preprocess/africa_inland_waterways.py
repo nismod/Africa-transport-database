@@ -21,7 +21,7 @@ def main(config):
     processed_data_path = config['paths']['data']
     
     # Step 1: Take the OSM rivers data and convert it into a network
-    step = False # This step takes a lot of time, so we have set it to false after running it once
+    step = True # This step takes a lot of time, so we have set it to false after running it once
     if step is True:
         edges = gpd.read_parquet(
                 os.path.join(
@@ -68,9 +68,9 @@ def main(config):
                             "Africa_osm_rivers",
                             "africa_river_edges.geoparquet")
                         )
-        edges = edges[edges["component_count"] > component_size_threshold]
+        edges = edges[edges["component_size"] > component_size_threshold]
         original_crs = edges.crs
-        edges.drop(["edge_id","from_node","to_node","component","component_count"],axis=1,inplace=True)
+        edges.drop(["edge_id","from_node","to_node","component","component_size"],axis=1,inplace=True)
 
         # IWW_ports: IWW ports data from different datasets were taken and combined, 
         # then we produced a final version of the selected ports and routes between them by manual cleaning
@@ -81,7 +81,7 @@ def main(config):
                             sheet_name="selected_ports")
         df_ports["geometry"] = gpd.points_from_xy(
                                 df_ports["lon"],df_ports["lat"])
-        df_ports["infra"] = "IWW port"
+        df_ports["infra"] = df_ports.progress_apply(lambda x:f"IWW {x.infra}",axis=1)
         df_ports = gpd.GeoDataFrame(df_ports,geometry="geometry",crs="EPSG:4326")
 
         # known lake routes connecting ports - merge ports and routing files
