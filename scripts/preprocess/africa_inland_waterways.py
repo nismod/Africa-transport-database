@@ -21,7 +21,7 @@ def main(config):
     processed_data_path = config['paths']['data']
     
     # Step 1: Take the OSM rivers data and convert it into a network
-    step = True # This step takes a lot of time, so we have set it to false after running it once
+    step = False # This step takes a lot of time, so we have set it to false after running it once
     if step is True:
         edges = gpd.read_parquet(
                 os.path.join(
@@ -112,16 +112,17 @@ def main(config):
         network = create_network_from_nodes_and_edges(df_ports.to_crs(epsg=epsg_meters),
                             df_routes.to_crs(epsg=epsg_meters),"iww",
                                     snap_distance=6000)
-        edges = network.edges.set_crs(epsg=epsg_meters)
-        nodes = network.nodes.set_crs(epsg=epsg_meters)
-        edges, nodes = components(edges,nodes,
+        edges, nodes = components(network.edges,network.nodes,
                                     node_id_column="node_id",
                                     edge_id_column="edge_id",
                                     from_node_column="from_node",
                                     to_node_column="to_node")
 
-        edges = edges.to_crs(epsg=original_crs)
-        nodes = nodes.to_crs(epsg=original_crs)
+        edges = gpd.GeoDataFrame(edges,geometry="geometry",crs=f"EPSG:{epsg_meters}")
+        nodes = gpd.GeoDataFrame(nodes,geometry="geometry",crs=f"EPSG:{epsg_meters}")
+
+        edges = edges.to_crs(epsg=4326)
+        nodes = nodes.to_crs(epsg=4326)
 
         edges.to_parquet(
                     os.path.join(
