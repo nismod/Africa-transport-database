@@ -68,7 +68,7 @@ def main(config):
                                                     ),
                                 'layer_name':'nodes',
                                 'node_type_column':'infra',
-                                'node_type':['IWW port'],
+                                'node_type':['IWW port','IWW ferry terminal','IWW pier/dock','IWW yatch club'],
                                 'id_column':'id',
                                 'iso_column': "iso3",
                                 'geometry_type':'Point'
