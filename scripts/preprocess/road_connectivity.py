@@ -98,10 +98,10 @@ def main(config):
     main_road_types = ["trunk","motorway","primary","secondary"]
     road_edges = gpd.read_parquet(os.path.join(incoming_data_path,
                             "africa_roads",
-                            "edges_with_topology.geoparquet"))
+                            "edges_with_topology.gpq"))
     road_nodes = gpd.read_parquet(os.path.join(incoming_data_path,
                             "africa_roads",
-                            "nodes_with_topology.geoparquet"))
+                            "nodes_with_topology.gpq"))
     road_nodes.rename(columns={"id":node_id_column},inplace=True)
     road_edges = road_edges.to_crs(epsg=epsg_meters)
     road_nodes = road_nodes.to_crs(epsg=epsg_meters) 
