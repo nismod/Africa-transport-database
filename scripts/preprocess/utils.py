@@ -285,3 +285,28 @@ def create_igraph_from_dataframe(graph_dataframe, directed=False, simple=False):
             s, d, "igraph", len(es), len(vs)))
 
     return graph
+
+def add_iso_code(df,df_id_column,incoming_data_path,epsg=4326):
+    # Insert countries' ISO CODE
+    africa_boundaries = gpd.read_file(os.path.join(
+                            incoming_data_path,
+                            "Africa_GIS Supporting Data",
+                            "a. Africa_GIS Shapefiles",
+                            "AFR_Political_ADM0_Boundaries.shp",
+                            "AFR_Political_ADM0_Boundaries.shp"))
+    africa_boundaries.rename(columns={"DsgAttr03":"iso3","Country":"country"},inplace=True)
+    africa_boundaries = africa_boundaries.to_crs(epsg=epsg)
+    # Spatial join
+    for c in ['iso3','country']:
+        if c in df.columns.values.tolist():
+            df.drop(c,axis=1,inplace=True)
+    m = gpd.sjoin(df, 
+                    africa_boundaries[['geometry', 'iso3','country']], 
+                    how="left", predicate='within').reset_index()
+    m = m[~m["iso3"].isna()]        
+    un = df[~df[df_id_column].isin(m[df_id_column].values.tolist())]
+    un = gpd.sjoin_nearest(un,
+                            africa_boundaries[['geometry', 'iso3','country']], 
+                            how="left").reset_index()
+    m = pd.concat([m,un],axis=0,ignore_index=True)
+    return m
