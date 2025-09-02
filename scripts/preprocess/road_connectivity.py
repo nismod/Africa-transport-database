@@ -221,7 +221,7 @@ def main(config):
     edges = nearest_roads[[
             'from_id','to_id','id','osm_way_id','from_iso_a3','to_iso_a3',
             'tag_highway', 'tag_surface','tag_bridge','tag_maxspeed','tag_lanes',
-            'bridge','paved','material','lanes','width_m','length_m','asset_type','geometry']]
+            'bridge','paved','material','lanes','length_m','asset_type','geometry']]
     """Find the network components
     """
     edges, nearest_nodes = components(edges,nearest_nodes,node_id_column="id")
