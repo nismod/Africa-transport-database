@@ -104,6 +104,7 @@ def main(config):
                             "nodes_with_topology.gpq"))
     road_nodes.rename(columns={"id":node_id_column},inplace=True)
     road_edges = road_edges.to_crs(epsg=epsg_meters)
+    road_edges["length_m"] = road_edges.geometry.length
     road_nodes = road_nodes.to_crs(epsg=epsg_meters) 
     
     main_roads = road_edges[
