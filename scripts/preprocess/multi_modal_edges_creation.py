@@ -23,7 +23,7 @@ def get_mode_dataframe(
         nodes =  gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_airport_network_last.gpkg"
+                                "africa_airport_network.gpkg"
                                     ), layer="nodes"
                                 )  
         nodes = nodes[nodes["infra"] == "airport"]   
@@ -31,7 +31,7 @@ def get_mode_dataframe(
         nodes =  gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_maritime_network_last.gpkg"
+                                "africa_maritime_network.gpkg"
                                     ), layer="nodes"
                                 )  
         nodes = nodes[nodes["infra"] == "port"]
@@ -39,7 +39,7 @@ def get_mode_dataframe(
         nodes = gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_iww_network_last.gpkg"
+                                "africa_iww_network.gpkg"
                                     ), layer="nodes"
                                 ) 
         nodes = nodes[nodes["infra"] == "IWW port"]
@@ -47,7 +47,7 @@ def get_mode_dataframe(
         rail_edges = gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_railways_network_last.gpkg"
+                                "africa_railways_network.gpkg"
                                     ), layer="edges"
                         )
         rail_edges = rail_edges[rail_edges["status"].isin(rail_status)]
@@ -55,7 +55,7 @@ def get_mode_dataframe(
         nodes = gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_railways_network_last.gpkg"
+                                "africa_railways_network.gpkg"
                                     ), layer="nodes"
                         )
         nodes = nodes[(nodes["id"].isin(rail_node_ids)) & (nodes["infra"].isin(['stop','station']))]
@@ -83,7 +83,7 @@ def get_mode_dataframe(
         nodes = gpd.read_parquet(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_roads_nodes_FINAL.geoparquet"))
+                                "africa_roads_nodes.geoparquet"))
         nodes.rename(columns={"iso_a3":"iso3"},inplace=True)
 
     return nodes
@@ -175,7 +175,7 @@ def main():
     multi_df.to_file(os.path.join(
                             processed_data_path,
                             "infrastructure",
-                            "africa_multimodal_last.gpkg"
+                            "africa_multimodal.gpkg"
                                 ), 
                             layer="edges",
                             driver="GPKG"
