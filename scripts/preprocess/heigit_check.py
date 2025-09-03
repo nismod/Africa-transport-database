@@ -40,6 +40,8 @@ def main(config):
     heigit_lines = heigit_lines[heigit_lines["osm_id"].isin(edge_ids)]
     heigit_lines = heigit_lines.drop_duplicates(subset=["osm_id"],keep="first")
     heigit_lines.rename(columns={"country":"country_iso_a3"},inplace=True)
+    print (heigit_lines)
+    print (heigit_lines.columns.values.tolist())
     
     # Ensure all GeoDataFrames use the same CRS
     database_lines = database_lines.to_crs(epsg=epsg_meters)
