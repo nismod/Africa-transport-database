@@ -42,7 +42,7 @@ def get_mode_dataframe(
                                 "africa_iww_network.gpkg"
                                     ), layer="nodes"
                                 ) 
-        nodes = nodes[nodes["infra"] == "IWW port"]
+        nodes = nodes[nodes["infra"] != "IWW route"]
     elif mode == "rail":
         rail_edges = gpd.read_file(os.path.join(
                                 processed_data_path,
