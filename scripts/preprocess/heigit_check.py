@@ -67,7 +67,7 @@ def main(config):
             df["length_m"] = df.geometry.length
             database_clipped_df.append(df)
 
-        b_df = heigit_lines[heigit_lines["country"] == country]
+        b_df = heigit_lines[heigit_lines["country_iso_a3"] == country]
         df = gpd.overlay(b_df,boundary_df,how="intersection")
         if len(df.index) > 0:
             df["heigit_length_m"] = df.geometry.length
