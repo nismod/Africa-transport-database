@@ -24,7 +24,7 @@ def main(config):
             # Read GeoDataFrame
             gdf = gpd.read_file(gpkg_path, layer=layer_name)
             country_code = os.path.basename(gpkg_path).split('_')[1]
-            gdf['country'] = country_code
+            gdf['country_iso_a3'] = str(country_code).upper()
             merged_gdf.append(gdf)
         except Exception as e:
             print(f"Skipping {gpkg_path}: {e}")
