@@ -95,6 +95,13 @@ def main(config):
     # Group by ISO3 and surface class
     # Heigit grouping
     heigit_summary = (
+        matched_df.groupby(['country_iso_a3', 'combined_surface_DL_priority'])['heigit_length_m']
+        .sum()
+        .unstack(fill_value=0)
+        .add_prefix('length_heigit_m_')
+    )
+
+    heigit_summary_corr = (
         matched_df.groupby(['country_iso_a3', 'combined_surface_DL_priority'])['length_heigit_m']
         .sum()
         .unstack(fill_value=0)
@@ -111,6 +118,13 @@ def main(config):
 
     # Merge both
     pivot_table = heigit_summary.join(db_summary, how='outer').fillna(0).reset_index()
+    # Export the pivot table
+    pivot_table.to_csv(os.path.join(
+                            output_path,
+                            "merged_validation_datasets.csv")) 
+
+    # Merge both
+    pivot_table = heigit_summary_corr.join(db_summary, how='outer').fillna(0).reset_index()
     # Export the pivot table
     pivot_table.to_csv(os.path.join(
                             output_path,
