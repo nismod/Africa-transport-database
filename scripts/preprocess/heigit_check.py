@@ -77,7 +77,7 @@ def main(config):
 
     database_lines = pd.concat(database_clipped_df, axis=0, ignore_index=True)
     # 4. Group database_lines to get summed lengths per osm_id/paved
-    database_lines["paved"] = database_lines["paved"].str.lower()
+    database_lines["paved"] = database_lines.apply(lambdda x: str(x.["paved"]).lower(),axis=1)
     database_lines["paved_type"
         ] = np.where(database_lines["paved"] == "true","paved","unpaved")
     database_lines = database_lines.groupby(['osm_way_id','country_iso_a3','paved_type'])['length_m'].sum().reset_index()
