@@ -47,14 +47,15 @@ def main(config):
                  "infrastructure",
                  "africa_iww_network.gpkg"
                  ), layer = 'nodes')
+    
     IWW_edges = gpd.read_file(os.path.join(
                  data_path,
                  "infrastructure",
                  "africa_iww_network.gpkg"
                  ), layer = 'edges')
-    
+  
     IWW_nodes = IWW_nodes[
-                        IWW_nodes['infra'].isin(['IWW port'])
+                        ~IWW_nodes['infra'].isin(['IWW route'])
                         ]
     maritime_nodes = maritime_nodes[
                         maritime_nodes['infra'].isin(['port'])
@@ -124,7 +125,25 @@ def main(config):
 
     IWW_edges.plot(ax=ax, zorder=3, color='#01665e', linewidth=1, label="IWW route")
     
-    IWW_nodes.plot(ax=ax, zorder=4, color='#01665e', markersize=25, label="IWW port")
+    infra_colors = {
+    "IWW port": "#01665e",
+    "IWW ferry terminal": "#5ab4ac",
+    "IWW pier/dock": "#96764F",
+    "IWW yacht club": "#c51b7d",
+    #"IWW route": "#90d5f8"
+                }
+
+    # Loop over unique values in the "infra" column
+    for infra_type in IWW_nodes["infra"].unique():
+        color = infra_colors.get(infra_type)  
+        IWW_nodes[IWW_nodes["infra"] == infra_type].plot(
+            ax=ax,
+            zorder=4,
+            color=color,
+            markersize=10,
+            label=infra_type
+        )
+
     
     maritime_edges.plot(ax=ax, zorder=3, color='#3690c0', linewidth=1, label="Maritime route")
     
@@ -137,7 +156,7 @@ def main(config):
 
     plt.tight_layout()
     
-    save_fig(os.path.join(figures,"ports_with_edges_v2.png"))
+    save_fig(os.path.join(figures,"ports_with_edges_last.png"))
     plt.close()
     
 
