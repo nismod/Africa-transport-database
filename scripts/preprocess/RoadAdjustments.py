@@ -123,7 +123,7 @@ def main(config):
     edges = road_edges[[
             'from_id','to_id','id','osm_way_id','from_iso_a3','to_iso_a3',
             'tag_highway', 'tag_surface','tag_bridge','tag_maxspeed','tag_lanes',
-            'bridge','paved','material','lanes','width_m','length_m','asset_type','corridor_name','geometry']]
+            'bridge','paved','material','lanes','length_m','asset_type','corridor_name','geometry']]
     edges, nearest_nodes = components(edges,nearest_nodes,node_id_column="id")
 
     edges["border_road"] = np.where(edges["from_iso_a3"] == edges["to_iso_a3"],0,1)
@@ -145,6 +145,16 @@ def main(config):
                             processed_data_path,
                             "infrastructure",
                             "africa_roads_edges_FINAL.geoparquet"))
+    nearest_nodes.to_file(os.path.join(
+                            processed_data_path,
+                            "infrastructure",
+                            "africa_roads_network.gpkg"),
+                            layer="nodes",driver="GPKG")
+    edges.to_file(os.path.join(
+                            processed_data_path,
+                            "infrastructure",
+                            "africa_roads_network.gpkg"),
+                            layer="edges",driver="GPKG")
    
     
     # # Write  the file back to the original if you are feeling confident!

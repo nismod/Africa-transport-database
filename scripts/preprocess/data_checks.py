@@ -18,13 +18,13 @@ def main():
     processed_data_path = config['paths']['data']
     epsg_meters = 3395 # To convert geometries to measure distances in meters   
 
-    ports_nodes = gpd.read_file(os.path.join(processed_data_path,
-                                    "infrastructure",
-                                    "africa_maritime_network.gpkg"),layer = 'nodes') 
-    ports_edges = gpd.read_file(os.path.join(processed_data_path,
-                                    "infrastructure",
-                                    "africa_maritime_network.gpkg"),layer = 'edges')
-    roads_nodes
+    # ports_nodes = gpd.read_file(os.path.join(processed_data_path,
+    #                                 "infrastructure",
+    #                                 "africa_maritime_network.gpkg"),layer = 'nodes') 
+    # ports_edges = gpd.read_file(os.path.join(processed_data_path,
+    #                                 "infrastructure",
+    #                                 "africa_maritime_network.gpkg"),layer = 'edges')
+    # roads_nodes
     
     # """Remove the edges which contain nodes not found in the node list 
     # """
@@ -109,13 +109,7 @@ def main():
     #                     layer="nodes",driver="GPKG")
     # print("Africa maritime network created successfully.")    
     
-    # multi_df = gpd.read_file(os.path.join(
-    #                         processed_data_path,
-    #                         "infrastructure",
-    #                         "africa_multimodal.gpkg"
-    #                             ), 
-    #                         layer="edges"
-    #                         )
+    
     # air_nodes_df = gpd.read_file(os.path.join(
     #                         processed_data_path,
     #                         "infrastructure",
@@ -133,6 +127,23 @@ def main():
     # connected_airports = list(set(air_edges_df["from_id"].values.tolist() + air_edges_df["to_id"].values.tolist()))
     # afr_connected_airports = air_nodes_df[air_nodes_df["id"].isin(connected_airports)]
     # print (afr_connected_airports)
+
+    multi_df = gpd.read_file(os.path.join(
+                            processed_data_path,
+                            "infrastructure",
+                            "africa_multimodal.gpkg"
+                                ), 
+                            layer="edges"
+                            )
+    
+    multi_df = multi_df[["id","from_id", "to_id","from_infra","to_infra","from_iso3","to_iso3","link_type","length_m","geometry"]]
+    
+    multi_df.to_file(os.path.join(processed_data_path,
+                            "infrastructure",
+                            "africa_multimodal.gpkg"),
+                            layer="edges",driver="GPKG")
+
+
 
 if __name__ == '__main__':
     main()

@@ -45,12 +45,12 @@ def main(config):
     roads_edges = gpd.read_file(os.path.join(
                             processed_data_path,
                             "infrastructure",
-                            "africa_roads_FINAL.gpkg"),
+                            "africa_roads_network.gpkg"),
                              layer="edges",driver="GPKG")
     
     costs_df = pd.read_excel(os.path.join(
                             incoming_data_path,
-                            "Roads_Costs.xlsx"))
+                            "Roads_Costs.xlsx"),sheet_name="Roads_Costs_equal")
     
 
     roads_edges = roads_edges[~roads_edges['corridor_name'].isna()]
@@ -60,34 +60,38 @@ def main(config):
     gdf_exploded = roads_edges.explode('corridor_name', ignore_index=True)
 
     # Group by the single corridor and tag_highway, then sum length_km
-    grouped_data = gdf_exploded.groupby(['corridor_name', 'tag_highway','lanes','paved'])['length_km'].sum().reset_index()
+    grouped_data = gdf_exploded.groupby(['corridor_name', 'tag_highway','asset_type','lanes','paved'])['length_km'].sum().reset_index()
     grouped_data.loc[~grouped_data['tag_highway'].isin(['trunk', 'motorway', 'primary', 'secondary', 'tertiary', 'bridge']), 'tag_highway'] = 'tertiary'
-        
+    grouped_data["cost_tag"] = np.where(grouped_data["asset_type"]=="road_bridge","bridge",grouped_data["tag_highway"])   
     print("costs",costs_df)
     print("corridors",grouped_data)
     print("road type",grouped_data['tag_highway'])
     # Merge costs_df with grouped_data on tag_highway and paved
-    merged_data = grouped_data.merge(costs_df, left_on=['tag_highway', 'paved'], right_on=['tag_highway', 'paved'], how='left')
+    merged_data = grouped_data.merge(costs_df, left_on=['cost_tag', 'paved'], right_on=['tag_highway', 'paved'], how='left')
 
     # Calculate costs
       # Actualize to 2025 values with a X annual inflation rate 37 (2020) and 80 (2010) 
 
-    merged_data['min_capital_cost_USD_2025'] = merged_data['length_km'] * merged_data['lanes'] * merged_data['cost_min'].values[0]*(1.37)
-    merged_data['max_capital_cost_USD_2025'] = merged_data['length_km'] * merged_data['lanes'] * merged_data['cost_max'].values[0]*(1.37)
-    merged_data['median_capital_cost_USD_2025'] = merged_data['length_km'] * merged_data['lanes'] * merged_data['cost_median'].values[0]*(1.37)
+    merged_data['min_capital_cost_USD_2025'] = merged_data['length_km'] * merged_data['lanes'] * merged_data['cost_min']*(1.37)
+    merged_data['max_capital_cost_USD_2025'] = merged_data['length_km'] * merged_data['lanes'] * merged_data['cost_max']*(1.37)
+    merged_data['median_capital_cost_USD_2025'] = merged_data['length_km'] * merged_data['lanes'] * merged_data['cost_median']*(1.37)
 
     merged_data.drop([ 'cost_min', 'cost_max'], axis=1, inplace=True)
     merged_data['min_OM_cost_USD_2025'] = merged_data['length_km'] * merged_data['lanes'] * costs_df.loc[costs_df['cost_type'] == 'O&M', 'cost_min'].values[0]*(1.8)
     merged_data['max_OM_cost_USD_2025'] = merged_data['length_km'] * merged_data['lanes'] * costs_df.loc[costs_df['cost_type'] == 'O&M', 'cost_max'].values[0]*(1.8)
     merged_data['median_OM_cost_USD_2025'] = merged_data['length_km'] * merged_data['lanes'] * costs_df.loc[costs_df['cost_type'] == 'O&M', 'cost_median'].values[0]*(1.8)
     
+    merged_data.to_csv(os.path.join(
+                            processed_data_path,
+                            "infrastructure",
+                            "merged_costs_data.csv"))
     
     maintain_years = calculate_discounting_rate_factor(
                 discount_rate=2,
                 skip_year_one=True,
             )
     
-    print(maintain_years)
+    print(merged_data[merged_data['paved']=='true'])
     
 
     # Investment calculation - assuming a road has a lifetime of 20 years (big cost only once in 25 years) and O & M are every 4 years, calcultation of investment to 2050 
