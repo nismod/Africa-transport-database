@@ -14,6 +14,7 @@ tqdm.pandas()
 
 
 def main(config):
+    
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
     
@@ -86,7 +87,7 @@ def main(config):
     #MDG_nodes = MDG_nodes[MDG_nodes["corridor_name"] == "Madagascar – Port Beira Corridor" ]
     
     NS_edges = NS_edges[NS_edges["corridor_name"] == "North-South Corridor (North section)" ]
-   # NS_nodes = NS_nodes[NS_nodes["corridor_name"] == "North-South Corridor (North section)" ]
+    #NS_nodes = NS_nodes[NS_nodes["corridor_name"] == "North-South Corridor (North section)" ]
 
     Lobito_edges = Lobito_edges[Lobito_edges["corridor_name"] == "Lobito Corridor" ]
     #Lobito_nodes = Lobito_nodes[Lobito_nodes["corridor_name"] == "Lobito Corridor" ]
@@ -96,9 +97,7 @@ def main(config):
 
     TSH_edges = TSH_edges[TSH_edges["corridor_name"] == "Central Corridor of the TSH" ]
     #TSH_nodes = TSH_nodes[TSH_nodes["corridor_name"] == "Central Corridor of the TSH" ]
-
-    # print(road_edges) 
-    print(MDG_edges) 
+ 
 
     road_edges = road_edges.to_crs(epsg=epsg_meters)
     MDG_edges = MDG_edges.to_crs(epsg=epsg_meters)
@@ -108,18 +107,15 @@ def main(config):
     TSH_edges = TSH_edges.to_crs(epsg=epsg_meters)
     
 
-
-    
     road_edges = pd.concat([road_edges,MDG_edges, NS_edges,Lobito_edges, TA_edges,TSH_edges])
-    print(road_edges) 
-    
+   
     connected_nodes = list(set(road_edges.from_id.values.tolist() + road_edges.to_id.values.tolist()))
     nearest_nodes = road_nodes[road_nodes[node_id_column].isin(connected_nodes)]
     nearest_nodes.rename(columns={node_id_column:"id"},inplace=True)
     nearest_nodes = nearest_nodes.to_crs(epsg=4326)
 
-    # """Find the network components
-    # """
+    # Find the network components
+
     edges = road_edges[[
             'from_id','to_id','id','osm_way_id','from_iso_a3','to_iso_a3',
             'tag_highway', 'tag_surface','tag_bridge','tag_maxspeed','tag_lanes',
@@ -155,27 +151,6 @@ def main(config):
                             "infrastructure",
                             "africa_roads_network.gpkg"),
                             layer="edges",driver="GPKG")
-   
-    
-    # # Write  the file back to the original if you are feeling confident!
-    # # Otherwise rename
-    # # roads_with_corridors.to_csv(
-    # #                         os.path.join(
-    # #                                 processed_data_path,
-    # #                                 "infrastructure",
-    # #                                 "roads_corridors_PROVA.csv"
-    # #                                 )
-    # #                     )
-    # # road_edges.to_parquet(
-    # #                         os.path.join(
-    # #                                 processed_data_path,
-    # #                                 "infrastructure",
-    # #                                 "africa_roads_edges_PROVA.geoparquet"
-    # #                                 )
-    # #                     )
-   
-
-
 
 
 

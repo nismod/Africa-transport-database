@@ -219,26 +219,6 @@ def main(config):
                             "africa_roads_edges_PROVA_Lobito_corridor.geoparquet"))
    
     
-    # Write  the file back to the original if you are feeling confident!
-    # Otherwise rename
-    # roads_with_corridors.to_csv(
-    #                         os.path.join(
-    #                                 processed_data_path,
-    #                                 "infrastructure",
-    #                                 "roads_corridors_PROVA.csv"
-    #                                 )
-    #                     )
-    # road_edges.to_parquet(
-    #                         os.path.join(
-    #                                 processed_data_path,
-    #                                 "infrastructure",
-    #                                 "africa_roads_edges_PROVA.geoparquet"
-    #                                 )
-    #                     )
-   
-
-
-
 
 
 

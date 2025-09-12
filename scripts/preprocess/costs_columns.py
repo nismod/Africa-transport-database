@@ -132,61 +132,6 @@ def main(config):
     
     # print(airport_nodes.columns)
 
-    # # COSTS CALCULTATION
-    
-    # # RAILWAYS -----------------------------------------------------------------------------------------------------------------------
-        
-    # rail_edges = gpd.read_file(os.path.join(processed_data_path,
-    #                         "infrastructure",
-    #                         "africa_railways_network.gpkg"),
-    #                         layer="edges")
-    # rail_edges['country'] = rail_edges['country'].replace('DRC', 'Democratic Republic of the Congo')
-    # rail_nodes = gpd.read_file(os.path.join(processed_data_path,
-    #                         "infrastructure",
-    #                         "africa_railways_network.gpkg"),
-    #                         layer="nodes")
-    
-    # rail_edges = rail_edges[["id","from_id","to_id","country","from_iso3","to_iso3","component","length_m","line", "status","mode","infra","gauge","structure","speed_freight","speed_passenger", "time_freight","electrified","comment","geometry"]]
-    # # rail_nodes = rail_nodes[["id","iso3","name","name_arabic","infra","component","facility", "gauge","status","comment","geometry"]]
-    
-    
-    # print(rail_edges.columns)
-
-    # rail_edges = rail_edges.rename(columns={"from_iso_a3":"from_iso3","to_iso_a3":"to_iso3"})
-
-
-    #construction/reconstruction cost
-
-    # rail_edges["cost_2010_USD"] = rail_edges["length_m"]*4500 
-    # rail_edges["cost_2024_USD"] = rail_edges["length_m"]*4500*pow(1.03,14) # assuming 3% discount rate
-    
-
-   
-    # # ROADS -----------------------------------------------------------------------------------------------------------------------
-
-    # construction
-
-    # roads_edges["con_cost_2010_USD"] = roads_edges["length_m"]*roads_edges["lanes"]*1200 
-    # roads_edges["con_cost_2024_USD"] = roads_edges["length_m"]*roads_edges["lanes"]*1200*pow(1.03,14) # assuming 3% discount rate
-
-    # # # reconstruction/upgrade
-
-    # roads_edges["rec_cost_2024_USD"] = roads_edges["length_m"]*roads_edges["lanes"]*200*pow(1.03,14) # assuming 3% discount rate
-
-   # # AIRPORTS -----------------------------------------------------------------------------------------------------------------------
-
-    # construction
-
-    # airport_nodes["con_cost_2024_MUSD"] = airport_nodes["TotalSeats"]*449.24*pow(10,-6) 
-    # airport_edges = airport_edges[["id","Orig","Dest","from_iso3","to_iso3","name1", "name2","TotalSeats","geometry"]]
-    # airport_nodes = airport_nodes[["id","iso3","name","infra","TotalSeats","geometry"]]
-    
-    # multimodal_edges = gpd.read_file(os.path.join(processed_data_path,
-    #                         "infrastructure",
-    #                         "africa_multimodal.gpkg"),
-    #                         layer="edges")
-    # multimodal_edges = multimodal_edges[["id","from_iso3","to_iso3","from_infra", "to_infra","link_type","length_m","geometry"]]
-    
     # print(roads_edges.columns)
     roads_edges = roads_edges.rename(columns={"from_iso_a3":"from_iso3", "to_iso_a3":"to_iso3"})
     roads_edges = roads_edges[["id","from_id","to_id","from_iso3","to_iso3","component","border_road", "corridor_name","length_m","osm_way_id","tag_highway","tag_surface","tag_bridge", "tag_maxspeed","tag_lanes","bridge","paved","material","lanes","asset_type","geometry"]]

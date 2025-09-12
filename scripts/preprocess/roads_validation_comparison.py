@@ -32,7 +32,7 @@ def main(config):
     countries = list(set(database_lines["from_iso_a3"].values.tolist() + database_lines["to_iso_a3"].values.tolist()))
     global_boundaries = global_boundaries[global_boundaries["ISO_A3"].isin(countries)]
 
-    # 1. Ensure all GeoDataFrames use the same CRS
+    # Ensure all GeoDataFrames use the same CRS
     database_lines = database_lines.to_crs(epsg=epsg_meters)
     global_boundaries = global_boundaries.to_crs(epsg=epsg_meters)
 
@@ -82,7 +82,7 @@ def main(config):
     heigit_lines = pd.concat(heigit_clipped_df, axis=0, ignore_index=True)
     database_lines = pd.concat(database_clipped_df, axis=0, ignore_index=True)
 
-    # 4. Group database_lines to get summed lengths per osm_id/paved
+    # Group database_lines to get summed lengths per osm_id/paved
     database_lines["paved"] = database_lines['paved'].astype(str).str.lower()
     database_lines["paved"
         ] = np.where(database_lines["paved"] == 'true',"paved","unpaved")
@@ -96,7 +96,7 @@ def main(config):
                 )
     heigit_lines = heigit_lines.groupby(['osm_id','country_iso_a3',"osm_class", 'combined_surface_DL_priority'])['length'].sum().reset_index()
     print (heigit_lines)
-    # 5. Merge the two datasets on osm_id 
+    # Merge the two datasets on osm_id 
     merged = heigit_lines.merge(database_lines, on=['osm_id','country_iso_a3'], suffixes=('_heigit', '_db'))
     
     # Make sure surface and paved are in consistent format (e.g., lowercase strings)
@@ -128,9 +128,7 @@ def main(config):
     # Merge both
     pivot_table = heigit_summary.join(db_summary, how='outer').fillna(0).reset_index()
     
-
-    pivot_table
-    # 7. Select the columns you're interested in
+    # Select the columns you're interested in
     # Export the full merged dataset
     merged.to_parquet(os.path.join(
                             output_folder,

@@ -14,6 +14,7 @@ def create_tag(x):
         return 3
 
 def main(config):
+    
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
     output_path = config['paths']['results']

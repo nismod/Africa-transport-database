@@ -64,7 +64,7 @@ def main(config):
     
     mask = grouped_data['status'].isin(['construction', 'planned', 'proposed', 'rehabilitation'])
 
-# Set zero values for all rows by default
+    # Set zero values for all rows by default
     grouped_data.loc[~mask, ['min_capital_cost_USD_2025', 'max_capital_cost_USD_2025', 
                             'median_capital_cost_USD_2025', 'min_OM_cost_USD_2025', 
                             'max_OM_cost_USD_2025', 'median_OM_cost_USD_2025',
@@ -97,12 +97,6 @@ def main(config):
                             "infrastructure",
                             "africa_rails_costs.csv"))
    
-    
-   
-
-    
-
-
 
 if __name__ == '__main__':
     CONFIG = load_config()

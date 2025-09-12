@@ -14,6 +14,7 @@ tqdm.pandas()
 
 
 def main(config):
+    
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
     
@@ -25,6 +26,7 @@ def main(config):
     node_id_column = "id"
     road_type_column = "tag_highway"
     main_road_types = ["trunk","motorway","primary","secondary"]
+    
     # """
     # Assuming that the starting point is the road network with the main highways
     # Because main corridors should be along main highways
@@ -210,27 +212,6 @@ def main(config):
                             "africa_roads_edges_withcorridors.geoparquet"))
    
     
-    # Write  the file back to the original if you are feeling confident!
-    # Otherwise rename
-    # roads_with_corridors.to_csv(
-    #                         os.path.join(
-    #                                 processed_data_path,
-    #                                 "infrastructure",
-    #                                 "roads_corridors_PROVA.csv"
-    #                                 )
-    #                     )
-    # road_edges.to_parquet(
-    #                         os.path.join(
-    #                                 processed_data_path,
-    #                                 "infrastructure",
-    #                                 "africa_roads_edges_PROVA.geoparquet"
-    #                                 )
-    #                     )
-   
-
-
-
-
 
 
 if __name__ == '__main__':

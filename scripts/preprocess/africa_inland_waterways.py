@@ -84,7 +84,7 @@ def main():
     # Step 2: Select the big connected rivers across Africa based on the largest component sizes
     step = False # This step takes a lot of time, so we have set it to false after running it once
     if step is True:
-        component_size_threshold = 750 # We checked this from the reuslt of the previous step
+        component_size_threshold = 750 # We checked this from the result of the previous step
         snap_distance_threshold = 6000
         edges = gpd.read_parquet(
                         os.path.join(

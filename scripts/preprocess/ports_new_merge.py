@@ -298,12 +298,12 @@ def main(config):
 
     right_join = left_join.copy()
     right_join.columns = ["to_id","to_infra","from_id","from_infra","geometry"]
-    print (left_join.crs)
-    print (df_edges.crs)
+    
+
     df_edges = pd.concat([df_edges,left_join,right_join],axis=0,ignore_index=True)
     df_edges.drop("id",axis=1,inplace=True)
 
-    print (df_edges)
+    
 
     df_edges["from_id"] = df_edges["from_id"].str.replace('maritime', 'maritime_')
     df_edges["from_id"] = df_edges["from_id"].str.replace('port', 'port_')
@@ -349,7 +349,6 @@ def main(config):
     global_edges = port_edges[["from_id","to_id","id","distance"]]
     africa_ports = port_nodes[port_nodes["continent"] == "Africa"]
     G = ig.Graph.TupleList(global_edges.itertuples(index=False), edge_attrs=list(global_edges.columns)[2:])
-    # print (G)
 
     all_edges = []
     africa_nodes = africa_ports[africa_ports["infra"]=="port"]["id"].values.tolist()

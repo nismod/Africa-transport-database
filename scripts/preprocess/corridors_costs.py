@@ -55,6 +55,7 @@ def main(config):
 
     roads_edges = roads_edges[~roads_edges['corridor_name'].isna()]
     roads_edges['length_km'] = roads_edges['length_m'] / 1000
+    
     # Split the 'corridor_name' by '/' to account for multiple corridors
     roads_edges['corridor_name'] = roads_edges['corridor_name'].str.split('/')
     gdf_exploded = roads_edges.explode('corridor_name', ignore_index=True)
@@ -66,12 +67,13 @@ def main(config):
     print("costs",costs_df)
     print("corridors",grouped_data)
     print("road type",grouped_data['tag_highway'])
+    
     # Merge costs_df with grouped_data on tag_highway and paved
     merged_data = grouped_data.merge(costs_df, left_on=['cost_tag', 'paved'], right_on=['tag_highway', 'paved'], how='left')
 
-    # Calculate costs
-      # Actualize to 2025 values with a X annual inflation rate 37 (2020) and 80 (2010) 
-
+    ## Calculate costs ##
+    
+    # Actualize to 2025 values with a X annual inflation rate 37 (2020) and 80 (2010) 
     merged_data['min_capital_cost_USD_2025'] = merged_data['length_km'] * merged_data['lanes'] * merged_data['cost_min']*(1.37)
     merged_data['max_capital_cost_USD_2025'] = merged_data['length_km'] * merged_data['lanes'] * merged_data['cost_max']*(1.37)
     merged_data['median_capital_cost_USD_2025'] = merged_data['length_km'] * merged_data['lanes'] * merged_data['cost_median']*(1.37)
@@ -90,9 +92,6 @@ def main(config):
                 discount_rate=2,
                 skip_year_one=True,
             )
-    
-    print(merged_data[merged_data['paved']=='true'])
-    
 
     # Investment calculation - assuming a road has a lifetime of 20 years (big cost only once in 25 years) and O & M are every 4 years, calcultation of investment to 2050 
     merged_data['investment_min_USD_2025'] = merged_data['min_capital_cost_USD_2025'] + ((merged_data['min_OM_cost_USD_2025']))*sum(maintain_years)

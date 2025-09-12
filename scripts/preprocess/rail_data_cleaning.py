@@ -109,7 +109,7 @@ def main(config):
                                                     "mode":"mixed",
                                                     "gauge":1435,
                                                     "line":"Tema-Ouagadougou Railway"},
-                                "distance_threshold":300 #added as there was no field here but number is set as the majority of the others
+                                "distance_threshold":300 
                             },
                             {
                                 "project_name":"Isaka Kigali Gitega Railway",

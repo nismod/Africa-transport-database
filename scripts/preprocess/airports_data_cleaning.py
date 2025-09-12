@@ -37,6 +37,7 @@ def add_iso_code(df,df_id_column,incoming_data_path):
     
 
 def main(config):
+    
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
     
@@ -103,13 +104,6 @@ def main(config):
     
 
 
-    
-   
-    
-
-    
-
-
     # df_airports_flow= add_iso_code(df_airports_flow,"Country1",incoming_data_path)
     # df_airports_flow.rename(columns={"iso3": "iso3_1"},inplace=True)  
     # df_airports_flow.drop(columns=["index_right"], inplace = True)  
@@ -143,12 +137,7 @@ def main(config):
 
 
     # print(df_airports_nodes)
-    
-
-    
-    
-    
-    
+ 
     # Get the airports for Africa
 
 

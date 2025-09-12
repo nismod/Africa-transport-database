@@ -29,12 +29,7 @@ def main(config):
                  ), layer = 'edges')
     
 
-
-
-
-    
-
-    # Convert length from meters to kilometers
+    # Convert length from meters to kilometers - railways
     rail_df['length_km'] = rail_df['length_m'] / 1000
     grouped_data_rail = rail_df.groupby(['status'])['length_km'].sum().reset_index()
     grouped_data_rail['percentage'] = (grouped_data_rail['length_km'] / grouped_data_rail['length_km'].sum()) * 100
@@ -46,14 +41,10 @@ def main(config):
         "rail_stats.csv"
     ), index=False)
 
-    # Convert length from meters to kilometers
+    # Convert length from meters to kilometers - roads
     roads_df['length_km'] = roads_df['length_m'] / 1000
-
-    
-
     total_length_km = roads_df['length_km'].sum()
     print(f"Total length in km: {total_length_km}")
-    
     grouped_roads_df = roads_df.groupby(['tag_highway'])['length_km'].sum().reset_index()
     grouped_roads_df['percentage'] = (grouped_roads_df['length_km'] / grouped_roads_df['length_km'].sum()) * 100
     print(grouped_roads_df)
@@ -74,29 +65,17 @@ def main(config):
     # Calculate total length per corridor
     grouped_data['total_km'] = grouped_data['length_km'].sum()
 
-# Calculate percentage for each paved/unpaved group
+    # Calculate percentage for each paved/unpaved group
     grouped_data['percentage'] = (grouped_data['length_km'] / grouped_data['total_km']) * 100
     total_lengths = gdf_exploded.groupby('paved')['length_km'].sum()
     total = total_lengths.sum()
     percentages = (total_lengths / total) * 100
-
-    # print(percentages)
-    
-    
-    # print(grouped_data)
 
     grouped_data.to_csv(os.path.join(
         processed_data_path,
         "infrastructure",
         "paved_stats2.csv"
     ), index=False)
-
-    
-    
-
-    
-    # Save files
-    
    
     
 
