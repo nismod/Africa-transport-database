@@ -62,16 +62,16 @@ def main(config):
     # '#d3d3d3',  
     # ]
     colormap = {
-    'Abandoned': '#fddbcc',       # very light peach
-    'Disused': '#f97306',         # bright orange
-    'Razed': '#c1272d',           # deep red
-    'Suspended': '#801515',       # dark maroon
-    'Open': '#fbb03b',            # golden orange
-    'Planned': '#d0e4f7',         # light sky blue
-    'Proposed': '#8c8ccf',        # soft lavender-blue
-    'Construction': '#6a5acd',    # medium slate blue
-    'Rehabilitation': '#800080',  # purple
-    'Unknown': '#d3d3d3',         # light gray
+    'Abandoned':'#fddbcc',       
+    'Disused': '#f97306',         
+    'Razed': '#c1272d',           
+    'Suspended': '#801515',      
+    'Open': '#fbb03b',            
+    'Planned': '#d0e4f7',         
+    'Proposed': '#8c8ccf',        
+    'Construction': '#6a5acd',    
+    'Rehabilitation': '#800080',  
+    'Unknown': '#d3d3d3',         
     }
 
     

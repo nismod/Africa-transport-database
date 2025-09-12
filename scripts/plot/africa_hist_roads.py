@@ -47,12 +47,12 @@ def main(config):
     # Define valid highway types
     valid_highways = ['trunk', 'motorway', 'primary', 'secondary', 'tertiary']
 
-# Replace values not in the valid list with 'Other'
+    # Replace values not in the valid list with 'Other'
     gdf_exploded.loc[~gdf_exploded['tag_highway'].isin(valid_highways), 'tag_highway'] = 'Other'
 
     grouped_data = gdf_exploded.groupby(['corridor_name', 'tag_highway'], as_index=False).agg({'length_km': 'sum'})
     
-# Check again for duplicates
+    # Check again for duplicates
     print(grouped_data.duplicated(subset=['corridor_name', 'tag_highway']).sum())
 
     # Clean and format tag_highway names (capitalize and replace underscores with space)
@@ -70,12 +70,12 @@ def main(config):
         values='length_km'
     ).fillna(0)
 
-# Reorder the columns according to desired_order
+    # Reorder the columns according to desired_order
     pivot_data = pivot_data.reindex(columns=desired_order, fill_value=0)
     
     # Create a font property for bold text
     bold_font = font_manager.FontProperties(weight='bold')
-    # Select a colormap (e.g., 'viridis', 'plasma', 'tab20', 'Set1', etc.)
+    # Select a colormap 
     colormap =  ['#d7191c','#fdae61','#ffffbf','#abd9e9','#2c7bb6','#d9d9d9']
     # Get color values from the colormap
     num_colors = len(pivot_data.columns)

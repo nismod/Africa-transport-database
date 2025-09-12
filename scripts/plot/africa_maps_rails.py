@@ -49,10 +49,10 @@ def main(config):
 
     
     output_column = "gauge"
-    # Convert to categorical first (if not already)
+
     rail_df[output_column] = pd.Categorical(rail_df[output_column])
 
-    # Add "Not Known" as a category and fill NaN values
+
     rail_df[output_column] = rail_df[output_column].cat.add_categories("Not Known")
     rail_df[output_column] = rail_df[output_column].fillna("Not Known")
     # rail_df.status = pd.Categorical(

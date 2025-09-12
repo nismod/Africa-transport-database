@@ -418,33 +418,6 @@ def main(config):
                         zorder=8
                     )
                     
-        # elif idx == 18:
-        #     if row.geometry is not None and not row.geometry.is_empty:
-        #             centroid = row.geometry.centroid  # Get average centroid
-        #             ax.annotate(
-        #             text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
-        #             xy=(centroid.x, centroid.y),
-        #             xytext=(3, 180),  # Small offset for visibility
-        #             textcoords="offset points",
-        #             fontsize=9,
-        #             color="black",
-        #             alpha=1,
-        #             bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
-        #             zorder=8
-        #             )
-        #             # Second label (below)
-        #             ax.annotate(
-        #                 text=str(idx + 1),
-        #                 xy=(centroid.x, centroid.y),
-        #                 xytext=(-70, -250),  # This pushes the label down
-        #                 textcoords="offset points",
-        #                 fontsize=9,
-        #                 color="black",
-        #                 alpha=1,
-        #                 bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
-        #                 zorder=8
-        #             )
-
 
     plt.tight_layout()
     
