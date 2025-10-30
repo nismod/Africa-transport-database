@@ -23,6 +23,7 @@ def create_edges_from_nearest_node_joins(from_df,to_df,
                     from_id_column,to_id_column,
                     from_iso_column,to_iso_column,
                     from_mode,to_mode,
+                    #connection_type,
                     distance_threshold=2000):
     from_df.rename(columns={from_id_column:"from_id",from_iso_column:"from_iso_a3"},inplace=True)
     to_df.rename(columns={to_id_column:"to_id",to_iso_column:"to_iso_a3"},inplace=True)
@@ -32,6 +33,8 @@ def create_edges_from_nearest_node_joins(from_df,to_df,
     from_to_df = ckdnearest(from_df[["from_id","from_iso_a3","from_infra","geometry"]],
                             to_df[["to_id","to_iso_a3","to_infra","geometry"]])
     from_to_df["link_type"] = f"{from_mode}-{to_mode}"
+    #from_to_df["connection_type"] = connection_type
+    
     from_to_df = from_to_df[from_to_df["dist"] <= distance_threshold]
 
     if len(from_to_df.index) > 0:
