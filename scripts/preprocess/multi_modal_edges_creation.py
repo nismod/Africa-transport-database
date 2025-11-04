@@ -227,6 +227,20 @@ def main():
     multi_df = multi_df.to_crs(epsg=4326)
     multi_df["id"] = multi_df.index.values.tolist()
     multi_df["id"] = multi_df.progress_apply(lambda x:f"intermodale_{x.id}",axis=1)
+
+    multi_df=multi_df[[
+                    "id",
+                    "from_id",
+                    "to_id",
+                    "from_infra",
+                    "to_infra",
+                    "from_iso3",
+                    "to_iso3",
+                    "link_type",
+                    "usage_type",
+                    "length_m",
+                    "geometry"
+                    ]]
     
     
     multi_df.to_file(os.path.join(

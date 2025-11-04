@@ -25,7 +25,7 @@ def main(config):
 
     df_airports_ourairports = gpd.read_file(os.path.join(incoming_data_path,
                                     "airports",
-                                    "africa_airports_ourairports.gpkg"))
+                                    "africa_airports_ourairport.gpkg"))
     
     df_airports_nodes = gpd.read_file(os.path.join(processed_data_path,
                                     "infrastructure",
@@ -36,11 +36,11 @@ def main(config):
     
     df_airports_ourairports= df_airports_ourairports.to_crs(epsg=4326)
     
-    df_airports_ourairports_filtered = df_airports_ourairports[df_airports_ourairports['iata_code'].isin(df_airports_nodes['Origin'])]
-    df_airports_nodes.rename(columns={"Origin":"iata_code"}, inplace=True)
+    df_airports_ourairports_filtered = df_airports_ourairports[df_airports_ourairports['iata_code'].isin(df_airports_nodes['Orig'])]
+    df_airports_nodes.rename(columns={"Orig":"iata_code"}, inplace=True)
 
     df_airports_ourairports_filtered= df_airports_ourairports_filtered.to_crs(epsg=4326)
-    
+
     df_airports_nodes= df_airports_nodes.to_crs(epsg=4326)
     df_airports_edges= df_airports_edges.to_crs(epsg=4326)
     
