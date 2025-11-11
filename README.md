@@ -4,7 +4,7 @@ We present the first comprehensive geolocated multi-modal transport database for
 This GitHub folder contains the scripts that have been used to create the database, of particular importance the road network creation and the multimodal edges creation ones.
 <br/><br/>
 
-The codes for operationalization for downloading and creating network representations from OSM raw data, via the Open-Gira repository, are available here: [https://github.com/nismod/open-gira]. Further Open-Gira documentation is provided here: [https://nismod.github.io/open-gira/user-guide/usage/network-creation/road.html] and [https://nismod.github.io/open-gira/user-guide/usage/network-creation/rail.html]. 
+The codes for operationalization for downloading and creating network representations from OSM raw data, via the Open-Gira repository, are available here: https://github.com/nismod/open-gira. Further Open-Gira documentation is provided here: https://nismod.github.io/open-gira/user-guide/usage/network-creation/road.html and https://nismod.github.io/open-gira/user-guide/usage/network-creation/rail.html. 
 <br/><br/>
 
 The spatially explicit, harmonized AfTS-Db is publicly available and can be explored [here](https://doi.org/10.5281/zenodo.15527231). These files can be easily accessed, visualized, and manipulated using standard GIS applications such as QGIS or ArcGIS.
@@ -24,7 +24,7 @@ The road topological network creation follows 5 main steps: <br/>
 
 
 ### Multimodal links creation
-The multimodal network creation constists on:
+The multimodal network creation constists on:<br/>
 <br/>
 **Step 1:** Input the different point location data from all the transport datasets: airports, maritime ports, inland ports, railway stations and points of interest, road nodes <br/>
 **Step 2:** Connect the different nodes to the ground transport network (road and rail nodes) <br/>
