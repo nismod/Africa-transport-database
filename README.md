@@ -1,8 +1,13 @@
 # Africa transport database
 We present the first comprehensive geolocated multi-modal transport database for the whole continent of Africa, the **African Transport Systems Database (AfTS-Db)**, including road, rail, aviation, maritime and inland waterway networks. To do so, we created and standardized asset and network data across all transport modes, including inter-modal connections, attributes of road and rail corridors and estimated annual statistics for airports and ports. The African Transport Systems Database includes 234 airports including their airline routes, 179 maritime ports and their connections with each other, 132 inland ports and docking sites with river and lake connections, 4,412 railway stations connected across 99,373 kilometers of rail lines, and 1,004,512 kilometers of roads mainly comprised of all motorways, trunk roads, primary and secondary routes across Africa and some local roads that connect to other transport modes. The AfTS-Db provides key information for transport planning, resilience assessments, asset management and development of transport models and applications. Furthermore, we expect the data will also be of relevance for environmental, health, social and economic studies. <br/><br/>
+
 This GitHub folder contains the scripts that have been used to create the database, of particular importance the road network creation and the multimodal edges creation ones.
 <br/><br/>
-The dataset is open-access and available [here](https://doi.org/10.5281/zenodo.15527231).
+
+The codes for operationalization for downloading and creating network representations from OSM raw data, via the Open-Gira repository, are available here: [https://github.com/nismod/open-gira]. Further Open-Gira documentation is provided here: [https://nismod.github.io/open-gira/user-guide/usage/network-creation/road.html] and [https://nismod.github.io/open-gira/user-guide/usage/network-creation/rail.html]. 
+<br/><br/>
+
+The spatially explicit, harmonized AfTS-Db is publicly available and can be explored [here](https://doi.org/10.5281/zenodo.15527231). These files can be easily accessed, visualized, and manipulated using standard GIS applications such as QGIS or ArcGIS.
 
 ## About the scripts
 All the scripts used to create the datasets are available and free to use in the [**scripts folder**](https://github.com/nismod/Africa-transport-database/tree/main/scripts), ensuring replicability of the database. Most of them represent simple cleaning and validation (in the [**preprocess**](https://github.com/nismod/Africa-transport-database/tree/main/scripts/preprocess) folder) or plots and figures (in the [**maps and stats**](github.com/nismod/Africa-transport-database/tree/main/scripts/maps%20and%20stats) and [**plot**](https://github.com/nismod/Africa-transport-database/tree/main/scripts/plot) folders) reproduction codes. <br/>
