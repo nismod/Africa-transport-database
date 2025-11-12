@@ -7,7 +7,7 @@ This GitHub folder contains the scripts that have been used to create the databa
 The codes for operationalization for downloading and creating network representations from OSM raw data, via the Open-Gira repository, are available here: https://github.com/nismod/open-gira. Further Open-Gira documentation is provided here: https://nismod.github.io/open-gira/user-guide/usage/network-creation/road.html and https://nismod.github.io/open-gira/user-guide/usage/network-creation/rail.html. 
 <br/><br/>
 
-The spatially explicit, harmonized AfTS-Db is publicly available and can be explored [here](https://doi.org/10.5281/zenodo.15527231). These files can be easily accessed, visualized, and manipulated using standard GIS applications such as QGIS or ArcGIS.
+The spatially explicit, harmonized AfTS-Db is publicly available and can be explored [here](https://zenodo.org/uploads/17593244). These files can be easily accessed, visualized, and manipulated using standard GIS applications such as QGIS or ArcGIS.
 <br/><br/>
 
 This research has been supported by the **Climate Compatible Growth (CCG)** program funded by the UK Foreign, Commonwealth and Development Office ([FCDO](https://devtracker.fcdo.gov.uk/programme/GB-GOV-1-300125/summary)).
