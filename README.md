@@ -8,6 +8,9 @@ The codes for operationalization for downloading and creating network representa
 <br/><br/>
 
 The spatially explicit, harmonized AfTS-Db is publicly available and can be explored [here](https://doi.org/10.5281/zenodo.15527231). These files can be easily accessed, visualized, and manipulated using standard GIS applications such as QGIS or ArcGIS.
+<br/><br/>
+
+This research has been supported by the **Climate Compatible Growth (CCG)** program funded by the UK Foreign, Commonwealth and Development Office [FCDO] (https://devtracker.fcdo.gov.uk/programme/GB-GOV-1-300125/summary).
 
 ## About the scripts
 All the scripts used to create the datasets are available and free to use in the [**scripts folder**](https://github.com/nismod/Africa-transport-database/tree/main/scripts), ensuring replicability of the database. Most of them represent simple cleaning and validation (in the [**preprocess**](https://github.com/nismod/Africa-transport-database/tree/main/scripts/preprocess) folder) or plots and figures (in the [**maps and stats**](github.com/nismod/Africa-transport-database/tree/main/scripts/maps%20and%20stats) and [**plot**](https://github.com/nismod/Africa-transport-database/tree/main/scripts/plot) folders) reproduction codes. <br/>
@@ -30,5 +33,4 @@ The multimodal network creation constists on:<br/>
 **Step 2:** Connect the different nodes to the ground transport network (road and rail nodes) <br/>
 **Step 3:** Differentiate the connection between freight transport (specific rail-road connection based on the facility specifics of the rail node) and general freight/passenger transport (the rest of the connections, if not specified) <br/>
 **Step 4:** The resulting dataset will include edges identified by unique IDs, along with references to the source and target nodes they connect, as well as details about the link and its usage (freigth ore freight/transport)
-
-
+ 
