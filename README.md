@@ -32,5 +32,5 @@ The multimodal network creation constists on:<br/>
 **Step 1:** Input the different point location data from all the transport datasets: airports, maritime ports, inland ports, railway stations and points of interest, road nodes <br/>
 **Step 2:** Connect the different nodes to the ground transport network (road and rail nodes) <br/>
 **Step 3:** Differentiate the connection between freight transport (specific rail-road connection based on the facility specifics of the rail node) and general freight/passenger transport (the rest of the connections, if not specified) <br/>
-**Step 4:** The resulting dataset will include edges identified by unique IDs, along with references to the source and target nodes they connect, as well as details about the link and its usage (freigth ore freight/transport)
+**Step 4:** The resulting dataset will include edges identified by unique IDs, along with references to the source and target nodes they connect, as well as details about the link and its usage (freigth or freight/transport)
  
