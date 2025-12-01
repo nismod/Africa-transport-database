@@ -285,7 +285,7 @@ def main():
 
     iww_df_nodes.loc[mask_iww, "source"] = (
         iww_df_nodes.loc[mask_iww]
-        .apply(lambda _: "Modelled", axis=1)
+        .apply(lambda _: ["Modelled"], axis=1)
     )
 
     iww_df_nodes.loc[mask_osm, "source"] = (
