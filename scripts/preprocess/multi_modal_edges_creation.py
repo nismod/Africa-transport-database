@@ -82,7 +82,7 @@ def get_mode_dataframe(
         nodes = gpd.read_parquet(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
-                                "africa_roads_nodes.geoparquet"))
+                                "africa_roads_nodes_FINAL.geoparquet"))
         nodes.rename(columns={"iso_a3":"iso3"},inplace=True)
 
     return nodes
@@ -183,7 +183,7 @@ def main():
                             t_df.to_crs(epsg=epsg_meters),
                             "id","id",
                             "iso3","iso3",
-                            f_m,t_m) #distance_threshold=distance_threshold
+                            f_m,t_m,distance_threshold=3000) 
         f_t_df = f_t_df.rename(columns={"from_iso_a3":"from_iso3","to_iso_a3":"to_iso3"})
 
         f_t_df["usage_type"] = f_t_df["link_type"].apply(
