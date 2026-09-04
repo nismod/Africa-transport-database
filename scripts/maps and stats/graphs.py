@@ -1,16 +1,13 @@
 import os
-import sys
-from collections import OrderedDict
-import pandas as pd
+
 import geopandas as gpd
-import numpy as np
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from map_plotting_utils import *
-#from utils_new import *
+import pandas as pd
 from tqdm import tqdm
+
+from aftdb.map.map_plotting_utils import *
+
+
 tqdm.pandas()
 
 
@@ -26,8 +23,8 @@ def main(config):
     ccg_countries = pd.read_csv(os.path.join(processed_data_path,"admin_boundaries","ccg_country_codes.csv"))
     ccg_isos = ccg_countries[ccg_countries["ccg_country"] == 1]["iso_3digit_alpha"].values.tolist()
     #reference_mineral_colors = ["#cc4c02","#3690c0","#88419d","#d7301f","#252525","#737373"]
-    
-    
+
+
     roads_df = gpd.read_file(os.path.join(
                  incoming_data_path,
                  "africa_roads",
@@ -39,7 +36,7 @@ def main(config):
 
     #print(roads_df.columns)
     #breakpoint()
-    
+
     output_column = "asset_type"
     values_range = roads_df[output_column].values.tolist()
     ax_proj = get_projection(epsg=4326)
@@ -48,7 +45,7 @@ def main(config):
                          figsize=(12,12),
                          dpi=500)
     #ax_plots = ax_plots.flatten()
-    
+
     ax = plot_africa_basemap(ax_plots)
     breakpoint()
     roads_df.plot()

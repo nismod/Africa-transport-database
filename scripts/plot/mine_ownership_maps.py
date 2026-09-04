@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-import sys
 import os
-import ast
+
 import pandas as pd
 import numpy as np
-pd.options.mode.copy_on_write = True
 import geopandas as gpd
 import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse, Circle
-from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from map_plotting_utils import *
 from tqdm import tqdm
+
+from aftdb.map.map_plotting_utils import *
+
+pd.options.mode.copy_on_write = True
 tqdm.pandas()
 
 config = load_config()
@@ -51,7 +50,7 @@ def draw_pie(dist, xpos, ypos, size, color_map, ax=None):
 def main():
     figures = os.path.join(figure_path,"mine_ownership")
     os.makedirs(figures,exist_ok=True)
-    
+
     global_df = gpd.read_file(os.path.join(
                     processed_data_path,'admin_boundaries',
                     'ne_10m_admin_0_countries',
@@ -69,8 +68,8 @@ def main():
     centroid_df["geometry"] = gpd.points_from_xy(
                                     centroid_df["longitude_shift"],
                                     centroid_df["latitude_shift"])
-    
-        
+
+
     _,_,xl,yl = map_background_and_bounds(include_continents=continents)
     dxl = abs(np.diff(xl))[0]
     dyl = abs(np.diff(yl))[0]
@@ -79,11 +78,11 @@ def main():
     panel_span = 2
     marker_size_max = 1500.0
     commodities = [
-                    'Manganese', 'Uranium', 
-                    'Bauxite', 'Copper', 
-                    'Nickel', 'Iron Ore', 
-                    'Gold', 'Cobalt', 
-                    'Silver', 'Lithium', 
+                    'Manganese', 'Uranium',
+                    'Bauxite', 'Copper',
+                    'Nickel', 'Iron Ore',
+                    'Gold', 'Cobalt',
+                    'Silver', 'Lithium',
                     'Lead', 'Zinc'
                 ]
     commodities_colors = [
@@ -99,7 +98,7 @@ def main():
                             "#ce1256",
                             "#a63603",
                             "#084081"
-                        ] 
+                        ]
     color_df = pd.DataFrame(list(zip(commodities,commodities_colors)),columns=["commodity","color"])
     # textfontsize = 12
 
@@ -114,7 +113,7 @@ def main():
     ax.set_aspect('equal')
     ax.set_xticks([])
     ax.set_yticks([])
-    
+
     ax = plot_global_basemap(
                 ax,
                 include_continents=continents,
@@ -199,8 +198,8 @@ def main():
             gdf["markersize"] = marker_size_max*(gdf[sc_n]/tmax)**0.5
             gdf = gdf.sort_values(by=sc_n,ascending=False)
             gdf.geometry.plot(
-                ax=ax, 
-                color=df["color"], 
+                ax=ax,
+                color=df["color"],
                 edgecolor='none',
                 markersize=gdf["markersize"],
                 alpha=0.8)
@@ -237,7 +236,7 @@ def main():
     ax.set_aspect('equal')
     ax.set_xticks([])
     ax.set_yticks([])
-    
+
     ax = plot_global_basemap(
                 ax,
                 include_continents=continents,
@@ -247,10 +246,10 @@ def main():
     for row in df.itertuples():
         values = [row.Local,row.Foreign,row.Unknown]
         colors = pie_colors.copy()
-        draw_pie(dist=values, 
-                xpos=row.geometry.x, 
-                ypos=row.geometry.y, 
-                size=marker_size_max*(row.Total/tmax)**0.5, 
+        draw_pie(dist=values,
+                xpos=row.geometry.x,
+                ypos=row.geometry.y,
+                size=marker_size_max*(row.Total/tmax)**0.5,
                 color_map=colors,
                 ax=ax)
         ax.scatter(
@@ -287,8 +286,8 @@ def main():
                 ins.text(xk,yk[k],'       {:,.0f}'.format(tonnage_key[k]),va='center',fontsize=10)
             # for n, p in enumerate(size_key):
             #     circle = Circle(
-            #                         (xk, yk[n]), 
-            #                         radius=(p)**0.5, 
+            #                         (xk, yk[n]),
+            #                         radius=(p)**0.5,
             #                         fc='k')
             #     ax.add_artist(circle)
         else:

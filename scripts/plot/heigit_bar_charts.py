@@ -1,20 +1,16 @@
 """Generate bar plots
 """
 import os
-import sys
+
 import pandas as pd
-pd.options.mode.copy_on_write = True
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 import matplotlib.patches as mpatches
-from matplotlib.colors import ListedColormap
-from matplotlib.ticker import (MaxNLocator,LinearLocator, MultipleLocator)
-from itertools import cycle, islice
-import matplotlib.pyplot as plt
-from matplotlib import cm
-from map_plotting_utils import *
 from tqdm import tqdm
+
+from aftdb.map.map_plotting_utils import *
+
+pd.options.mode.copy_on_write = True
 tqdm.pandas()
 
 # mpl.style.use('ggplot')
@@ -33,9 +29,9 @@ def plot_clustered_stacked(fig,axe,
                             legend_title=None,
                             title="multiple stacked bar plot",
                             H="/",**kwargs):
-    """ 
+    """
         Source: https://stackoverflow.com/questions/22787209/how-to-have-clusters-of-stacked-bars
-        Given a list of dataframes, with identical columns and index, create a clustered stacked bar plot. 
+        Given a list of dataframes, with identical columns and index, create a clustered stacked bar plot.
         labels is a list of the names of the dataframe, used for the legend
         title is a string for the title of the plot
         H is the hatch used for identification of the different dataframe
@@ -50,7 +46,7 @@ def plot_clustered_stacked(fig,axe,
                            index=["A", "B", "C", "D"],
                            columns=["I", "J", "K", "L", "M"])
         df3 = pd.DataFrame(np.random.rand(4, 5),
-                           index=["A", "B", "C", "D"], 
+                           index=["A", "B", "C", "D"],
                            columns=["I", "J", "K", "L", "M"])
 
         # Then, just call :
@@ -58,7 +54,7 @@ def plot_clustered_stacked(fig,axe,
     """
 
     n_df = len(dfall)
-    n_col = len(dfall[0].columns) 
+    n_col = len(dfall[0].columns)
     n_ind = len(dfall[0].index)
     # axe = plt.subplot(111)
 
@@ -81,7 +77,7 @@ def plot_clustered_stacked(fig,axe,
             for rect in pa.patches: # for each index
                 rect.set_x(rect.get_x() + 1 / float(n_df + 1) * i / float(n_col))
                 if H is not None:
-                    rect.set_hatch(H * int(i / n_col)) #edited part     
+                    rect.set_hatch(H * int(i / n_col)) #edited part
                 rect.set_width(1 / float(n_df + 1))
 
     # sec.set_xticks([5, 15, 25], labels=['\nOughts', '\nTeens', '\nTwenties'])
@@ -111,12 +107,12 @@ def plot_clustered_stacked(fig,axe,
                 legend_handles.append(mpatches.Patch(facecolor=bc,edgecolor='white',
                                         label=lbls[idx]))
     leg = axe.legend(
-                handles=legend_handles, 
-                fontsize=15, 
+                handles=legend_handles,
+                fontsize=15,
                 loc='upper left',
                 frameon=False)
 
-    # Move titles to the left 
+    # Move titles to the left
     for item, label in zip(leg.legend_handles, leg.texts):
         if label._text in titles:
             width = item.get_window_extent(fig.canvas.get_renderer()).width
@@ -140,7 +136,7 @@ def main(config):
                     ["#d53e4f","#f46d43"],["#014636","#a6bddb"]
                 ]
         road_labels = [["Our database - Paved","Our database - Unpaved"],["HeiGIT - Paved","HeiGIT - Unpaved"]]
-    
+
         fig, ax = plt.subplots(1,1,figsize=(18,9),dpi=500)
         data_df = pd.read_csv(results_file)
         country_name = pd.read_excel(
@@ -159,7 +155,7 @@ def main(config):
         ax = plot_clustered_stacked(
                                     fig,ax,dfall,road_colors,
                                     labels=road_labels,
-                                    ylabel="Road length (km)", 
+                                    ylabel="Road length (km)",
                                     legend_title = "$\\bf{Road \, types}$",
                                     title="Heigit vs Our database - Length comparisons between paved and unpaved roads")
         plt.grid()
@@ -193,7 +189,7 @@ def main(config):
         ax = plot_clustered_stacked(
                                     fig,ax,dfall,road_colors,
                                     labels=road_labels,
-                                    ylabel="Length difference (%)", 
+                                    ylabel="Length difference (%)",
                                     legend_title = "$\\bf{Road \, types}$",
                                     H=None,
                                     title="Heigit vs Our database - Length differences between paved and unpaved roads")
@@ -203,7 +199,7 @@ def main(config):
                     "heigit_difference.png"))
         plt.close()
 
-    
+
     make_plot = True
     if make_plot is True:
         results_file = os.path.join(output_data_path,
@@ -227,7 +223,7 @@ def main(config):
                                     labels=rail_labels,
                                     ylabel="Railways length (km)",
                                     H=None,
-                                    legend_title="$\\bf{Railways \, data \, sources}$", 
+                                    legend_title="$\\bf{Railways \, data \, sources}$",
                                     title="CIA vs Worlpop Review vs Our database - Length comparisons between railways")
         plt.grid()
         plt.tight_layout()

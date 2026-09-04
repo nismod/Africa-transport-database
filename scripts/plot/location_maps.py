@@ -1,19 +1,17 @@
 """Mine and processing location volume plots
 """
 import os
-import sys
-from collections import OrderedDict
+
 import pandas as pd
-pd.options.mode.chained_assignment = None  # default='warn'
 import geopandas as gpd
 import numpy as np
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from map_plotting_utils import *
 from trade_functions import *
 from tqdm import tqdm
+
+from aftdb.map.map_plotting_utils import *
+
+pd.options.mode.chained_assignment = None  # default='warn'
 tqdm.pandas()
 
 config = load_config()
@@ -26,12 +24,12 @@ def main():
     # if os.path.exists(figures) is False:
     #     os.mkdir(figures)
     os.makedirs(figures,exist_ok=True)
-    
+
     figures = os.path.join(figure_path,"regional_figures","mine_and_processing_locations")
     # if os.path.exists(figures) is False:
     #     os.mkdir(figures)
     os.makedirs(figures,exist_ok=True)
-    
+
     ccg_countries = pd.read_csv(os.path.join(processed_data_path,"admin_boundaries","ccg_country_codes.csv"))
     ccg_isos = ccg_countries[ccg_countries["ccg_country"] == 1]["iso_3digit_alpha"].values.tolist()
 
@@ -190,7 +188,7 @@ def main():
                     tmax += df["total_tons"].values.tolist()
                 dfs = pd.concat(dfs,axis=0,ignore_index=True)
                 sc_dfs.append((lyr_nm,dfs,panel_span*idx + 1,panel_span))
-        
+
             tmax = max(tmax)
             tonnage_key = 10**np.arange(1,np.ceil(np.log10(tmax)),1)
             sc_dfs.append(tuple(key_info))
@@ -253,15 +251,15 @@ def main():
                     df["markersize"] = marker_size_max*(df["total_tons"]/tmax)**0.5
                     df = df.sort_values(by="total_tons",ascending=False)
                     df.geometry.plot(
-                        ax=ax, 
-                        color=df["color"], 
+                        ax=ax,
+                        color=df["color"],
                         edgecolor='none',
                         markersize=df["markersize"],
                         alpha=0.7)
                     ax.text(
                         xl[0]+0.5*dxl,yl[0]+0.05*dyl,
                         'Total = {:.1f} million tonnes'.format(df["total_tons"].sum()/1e6),
-                        fontsize=textfontsize,weight='bold',ha='center')  
+                        fontsize=textfontsize,weight='bold',ha='center')
             fig_nm = '_'.join(list(set(layers))).replace("_min_threshold_metal_tons","").replace("_max_threshold_metal_tons","")
             if ton_type == "initial_stage_production_tons":
                 fig_file = f"mine_metal_content_maps_{fig_nm}.png"
@@ -270,7 +268,7 @@ def main():
                 fig_file = f"{rt}_processing_locations_maps_{fig_nm}.png"
             plt.tight_layout()
             save_fig(os.path.join(figures,fig_file))
-            plt.close()          
+            plt.close()
 
 
 if __name__ == '__main__':

@@ -1,23 +1,17 @@
 """Road network risks and adaptation maps
 """
 import os
-import sys
-from collections import OrderedDict
+
 import pandas as pd
 import geopandas as gpd
-import numpy as np
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from matplotlib.lines import Line2D
-from map_plotting_utils import *
 from tqdm import tqdm
-from matplotlib import cm
-tqdm.pandas()
 from matplotlib import font_manager
-import matplotlib.ticker as mticker
 from matplotlib.colors import ListedColormap
+
+from aftdb.map.map_plotting_utils import *
+
+tqdm.pandas()
 
 def main(config):
     data_path = config['paths']['data']
@@ -34,7 +28,7 @@ def main(config):
                     subplot_kw={'projection': ax_proj},
                     figsize=(12,12),
                     dpi=500)
-    
+
     # save_fig(os.path.join(figures,"africa_basemap.png"))
     #plt.close()
 
@@ -48,8 +42,8 @@ def main(config):
                  "infrastructure",
                  "africa_railways_network.gpkg"
                  ), layer = 'nodes')
-    
-    
+
+
     # roads_df["geometry"] = roads_df.geometry.centroid
 
 
@@ -119,7 +113,7 @@ def main(config):
     save_fig(os.path.join(figures, "rail_test_facility.png"))
 
 
-        
+
 
 if __name__ == '__main__':
     CONFIG = load_config()

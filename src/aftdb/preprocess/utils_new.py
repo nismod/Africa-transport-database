@@ -1,20 +1,21 @@
 """Functions for preprocessing road data
     WILL MODIFY LATER
 """
-import sys
-import os
 import json
-import network as ntx
+import os
+
 import numpy as np
 import pandas as pd
 import igraph as ig
 import networkx
 import geopandas as gpd
-import fiona
-from shapely.geometry import shape, mapping, LineString
+from shapely.geometry import shape, LineString
 from scipy.spatial import cKDTree
 from tqdm import tqdm
 from haversine import haversine
+
+import aftdb.preprocess.network as ntx
+
 tqdm.pandas()
 
 
@@ -23,6 +24,7 @@ def create_edges_from_nearest_node_joins(from_df,to_df,
                     from_id_column,to_id_column,
                     from_iso_column,to_iso_column,
                     from_mode,to_mode,
+                    #connection_type,
                     distance_threshold=2000):
     from_df.rename(columns={from_id_column:"from_id",from_iso_column:"from_iso_a3"},inplace=True)
     to_df.rename(columns={to_id_column:"to_id",to_iso_column:"to_iso_a3"},inplace=True)
@@ -32,6 +34,8 @@ def create_edges_from_nearest_node_joins(from_df,to_df,
     from_to_df = ckdnearest(from_df[["from_id","from_iso_a3","from_infra","geometry"]],
                             to_df[["to_id","to_iso_a3","to_infra","geometry"]])
     from_to_df["link_type"] = f"{from_mode}-{to_mode}"
+    #from_to_df["connection_type"] = connection_type
+
     from_to_df = from_to_df[from_to_df["dist"] <= distance_threshold]
 
     if len(from_to_df.index) > 0:
@@ -42,7 +46,7 @@ def create_edges_from_nearest_node_joins(from_df,to_df,
                                     lambda x:LineString([x.from_geometry,x.to_geometry]),
                                     axis=1)
         from_to_df.drop(["from_geometry","to_geometry"],axis=1,inplace=True)
-    
+
     return from_to_df
 
 
@@ -73,13 +77,13 @@ def add_iso_code(df,df_id_column,incoming_data_path,epsg=4326):
     for c in ['iso3','country']:
         if c in df.columns.values.tolist():
             df.drop(c,axis=1,inplace=True)
-    m = gpd.sjoin(df, 
-                    africa_boundaries[['geometry', 'iso3','country']], 
+    m = gpd.sjoin(df,
+                    africa_boundaries[['geometry', 'iso3','country']],
                     how="left", predicate='within').reset_index()
-    m = m[~m["iso3"].isna()]        
+    m = m[~m["iso3"].isna()]
     un = df[~df[df_id_column].isin(m[df_id_column].values.tolist())]
     un = gpd.sjoin_nearest(un,
-                            africa_boundaries[['geometry', 'iso3','country']], 
+                            africa_boundaries[['geometry', 'iso3','country']],
                             how="left").reset_index()
     m = pd.concat([m,un],axis=0,ignore_index=True)
     return m
@@ -118,7 +122,7 @@ def link_nodes_to_nearest_edge(network, condition=None, tolerance=1e-9):
 
     return split
 def convert_json_geopandas(df,epsg=4326):
-    layer_dict = []    
+    layer_dict = []
     for key, value in df.items():
         if key == "features":
             for feature in value:
@@ -137,7 +141,7 @@ def components(edges,nodes,
         (getattr(n, node_id_column), {"geometry": n.geometry}) for n in nodes.itertuples()
     )
     G.add_edges_from(
-        (getattr(e,from_node_column), getattr(e,to_node_column), 
+        (getattr(e,from_node_column), getattr(e,to_node_column),
             {edge_id_column: getattr(e,edge_id_column), "geometry": e.geometry})
         for e in edges.itertuples()
     )
@@ -151,7 +155,7 @@ def components(edges,nodes,
 
 def add_lines(x,from_nodes_df,to_nodes_df,from_nodes_id,to_nodes_id):
     from_point = from_nodes_df[from_nodes_df[from_nodes_id] == x[from_nodes_id]]
-    to_point = to_nodes_df[to_nodes_df[to_nodes_id] == x[to_nodes_id]] 
+    to_point = to_nodes_df[to_nodes_df[to_nodes_id] == x[to_nodes_id]]
     return LineString([from_point.geometry.values[0],to_point.geometry.values[0]])
 
 def ckdnearest(gdA, gdB):
@@ -167,7 +171,7 @@ def ckdnearest(gdA, gdB):
             gdA.reset_index(drop=True),
             gdB_nearest,
             pd.Series(dist, name='dist')
-        ], 
+        ],
         axis=1)
 
     return gdf
@@ -246,7 +250,7 @@ def create_network_from_nodes_and_edges(nodes,edges,node_edge_prefix,
         # network = ntx.split_edges_at_nodes(network,tolerance=9e-10)
         # print ('* Done with splitting edges at nodes')
 
-    network = ntx.add_endpoints(network)   
+    network = ntx.add_endpoints(network)
     print ('* Done with adding endpoints')
 
     network.nodes = ntx.drop_duplicate_geometries(network.nodes)
@@ -254,9 +258,9 @@ def create_network_from_nodes_and_edges(nodes,edges,node_edge_prefix,
 
     network = ntx.split_edges_at_nodes(network,tolerance=1e-9)
     print ('* Done with splitting edges at nodes')
-    
-    network = ntx.add_ids(network, 
-                            edge_prefix=f"{node_edge_prefix}e", 
+
+    network = ntx.add_ids(network,
+                            edge_prefix=f"{node_edge_prefix}e",
                             node_prefix=f"{node_edge_prefix}n")
     network = ntx.add_topology(network, id_col='id')
     print ('* Done with network topology')
@@ -270,7 +274,7 @@ def create_network_from_nodes_and_edges(nodes,edges,node_edge_prefix,
                                 'id':'edge_id'},
                                 inplace=True)
     network.nodes.rename(columns={'id':'node_id'},inplace=True)
-    
+
     return network
 
 def network_od_path_estimations(graph,
@@ -324,22 +328,22 @@ def network_od_path_estimations(graph,
         edge_path_list.append(edge_path)
         path_gcost_list.append(path_gcost)
 
-    
+
     return edge_path_list, path_gcost_list
 
 def haversine_distance(point1, point2):
     """
-    Calculate the great circle distance between two points 
+    Calculate the great circle distance between two points
     on the earth (specified in decimal degrees)
     """
     lon1, lat1 = point1.bounds[0], point1.bounds[1]
     lon2, lat2 = point2.bounds[0], point2.bounds[1]
 
-    # convert decimal degrees to radians 
+    # convert decimal degrees to radians
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
 
-    # haversine formula 
-    dlon = lon2 - lon1 
+    # haversine formula
+    dlon = lon2 - lon1
     dlat = lat2 - lat1
     a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
     c = 2 * asin(sqrt(a))
@@ -365,7 +369,7 @@ def modify_distance(x):
                 )
 
 def match_ports(df1,df2,df1_id_column,df2_id_column,cutoff_distance):
-    # Find the nearest ports that match and the ones which do not 
+    # Find the nearest ports that match and the ones which do not
     matches = ckdnearest(df1,
                         df2)
     matches = matches.sort_values(by="dist",ascending=True)
@@ -375,3 +379,22 @@ def match_ports(df1,df2,df1_id_column,df2_id_column,cutoff_distance):
     selection = selection.drop_duplicates(subset=df2_id_column,keep='first')
     matched_ids = list(set(selection[df1_id_column].values.tolist()))
     return matches, df1[~(df1[df1_id_column].isin(matched_ids))]
+
+
+def create_igraph_from_dataframe(graph_dataframe, directed=False, simple=False):
+    graph = ig.Graph.TupleList(
+        graph_dataframe.itertuples(index=False),
+        edge_attrs=list(graph_dataframe.columns)[2:],
+        directed=directed
+    )
+    if simple:
+        graph.simplify()
+
+    es, vs, simple = graph.es, graph.vs, graph.is_simple()
+    d = "directed" if directed else "undirected"
+    s = "simple" if simple else "multi"
+    print(
+        "Created {}, {} {}: {} edges, {} nodes.".format(
+            s, d, "igraph", len(es), len(vs)))
+
+    return graph

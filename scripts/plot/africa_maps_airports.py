@@ -1,19 +1,15 @@
 """Road network risks and adaptation maps
 """
 import os
-import sys
-from collections import OrderedDict
-import pandas as pd
+
 import geopandas as gpd
-import numpy as np
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from matplotlib.lines import Line2D
-from map_plotting_utils import *
+import numpy as np
 from tqdm import tqdm
-from matplotlib import cm
+
+
+from aftdb.map.map_plotting_utils import *
+
 tqdm.pandas()
 
 
@@ -37,14 +33,14 @@ def main(config):
                     subplot_kw={'projection': ax_proj},
                     figsize=(12,12),
                     dpi=500)
-    
+
     ax = plot_africa_basemap2(ax_plots)
     # air_nodes.plot(ax=ax,zorder=4, column='TotalSeats', cmap='YlOrRd',markersize=15,legend=True, scheme="quantiles", label="Airport total seats")
     air_nodes["markersize"] = marker_size_max*(air_nodes["TotalSeats"]/tmax)**0.5
     air_nodes = air_nodes.sort_values(by="TotalSeats",ascending=False)
     air_nodes.geometry.plot(
-        ax=ax, 
-        color="#3690c0", 
+        ax=ax,
+        color="#3690c0",
         edgecolor='none',
         markersize=air_nodes["markersize"],
         alpha=0.7,
@@ -73,7 +69,7 @@ def main(config):
     plt.tight_layout()
     save_fig(os.path.join(figures,"airports.png"))
     plt.close()
-    
+
 
 if __name__ == '__main__':
     CONFIG = load_config()

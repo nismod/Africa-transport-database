@@ -1,26 +1,20 @@
 """Road network risks and adaptation maps
 """
 import os
-import sys
 import json
 from collections import namedtuple, OrderedDict
-import ast
 import math
+
 import numpy as np
 import geopandas as gpd
 import pandas as pd
 import cartopy.crs as ccrs
-from shapely.geometry.point import Point
-import cartopy.io.shapereader as shpreader
 from matplotlib_scalebar.scalebar import ScaleBar
 import matplotlib.pyplot as plt
-from sklearn.metrics.pairwise import haversine_distances
 import matplotlib.patches as mpatches
-from shapely.geometry import LineString
 from matplotlib.lines import Line2D
-from scalebar import scale_bar
-from htb import htb
-import jenkspy
+
+# from aftdb.map.htb import htb
 
 Style = namedtuple('Style', ['color', 'zindex', 'label'])
 Style.__doc__ += """: class to hold an element's styles
@@ -101,24 +95,24 @@ def plot_basemap_labels(ax,labels=None,label_column="Region",label_size=8.0,incl
                     zorder = include_zorder,
                     transform=proj)
 
-def plot_scale_bar(ax,scalebar_location=(0.88,0.05),scalebar_distance=25,zorder=20):
+def plot_scale_bar(ax,scalebar_location=(0.88,0.05),scalebar_distance=25):
     """Draw a scale bar and direction arrow
 
     Parameters
     ----------
     ax : axes
-    scalebar_location: tuple 
+    scalebar_location: tuple
         location of scalebar on axes
     scalebar_distance : int
         length of the scalebar in km.
     zorder: int
         Order of scalebar on plot
     """
-    scale_bar(ax, scalebar_location, scalebar_distance, color='k',zorder=zorder)
+    ScaleBar(ax, scalebar_location, scalebar_distance, color='k')
 
 def scale_bar_and_direction(ax,arrow_location=(0.80,0.08),
                     scalebar_location=(0.88,0.05),
-                    scalebar_distance=25,zorder=20):
+                    scalebar_distance=25):
     """Draw a scale bar and direction arrow
 
     Parameters
@@ -134,13 +128,13 @@ def scale_bar_and_direction(ax,arrow_location=(0.80,0.08),
         thickness of the scalebar.
     """
     # lat-lon limits
-    scale_bar(ax, scalebar_location, scalebar_distance, color='k',zorder=zorder)
+    ScaleBar(ax, scalebar_location, scalebar_distance, color='k')
 
     ax.text(*arrow_location,transform=ax.transAxes, s='N', fontsize=14,zorder=zorder)
     arrow_location = np.asarray(arrow_location) + np.asarray((0.008,-0.03))
     # arrow_location[1] = arrow_location[1] - 0.02
     ax.arrow(*arrow_location, 0, 0.02, length_includes_head=True,
-          head_width=0.01, head_length=0.04, overhang=0.2,transform=ax.transAxes, 
+          head_width=0.01, head_length=0.04, overhang=0.2,transform=ax.transAxes,
           facecolor='k',zorder=zorder)
 
 def save_fig(output_filename):
@@ -171,7 +165,7 @@ def plot_basemap(ax,include_labels=False):
     else:
         labels = None
     plot_basemap_labels(ax,labels=labels)
-    plot_scale_bar(ax,scalebar_location=(0.57,0.04),scalebar_distance=100,zorder=20)
+    plot_scale_bar(ax,scalebar_location=(0.57,0.04),scalebar_distance=100)
     return ax
 
 def plot_global_basemap(ax,include_countries=None,
@@ -191,10 +185,10 @@ def plot_global_basemap(ax,include_countries=None,
     proj = ccrs.PlateCarree() # See more on projections here: https://scitools.org.uk/cartopy/docs/v0.15/crs/projections.html#cartopy-projections
     bounds = boundary_gdp.geometry.total_bounds # this gives your boundaries of the map as (xmin,ymin,xmax,ymax)
     if include_countries is not None:
-        xmin = bounds[0]
-        xmax = bounds[2]+50.0
-        ymin = bounds[1]
-        ymax = bounds[3]+50.0
+        xmin = bounds[0]+2.0
+        xmax = bounds[2]+6.0
+        ymin = bounds[1]+4.0
+        ymax = bounds[3]+2.0
     else:
         xmin = bounds[0]
         xmax = bounds[2]
@@ -216,17 +210,22 @@ def plot_global_basemap(ax,include_countries=None,
         labels = boundary_gdp[['ADM0_A3_US','geometry']]
         labels = labels[labels["ADM0_A3_US"].isin(label_countries)]
         plot_basemap_labels(ax,labels=labels,label_column="ISO_A3_EH",label_size=label_size)
-    
+    # plot_scale_bar(ax,scalebar_location=(0.90,0.04),scalebar_distance=100)
     scale_bar_and_direction(ax,arrow_location=arrow_location,
                     scalebar_location=scalebar_location,
-                    scalebar_distance=100,zorder=20)
+                    scalebar_distance=100)
     return ax
 
 def plot_africa_basemap(ax):
     data_path = load_config()['paths']['data']
+    ccg_countries = pd.read_csv(os.path.join(data_path,"admin_boundaries","ccg_country_codes.csv"))
+    ccg_isos = ccg_countries[ccg_countries["ccg_country"] == 1]["iso_3digit_alpha"].values.tolist()
+    del ccg_countries
+
     global_map_df = gpd.read_file(os.path.join(data_path,"admin_boundaries",
                                     "ne_10m_admin_0_countries",
                                     "ne_10m_admin_0_countries.shp"))
+    ccg_map_df = global_map_df[global_map_df["ADM0_A3_US"].isin(ccg_isos)]
     global_lake_df = gpd.read_file(os.path.join(data_path,"admin_boundaries",
                                     "ne_10m_lakes",
                                     "ne_10m_lakes.shp"))
@@ -240,6 +239,14 @@ def plot_africa_basemap(ax):
     del global_map_df
     ax = plot_global_basemap(ax,
                         include_countries=africa_isos)
+    for ccg_country in ccg_map_df.itertuples():
+        ax.add_geometries(
+            [ccg_country.geometry],
+            crs=ccrs.PlateCarree(),
+            edgecolor="white",
+            facecolor="#d9d9d9",
+            zorder=2)
+    plot_basemap_labels(ax,labels=ccg_map_df,label_column="ADM0_A3_US",label_size=10)
     for lake in global_lake_df.itertuples():
         ax.add_geometries(
             [lake.geometry],
@@ -249,60 +256,130 @@ def plot_africa_basemap(ax):
             zorder=3)
     return ax
 
-def plot_africa_basemap2(ax):
+def plot_ccg_basemap(ax,scalebar_location=(0.12,0.05),
+                        arrow_location=(0.06,0.08),
+                        scalebar_distance=100,
+                        label_size=6.0):
     data_path = load_config()['paths']['data']
-    
-    # Load country and lake shapefiles
-    global_map_df = gpd.read_file(os.path.join(data_path, "admin_boundaries",
-                                               "ne_10m_admin_0_countries",
-                                               "ne_10m_admin_0_countries.shp"))
-    global_lake_df = gpd.read_file(os.path.join(data_path, "admin_boundaries",
-                                                "ne_10m_lakes",
-                                                "ne_10m_lakes.shp"))
-    
-    # Get list of African countries
-    africa_df = global_map_df[global_map_df["CONTINENT"] == "Africa"]
-    
-    # Plot African basemap
-    africa_isos = list(set(africa_df["ADM0_A3_US"].values.tolist()))
-    ax = plot_global_basemap(ax, include_countries=africa_isos)
-    
-    # Plot lakes
+    ccg_countries = pd.read_csv(os.path.join(data_path,"admin_boundaries","ccg_country_codes.csv"))
+    ccg_isos = ccg_countries[ccg_countries["ccg_country"] == 1]["iso_3digit_alpha"].values.tolist()
+    boundary_isos = ["RWA","LSO","SWZ","COG","GNQ","GAB","SOM","ETH","SDS","CAF","CMR"]
+    del ccg_countries
+
+    global_map_df = gpd.read_file(os.path.join(data_path,"admin_boundaries",
+                                    "ne_10m_admin_0_countries",
+                                    "ne_10m_admin_0_countries.shp"))
+    ccg_map_df = global_map_df[global_map_df["ADM0_A3_US"].isin(ccg_isos + boundary_isos)]
+    global_lake_df = gpd.read_file(os.path.join(data_path,"admin_boundaries",
+                                    "ne_10m_lakes",
+                                    "ne_10m_lakes.shp"))
+
+    proj = ccrs.PlateCarree() # See more on projections here: https://scitools.org.uk/cartopy/docs/v0.15/crs/projections.html#cartopy-projections
+    bounds = ccg_map_df.geometry.total_bounds # this gives your boundaries of the map as (xmin,ymin,xmax,ymax)
+    xmin = bounds[0]
+    xmax = bounds[2]
+    ymin = bounds[1] - 5.0
+    ymax = bounds[3] - 9.0
+
+    ax = get_axes(ax,extent = (xmin,xmax,ymin,ymax),epsg=4326) # extent requires (xmin,xmax,ymin,ymax) you might have to adjust the offsets a bit manually as I have done here by +/-0.1
+    ax.set_facecolor("#c6e0ff")
+
+    for ccg_country in ccg_map_df.itertuples():
+        iso = getattr(ccg_country,"ADM0_A3_US")
+        if iso in ccg_isos:
+            facecolor = "#d9d9d9"
+        else:
+            facecolor = "#e0e0e0"
+        ax.add_geometries(
+            [ccg_country.geometry],
+            crs=ccrs.PlateCarree(),
+            edgecolor="white",
+            facecolor=facecolor,
+            zorder=2)
+    plot_basemap_labels(ax,
+                labels=ccg_map_df[ccg_map_df["ADM0_A3_US"].isin(ccg_isos)],
+                label_column="ADM0_A3_US",label_size=10)
     for lake in global_lake_df.itertuples():
         ax.add_geometries(
             [lake.geometry],
             crs=ccrs.PlateCarree(),
             edgecolor="#c6e0ff",
             facecolor="#c6e0ff",
-            zorder=3
-        )
-    
-     # Add country names with larger, dark grey font
-    for _, country in africa_df.iterrows():
-        if country.geometry.is_empty:
-            continue
-        
-        # Get centroid to position the label
-        centroid = country.geometry.centroid
-        ax.text(centroid.x, centroid.y,
-                country['NAME'],  # Country name column
-                horizontalalignment='center',
-                fontsize=9,  # Increased font size
-                color='darkgrey',  # Dark grey color
-                fontweight='bold',  # Bold for emphasis
-                transform=ccrs.PlateCarree(),
-                zorder=5)
-    
-    # Get bounds and set equal white space on left and right
-    bounds = africa_df.total_bounds  # [minx, miny, maxx, maxy]
-    width = bounds[2] - bounds[0]
-    height = bounds[3] - bounds[1]
-    
-    # Add padding for equal white space
-    padding = width * 0.05  # 5% padding on each side
-    ax.set_extent([bounds[0] - padding, bounds[2] + 2.6*padding,
-                   bounds[1], bounds[3] + 1.1*padding], crs=ccrs.PlateCarree())
-    
+            zorder=3)
+    scale_bar_and_direction(ax,arrow_location=arrow_location,
+                    scalebar_location=scalebar_location,
+                    scalebar_distance=100)
+    return ax
+
+def plot_ccg_country_basemap(ax,
+                        country_isos,
+                        boundary_isos=[],
+                        scalebar_location=(0.12,0.05),
+                        arrow_location=(0.06,0.08),
+                        scalebar_distance=100,
+                        label_size=6.0):
+    data_path = load_config()['paths']['data']
+    global_map_df = gpd.read_file(os.path.join(data_path,"admin_boundaries",
+                                    "ne_10m_admin_1_states_provinces",
+                                    "ne_10m_admin_1_states_provinces.shp"))
+    country_map_df = global_map_df[global_map_df["adm0_a3"].isin(country_isos)]
+    country_map_df = country_map_df[["adm0_a3","name","geometry"]]
+    ccg_isos = country_map_df["name"].values.tolist()
+    del global_map_df
+
+    if len(boundary_isos) > 0:
+        global_map_df = gpd.read_file(os.path.join(data_path,"admin_boundaries",
+                                    "ne_10m_admin_0_countries",
+                                    "ne_10m_admin_0_countries.shp"))
+        boundary_map_df = global_map_df[global_map_df["ADM0_A3_US"].isin(boundary_isos)]
+        boundary_map_df.rename(columns={"ADM0_A3_US":"adm0_a3","NAME":"name"},inplace=True)
+        boundary_map_df = boundary_map_df[["adm0_a3","name","geometry"]]
+
+
+    ccg_map_df = gpd.GeoDataFrame(
+                            pd.concat([country_map_df,boundary_map_df],axis=0,ignore_index=True),
+                            geometry="geometry",
+                            crs=country_map_df.crs)
+
+    global_lake_df = gpd.read_file(os.path.join(data_path,"admin_boundaries",
+                                    "ne_10m_lakes",
+                                    "ne_10m_lakes.shp"))
+
+    proj = ccrs.PlateCarree() # See more on projections here: https://scitools.org.uk/cartopy/docs/v0.15/crs/projections.html#cartopy-projections
+    bounds = country_map_df.geometry.total_bounds # this gives your boundaries of the map as (xmin,ymin,xmax,ymax)
+    xmin = bounds[0] - 2.0
+    xmax = bounds[2] + 0.5
+    ymin = bounds[1] - 0.5
+    ymax = bounds[3] + 3.0
+
+    ax = get_axes(ax,extent = (xmin,xmax,ymin,ymax),epsg=4326) # extent requires (xmin,xmax,ymin,ymax) you might have to adjust the offsets a bit manually as I have done here by +/-0.1
+    ax.set_facecolor("#c6e0ff")
+
+    for ccg_country in ccg_map_df.itertuples():
+        iso = getattr(ccg_country,"name")
+        if iso in ccg_isos:
+            facecolor = "#d9d9d9"
+        else:
+            facecolor = "#e0e0e0"
+        ax.add_geometries(
+            [ccg_country.geometry],
+            crs=ccrs.PlateCarree(),
+            edgecolor="white",
+            facecolor=facecolor,
+            zorder=2)
+    plot_basemap_labels(ax,
+                labels=ccg_map_df,
+                label_column="name",label_size=10)
+    for lake in global_lake_df.itertuples():
+        ax.add_geometries(
+            [lake.geometry],
+            crs=ccrs.PlateCarree(),
+            edgecolor="#c6e0ff",
+            facecolor="#c6e0ff",
+            zorder=3)
+    scale_bar_and_direction(ax,arrow_location=arrow_location,
+                    scalebar_location=scalebar_location,
+                    scalebar_distance=100)
     return ax
 
 def plot_point_assets(ax,nodes,colors,size,marker,zorder,label):
@@ -358,7 +435,7 @@ def generate_weight_bins(weights, n_steps=9, width_step=0.01, interpolation='lin
         if min_nearest > min_decimal_one:
             min_nearest = min_nearest - 0.1
         min_weight = (10**min_order)*min_nearest
-    
+
     if max(weights) > 0:
         max_order = math.floor(math.log10(max(weights)))
         max_decimal_one = max_weight/(10**max_order)
@@ -379,7 +456,7 @@ def generate_weight_bins(weights, n_steps=9, width_step=0.01, interpolation='lin
         weights = np.array([min_weight] + list(weights) + [max_weight])
         mins = np.quantile(weights,q=np.linspace(0,1,n_steps,endpoint=True))
     elif interpolation == 'equal bins':
-        mins = np.array([min_weight] + list(sorted(set([cut.right for cut in pd.qcut(sorted(weights),n_steps-1)])))[:-1] + [max_weight])  
+        mins = np.array([min_weight] + list(sorted(set([cut.right for cut in pd.qcut(sorted(weights),n_steps-1)])))[:-1] + [max_weight])
     # elif interpolation == 'htb':
     #     weights = [min_weight] + list(weights) + [max_weight]
     #     mins = htb(weights)
@@ -437,13 +514,13 @@ def create_figure_legend(divisor,significance,
 
         if legend_type == 'marker':
             legend_handles.append(plt.plot([],[],
-                                marker=marker, 
-                                ms=width/legend_weight, 
+                                marker=marker,
+                                ms=width/legend_weight,
                                 ls="",
                                 color=legend_colors[i],
                                 label=label)[0])
         else:
-            legend_handles.append(Line2D([0], [0], 
+            legend_handles.append(Line2D([0], [0],
                             color=legend_colors[i], lw=width/legend_weight, label=label))
 
     return legend_handles
@@ -596,8 +673,8 @@ def line_map_plotting_colors_width(ax,df,df_column,
     #     for record in df.itertuples()
     # ]
     max_weight = max(weights)
-    width_by_range = generate_weight_bins(weights, 
-                                width_step=width_step, 
+    width_by_range = generate_weight_bins(weights,
+                                width_step=width_step,
                                 n_steps=line_steps,
                                 interpolation=interpolation)
     # print (min(weights),max(weights))
@@ -672,8 +749,8 @@ def point_map_plotting_color_width(ax,df,df_column,
     #     for record in df.itertuples() if getattr(record,column) > 0
     # ]
     max_weight = max(weights)
-    width_by_range = generate_weight_bins(weights, 
-                                width_step=width_step, 
+    width_by_range = generate_weight_bins(weights,
+                                width_step=width_step,
                                 n_steps=point_steps,
                                 interpolation=interpolation)
 
@@ -753,8 +830,8 @@ def point_map_plotting_colors_width(ax,df,column,
     #     for record in df.itertuples() if getattr(record,column) > 0
     # ]
     max_weight = max(weights)
-    width_by_range = generate_weight_bins(weights, 
-                                width_step=width_step, 
+    width_by_range = generate_weight_bins(weights,
+                                width_step=width_step,
                                 n_steps=point_steps,
                                 interpolation=interpolation)
     # print (width_by_range)
@@ -780,7 +857,7 @@ def point_map_plotting_colors_width(ax,df,column,
                         'marker',point_colors,
                         width_step/legend_weight,marker=marker)
         styles = OrderedDict([
-            (cat,  
+            (cat,
                 Style(color=color, zindex=zorder,label=label)) for j,(cat,color,label,zorder) in enumerate(layer_details)
         ] + [(no_value_label,  Style(color=no_value_color, zindex=min_order-1,label=no_value_label))])
     else:
@@ -812,7 +889,7 @@ def point_map_plotting_colors_width(ax,df,column,
                             width_step/legend_weight,marker=marker)
 
         styles = OrderedDict([
-            (label,  
+            (label,
                 Style(color=color, zindex=zorder,label=label)) for j,(cat,color,label,zorder) in enumerate(layer_details)
         ] + [(no_value_label,  Style(color=no_value_color, zindex=min_order-1,label=no_value_label))])
     for cat, geoms in point_geoms_by_category.items():

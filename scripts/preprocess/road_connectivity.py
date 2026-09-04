@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
-import sys
 import os
-import re
-import json
+
 import pandas as pd
-import igraph as ig
 import geopandas as gpd
-from utils_new import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils_new import *
+
 tqdm.pandas()
 
 
@@ -16,7 +15,7 @@ tqdm.pandas()
 def main(config):
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
-    
+
     epsg_meters = 3395 # To convert geometries to measure distances in meters
 
     # Read the different location data from different extracts
@@ -105,13 +104,13 @@ def main(config):
     road_nodes.rename(columns={"id":node_id_column},inplace=True)
     road_edges = road_edges.to_crs(epsg=epsg_meters)
     road_edges["length_m"] = road_edges.geometry.length
-    road_nodes = road_nodes.to_crs(epsg=epsg_meters) 
-    
+    road_nodes = road_nodes.to_crs(epsg=epsg_meters)
+
     main_roads = road_edges[
                         road_edges[road_type_column].isin(main_road_types)
-                        ][road_id_column].values.tolist() 
+                        ][road_id_column].values.tolist()
 
-    
+
     all_point_locations_df = []
     all_polygon_locations_df = []
     countries = []
@@ -140,14 +139,14 @@ def main(config):
     if len(all_point_locations_df) > 0:
         all_point_locations_df = gpd.GeoDataFrame(
                                         pd.concat(all_point_locations_df,axis=0,ignore_index=True),
-                                        geometry="geometry", 
+                                        geometry="geometry",
                                         crs=f"EPSG:{epsg_meters}"
-                                        ) 
+                                        )
         connection_type["Point"] = all_point_locations_df
     if len(all_polygon_locations_df) > 0:
         all_polygon_locations_df = gpd.GeoDataFrame(
                                         pd.concat(all_polygon_locations_df,axis=0,ignore_index=True),
-                                        geometry="geometry", 
+                                        geometry="geometry",
                                         crs=f"EPSG:{epsg_meters}"
                                         )
         connection_type["Polygon"] = all_polygon_locations_df
@@ -159,7 +158,7 @@ def main(config):
                     road_edges["from_iso_a3"] == m_c
                     ) | (road_edges["to_iso_a3"] == m_c)]
         connected_nodes = list(set(country_roads.from_id.values.tolist() + country_roads.to_id.values.tolist()))
-        country_nodes = road_nodes[road_nodes[node_id_column].isin(connected_nodes)] 
+        country_nodes = road_nodes[road_nodes[node_id_column].isin(connected_nodes)]
         if len(country_roads.index) > 0:
             targets = []
             for key,location_df in connection_type.items():
@@ -204,7 +203,7 @@ def main(config):
                         else:
                             nearest_roads += connected_edges
 
-        
+
         print (f"* Done with country - {m_c}")
 
     # print (nearest_roads)
@@ -225,7 +224,7 @@ def main(config):
     """Find the network components
     """
     edges, nearest_nodes = components(edges,nearest_nodes,node_id_column="id")
-    
+
     """Assign border roads
     """
     edges["border_road"] = np.where(edges["from_iso_a3"] == edges["to_iso_a3"],0,1)

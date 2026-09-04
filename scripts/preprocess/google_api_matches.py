@@ -1,13 +1,13 @@
 import os
-import sys
+
 import pandas as pd
 import geopandas as gpd
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from utils_new import *
 from tqdm import tqdm
+
+
+from aftdb.preprocess.utils_new import *
+
 tqdm.pandas()
 
 def match_and_merge(
@@ -21,7 +21,7 @@ def match_and_merge(
                     ):
     if "id" in location_df.columns.values.tolist():
         location_df.rename(columns={"id":"location_id"},inplace=True)
-    
+
     matches = gpd.sjoin_nearest(rail_dataframe,location_df,distance_col=distance_column)
     matches = matches.drop_duplicates(subset=["id"],keep="first")
     matches_dataframe = pd.merge(
@@ -95,7 +95,7 @@ def main(config):
                                 distance_column="distance_mines",
                                 name_column="Name",
                                 type_column="mines")
-    
+
     usgs_data = gpd.read_file(
                     os.path.join(
                         incoming_data_path,
@@ -242,7 +242,7 @@ def main(config):
                             "africa-station-google-points",
                             "location_proximity_final.gpkg"),
                         driver="GPKG")
-    
+
 
 if __name__ == '__main__':
     CONFIG = load_config()

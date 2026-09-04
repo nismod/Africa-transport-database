@@ -1,29 +1,28 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Aim: to complete the attribution table for 'ports' in the 'africa_ports_modified.gpkg' file, specifically adding the 'node_id', 'name', and 'ISO3' fields. 
+# Aim: to complete the attribution table for 'ports' in the 'africa_ports_modified.gpkg' file, specifically adding the 'node_id', 'name', and 'ISO3' fields.
 # The output file will be named 'output.gpkg' and will contain two layers: 'nodes' and 'edges'."
 
+import os
 
 import geopandas as gpd
-from shapely.ops import nearest_points
-import os
 import pandas as pd
-import sys
-import re
-from utils import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils import *
+
 tqdm.pandas()
 
 def main(config):
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
 
-    # 1. Read files 
+    # 1. Read files
     # (1) Read the non-intersected gpkg
     non_intersected = gpd.read_file(os.path.join(processed_data_path,
                                         "non_intersected_from_merged.gpkg"))
-    # (2) Read the merged gpkg 
+    # (2) Read the merged gpkg
     #nodes
     df = gpd.read_file(os.path.join(processed_data_path,"africa_ports_modified.gpkg"),layer="nodes")
     # lines
@@ -36,13 +35,13 @@ def main(config):
     #（4）Read merged file with iso3
     merged_file_path=os.path.join(processed_data_path,"merged_with_iso2.csv")
     merged_file= pd.read_csv(merged_file_path)
-    
+
     #2. Fill in the blank values in the column of node_id
 
     for idx, row in df[df['node_id'].isnull()].iterrows():
         # Find the coresponding rows ion the non_intersected datasets
         intersected_rows = non_intersected[non_intersected.intersects(row['geometry'])]
-   
+
         # If an intersection exists, take the 'FeatureUID' of the first intersection and assign it to the corresponding 'node_id' of df.
         if not intersected_rows.empty:
             df.at[idx, 'node_id'] = intersected_rows.iloc[0]['FeatureUID']
@@ -59,7 +58,7 @@ def main(config):
     merged_file = merged_file.loc[:,~merged_file.columns.duplicated()]
     merged_result = df.merge(merged_file[['node_id', 'ISO_A3']], on='node_id', how='left')
     merged_result['iso3'].fillna(merged_result['ISO_A3'], inplace=True)
-    merged_result.drop(columns=['ISO_A3'], inplace=True)  
+    merged_result.drop(columns=['ISO_A3'], inplace=True)
 
     # (2) Extract the ISO number from world boundary file
     merged_result = merged_result.merge(world[['ISO_A3', 'geometry']], left_on='iso3', right_on='ISO_A3', how='left')
@@ -74,21 +73,21 @@ def main(config):
     #5. Add values to the name column
     # Extract these rows with name-null from merged_result
     for idx, row in merged_result[merged_result['name'].isnull()].iterrows():
-        
+
         # Accoding to node_id, extraxct rows from merged_file
         related_row = merged_file[merged_file['node_id'] == row['node_id']]
-        
+
         if not related_row.empty:
-            related_row = related_row.iloc[0]  
-            
+            related_row = related_row.iloc[0]
+
             # if  FeatureNam is not null，
             if pd.notnull(related_row['FeatureNam']):
                 merged_result.at[idx, 'name'] = related_row['FeatureNam']
-                
+
             # if  FeatureNamis numm but the column "name" ios not null
             elif pd.notnull(related_row['name']):
                 merged_result.at[idx, 'name'] = related_row['name']
-                
+
             # if both FeatureNam and name is null，use the 'Project_name' to update
             else:
                 merged_result.at[idx, 'name'] = related_row['Project_name']

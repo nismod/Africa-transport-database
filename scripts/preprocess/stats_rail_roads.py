@@ -1,22 +1,20 @@
-import sys
 import os
-import re
-import json
-import pandas as pd
-import igraph as ig
+
 import geopandas as gpd
-from utils_new import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils_new import *
+
 tqdm.pandas()
 
 
 def main(config):
 
     incoming_data_path = config['paths']['incoming_data']
-    
+
     processed_data_path = config['paths']['data']
 
-    
+
     roads_df = gpd.read_parquet(os.path.join(
                  processed_data_path,
                  "infrastructure",
@@ -27,7 +25,7 @@ def main(config):
                  "infrastructure",
                  "africa_railways_network.gpkg"
                  ), layer = 'edges')
-    
+
 
     # Convert length from meters to kilometers - railways
     rail_df['length_km'] = rail_df['length_m'] / 1000
@@ -76,13 +74,11 @@ def main(config):
         "infrastructure",
         "paved_stats2.csv"
     ), index=False)
-   
-    
+
+
 
 
 
 if __name__ == '__main__':
     CONFIG = load_config()
     main(CONFIG)
-
-    

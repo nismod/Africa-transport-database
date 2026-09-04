@@ -1,21 +1,15 @@
 """Road network risks and adaptation maps
 """
 import os
-import sys
-from collections import OrderedDict
-import pandas as pd
+
 import geopandas as gpd
-import numpy as np
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from matplotlib.lines import Line2D
-from map_plotting_utils import *
 from tqdm import tqdm
-from matplotlib import cm
-tqdm.pandas()
 from matplotlib import font_manager
+
+from aftdb.map.map_plotting_utils import *
+
+tqdm.pandas()
 
 
 
@@ -28,14 +22,14 @@ def main(config):
     if os.path.exists(figures) is False:
         os.mkdir(figures)
 
-    
+
     rail_df = gpd.read_file(os.path.join(
                  data_path,
                  "infrastructure",
                  "africa_railways_network.gpkg"
                  ), layer = 'edges')
-    
-    
+
+
     rail_df['length_km'] = rail_df['length_m'] / 1000
     # Group the data by country and status, summing the length_m column
     grouped_data = rail_df.groupby(['country', 'status'])['length_km'].sum().reset_index()
@@ -45,36 +39,36 @@ def main(config):
     pivot_data = grouped_data.pivot(index='country', columns='status', values='length_km').fillna(0)
     # Preview the pivot table
     print(pivot_data.head())
-    
+
     # Create a font property for bold text
     bold_font = font_manager.FontProperties(weight='bold')
     # Select a colormap (e.g., 'viridis', 'plasma', 'tab20', 'Set1', etc.)
     # colormap = [
-    # '#fddbcc',  
-    # '#f97306',  
-    # '#c1272d',  
-    # '#801515',  
-    # '#fbb03b',  
-    # '#d0e4f7',  
-    # '#8c8ccf',  
-    # '#6a5acd',  
-    # '#800080',  
-    # '#d3d3d3',  
+    # '#fddbcc',
+    # '#f97306',
+    # '#c1272d',
+    # '#801515',
+    # '#fbb03b',
+    # '#d0e4f7',
+    # '#8c8ccf',
+    # '#6a5acd',
+    # '#800080',
+    # '#d3d3d3',
     # ]
     colormap = {
-    'Abandoned':'#fddbcc',       
-    'Disused': '#f97306',         
-    'Razed': '#c1272d',           
-    'Suspended': '#801515',      
-    'Open': '#fbb03b',            
-    'Planned': '#d0e4f7',         
-    'Proposed': '#8c8ccf',        
-    'Construction': '#6a5acd',    
-    'Rehabilitation': '#800080',  
-    'Unknown': '#d3d3d3',         
+    'Abandoned':'#fddbcc',
+    'Disused': '#f97306',
+    'Razed': '#c1272d',
+    'Suspended': '#801515',
+    'Open': '#fbb03b',
+    'Planned': '#d0e4f7',
+    'Proposed': '#8c8ccf',
+    'Construction': '#6a5acd',
+    'Rehabilitation': '#800080',
+    'Unknown': '#d3d3d3',
     }
 
-    
+
     # Get color values from the colormap
     # num_colors = len(pivot_data.columns)
     # colors = [colormap[i] for i in range(num_colors)]
@@ -91,13 +85,13 @@ def main(config):
     # Adjust x-axis labels
     plt.xticks(rotation=30, ha='right')
     plt.legend(title='Status',title_fontproperties=bold_font, fontsize='small')
-    
+
     plt.subplots_adjust(bottom=0.1)
     plt.tight_layout()
 
     save_fig(os.path.join(figures,"rail_hist_cap_withgrid.png"))
-    
-    
+
+
 
 if __name__ == '__main__':
     CONFIG = load_config()

@@ -1,7 +1,8 @@
-import geopandas as gpd
-import glob
 import os
-from utils_new import *
+
+import geopandas as gpd
+
+from aftdb.preprocess.utils_new import *
 
 def create_tag(x):
     if (x["osm_class"] == x["combined_surface_DL_priority"]) & (x["osm_class"] == x["paved"]):
@@ -14,12 +15,12 @@ def create_tag(x):
         return 3
 
 def main(config):
-    
+
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
     output_path = config['paths']['results']
     figure_path = config['paths']['figures']
-    
+
     epsg_meters = 3395
     # Write to a new GeoPackage
     database_lines = gpd.read_parquet(os.path.join(
@@ -40,7 +41,7 @@ def main(config):
     edge_ids = list(set(database_lines["osm_way_id"].values.tolist()))
     heigit_lines = heigit_lines[heigit_lines["osm_id"].isin(edge_ids)]
     heigit_lines = heigit_lines.drop_duplicates(subset=["osm_id"],keep="first")
-    
+
     # Ensure all GeoDataFrames use the same CRS
     database_lines = database_lines.to_crs(epsg=epsg_meters)
     heigit_lines = heigit_lines.to_crs(epsg=epsg_meters)
@@ -87,7 +88,7 @@ def main(config):
     heigit_lines = pd.concat(heigit_clipped_df, axis=0, ignore_index=True)
     heigit_lines = heigit_lines.groupby(['osm_id','country_iso_a3','combined_surface_DL_priority'])['heigit_length_m'].sum().reset_index()
     matched_df = pd.merge(heigit_lines,database_lines,how="left",on=["osm_id","country_iso_a3"])
-    
+
     matched_df["length_heigit_m"] = matched_df["length_m"]
     matched_df["length_db_m"] = matched_df["length_m"]
     matched_df.drop("length_m",axis=1,inplace=True)
@@ -122,16 +123,16 @@ def main(config):
     # Export the pivot table
     pivot_table.to_csv(os.path.join(
                             output_path,
-                            "merged_validation_datasets.csv")) 
+                            "merged_validation_datasets.csv"))
 
     # Merge both
     pivot_table = heigit_summary_corr.join(db_summary, how='outer').fillna(0).reset_index()
     # Export the pivot table
     pivot_table.to_csv(os.path.join(
                             output_path,
-                            "merged_validation_datasets_corrected.csv"))   
-    
-    
+                            "merged_validation_datasets_corrected.csv"))
+
+
 if __name__ == '__main__':
     CONFIG = load_config()
-    main(CONFIG)    
+    main(CONFIG)

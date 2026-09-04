@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 # coding: utf-8
-import sys
+import json
 import os
 import re
-import json
+
 import pandas as pd
 import geopandas as gpd
-import snkit
 from shapely.geometry import LineString
-from utils_new import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils_new import *
+
 tqdm.pandas()
 
 def get_line_status(x):
@@ -34,13 +35,13 @@ def add_iso_code(df,df_id_column,incoming_data_path):
                             "AFR_Political_ADM0_Boundaries.shp"))
     africa_boundaries.rename(columns={"DsgAttr03":"iso3"},inplace=True)
     # Spatial join
-    m = gpd.sjoin(df, 
-                    africa_boundaries[['geometry', 'iso3']], 
+    m = gpd.sjoin(df,
+                    africa_boundaries[['geometry', 'iso3']],
                     how="left", predicate='within').reset_index()
-    m = m[~m["iso3"].isna()]        
+    m = m[~m["iso3"].isna()]
     un = df[~df[df_id_column].isin(m[df_id_column].values.tolist())]
     un = gpd.sjoin_nearest(un,
-                            africa_boundaries[['geometry', 'iso3']], 
+                            africa_boundaries[['geometry', 'iso3']],
                             how="left").reset_index()
     m = pd.concat([m,un],axis=0,ignore_index=True)
     return m
@@ -48,7 +49,7 @@ def add_iso_code(df,df_id_column,incoming_data_path):
 def main(config):
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
-    
+
     epsg_meters = 3395 # To convert geometries to measure distances in meters
 
     # Read a number of rail network files and convert them to networks first
@@ -109,7 +110,7 @@ def main(config):
                                                     "mode":"mixed",
                                                     "gauge":1435,
                                                     "line":"Tema-Ouagadougou Railway"},
-                                "distance_threshold":300 
+                                "distance_threshold":300
                             },
                             {
                                 "project_name":"Isaka Kigali Gitega Railway",
@@ -183,7 +184,7 @@ def main(config):
                             },
 
                         ]
-    
+
     processinng_step_one = True
     if processinng_step_one is True:
         for inputs in input_descriptions:
@@ -205,8 +206,8 @@ def main(config):
                 df_points = gpd.GeoDataFrame(df_points,geometry="geometry",crs="EPSG:4326")
             else:
                 df_points = inputs["points_file"]
-            
-            
+
+
             if inputs["project_name"] == "Standard Gauge Railway":
                 tza_sgr_lines = gpd.read_file(os.path.join(rail_paths,
                             "tanzania_standard_gauge_railway.gpkg"),
@@ -236,15 +237,15 @@ def main(config):
             else:
                 df_lines = add_attributes(df_lines,inputs["project_attributes"])
                 df_lines = df_lines[["country","line","status","mode","gauge","geometry"]]
-            
+
             df_crs = int(str(df_lines.crs).split(":")[1])
-            
+
             network = create_network_from_nodes_and_edges(
                                         df_points,
                                         df_lines,
                                         "",
                                         geometry_precision=True)
-            
+
             edges, nodes = components(network.edges,network.nodes,
                                       node_id_column="node_id",
                                       edge_id_column="edge_id",
@@ -254,8 +255,8 @@ def main(config):
             edges = edges.set_crs(epsg=df_crs)
             nodes = nodes.set_crs(epsg=df_crs)
             max_edge_id = max([int(re.findall(r'\d+',v)[0]) for v in edges["edge_id"].values.tolist()])
-            
-              
+
+
 
             # Join network components which are very close
             all_components = list(set(nodes["component"].values.tolist()))
@@ -281,7 +282,7 @@ def main(config):
                         distances = distances.to_crs(epsg=df_crs)
                         component_dfs.append(distances)
                         max_edge_id = max(max_edge_id + 1 + distances.index.values)
-        
+
             nodes = nodes.to_crs(epsg=df_crs)
             if len(component_dfs) > 0:
                 edges = pd.concat([edges]+component_dfs,
@@ -306,7 +307,7 @@ def main(config):
                                     rail_paths,
                                     f"{output_file_name}.gpkg"),
                                 layer="edges",driver="GPKG")
-    
+
     # Other databases
     input_descriptions = [
                             {
@@ -351,14 +352,14 @@ def main(config):
                                 "distance_threshold":2.0
                             },
                         ]
-   
 
-    processinng_step_two = True 
+
+    processinng_step_two = True
     if processinng_step_two is True:
         rail_edges = gpd.read_file(os.path.join(incoming_data_path,
                             "africa_rail_network",
                             "network_data",
-                            "africa_railways.gpkg"),layer="edges") 
+                            "africa_railways.gpkg"),layer="edges")
         max_edge_id = max(rail_edges.oid.values.tolist())
         df_crs = int(str(rail_edges.crs).split(":")[1])
         rail_nodes = json.load(open(os.path.join(incoming_data_path,
@@ -395,7 +396,7 @@ def main(config):
             for del_col in ["oid","edge_id","source","target","component"]:
                 if del_col in df_edges.columns.values.tolist():
                     df_edges.drop(del_col,axis=1,inplace=True)
-            
+
             df_edges = pd.merge(df_edges,
                             df_nodes[["node_id","oid"]],
                             how="left",
@@ -409,7 +410,7 @@ def main(config):
             df_edges.rename(columns={"oid":"target"},inplace=True)
             df_edges.drop(["to_node","node_id"],axis=1,inplace=True)
             df_edges["oid"] = list(max_edge_id + 1 + df_edges.index.values)
-            
+
             all_edges.append(df_edges)
             max_edge_id = max(max_edge_id + 1 + df_edges.index.values)
             if inputs["find_nearest"] is True:
@@ -443,7 +444,7 @@ def main(config):
             all_nodes.append(df_nodes)
             max_node_id = max(max_node_id + 1 + df_nodes.index.values)
             print (f"* Added rail edges and nodes for {inputs['project_name']}")
-        
+
         all_edges = pd.concat(all_edges,axis=0,ignore_index=True)
         all_nodes = pd.concat(all_nodes,axis=0,ignore_index=True)
 
@@ -455,7 +456,7 @@ def main(config):
         for del_col in ["node_id","index","index_right"]:
             if del_col in nodes.columns.values.tolist():
                 nodes.drop(del_col,axis=1,inplace=True)
-        
+
         nodes.rename(columns={"oid":"id","type":"infra"},inplace=True)
 
         edges = gpd.GeoDataFrame(edges,geometry="geometry",crs=rail_edges.crs)
@@ -478,7 +479,7 @@ def main(config):
         edges["source"] = edges.progress_apply(lambda x:f"railn_{x.source}",axis=1)
         edges["target"] = edges.progress_apply(lambda x:f"railn_{x.target}",axis=1)
         edges.rename(columns={"oid":"id","source":"from_id","target":"to_id","type":"infra"},inplace=True)
-        
+
         gpd.GeoDataFrame(nodes,
                 geometry="geometry",
                 crs=rail_edges.crs).to_file(os.path.join(
@@ -493,7 +494,7 @@ def main(config):
                                 "infrastructure",
                                 "africa_railways_network.gpkg"),
                             layer="edges",driver="GPKG")
- 
+
 
 
 

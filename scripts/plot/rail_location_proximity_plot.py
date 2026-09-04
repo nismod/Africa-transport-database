@@ -1,13 +1,13 @@
 import os
-import sys
+
 import pandas as pd
 import geopandas as gpd
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from map_plotting_utils import *
 from tqdm import tqdm
+
+from aftdb.map.map_plotting_utils import *
+
 tqdm.pandas()
 
 def main(config):
@@ -23,16 +23,16 @@ def main(config):
                             "africa-station-google-points",
                             "location_proximity_final.gpkg"))
     closest_classes = [
-                        ('air',"Airports"), 
-                        ('Mineral Processing Plants', "Mineral Processing Plants - USGS"), 
-                        ('manual check',"Manual check - Satellite imagery"), 
-                        ('IWW port',"Inland ports"), 
-                        ('Manual check',"Manual check - Satellite imagery"), 
-                        ('port',"Martime ports"), ('manul check',"Manual check - Satellite imagery"), 
-                        ('google',"Google places search"), 
-                        ('Oil and Gas Refineries and (or) Petrochemical Complexes',"Oil Refineries - USGS"), 
-                        ('mine',"Remote sensed mines"), 
-                        ('Mines and Quarries',"Mines and Quarries - USGS"), 
+                        ('air',"Airports"),
+                        ('Mineral Processing Plants', "Mineral Processing Plants - USGS"),
+                        ('manual check',"Manual check - Satellite imagery"),
+                        ('IWW port',"Inland ports"),
+                        ('Manual check',"Manual check - Satellite imagery"),
+                        ('port',"Martime ports"), ('manul check',"Manual check - Satellite imagery"),
+                        ('google',"Google places search"),
+                        ('Oil and Gas Refineries and (or) Petrochemical Complexes',"Oil Refineries - USGS"),
+                        ('mine',"Remote sensed mines"),
+                        ('Mines and Quarries',"Mines and Quarries - USGS"),
                         ('Martime port',"Martime ports")
                     ]
     colors = [
@@ -45,7 +45,7 @@ def main(config):
     fig, ax1 = plt.subplots()
     for ct in closest_types:
         df.append(proximity_matches[proximity_matches["closest_class"] == ct]["closest_distance"].values)
-    
+
     counts, edges, bars = ax1.hist(df,histtype='barstacked',bins=30)
     max_y = max([max(c) for c in counts])
 
@@ -59,9 +59,9 @@ def main(config):
         if idx == len(closest_types) - 1:
             text = [str(int(c)) for c in counts[idx]]
             for jdx,(x,y,s) in enumerate(zip(edges[:-1],counts[idx],text)):
-                if int(s) > 0:  
+                if int(s) > 0:
                     axe.text(x,1.02*y,s,fontweight='bold',fontsize=11,ha='center')
-    
+
     legend = axe.legend(title ="Validation data source",loc='upper right',fontsize=15,title_fontproperties={'weight':'bold'})
     plt.setp(legend.get_title(),fontsize=18)
     axe.set_xlabel("Closest distance (meters)",fontweight='bold',fontsize=15)
@@ -79,7 +79,7 @@ def main(config):
     save_fig(os.path.join(figures,
                 "rail_facility_proximity.png"))
     plt.close()
-    
+
 
 if __name__ == '__main__':
     CONFIG = load_config()

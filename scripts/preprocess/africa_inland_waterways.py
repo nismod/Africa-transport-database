@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # coding: utf-8
 # (1) Merge three datasets; (2)Add ISO3 (4) extraxt non_intersected
-import sys
 import os
-import re
-import json
+
 import pandas as pd
 import geopandas as gpd
 import igraph as ig
 from shapely.geometry import LineString
-from utils import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils import *
+
 tqdm.pandas()
 
 config = load_config()
@@ -31,7 +31,7 @@ def get_components_and_size(edges,nodes,
     nodes = gpd.GeoDataFrame(nodes,geometry="geometry",crs=f"EPSG:{network_crs}")
 
     return edges, nodes
-    
+
 def network_creation(nodes_df,edges_df,
                         mode="iww",
                         write_file_name="network",
@@ -67,7 +67,7 @@ def network_creation(nodes_df,edges_df,
 
 
 def main():
-    epsg_meters = 3395    
+    epsg_meters = 3395
     # Step 1: Take the OSM rivers data and convert it into a network
     step = False # This step takes a lot of time, so we have set it to false after running it once
     if step is True:
@@ -80,7 +80,7 @@ def main():
 
         edges = edges[edges["waterway"] == "river"] # Only select the rivers because they will be used for navigation
         edges, nodes = network_creation(None,edges,write_file_name="africa_river")
-    
+
     # Step 2: Select the big connected rivers across Africa based on the largest component sizes
     step = False # This step takes a lot of time, so we have set it to false after running it once
     if step is True:
@@ -95,9 +95,9 @@ def main():
         edges = edges[edges["component_size"] > component_size_threshold]
         edges.drop(["edge_id","from_node","to_node","component","component_size"],axis=1,inplace=True)
 
-        # IWW_ports: IWW ports data from different datasets were taken and combined, 
+        # IWW_ports: IWW ports data from different datasets were taken and combined,
         # then we produced a final version of the selected ports and routes between them by manual cleaning
-        # IWW ports 
+        # IWW ports
         df_ports = pd.read_excel(os.path.join(incoming_data_path,
                                     "IWW_ports",
                                     "africa_IWW_ports.xlsx"),
@@ -108,12 +108,12 @@ def main():
         df_ports = gpd.GeoDataFrame(df_ports,geometry="geometry",crs="EPSG:4326")
 
         # known lake routes connecting ports - merge ports and routing files
-    
+
         df_lake_routes = pd.read_excel(os.path.join(incoming_data_path,
                                         "IWW_ports",
                                         "africa_IWW_ports.xlsx"),
                                 sheet_name="known_connections")
-        
+
         df_lake_routes = pd.merge(df_lake_routes,
                         df_ports[["name","geometry"]],
                         how="left",left_on=["from_port"],right_on=["name"])
@@ -128,7 +128,7 @@ def main():
                                         lambda x:LineString([x.from_geometry,x.to_geometry]),
                                         axis=1)
         df_lake_routes.drop(["from_geometry","to_geometry"],axis=1,inplace=True)
-        
+
         df_routes = gpd.GeoDataFrame(pd.concat([df_lake_routes[["geometry"]],
                         edges[["geometry"]]],axis=0,ignore_index=True),
                         geometry="geometry",crs="EPSG:4326")
@@ -154,7 +154,7 @@ def main():
                         incoming_data_path,
                         "Africa_osm_rivers",
                         "africa_network_nodes.geoparquet")
-                    ) 
+                    )
 
         edges = edges.to_crs(epsg=epsg_meters)
         nodes = nodes.to_crs(epsg=epsg_meters)
@@ -172,7 +172,7 @@ def main():
 
         all_edges = list(set([item for sublist in all_edges for item in sublist]))
         africa_edges = edges[edges["edge_id"].isin(all_edges)]
-        
+
         all_nodes = list(set(africa_edges["from_node"].values.tolist() + africa_edges["to_node"].values.tolist()))
         africa_nodes = nodes[nodes["node_id"].isin(all_nodes)]
 
@@ -186,7 +186,7 @@ def main():
         missing_isos = add_iso_code(missing_isos,"node_id",incoming_data_path,epsg=epsg_meters)
         for del_col in ["index","index_right","lat","lon"]:
             if del_col in missing_isos.columns.values.tolist():
-                missing_isos.drop(del_col,axis=1,inplace=True) 
+                missing_isos.drop(del_col,axis=1,inplace=True)
         iso_nodes = africa_nodes[~africa_nodes["iso3"].isna()]
 
         # Clean and create final Africa nodes and edges
@@ -233,7 +233,7 @@ def main():
                                 "africa_iww_network.gpkg"),
                             layer="edges",driver="GPKG")
 
-    
+
 
 if __name__ == '__main__':
     main()

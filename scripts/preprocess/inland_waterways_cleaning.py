@@ -1,31 +1,30 @@
 #!/usr/bin/env python
 # coding: utf-8
 # (1) Merge three datasets; (2)Add ISO3 (4) extraxt non_intersected
-import sys
 import os
-import re
+
 import pandas as pd
 import geopandas as gpd
 import igraph as ig
 from shapely.geometry import LineString
-from utils_new import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils_new import *
+
 tqdm.pandas()
-
-
 
 
 def main(config):
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
-    
+
     epsg_meters = 3395 # To convert geometries to measure distances in meters
-    
-# IWW_ports: IWW ports data from different datasets were taken and combined, 
+
+# IWW_ports: IWW ports data from different datasets were taken and combined,
 # then we produced a final version of the selected ports and routes between them by manual cleaning
-      
-# IWW ports 
-      
+
+# IWW ports
+
     df_ports = pd.read_excel(os.path.join(incoming_data_path,
                                     "IWW_ports",
                                     "africa_IWW_ports.xlsx"),
@@ -33,16 +32,16 @@ def main(config):
     df_ports["geometry"] = gpd.points_from_xy(
                             df_ports["lon"],df_ports["lat"])
     df_ports["infra"] = "IWW port"
-  
+
     df_ports = gpd.GeoDataFrame(df_ports,geometry="geometry",crs="EPSG:4326")
 
 # known lake routes connecting ports - merge ports and routing files
-    
+
     df_lake_routes = pd.read_excel(os.path.join(incoming_data_path,
                                     "IWW_ports",
                                     "africa_IWW_ports.xlsx"),
                             sheet_name="known_connections")
-    
+
     df_lake_routes = pd.merge(df_lake_routes,
                     df_ports[["name","geometry"]],
                     how="left",left_on=["from_port"],right_on=["name"])
@@ -57,17 +56,17 @@ def main(config):
                                     lambda x:LineString([x.from_geometry,x.to_geometry]),
                                     axis=1)
     df_lake_routes.drop(["from_geometry","to_geometry"],axis=1,inplace=True)
-    
+
 # Add lines for Congo ports based on the routing along the rivers
 
     df_congo_rivers = gpd.read_file(os.path.join(incoming_data_path,
                             "IWW_ports",
                             "edges_port_IWW_af.gpkg"))
-    
+
     df_congo_ports = df_ports[df_ports["iso3"].isin(["CAF","COD","COG"])]
-    lake_ids = list(set(df_lake_routes["from_port"].values.tolist() + df_lake_routes["to_port"].values.tolist())) 
+    lake_ids = list(set(df_lake_routes["from_port"].values.tolist() + df_lake_routes["to_port"].values.tolist()))
     df_congo_ports = df_congo_ports[~df_congo_ports["name"].isin(lake_ids)]
-    
+
     df_south_sudan = gpd.read_file(os.path.join(incoming_data_path,
                             "IWW_ports",
                             "hotosm_ssd_waterways.gpkg"))
@@ -108,21 +107,21 @@ def main(config):
 
     all_edges = list(set([item for sublist in all_edges for item in sublist]))
     africa_edges = edges[edges["edge_id"].isin(all_edges)]
-    
+
     all_nodes = list(set(africa_edges["from_node"].values.tolist() + africa_edges["to_node"].values.tolist()))
     africa_nodes = nodes[nodes["node_id"].isin(all_nodes)]
 
     africa_nodes["infra"] = np.where(africa_nodes["infra"] == "IWW port",
                                     africa_nodes["infra"],
                                     "IWW route")
-    
+
 # Adding missing iso3 codes
 
     missing_isos = africa_nodes[africa_nodes["iso3"].isna()]
     missing_isos = add_iso_code(missing_isos,"node_id",incoming_data_path,epsg=epsg_meters)
     for del_col in ["index","index_right","lat","lon"]:
         if del_col in missing_isos.columns.values.tolist():
-            missing_isos.drop(del_col,axis=1,inplace=True) 
+            missing_isos.drop(del_col,axis=1,inplace=True)
     iso_nodes = africa_nodes[~africa_nodes["iso3"].isna()]
 
 # Clean and create final Africa nodes and edges
@@ -161,7 +160,7 @@ def main(config):
                             "africa_iww_network.gpkg"),
                         layer="edges",driver="GPKG")
 
-    
+
 
 if __name__ == '__main__':
     CONFIG = load_config()

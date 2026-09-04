@@ -1,31 +1,30 @@
 #!/usr/bin/env python
 # coding: utf-8
-import sys
 import os
-import re
-import json
+
 import pandas as pd
-import igraph as ig
 import geopandas as gpd
-from utils_new import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils_new import *
+
 tqdm.pandas()
 
 
 
 def main(config):
-    
+
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
-    
+
     epsg_meters = 3395 # To convert geometries to measure distances in meters
-   
+
     # Read the road edges data for Africa
     road_id_column = "id"
     node_id_column = "id"
     road_type_column = "tag_highway"
     main_road_types = ["trunk","motorway","primary","secondary"]
-    
+
     Lobito_edges = gpd.read_parquet(os.path.join(
                             processed_data_path,
                             "infrastructure",
@@ -66,7 +65,7 @@ def main(config):
                             processed_data_path,
                             "infrastructure",
                             "africa_roads_edges_PROVA_MDG.geoparquet"))
-    
+
     MDG_nodes = gpd.read_parquet(os.path.join(
                             processed_data_path,
                             "infrastructure",
@@ -76,16 +75,16 @@ def main(config):
                             processed_data_path,
                             "infrastructure",
                             "africa_roads_edges_withcorridors.geoparquet"))
-    
+
     road_nodes = gpd.read_parquet(os.path.join(
                             processed_data_path,
                             "infrastructure",
                             "africa_roads_nodes_withcorridors.geoparquet"))
-    
-    
+
+
     MDG_edges = MDG_edges[MDG_edges["corridor_name"] == "Madagascar – Port Beira Corridor" ]
     #MDG_nodes = MDG_nodes[MDG_nodes["corridor_name"] == "Madagascar – Port Beira Corridor" ]
-    
+
     NS_edges = NS_edges[NS_edges["corridor_name"] == "North-South Corridor (North section)" ]
     #NS_nodes = NS_nodes[NS_nodes["corridor_name"] == "North-South Corridor (North section)" ]
 
@@ -97,7 +96,7 @@ def main(config):
 
     TSH_edges = TSH_edges[TSH_edges["corridor_name"] == "Central Corridor of the TSH" ]
     #TSH_nodes = TSH_nodes[TSH_nodes["corridor_name"] == "Central Corridor of the TSH" ]
- 
+
 
     road_edges = road_edges.to_crs(epsg=epsg_meters)
     MDG_edges = MDG_edges.to_crs(epsg=epsg_meters)
@@ -105,10 +104,10 @@ def main(config):
     Lobito_edges = Lobito_edges.to_crs(epsg=epsg_meters)
     TA_edges = TA_edges.to_crs(epsg=epsg_meters)
     TSH_edges = TSH_edges.to_crs(epsg=epsg_meters)
-    
+
 
     road_edges = pd.concat([road_edges,MDG_edges, NS_edges,Lobito_edges, TA_edges,TSH_edges])
-   
+
     connected_nodes = list(set(road_edges.from_id.values.tolist() + road_edges.to_id.values.tolist()))
     nearest_nodes = road_nodes[road_nodes[node_id_column].isin(connected_nodes)]
     nearest_nodes.rename(columns={node_id_column:"id"},inplace=True)

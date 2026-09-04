@@ -2,16 +2,16 @@
 # coding: utf-8
 # This file aims to merge the value/weight/utilisations files together with the consolidated ports datasets
 
-import os 
+import os
+
 import pandas as pd
-import sys
 import geopandas as gpd
-from utils import *
 from tqdm import tqdm
-tqdm.pandas()
-import geopandas as gpd
-from shapely.geometry import Point
 from shapely import wkt
+
+from aftdb.preprocess.utils import *
+
+tqdm.pandas()
 
 def main(config):
     incoming_data_path = config['paths']['incoming_data']
@@ -64,7 +64,7 @@ def main(config):
         if column.endswith("_left"):
             left_column = column
             right_column = column.replace("_left", "_right")
-            
+
             if right_column in merged_file.columns:
 
                 merged_file[left_column].fillna(merged_file[right_column], inplace=True)
@@ -74,7 +74,7 @@ def main(config):
     # Delete null columns
     columns_to_remove = ['FeatureUID_left', 'Country_left', 'id_left', 'infra_left', 'name_left', 'iso3_left', 'Continent_Code_left', 'node_id_left']
     merged_file.drop(columns=columns_to_remove, inplace=True)
-    
+
         # Delete null rows
 
     merged_file=merged_file[merged_file['FeatureUID'] !='LTT02']
@@ -90,13 +90,13 @@ def main(config):
 
     def nearest_distance(row, gdf):
         current_point = row['geometry']
-        
+
         # distance between current points with all points
         distances = gdf['geometry'].distance(current_point)
-        
+
         # delete itself
         distances = distances[distances > 0]
-        
+
         return distances.min()
 
 
@@ -108,11 +108,11 @@ def main(config):
         current_point = row['geometry']
         distances = gdf['geometry'].distance(current_point)
         distances = distances[distances > 0]
-        
+
         # return index of the nearest row along with the distance
         min_distance = distances.min()
         nearest_index = distances.idxmin()
-        
+
         return nearest_index, min_distance
 
 

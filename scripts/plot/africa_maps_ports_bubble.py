@@ -1,20 +1,16 @@
 """Road network risks and adaptation maps
 """
 import os
-import sys
-from collections import OrderedDict
-import pandas as pd
+
 import geopandas as gpd
 import numpy as np
 import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from matplotlib.lines import Line2D
-from map_plotting_utils import *
 from tqdm import tqdm
-from matplotlib import cm
 from matplotlib import font_manager
+
+from aftdb.map.map_plotting_utils import *
+
 tqdm.pandas()
 
 
@@ -38,29 +34,29 @@ def main(config):
                  "infrastructure",
                  "africa_maritime_network.gpkg"
                  ), layer = 'edges')
-    
-    
-    
+
+
+
 
     IWW_nodes = gpd.read_file(os.path.join(
                  data_path,
                  "infrastructure",
                  "africa_iww_network.gpkg"
                  ), layer = 'nodes')
-    
+
     IWW_edges = gpd.read_file(os.path.join(
                  data_path,
                  "infrastructure",
                  "africa_iww_network.gpkg"
                  ), layer = 'edges')
-  
+
     IWW_nodes = IWW_nodes[
                         ~IWW_nodes['infra'].isin(['IWW route'])
                         ]
     maritime_nodes = maritime_nodes[
                         maritime_nodes['infra'].isin(['port'])
                         ]
-    
+
     tmax = maritime_nodes["vessel_count_total"].max()
     target_crs = "EPSG:4326"
     maritime_nodes = maritime_nodes.to_crs(target_crs)
@@ -68,7 +64,7 @@ def main(config):
     IWW_edges = IWW_edges.to_crs(target_crs)
     maritime_edges = maritime_edges.to_crs(target_crs)
     print(maritime_nodes.head())
-    
+
 
     map_epsg = 4326
     ax_proj = get_projection(epsg=map_epsg)
@@ -76,7 +72,7 @@ def main(config):
                     subplot_kw={'projection': ax_proj},
                     figsize=(12,12),
                     dpi=500)
-    
+
     ax = plot_africa_basemap2(ax_plots)
 
     # Expand limits a bit
@@ -92,13 +88,13 @@ def main(config):
     maritime_nodes["markersize"].describe()
     maritime_nodes = maritime_nodes.sort_values(by="vessel_count_total",ascending=False)
     maritime_nodes.geometry.plot(
-        ax=ax, 
-        color="#3690c0", 
+        ax=ax,
+        color="#3690c0",
         edgecolor='none',
         markersize=maritime_nodes["markersize"],
         alpha=0.7,
         zorder=10)
-    
+
     ins = ax.inset_axes([0.02,-0.2,0.15,0.8])
     ins.spines[['top','right','bottom','left']].set_visible(False)
     ins.set_xticks([])
@@ -108,9 +104,9 @@ def main(config):
     ins.set_facecolor("#c6e0ff")
     xk = -0.6
     xt = -0.95
-    
+
     t_key = 10**np.arange(0.7,np.ceil(np.log10(tmax)),0.6)[:-1]
-    
+
     # t_key = maritime_nodes["vessel_count_total"].quantile([0.25, 0.5, 0.75, 1.0]).values
     t_key = t_key[::-1]
     Nk = t_key.size
@@ -124,7 +120,7 @@ def main(config):
         ins.text(xk,yk[k],'       {:,.0f}'.format(t_key[k]),va='center',fontsize=12)
 
     IWW_edges.plot(ax=ax, zorder=3, color='#01665e', linewidth=1, label="IWW route")
-    
+
     infra_colors = {
     "IWW port": "#01665e",
     "IWW ferry terminal": "#5ab4ac",
@@ -135,7 +131,7 @@ def main(config):
 
     # Loop over unique values in the "infra" column
     for infra_type in IWW_nodes["infra"].unique():
-        color = infra_colors.get(infra_type)  
+        color = infra_colors.get(infra_type)
         IWW_nodes[IWW_nodes["infra"] == infra_type].plot(
             ax=ax,
             zorder=4,
@@ -144,21 +140,21 @@ def main(config):
             label=infra_type
         )
 
-    
+
     maritime_edges.plot(ax=ax, zorder=3, color='#3690c0', linewidth=1, label="Maritime route")
-    
+
     maritime_nodes.plot(ax=ax, zorder=4, color='#3690c0', markersize=25, label="Maritime port")
 
     # Add legend manually
     bold_font = font_manager.FontProperties(weight='bold',size=12)
-    ax.legend(loc=(0.015, 0.35),title='Water networks', facecolor="#c6e0ff",fontsize=12,frameon = False, title_fontproperties= bold_font) 
+    ax.legend(loc=(0.015, 0.35),title='Water networks', facecolor="#c6e0ff",fontsize=12,frameon = False, title_fontproperties= bold_font)
     ax.get_legend()._legend_box.align = "left"
 
     plt.tight_layout()
-    
+
     save_fig(os.path.join(figures,"ports_with_edges_last.png"))
     plt.close()
-    
+
 
 if __name__ == '__main__':
     CONFIG = load_config()

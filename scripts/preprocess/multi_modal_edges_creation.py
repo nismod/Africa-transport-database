@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 import os
+
 import pandas as pd
 import geopandas as gpd
-from shapely.geometry import LineString
-from utils_new import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils_new import *
+
 tqdm.pandas()
 
 config = load_config()
@@ -26,15 +28,15 @@ def get_mode_dataframe(
                                 "infrastructure",
                                 "africa_airport_network.gpkg"
                                     ), layer="nodes"
-                                )  
-        nodes = nodes[nodes["infra"] == "airport"]   
+                                )
+        nodes = nodes[nodes["infra"] == "airport"]
     elif mode == "sea":
         nodes =  gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
                                 "africa_maritime_network.gpkg"
                                     ), layer="nodes"
-                                )  
+                                )
         nodes = nodes[nodes["infra"] == "port"]
     elif mode == "IWW":
         nodes = gpd.read_file(os.path.join(
@@ -42,7 +44,7 @@ def get_mode_dataframe(
                                 "infrastructure",
                                 "africa_iww_network.gpkg"
                                     ), layer="nodes"
-                                ) 
+                                )
         nodes = nodes[nodes["infra"] != "IWW route"]
     elif mode == "rail":
         rail_edges = gpd.read_file(os.path.join(
@@ -78,7 +80,7 @@ def get_mode_dataframe(
                                                     ~nodes["facility"].isin(freight_facility_types)
                                                 )
                                             ]
-    else: 
+    else:
         nodes = gpd.read_parquet(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
@@ -108,21 +110,21 @@ def main():
                                         "manufacturing",
                                         "military",
                                         "storage"
-                                        ] 
+                                        ]
     service_connections = ["commodity auctions",
                             "engineering",
                             "gauge_interchange",
                             "marshalling yard",
                             "power station",
                             "mining",
-                            "mine railway",    
+                            "mine railway",
                             "quarry",
                             "refinery",
                             "terminal",
                             "utilities"
 
                             ]
-    
+
 
     rail_facility_types = {
                                 "air":["airport"]
@@ -135,7 +137,7 @@ def main():
                             ,
 
                             "road_passenger": freight_connections+service_connections
-                            
+
                             }
 
     multi_df = []
@@ -146,7 +148,7 @@ def main():
         #     distance_threshold = 3000   # Found this by manual check
 
         if f_m == "rail":
-            
+
 
             if t_m == "road_freight":
                 f_df = get_mode_dataframe(
@@ -156,7 +158,7 @@ def main():
                                             rail_facilities=rail_facility_types[t_m]
                                         )
                 t_df = get_mode_dataframe(t_m)
-            
+
             elif t_m == "road_passenger":
                 f_df = get_mode_dataframe(
                                             f_m,
@@ -165,7 +167,7 @@ def main():
                                             rail_facilities=rail_facility_types[t_m]
                                         )
                 t_df = get_mode_dataframe(t_m)
-            
+
 
 
         elif t_m == "rail":
@@ -183,7 +185,7 @@ def main():
                             t_df.to_crs(epsg=epsg_meters),
                             "id","id",
                             "iso3","iso3",
-                            f_m,t_m,distance_threshold=3000) 
+                            f_m,t_m,distance_threshold=3000)
         f_t_df = f_t_df.rename(columns={"from_iso_a3":"from_iso3","to_iso_a3":"to_iso3"})
 
         f_t_df["usage_type"] = f_t_df["link_type"].apply(
@@ -205,7 +207,7 @@ def main():
         )
 
 
-        
+
         print(f_t_df)
 
         if len(f_t_df) > 0:
@@ -219,7 +221,7 @@ def main():
                         "from_iso3",
                         "link_type","usage_type","length_m","geometry"]
             multi_df.append(c_t_df)
-        
+
 
     multi_df = gpd.GeoDataFrame(
                     pd.concat(multi_df,axis=0,ignore_index=True),
@@ -241,13 +243,13 @@ def main():
                     "length_m",
                     "geometry"
                     ]]
-    
-    
+
+
     multi_df.to_file(os.path.join(
                             processed_data_path,
                             "infrastructure",
                             "africa_multimodal_rev.gpkg"
-                                ), 
+                                ),
                             layer="edges",
                             driver="GPKG"
                             )

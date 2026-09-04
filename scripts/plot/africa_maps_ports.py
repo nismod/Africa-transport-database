@@ -1,19 +1,14 @@
 """Road network risks and adaptation maps
 """
 import os
-import sys
-from collections import OrderedDict
-import pandas as pd
+
 import geopandas as gpd
-import numpy as np
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from matplotlib.lines import Line2D
-from map_plotting_utils import *
 from tqdm import tqdm
-from matplotlib import cm
+
+
+from aftdb.map.map_plotting_utils import *
+
 tqdm.pandas()
 
 
@@ -32,7 +27,7 @@ def main(config):
                     subplot_kw={'projection': ax_proj},
                     figsize=(12,12),
                     dpi=500)
-    
+
     # save_fig(os.path.join(figures,"africa_basemap.png"))
     #plt.close()
 
@@ -56,29 +51,29 @@ def main(config):
                  "infrastructure",
                  "africa_iww_network.gpkg"
                  ), layer = 'nodes')
-    
+
     maritime_nodes = maritime_nodes[
                         maritime_nodes['infra'].isin(['port'])
                         ]
     IWW_nodes = IWW_nodes[
                         IWW_nodes['infra'].isin(['IWW port'])
                         ]
-    
+
     maritime_nodes["geometry"] = maritime_nodes.geometry.centroid
     IWW_nodes["geometry"] = IWW_nodes.geometry.centroid
 
-    
-    
-    
+
+
+
     # ax_proj = get_projection(epsg=4326)
     # fig, ax_plots = plt.subplots(1,1,
     #                      subplot_kw={'projection': ax_proj},
     #                      figsize=(12,12),
     #                      dpi=500)
     # ax_plots = ax_plots.flatten()
-    
+
     ax = plot_africa_basemap(ax_plots)
-    
+
     #save_fig(os.path.join(figures,"roads_test.png"))
     #plt.close()
     # ax = point_map_plotting_colors_width(ax,roads_df,
@@ -98,12 +93,12 @@ def main(config):
     #                                 no_value_label="No value",
     #                               )
 
-   
-    
-    
+
+
+
     # colors = ['darkblue','mediumblue']
     # colors2 = ['blue','royalblue']
-    
+
     # lines = [Line2D([0], [0], color=c, linewidth=3, linestyle='-') for c in colors]
     # points =[Line2D([0], [0], color=c, markersize=5, linestyle='dotted') for c in colors2]
     # labels = ['maritime route','IWW route']
@@ -118,13 +113,13 @@ def main(config):
     maritime_edges.plot(ax=ax,zorder=4, color='darkblue', linewidth=1,label="maritime route")
     IWW_edges.plot(ax=ax,zorder=4, color='cornflowerblue', linewidth=1,label="IWW route")
     plt.legend(loc='upper right')
-    
+
     # corridors.plot(ax=ax,zorder=2,column=output_column, cmap='tab20',linewidth=5)
-   
+
     plt.tight_layout()
     save_fig(os.path.join(figures,"IWW_and_ports.png"))
     plt.close()
-    
+
 
 if __name__ == '__main__':
     CONFIG = load_config()

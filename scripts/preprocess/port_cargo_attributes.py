@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 # (1) Merge three datasets; (2)Add ISO3 (4) extract non_intersected
-import sys
 import os
-import re
+
 import pandas as pd
 import geopandas as gpd
-import igraph as ig
-from utils import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils import *
+
 tqdm.pandas()
 
 def convert_units(y):
@@ -56,7 +56,7 @@ def find_ref_mineral(x,m):
 def main(config):
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
-    
+
     port_matches = pd.read_excel(
                     os.path.join(incoming_data_path,
                         "ports",
@@ -65,7 +65,7 @@ def main(config):
     port_corridor = gpd.read_file(os.path.join(
                                 incoming_data_path,
                                 "africa_corridor_developments",
-                                "AfricanDevelopmentCorridorDatabase2022.gpkg" 
+                                "AfricanDevelopmentCorridorDatabase2022.gpkg"
                                 ),layer='point')[["Project_code","Commodities_traded_or_transported"]]
     port_corridor.rename(columns={"Commodities_traded_or_transported":"commodity_subgroup"},inplace=True)
     port_corridor['corridor_annual_capacity_tons'] = port_corridor.progress_apply(
@@ -90,7 +90,7 @@ def main(config):
     df = []
     for col in columns_merge:
         df.append(usgs_ports.groupby(['FeatureUID'])[col].agg(
-                [(col,  lambda x: ';'.join(map(str, x)))])) 
+                [(col,  lambda x: ';'.join(map(str, x)))]))
 
     df = pd.concat(df,axis=1).reset_index()
 
@@ -103,7 +103,7 @@ def main(config):
     for col in columns:
         port_matches[col] = port_matches[col].fillna('none')
 
-    
+
     port_matches["commodity_group_export"] = port_matches[
                                                     ["commodity_group_export",
                                                     "commodity_subgroup"]].apply(
@@ -116,7 +116,7 @@ def main(config):
                                                     ["usgs_annual_capacity_tons",
                                                     "corridor_annual_capacity_tons"]].apply(
                                             lambda x : ';'.join(x), axis = 1).str.replace('none', '').str.strip(';')
-    
+
     port_matches = port_matches[["id","commodity_group_export",
                                 "commodity_subgroup_export",
                                 "annual_capacity_tons"]]
@@ -126,14 +126,14 @@ def main(config):
                 "annual_capacity_tons"]:
         df.append(port_matches.groupby(['id'])[col].agg(
                 [(col,  lambda x: ';'.join(map(str, x)))]))
-    
+
     port_matches = pd.concat(df,axis=1).reset_index()
     # find ports with reference minerals
     reference_minerals = ["copper","cobalt","nickel","lithium","manganese","graphite"]
     for ref_m in reference_minerals:
         port_matches[f"{ref_m}_export_binary"] = port_matches.progress_apply(
                                             lambda x:find_ref_mineral(x,ref_m),axis=1)
-    
+
     port_df = gpd.read_file(os.path.join(processed_data_path,
                     "infrastructure",
                     "global_maritime_network.gpkg"),
@@ -143,7 +143,7 @@ def main(config):
                                 processed_data_path,
                                 "port_statistics",
                                 "port_utilization.csv"))
-    
+
     port_utilisation["annual_vessel_capacity_tons"] = 52.0*port_utilisation['dwt_per_week']
     port_matches = pd.merge(port_matches,port_df,how="left",on=["id"])
 
@@ -178,7 +178,7 @@ def main(config):
     # df = []
     # for col in columns_merge:
     #     df.append(port_utilisation.groupby(['id'])[col].agg(
-    #             [(col,  lambda x: ';'.join(map(str, x)))])) 
+    #             [(col,  lambda x: ';'.join(map(str, x)))]))
 
     # df = pd.concat(df,axis=1).reset_index()
     # df.to_csv(os.path.join(processed_data_path,

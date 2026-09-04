@@ -1,17 +1,12 @@
 import os
-import sys
-from collections import OrderedDict
-import pandas as pd
+
 import geopandas as gpd
-import numpy as np
-import cartopy.crs as ccrs
-import matplotlib
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from map_plotting_utils import *
-#from utils_new import *
 from tqdm import tqdm
+
+from aftdb.map.map_plotting_utils import *
+
+
 tqdm.pandas()
 
 
@@ -34,22 +29,22 @@ def main(config):
                     figsize=(12,12),
                     dpi=500)
     ax = plot_africa_basemap(ax_plots)
-    
+
     roads_df = gpd.read_parquet(os.path.join(
                  processed_data_path,
                  "infrastructure",
                  "africa_roads_edges_FINAL.geoparquet"
                  ))
-    
-    
+
+
     # roads_df["geometry"] = roads_df.geometry.centroid
 
     print(roads_df.columns)
-    
+
     output_column = "corridor_name"
     values_range = roads_df[output_column].values.tolist()
 
-    
+
     breakpoint()
 
     # ax_proj = get_projection(epsg=4326)
@@ -58,7 +53,7 @@ def main(config):
     #                      figsize=(12,12),
     #                      dpi=500)
     # ax_plots = ax_plots.flatten()
-    
+
     # ax = plot_africa_basemap(ax_plots)
     roads_df.plot()
     # ax = point_map_plotting_colors_width(ax,roads_df,

@@ -1,17 +1,12 @@
 """Road network risks and adaptation maps
 """
 import os
-import sys
-from collections import OrderedDict
-import pandas as pd
-import geopandas as gpd
-import numpy as np
-import cartopy.crs as ccrs
+
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from map_plotting_utils import *
 from tqdm import tqdm
+
+from aftdb.map.map_plotting_utils import *
+
 tqdm.pandas()
 
 def main(config):

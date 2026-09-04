@@ -1,23 +1,19 @@
 """Road network risks and adaptation maps
 """
 import os
-import sys
-from collections import OrderedDict
+
 import pandas as pd
 import geopandas as gpd
-import numpy as np
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from matplotlib.lines import Line2D
-from map_plotting_utils import *
 from tqdm import tqdm
-from matplotlib import cm
-tqdm.pandas()
 from matplotlib import font_manager
-import matplotlib.patches as mpatches
-from shapely.geometry import LineString
+
+from aftdb.map.map_plotting_utils import *
+
+
+tqdm.pandas()
+
 
 def main(config):
     data_path = config['paths']['data']
@@ -34,7 +30,7 @@ def main(config):
                     subplot_kw={'projection': ax_proj},
                     figsize=(12,12),
                     dpi=500)
-    
+
     # save_fig(os.path.join(figures,"africa_basemap.png"))
     #plt.close()
 
@@ -43,7 +39,7 @@ def main(config):
                  "infrastructure",
                  "africa_roads_edges_FINAL.geoparquet"
                  ))
-    
+
     roads_df['corridor_name'] = roads_df['corridor_name'].str.split('/')
 
     # Explode the data to separate overlapping corridors into individual rows
@@ -53,9 +49,9 @@ def main(config):
     # gdf_exploded['corridor_id'] = gdf_exploded['corridor_id'].fillna(-1)
     gdf_exploded = gdf_exploded.to_crs(epsg=4326)
     output_column = "corridor_id"
-    
+
     bold_font = font_manager.FontProperties(weight='bold',size=18)
-     
+
     fig, ax_plots = plt.subplots(1,1,
                     subplot_kw={'projection': ax_proj},
                     figsize=(12,12),
@@ -68,7 +64,7 @@ def main(config):
     legend_items = [mpatches.Patch(color=color_map[i], label=f"{i + 1} - {name}" if name != 'Missing' else 'Other')
     for i, name in enumerate(corridor_labels)
     ]
-  
+
     fig_legend, ax_legend = plt.subplots(figsize=(12, 12))
     legend=ax_legend.legend(handles=legend_items, title="Corridor Names", title_fontproperties = bold_font,ncol=2, fontsize= 9,loc='center' ,fancybox=True,frameon= True,edgecolor= 'black',facecolor='white')
 
@@ -79,7 +75,7 @@ def main(config):
 
     map_epsg = 4326
     ax_proj = get_projection(epsg=map_epsg)
-    
+
     ax = plot_africa_basemap2(ax_plots)
     # ax.set_aspect('equal')
     gdf_na = gdf_exploded[gdf_exploded['corridor_name'].isna()]
@@ -189,7 +185,7 @@ def main(config):
                 bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
                 zorder=8
                 )
-                
+
         elif idx == 9:
             if row.geometry is not None and not row.geometry.is_empty:
                 centroid = row.geometry.centroid  # Get average centroid
@@ -417,16 +413,16 @@ def main(config):
                         bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
                         zorder=8
                     )
-                    
+
 
     plt.tight_layout()
-    
+
     save_fig(os.path.join(figures,"roads_corridors_LAST.png"))
     plt.close()
-    
-    
-    
-    
+
+
+
+
 
 if __name__ == '__main__':
     CONFIG = load_config()

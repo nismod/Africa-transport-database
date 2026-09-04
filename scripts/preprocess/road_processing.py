@@ -1,15 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
-import sys
 import os
-import re
-import json
+
 import pandas as pd
-import igraph as ig
 import geopandas as gpd
-from typing import Tuple
-from utils import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils import *
+
 tqdm.pandas()
 
 def get_road_condition(row: pd.Series) -> Tuple[str, str]:
@@ -67,12 +65,12 @@ def get_asset_type(x):
 def main(config):
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
-    
+
     edges = gpd.read_parquet(os.path.join(
                             processed_data_path,
                             "infrastructure",
                             "africa_roads_edges_FINAL.geoparquet"))
-    
+
     # infer paved status and material type from 'surface' column
     edges["paved_material"] = edges.apply(
         lambda x: get_road_condition(x), axis=1

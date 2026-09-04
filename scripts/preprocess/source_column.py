@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 import os
-import pandas as pd
+
 import geopandas as gpd
-from shapely.geometry import LineString
-from utils_new import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils_new import *
+
 tqdm.pandas()
 
 config = load_config()
@@ -16,15 +17,15 @@ def main():
 
     incoming_data_path = config['paths']['incoming_data']
     processed_data_path = config['paths']['data']
-    epsg_meters = 3395 # To convert geometries to measure distances in meters   
+    epsg_meters = 3395 # To convert geometries to measure distances in meters
 
     ports_nodes = gpd.read_file(os.path.join(processed_data_path,
                                     "infrastructure",
-                                    "africa_maritime_network.gpkg"),layer = 'nodes') 
+                                    "africa_maritime_network.gpkg"),layer = 'nodes')
     ports_edges = gpd.read_file(os.path.join(processed_data_path,
                                     "infrastructure",
                                     "africa_maritime_network.gpkg"),layer = 'edges')
-    
+
     source_port = [
     "Padilla, A. D., Otarod, D., Deloach-Overton, S. W., Kemna, R. F., Freeman, P. A., Wolfe, E. R., ... & Brioche, A. S. Compilation of geospatial data (GIS) for the mineral industries and related infrastructure of Africa. US Geological Survey. https://doi.org/10.5066/P97EQWXP (2021).",
     "Thorn, J. P.R., Mwangi, B.; Juffe Bignoli, D., The African Development Corridors Database. Dryad, Dataset. https://doi.org/10.5061/dryad.9kd51c5hw (2022)."
@@ -55,7 +56,7 @@ def main():
         "Verschuur, J. Global multi-hazard risk to port infrastructure and trade. Mendeley Data. V1, doi: 10.17632/kdyt24tsh5.1 (2022).",
         "Modelled"
     ]]* len(ports_edges)
-   
+
     ports_edges.to_file(os.path.join(
                             processed_data_path,
                             "infrastructure",
@@ -65,24 +66,24 @@ def main():
                             "infrastructure",
                             "africa_maritime_network_withsources.gpkg"),
                         layer="nodes",driver="GPKG")
-    
-    
-    
+
+
+
     air_nodes_df = gpd.read_file(os.path.join(
                             processed_data_path,
                             "infrastructure",
                             "africa_airport_network_rev.gpkg"
-                                ), 
+                                ),
                             layer="nodes"
                             )
     air_edges_df = gpd.read_file(os.path.join(
                             processed_data_path,
                             "infrastructure",
                             "africa_airport_network_rev.gpkg"
-                                ), 
+                                ),
                             layer="edges"
                             )
-    
+
     air_nodes_df["source"] = [
     [
         "World Bank Group. Global Airports: Locations of airports with international travel. https://datacatalog.worldbank.org/search/dataset/0038117/Global-Airports (2020).",
@@ -106,16 +107,16 @@ def main():
                             "infrastructure",
                             "africa_airport_network_withsources.gpkg"),
                         layer="nodes",driver="GPKG")
-    
+
 
     multi_df = gpd.read_file(os.path.join(
                             processed_data_path,
                             "infrastructure",
                             "africa_multimodal_rev.gpkg"
-                                ), 
+                                ),
                             layer="edges"
                             )
-    
+
     multi_df["source"] = [
     [
         "Modelled"
@@ -132,14 +133,14 @@ def main():
                                 processed_data_path,
                                 "infrastructure",
                                 "africa_roads_network.gpkg"
-                                    ), 
+                                    ),
                                 layer="nodes"
                                 )
     roads_edges_df = gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
                                 "africa_roads_network.gpkg"
-                                    ), 
+                                    ),
                                 layer="edges"
                                 )
 
@@ -175,7 +176,7 @@ def main():
             "Open Street Maps. Open Street Maps. https://download.geofabrik.de/ (2021).",
             "Modelled"
         ]]* len(roads_nodes_df)
-    
+
     roads_nodes_df.to_file(os.path.join(processed_data_path,
                             "infrastructure",
                             "africa_roads_network_withsources.gpkg"),
@@ -184,20 +185,20 @@ def main():
                             "infrastructure",
                             "africa_roads_network_withsources.gpkg"),
                             layer="edges",driver="GPKG")
-    
+
 
     rail_nodes_df = gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
                                 "africa_railways_network.gpkg"
-                                    ), 
+                                    ),
                                 layer="nodes"
                                 )
     rail_edges_df = gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
                                 "africa_railways_network.gpkg"
-                                    ), 
+                                    ),
                                 layer="edges"
                                 )
 
@@ -228,7 +229,7 @@ def main():
 
     source_rail_edges1 = ["Open Street Maps. Open Street Maps. https://download.geofabrik.de/ (2021).",
                         "AU-PIDA. African Union. PIDA projects. AU-PIDA https://www.au-pida.org/pida-projects/ (accessed February 2025).",
-                        "Thorn, J. P.R., Mwangi, B.; Juffe Bignoli, D., The African Development Corridors Database. Dryad, Dataset. https://doi.org/10.5061/dryad.9kd51c5hw (2022).",              
+                        "Thorn, J. P.R., Mwangi, B.; Juffe Bignoli, D., The African Development Corridors Database. Dryad, Dataset. https://doi.org/10.5061/dryad.9kd51c5hw (2022).",
                         "CPCS Transcom International Limited. East African Railways Master Plan Study: Final Report. Prepared for the East African Community (2009).",
                         "Modelled"
         ]
@@ -247,8 +248,8 @@ def main():
         rail_edges_df.loc[mask_rail_edges2]
         .apply(lambda _: source_rail_edges2, axis=1)
     )
-    
-    
+
+
     rail_nodes_df.to_file(os.path.join(processed_data_path,
                             "infrastructure",
                             "africa_railways_network_withsources.gpkg"),
@@ -257,22 +258,22 @@ def main():
                             "infrastructure",
                             "africa_railways_network_withsources.gpkg"),
                             layer="edges",driver="GPKG")
-    
+
     iww_df_nodes = gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
                                 "africa_iww_network.gpkg"
-                                    ), 
+                                    ),
                                 layer="nodes"
                                 )
     iww_df_edges = gpd.read_file(os.path.join(
                                 processed_data_path,
                                 "infrastructure",
                                 "africa_iww_network.gpkg"
-                                    ), 
+                                    ),
                                 layer="edges"
                                 )
-    
+
     mask_nile = iww_df_nodes["waterbody"].isin(["Victoria Nile", "Nile river"])
     mask_iww = iww_df_nodes["infra"] == "IWW route"
     mask_osm = ~mask_nile & ~mask_iww  # everything else
@@ -290,7 +291,7 @@ def main():
 
     iww_df_nodes.loc[mask_osm, "source"] = (
         iww_df_nodes.loc[mask_osm]
-        .apply(lambda _: ["Africa Geoportal. OpenStreetMap Waterways for Africa. https://africageoportal.maps.arcgis.com/home/item.html?id=82232d0415c04e7086414dff7eb1310f"], 
+        .apply(lambda _: ["Africa Geoportal. OpenStreetMap Waterways for Africa. https://africageoportal.maps.arcgis.com/home/item.html?id=82232d0415c04e7086414dff7eb1310f"],
                axis=1)
     )
 

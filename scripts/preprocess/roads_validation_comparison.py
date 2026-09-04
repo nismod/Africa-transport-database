@@ -1,8 +1,9 @@
-import geopandas as gpd
-import glob
 import os
-from utils_new import *
+
+import geopandas as gpd
 import numpy as np
+
+from aftdb.preprocess.utils_new import *
 
 def create_tag(x):
     if (x["osm_class"] == x["combined_surface_DL_priority"]) & (x["osm_class"] == x["paved"]):
@@ -52,7 +53,7 @@ def main(config):
             h_df = h_df.drop_duplicates(subset=['geometry','osm_id'])
             h_df = h_df.to_crs(epsg=epsg_meters)
             h_df = h_df[h_df["osm_id"].isin(select_osm_ids)]
-            
+
             # Select and clip HEIGIT lines for each country boundary
             if len(h_df.index) > 0:
                 # df = gpd.clip(b_df,boundary_df)
@@ -96,9 +97,9 @@ def main(config):
                 )
     heigit_lines = heigit_lines.groupby(['osm_id','country_iso_a3',"osm_class", 'combined_surface_DL_priority'])['length'].sum().reset_index()
     print (heigit_lines)
-    # Merge the two datasets on osm_id 
+    # Merge the two datasets on osm_id
     merged = heigit_lines.merge(database_lines, on=['osm_id','country_iso_a3'], suffixes=('_heigit', '_db'))
-    
+
     # Make sure surface and paved are in consistent format (e.g., lowercase strings)
     merged['combined_surface_DL_priority'] = merged['combined_surface_DL_priority'].str.lower()
     # merged['paved'] = merged['paved'].astype(str).str.lower()
@@ -127,7 +128,7 @@ def main(config):
 
     # Merge both
     pivot_table = heigit_summary.join(db_summary, how='outer').fillna(0).reset_index()
-    
+
     # Select the columns you're interested in
     # Export the full merged dataset
     merged.to_parquet(os.path.join(
@@ -139,7 +140,7 @@ def main(config):
     pivot_table.to_csv(os.path.join(
                             output_folder,
                             "infrastructure",
-                            "merged_validation_datasets.csv"))   
+                            "merged_validation_datasets.csv"))
 
     merged["check"] = merged.apply(lambda x:create_tag(x),axis=1)
     merged = merged.value_counts(subset=['country_iso_a3','check'], sort=False).reset_index()
@@ -150,10 +151,10 @@ def main(config):
                             output_folder,
                             "infrastructure",
                             "merged_validation_datasets_counts.csv"))
-   
 
-    
+
+
 
 if __name__ == '__main__':
     CONFIG = load_config()
-    main(CONFIG)    
+    main(CONFIG)

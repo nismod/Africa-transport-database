@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 # coding: utf-8
-# Code to extract the suez canal navigation route 
+# Code to extract the suez canal navigation route
 import os
+import re
+
 import pandas as pd
 import geopandas as gpd
-import re
-from utils import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils import *
+
 tqdm.pandas()
 
 def main(config):
@@ -31,7 +34,7 @@ def main(config):
     df_global_ports = gpd.read_file(os.path.join(incoming_data_path,
                                     "Global port supply-chains",
                                     "Network",
-                                    "nodes_maritime.gpkg")) 
+                                    "nodes_maritime.gpkg"))
 
     nodes["infra"] = "maritime"
     prt = df_global_ports[df_global_ports["infra"] == "maritime"]

@@ -1,25 +1,19 @@
 """Road network risks and adaptation maps
 """
 import os
-import sys
-from collections import OrderedDict
-import pandas as pd
+
 import geopandas as gpd
-import numpy as np
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from map_plotting_utils import *
-from tqdm import tqdm
-from matplotlib.axes import Axes
-from cartopy.mpl.geoaxes import GeoAxes
-GeoAxes._pcolormesh_patched = Axes.pcolormesh
-import cartopy.feature as cfeature
-import mapclassify
-from matplotlib.colors import rgb2hex
-from matplotlib.colors import ListedColormap
 import numpy as np
+import pandas as pd
+from cartopy.mpl.geoaxes import GeoAxes
+from matplotlib.axes import Axes
+from tqdm import tqdm
+
+from aftdb.map.map_plotting_utils import *
+
+GeoAxes._pcolormesh_patched = Axes.pcolormesh
+
 tqdm.pandas()
 
 def select_nodes(x,flow_column,threshold_ton_flows):
@@ -32,7 +26,7 @@ def select_nodes(x,flow_column,threshold_ton_flows):
 
 def remove_nodes_and_edges(flow_df,nodes_df,data_path,output_path,year,mineral_class):
     flow_df = flow_df[~flow_df.geometry.isna()]
-    flow_crs = flow_df.crs 
+    flow_crs = flow_df.crs
     # port_routes = gpd.read_file(
     #                 os.path.join(data_path,
     #                     "infrastructure",
@@ -86,7 +80,7 @@ def main(config):
     ccg_isos = ccg_countries[ccg_countries["ccg_country"] == 1]["iso_3digit_alpha"].values.tolist()
     # reference_minerals = ["copper","cobalt","manganese","lithium","graphite","nickel"]
     reference_mineral_colors = ["#cc4c02","#3690c0","#88419d","#d7301f","#252525","#737373"]
-    
+
     # plot railways
     plot_mine_sites = True
     if plot_mine_sites is True:
@@ -102,9 +96,9 @@ def main(config):
                         subplot_kw={'projection': ax_proj},
                         figsize=(12,12),
                         dpi=500)
-        
+
         # ax_plots = ax_plots.flatten()
-        
+
         ax = plot_africa_basemap(ax_plots)
         breakpoint()
         ax = point_map_plotting_colors_width(ax,mine_sites_df,
@@ -151,15 +145,15 @@ def main(config):
 
             mines_df[f"{reference_mineral}_tons"] = mines_df[f"{reference_mineral}_processed_ton"] + mines_df[f"{reference_mineral}_unprocessed_ton"]
             mines_df["reference_mineral"] = reference_mineral
-        
+
             all_mines.append(mines_df[mines_df[f"{reference_mineral}_tons"]>0])
 
         all_mines = gpd.GeoDataFrame(
                             pd.concat(all_mines,axis=0,ignore_index=True).fillna(0),
                             geometry="geometry",crs=mines_crs)
         all_mines["total_tons"
-        ] = 1.0e-3*all_mines[[f"{rf}_tons" for rf in reference_minerals]].sum(axis=1) 
-        
+        ] = 1.0e-3*all_mines[[f"{rf}_tons" for rf in reference_minerals]].sum(axis=1)
+
         values_range = all_mines["total_tons"].values.tolist()
         ax_proj = get_projection(epsg=4326)
         fig, ax_plots = plt.subplots(1,1,
@@ -168,7 +162,7 @@ def main(config):
                         dpi=500)
         ax_plots = ax_plots.flatten()
         ax = plot_africa_basemap(ax_plots)
-        
+
         ax = point_map_plotting_colors_width(ax,all_mines,
                                     "total_tons",
                                     values_range,
@@ -206,8 +200,8 @@ def main(config):
 
         for year in years:
             output_column = f"{commodity_column}_{year}_{mineral}"
-            # mine_sites_df = s_and_p_mines[s_and_p_mines[output_column] > 0] 
-            mine_sites_df = s_and_p_mines[s_and_p_mines["copper_mine_binary"] == 1] 
+            # mine_sites_df = s_and_p_mines[s_and_p_mines[output_column] > 0]
+            mine_sites_df = s_and_p_mines[s_and_p_mines["copper_mine_binary"] == 1]
             mine_sites_df[output_column] = mine_sites_df[output_column].fillna(0)
             values_range = mine_sites_df[output_column].values.tolist()
             ax_proj = get_projection(epsg=4326)
@@ -263,7 +257,7 @@ def main(config):
             output_types = ["total"]
             output_colors = ["#cc4c02"]
             for idx,(oc,ot,ocl) in enumerate(zip(output_columns,output_types,output_colors)):
-                if oc in flow_df.columns.values.tolist(): 
+                if oc in flow_df.columns.values.tolist():
                     values_range = flow_df[oc].values.tolist()
                     if max(values_range) > 0:
                         ax_proj = get_projection(epsg=4326)
@@ -309,7 +303,7 @@ def main(config):
             output_types = ["total","refined","unrefined"]
             output_colors = ['#7f0000',"#41ae76","#e31a1c"]
             for idx,(oc,ot,ocl) in enumerate(zip(output_columns,output_types,output_colors)):
-                if oc in flow_df.columns.values.tolist(): 
+                if oc in flow_df.columns.values.tolist():
                     values_range = flow_df[oc].values.tolist()
                     if max(values_range) > 0:
                         threshold_ton_flows = nodes_df[oc].quantile(0.95)
@@ -445,7 +439,7 @@ def main(config):
     #                         "copper_unrefined_mine_output_tons"]
     #     output_types = ["total","refined","unrefined"]
     #     output_colors = ['#7f0000',"#41ae76","#e31a1c"]
-    #     for idx,(oc,ot,ocl) in enumerate(zip(output_columns,output_types,output_colors)): 
+    #     for idx,(oc,ot,ocl) in enumerate(zip(output_columns,output_types,output_colors)):
     #         values_range = flow_df[oc].values.tolist()
     #         threshold_ton_flows = nodes_df[oc].quantile(0.95)
 

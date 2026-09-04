@@ -1,13 +1,15 @@
-import geopandas as gpd
 import glob
 import os
-from utils_new import *
+
+import geopandas as gpd
+
+from aftdb.preprocess.utils_new import *
 
 def main(config):
     input_folder = config['paths']['incoming_data']
     output_folder = config['paths']['data']
     # Folder containing your GPKG files
-    
+
     output_file = 'merged_roadsurface_lines.gpkg'
 
     # Match all GPKG files
@@ -39,18 +41,18 @@ def main(config):
                         crs="EPSG:4326")
 
     # Save to GeoPackage
-    
-    
+
+
 
     # Write to a new GeoPackage
     final_gdf.to_parquet(os.path.join(
                             output_folder,
                             "infrastructure",
                             "validation_file_merge.geoparquet"))
-   
 
-    
+
+
 
 if __name__ == '__main__':
     CONFIG = load_config()
-    main(CONFIG)    
+    main(CONFIG)

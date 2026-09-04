@@ -1,19 +1,19 @@
 """Functions for preprocessing road data
     WILL MODIFY LATER
 """
-import sys
 import os
 import json
-import network as ntx
+
 import numpy as np
 import pandas as pd
-import igraph as ig
 import networkx
 import geopandas as gpd
-import fiona
-from shapely.geometry import shape, mapping, LineString
+from shapely.geometry import shape, LineString
 from scipy.spatial import cKDTree
 from tqdm import tqdm
+
+import aftdb.preprocess.network as ntx
+
 tqdm.pandas()
 
 
@@ -50,7 +50,7 @@ def link_nodes_to_nearest_edge(network, condition=None, tolerance=1e-9):
 
     return split
 def convert_json_geopandas(df,epsg=4326):
-    layer_dict = []    
+    layer_dict = []
     for key, value in df.items():
         if key == "features":
             for feature in value:
@@ -69,7 +69,7 @@ def components(edges,nodes,
         (getattr(n, node_id_column), {"geometry": n.geometry}) for n in nodes.itertuples()
     )
     G.add_edges_from(
-        (getattr(e,from_node_column), getattr(e,to_node_column), 
+        (getattr(e,from_node_column), getattr(e,to_node_column),
             {edge_id_column: getattr(e,edge_id_column), "geometry": e.geometry})
         for e in edges.itertuples()
     )
@@ -83,7 +83,7 @@ def components(edges,nodes,
 
 def add_lines(x,from_nodes_df,to_nodes_df,from_nodes_id,to_nodes_id):
     from_point = from_nodes_df[from_nodes_df[from_nodes_id] == x[from_nodes_id]]
-    to_point = to_nodes_df[to_nodes_df[to_nodes_id].isin([x[to_nodes_id]])] 
+    to_point = to_nodes_df[to_nodes_df[to_nodes_id].isin([x[to_nodes_id]])]
     return LineString([from_point.geometry.values[0],to_point.geometry.values[0]])
 
 def ckdnearest(gdA, gdB):
@@ -99,7 +99,7 @@ def ckdnearest(gdA, gdB):
             gdA.reset_index(drop=True),
             gdB_nearest,
             pd.Series(dist, name='dist')
-        ], 
+        ],
         axis=1)
 
     return gdf
@@ -178,7 +178,7 @@ def create_network_from_nodes_and_edges(nodes,edges,node_edge_prefix,
         # network = ntx.split_edges_at_nodes(network,tolerance=9e-10)
         # print ('* Done with splitting edges at nodes')
 
-    network = ntx.add_endpoints(network)   
+    network = ntx.add_endpoints(network)
     print ('* Done with adding endpoints')
 
     network.nodes = ntx.drop_duplicate_geometries(network.nodes)
@@ -186,9 +186,9 @@ def create_network_from_nodes_and_edges(nodes,edges,node_edge_prefix,
 
     network = ntx.split_edges_at_nodes(network,tolerance=1e-9)
     print ('* Done with splitting edges at nodes')
-    
-    network = ntx.add_ids(network, 
-                            edge_prefix=f"{node_edge_prefix}e", 
+
+    network = ntx.add_ids(network,
+                            edge_prefix=f"{node_edge_prefix}e",
                             node_prefix=f"{node_edge_prefix}n")
     network = ntx.add_topology(network, id_col='id')
     print ('* Done with network topology')
@@ -202,7 +202,7 @@ def create_network_from_nodes_and_edges(nodes,edges,node_edge_prefix,
                                 'id':'edge_id'},
                                 inplace=True)
     network.nodes.rename(columns={'id':'node_id'},inplace=True)
-    
+
     return network
 
 def network_od_path_estimations(graph,
@@ -256,5 +256,5 @@ def network_od_path_estimations(graph,
         edge_path_list.append(edge_path)
         path_gcost_list.append(path_gcost)
 
-    
+
     return edge_path_list, path_gcost_list

@@ -1,22 +1,15 @@
 """Road network risks and adaptation maps
 """
 import os
-import sys
-from collections import OrderedDict
-import pandas as pd
+
 import geopandas as gpd
-import numpy as np
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.gridspec as gridspec
-from matplotlib.lines import Line2D
-from map_plotting_utils import *
 from tqdm import tqdm
-from matplotlib import cm
-tqdm.pandas()
 from matplotlib import font_manager
 
+from aftdb.map.map_plotting_utils import *
+
+tqdm.pandas()
 
 
 def main(config):
@@ -28,14 +21,14 @@ def main(config):
     if os.path.exists(figures) is False:
         os.mkdir(figures)
 
-    
+
     roads_df = gpd.read_parquet(os.path.join(
                  data_path,
                  "infrastructure",
                  "africa_roads_edges_FINAL.geoparquet"
                  ))
-    
-    
+
+
     # Convert length from meters to kilometers
     roads_df['length_km'] = roads_df['length_m'] / 1000
 
@@ -51,7 +44,7 @@ def main(config):
     gdf_exploded.loc[~gdf_exploded['tag_highway'].isin(valid_highways), 'tag_highway'] = 'Other'
 
     grouped_data = gdf_exploded.groupby(['corridor_name', 'tag_highway'], as_index=False).agg({'length_km': 'sum'})
-    
+
     # Check again for duplicates
     print(grouped_data.duplicated(subset=['corridor_name', 'tag_highway']).sum())
 
@@ -59,7 +52,7 @@ def main(config):
     grouped_data['tag_highway'] = grouped_data['tag_highway'].str.replace('_', ' ').str.title()
 
     # Group all non-standard highways under 'Other'
-    
+
     # Pivot the data for a stacked bar plot
     desired_order = ['Motorway', 'Trunk', 'Primary', 'Secondary', 'Tertiary', 'Other']
 
@@ -72,10 +65,10 @@ def main(config):
 
     # Reorder the columns according to desired_order
     pivot_data = pivot_data.reindex(columns=desired_order, fill_value=0)
-    
+
     # Create a font property for bold text
     bold_font = font_manager.FontProperties(weight='bold')
-    # Select a colormap 
+    # Select a colormap
     colormap =  ['#d7191c','#fdae61','#ffffbf','#abd9e9','#2c7bb6','#d9d9d9']
     # Get color values from the colormap
     num_colors = len(pivot_data.columns)
@@ -96,8 +89,8 @@ def main(config):
     plt.tight_layout()
 
     save_fig(os.path.join(figures,"roads_hist_cap2_grid.png"))
-    
-    
+
+
 
 if __name__ == '__main__':
     CONFIG = load_config()

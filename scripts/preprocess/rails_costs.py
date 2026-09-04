@@ -1,18 +1,13 @@
-import sys
+import math
 import os
-import re
+
 import pandas as pd
 import geopandas as gpd
-import igraph as ig
-from shapely.geometry import LineString
-from utils_new import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils_new import *
+
 tqdm.pandas()
-
-
-import math
-tqdm.pandas()
-
 
 
 def calculate_discounting_rate_factor(
@@ -41,7 +36,7 @@ def calculate_discounting_rate_factor(
 def main(config):
 
     incoming_data_path = config['paths']['incoming_data']
-    
+
     processed_data_path = config['paths']['data']
 
 
@@ -50,25 +45,25 @@ def main(config):
                             "infrastructure",
                             "africa_railways_network.gpkg"),
                              layer="edges",driver="GPKG")
-    
+
     costs_df = pd.read_excel(os.path.join(
                             incoming_data_path,
                             "Rail_Costs.xlsx"))
-    
+
 
     rails_edges['length_km'] = rails_edges['length_m'] / 1000
 
 
     # Group by the single line and status, then sum length_km
     grouped_data = rails_edges.groupby(['line', 'status'])['length_km'].sum().reset_index()
-    
+
     mask = grouped_data['status'].isin(['construction', 'planned', 'proposed', 'rehabilitation'])
 
     # Set zero values for all rows by default
-    grouped_data.loc[~mask, ['min_capital_cost_USD_2025', 'max_capital_cost_USD_2025', 
-                            'median_capital_cost_USD_2025', 'min_OM_cost_USD_2025', 
+    grouped_data.loc[~mask, ['min_capital_cost_USD_2025', 'max_capital_cost_USD_2025',
+                            'median_capital_cost_USD_2025', 'min_OM_cost_USD_2025',
                             'max_OM_cost_USD_2025', 'median_OM_cost_USD_2025',
-                            'investment_min_USD_2025', 'investment_max_USD_2025', 
+                            'investment_min_USD_2025', 'investment_max_USD_2025',
                             'investment_median_USD_2025']] = 0
 
     # Only update rows where status matches
@@ -88,18 +83,16 @@ def main(config):
     grouped_data.loc[mask, 'investment_min_USD_2025'] = (grouped_data['min_capital_cost_USD_2025'] + (grouped_data['min_OM_cost_USD_2025'])) * sum(maintain_years)
     grouped_data.loc[mask, 'investment_max_USD_2025'] = (grouped_data['max_capital_cost_USD_2025'] + (grouped_data['max_OM_cost_USD_2025'])) * sum(maintain_years)
     grouped_data.loc[mask, 'investment_median_USD_2025'] = (grouped_data['median_capital_cost_USD_2025'] + (grouped_data['median_OM_cost_USD_2025'])) * sum(maintain_years)
-            
+
     grouped_data=grouped_data.groupby(['line','status']).agg({'length_km':'sum','min_capital_cost_USD_2025':'sum','max_capital_cost_USD_2025':'sum','median_capital_cost_USD_2025':'sum','min_OM_cost_USD_2025':'sum','max_OM_cost_USD_2025':'sum','median_OM_cost_USD_2025':'sum','investment_min_USD_2025':'sum','investment_max_USD_2025':'sum','investment_median_USD_2025':'sum'}).reset_index()
-        
+
 
     grouped_data.to_csv(os.path.join(
                             processed_data_path,
                             "infrastructure",
                             "africa_rails_costs.csv"))
-   
+
 
 if __name__ == '__main__':
     CONFIG = load_config()
     main(CONFIG)
-
-    

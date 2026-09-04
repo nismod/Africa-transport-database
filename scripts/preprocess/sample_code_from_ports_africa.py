@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
-import sys
 import os
 import re
+
 import pandas as pd
 import geopandas as gpd
-from utils import *
 from tqdm import tqdm
+
+from aftdb.preprocess.utils import *
+
 tqdm.pandas()
 
 def main(config):
@@ -37,10 +39,10 @@ def main(config):
 
     # This should have point geometry, not points with buffer geometry
     #non_intersected["geometry"]  = non_intersected.geometry.centroid
-    # Also it should be just 1 point at one location, so probably 
+    # Also it should be just 1 point at one location, so probably
     # Group by FeatureUID
     non_intersected = non_intersected.groupby('FeatureUID').first().reset_index()
-    #non_intersected = non_intersected.set_crs(epsg=3395) 
+    #non_intersected = non_intersected.set_crs(epsg=3395)
     # Also probabble have to project this to EPSG = 4326 because the other data is in that system
     # non_intersected = non_intersected.to_crs(epsg=4326)
     print(non_intersected)
@@ -62,7 +64,7 @@ def main(config):
                                 axis=1)
     nearest_nodes.rename(columns={from_node_id:"from_node",to_node_id:"to_node"},inplace=True)
     nearest_nodes["edge_id"] = list(max_edge_id + 1 + nearest_nodes.index.values)
-    nearest_nodes["edge_id"] = nearest_nodes.progress_apply(lambda x: f"port_route{x.edge_id}",axis=1) 
+    nearest_nodes["edge_id"] = nearest_nodes.progress_apply(lambda x: f"port_route{x.edge_id}",axis=1)
 
     nearest_nodes = gpd.GeoDataFrame(nearest_nodes,geometry="geometry",crs="EPSG:4326")
 
