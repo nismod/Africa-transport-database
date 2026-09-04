@@ -14,7 +14,6 @@ tqdm.pandas()
 
 def main(config):
     data_path = config["paths"]["data"]
-    output_path = config["paths"]["results"]
     figure_path = config["paths"]["figures"]
 
     figures = os.path.join(figure_path)

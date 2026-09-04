@@ -13,7 +13,6 @@ tqdm.pandas()
 
 def main(config):
     data_path = config["paths"]["data"]
-    output_path = config["paths"]["results"]
     figure_path = config["paths"]["figures"]
 
     figures = os.path.join(figure_path)
@@ -22,7 +21,7 @@ def main(config):
 
     map_epsg = 4326
     ax_proj = get_projection(epsg=map_epsg)
-    fig, ax_plots = plt.subplots(
+    _fig, ax_plots = plt.subplots(
         1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
     )
 

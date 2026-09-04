@@ -116,7 +116,6 @@ def main(config):
 
     # 7. Add values to the 'infra' column and 'Continent_Code' columns
     condition = (merged_result["infra"] == "ports") & (merged_result["iso3"].isnull())
-    ports_missing_iso3 = merged_result[condition]
 
     # 8. Add values to the blank rows of 'iso3' columns
     for idx, row in merged_result[condition].iterrows():

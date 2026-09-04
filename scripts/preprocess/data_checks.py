@@ -15,9 +15,7 @@ processed_data_path = config["paths"]["data"]
 
 def main():
 
-    incoming_data_path = config["paths"]["incoming_data"]
     processed_data_path = config["paths"]["data"]
-    epsg_meters = 3395  # To convert geometries to measure distances in meters
 
     # ports_nodes = gpd.read_file(os.path.join(processed_data_path,
     #                                 "infrastructure",

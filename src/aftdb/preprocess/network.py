@@ -499,8 +499,8 @@ def merge_edges(network, id_col="id", by=None):
         if len(d2_set) % 1000 == 0:
             print(len(d2_set))
         popped_node = d2_set.pop()
-        node_path = set([popped_node])
-        candidates = set([popped_node])
+        node_path = {popped_node}
+        candidates = {popped_node}
         while candidates:
             popped_cand = candidates.pop()
             matches = set(
@@ -741,9 +741,9 @@ def line_endpoints(line):
         coords = np.array(line.coords)
         start = Point(coords[0])
         end = Point(coords[-1])
-    except NotImplementedError as e:
+    except NotImplementedError:
         print(line)
-        raise e
+        raise
     return start, end
 
 

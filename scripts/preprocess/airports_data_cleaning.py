@@ -36,11 +36,8 @@ def add_iso_code(df, df_id_column, incoming_data_path):
 
 def main(config):
 
-    incoming_data_path = config["paths"]["incoming_data"]
     processed_data_path = config["paths"]["data"]
 
-    epsg_meters = 3395  # To convert geometries to measure distances in meters
-    cutoff_distance = 6600  # We assume airports within 6.6km are the same
 
     df_airports_flow = gpd.read_file(
         os.path.join(

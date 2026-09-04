@@ -133,12 +133,12 @@ def main(config):
     for o in range(len(ports) - 1):
         origin = ports[o]
         destinations = ports[o + 1 :]
-        e, c = network_od_path_estimations(
+        e, _c = network_od_path_estimations(
             G, origin, destinations, "distance", "edge_id"
         )
         all_edges += e
 
-    all_edges = list(set([item for sublist in all_edges for item in sublist]))
+    all_edges = list({item for sublist in all_edges for item in sublist})
     africa_edges = edges[edges["edge_id"].isin(all_edges)]
 
     all_nodes = list(

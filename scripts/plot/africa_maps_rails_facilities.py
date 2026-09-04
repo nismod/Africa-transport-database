@@ -9,14 +9,13 @@ from matplotlib import font_manager
 from matplotlib.colors import ListedColormap
 from tqdm import tqdm
 
-from aftdb.map.map_plotting_utils import *
+from aftdb.plot.map_plotting_utils import *
 
 tqdm.pandas()
 
 
 def main(config):
     data_path = config["paths"]["data"]
-    output_path = config["paths"]["results"]
     figure_path = config["paths"]["figures"]
 
     figures = os.path.join(figure_path)
@@ -25,7 +24,7 @@ def main(config):
 
     map_epsg = 4326
     ax_proj = get_projection(epsg=map_epsg)
-    fig, ax_plots = plt.subplots(
+    _fig, ax_plots = plt.subplots(
         1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
     )
 
@@ -79,7 +78,7 @@ def main(config):
     edges_df.plot(ax=ax, zorder=3, color="black", linewidth=1)
 
     # Plot nodes
-    plot = nodes_df.plot(
+    nodes_df.plot(
         ax=ax,
         zorder=5,
         column=output_column,

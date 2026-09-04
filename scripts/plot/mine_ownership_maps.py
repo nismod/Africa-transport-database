@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import itertools
 import os
 
 import geopandas as gpd
@@ -8,7 +9,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.map.map_plotting_utils import *
+from aftdb.plot.map_plotting_utils import *
 
 pd.options.mode.copy_on_write = True
 tqdm.pandas()
@@ -23,7 +24,7 @@ def draw_pie(dist, xpos, ypos, size, color_map, ax=None):
     """A function to plot pie charts on a map"""
     """https://gis.stackexchange.com/questions/429006/making-spatial-pie-chart-using-two-columns-in-geopandas"""
     if ax is None:
-        fig, ax = plt.subplots(figsize=(10, 8))
+        _fig, ax = plt.subplots(figsize=(10, 8))
 
     # for incremental pie slices
     cumsum = np.cumsum(dist)
@@ -32,7 +33,7 @@ def draw_pie(dist, xpos, ypos, size, color_map, ax=None):
 
     xy = []
     s = []
-    for r1, r2 in zip(pie[:-1], pie[1:]):
+    for r1, r2 in itertools.pairwise(pie):
         angles = np.linspace(2 * np.pi * r1, 2 * np.pi * r2)
         x = [0] + np.cos(angles).tolist()
         y = [0] + np.sin(angles).tolist()
@@ -125,7 +126,7 @@ def main():
 
     figwidth = 12
     figheight = figwidth / (1 + 1 * w) / dxl * dyl / (1 - dt)
-    fig = plt.figure(figsize=(figwidth, figheight))
+    plt.figure(figsize=(figwidth, figheight))
     # plt.subplots_adjust(left=0, bottom=0, right=1, top=1-dt,wspace=w)
     ax = plt.subplot2grid([1, 1], [0, 0], 1, colspan=panel_span)
     ax.spines[["top", "right", "bottom", "left"]].set_visible(True)
@@ -171,7 +172,7 @@ def main():
     figwidth = 24
     figheight = figwidth / (2 + 2 * w) / dxl * dyl / (1 - dt)
     figheight = 8
-    fig = plt.figure(figsize=(figwidth, figheight))
+    plt.figure(figsize=(figwidth, figheight))
     # plt.subplots_adjust(left=0, bottom=0, right=1, top=1-dt,wspace=0)
     plt.subplots_adjust(left=0, bottom=0, right=1, top=1 - dt, wspace=0, hspace=0)
     for jdx, (sc_n, sc_t, gdf, rowpos, colpos, rowspan, colspan) in enumerate(sc_dfs):
@@ -275,7 +276,7 @@ def main():
     marker_size_max = 3000.0
     df = (
         df.groupby(["region mine"])
-        .agg(dict([(c, "sum") for c in sum_cols]))
+        .agg({c: "sum" for c in sum_cols})
         .reset_index()
     )
     df["Foreign"] = np.where(df["Foreign"] < 0, 0, df["Foreign"])
@@ -293,7 +294,7 @@ def main():
     pie_colors = ["#1f78b4", "#e31a1c", "#4d4d4d"]
     figwidth = 12
     figheight = figwidth / (1 + 1 * w) / dxl * dyl / (1 - dt)
-    fig = plt.figure(figsize=(figwidth, figheight))
+    plt.figure(figsize=(figwidth, figheight))
     # plt.subplots_adjust(left=0, bottom=0, right=1, top=1-dt,wspace=w)
     ax = plt.subplot2grid([1, 1], [0, 0], 1, colspan=panel_span)
     ax.spines[["top", "right", "bottom", "left"]].set_visible(False)

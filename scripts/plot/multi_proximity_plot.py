@@ -13,9 +13,7 @@ tqdm.pandas()
 
 def main(config):
     config = load_config()
-    incoming_data_path = config["paths"]["incoming_data"]
     processed_data_path = config["paths"]["data"]
-    output_path = config["paths"]["results"]
     figure_path = config["paths"]["figures"]
 
     figures = os.path.join(figure_path)
@@ -45,11 +43,11 @@ def main(config):
             proximity_matches[proximity_matches["link_class"] == ct]["length_m"].values
         )
 
-    counts, edges, bars = ax1.hist(df, histtype="barstacked", bins=30)
+    counts, edges, _bars = ax1.hist(df, histtype="barstacked", bins=30)
     counts = [0.5 * c for c in counts]
-    max_y = max([max(c) for c in counts])
+    max_y = max(max(c) for c in counts)
 
-    fig, axe = plt.subplots(1, 1, figsize=(18, 9), dpi=500)
+    _fig, axe = plt.subplots(1, 1, figsize=(18, 9), dpi=500)
     for idx, (ct, cl) in enumerate(zip(closest_types, colors[: len(closest_types)])):
         if idx == 0:
             axe.bar(

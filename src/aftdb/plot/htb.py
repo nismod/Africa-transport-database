@@ -33,7 +33,7 @@ def htb(data):
     """
     # test input
     assert data, "Input must not be empty."
-    assert all(isinstance(datum, int) or isinstance(datum, float) for datum in data), (
+    assert all(isinstance(datum, (int, float)) for datum in data), (
         "All input values must be numeric."
     )
 

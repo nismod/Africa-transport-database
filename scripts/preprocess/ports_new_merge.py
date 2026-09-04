@@ -154,7 +154,6 @@ def main(config):
     processed_data_path = config["paths"]["data"]
 
     epsg_meters = 3395  # To convert geometries to measure distances in meters
-    cutoff_distance = 6600  # We assume ports within 6.6km are the same
     # 1. Read the previously created dataset
     df = gpd.read_file(
         os.path.join(
@@ -301,10 +300,6 @@ def main(config):
         (nodes_merged["infra"] == "port") & (nodes_merged["continent"] == "Africa")
     ]["id"].values.tolist()
     print(len(nodes))
-    from_to_nodes = list(
-        set(df_edges["from_id"].values.tolist() + df_edges["to_id"].values.tolist())
-    )
-    extra_nodes = [n for n in from_to_nodes if n not in nodes]
     # new_nodes = [n for n in nodes if n not in from_to_nodes]
     new_nodes = nodes
     print(df_edges)
@@ -441,7 +436,7 @@ def main(config):
         e, _ = network_od_path_estimations(G, origin, destinations, "distance", "id")
         all_edges += e
 
-    all_edges = list(set([item for sublist in all_edges for item in sublist]))
+    all_edges = list({item for sublist in all_edges for item in sublist})
     # all_edges += port_edges[port_edges.index > 9390]["id"].values.tolist()
     all_edges = list(set(all_edges))
     # africa_edges = port_edges[port_edges["id"].isin(all_edges)]

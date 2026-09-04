@@ -10,7 +10,6 @@ tqdm.pandas()
 
 def main(config):
 
-    incoming_data_path = config["paths"]["incoming_data"]
 
     processed_data_path = config["paths"]["data"]
 
@@ -75,9 +74,6 @@ def main(config):
     grouped_data["percentage"] = (
         grouped_data["length_km"] / grouped_data["total_km"]
     ) * 100
-    total_lengths = gdf_exploded.groupby("paved")["length_km"].sum()
-    total = total_lengths.sum()
-    percentages = (total_lengths / total) * 100
 
     grouped_data.to_csv(
         os.path.join(processed_data_path, "infrastructure", "paved_stats2.csv"),

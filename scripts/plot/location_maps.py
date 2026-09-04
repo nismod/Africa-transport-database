@@ -167,7 +167,7 @@ def main():
     ]
     # result_type = ["noncombined","combined"]
     result_type = ["combined"]
-    stage_mapping_df = pd.read_excel(
+    pd.read_excel(
         os.path.join(
             processed_data_path, "mineral_usage_factors", "stage_mapping.xlsx"
         ),
@@ -182,7 +182,6 @@ def main():
             ]
         for plot in plot_descriptions:
             ton_type = plot["type"]
-            st_type = plot["stage_type"]
             scenarios = plot["scenarios"]
             scenario_names = plot["scenario_names"]
             years = plot["years"]
@@ -255,7 +254,7 @@ def main():
                 )
                 # figheight = 8
                 textfontsize = 16
-            fig = plt.figure(figsize=(figwidth, figheight))
+            plt.figure(figsize=(figwidth, figheight))
             plt.subplots_adjust(left=0, bottom=0, right=1, top=1 - dt, wspace=w)
             for jdx, (sc_n, df, pos, span) in enumerate(sc_dfs):
                 ax = plt.subplot2grid(

@@ -145,7 +145,6 @@ def main(config):
     gdf["nearest_info"] = gdf.apply(nearest_distance, gdf=gdf, axis=1)
 
     # Step 2: Filter rows where distance is less than 0.03
-    close_rows = gdf[gdf["nearest_info"].apply(lambda x: x[1] < 0.03)]
 
     count_less_than_0_03 = (gdf["nearest_distance"] < 0.03).sum()
     print(count_less_than_0_03)

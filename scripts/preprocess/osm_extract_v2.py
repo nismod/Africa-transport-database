@@ -20,7 +20,6 @@ def load_config():
 
 def main(config):
     incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
     # in_path = os.path.join(incoming_data_path,"osm", "tanzania-260325.osm.pbf")
     in_path = os.path.join(incoming_data_path, "osm", "africa-260219.osm.pbf")
     out_path = os.path.join(

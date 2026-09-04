@@ -50,9 +50,7 @@ def main(config):
     incoming_data_path = config["paths"]["incoming_data"]
     processed_data_path = config["paths"]["data"]
     output_path = config["paths"]["results"]
-    figure_path = config["paths"]["figures"]
 
-    figures = os.path.join(figure_path)
 
     epsg_meters = 3395
 

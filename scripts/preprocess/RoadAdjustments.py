@@ -12,29 +12,18 @@ tqdm.pandas()
 
 def main(config):
 
-    incoming_data_path = config["paths"]["incoming_data"]
     processed_data_path = config["paths"]["data"]
 
     epsg_meters = 3395  # To convert geometries to measure distances in meters
 
     # Read the road edges data for Africa
-    road_id_column = "id"
     node_id_column = "id"
-    road_type_column = "tag_highway"
-    main_road_types = ["trunk", "motorway", "primary", "secondary"]
 
     Lobito_edges = gpd.read_parquet(
         os.path.join(
             processed_data_path,
             "infrastructure",
             "africa_roads_edges_PROVA_Lobito_corridor.geoparquet",
-        )
-    )
-    Lobito_nodes = gpd.read_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_nodes_PROVA_Lobito_corridor.geoparquet",
         )
     )
 
@@ -45,26 +34,12 @@ def main(config):
             "africa_roads_edges_PROVA_TA_corridor.geoparquet",
         )
     )
-    TA_nodes = gpd.read_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_nodes_PROVA_TA_corridor.geoparquet",
-        )
-    )
 
     TSH_edges = gpd.read_parquet(
         os.path.join(
             processed_data_path,
             "infrastructure",
             "africa_roads_edges_PROVA_TSH_corridor.geoparquet",
-        )
-    )
-    TSH_nodes = gpd.read_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_nodes_PROVA_TSH_corridor.geoparquet",
         )
     )
 
@@ -75,27 +50,12 @@ def main(config):
             "africa_roads_edges_PROVA_NS_corridor.geoparquet",
         )
     )
-    NS_nodes = gpd.read_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_nodes_PROVA_NS_corridor.geoparquet",
-        )
-    )
 
     MDG_edges = gpd.read_parquet(
         os.path.join(
             processed_data_path,
             "infrastructure",
             "africa_roads_edges_PROVA_MDG.geoparquet",
-        )
-    )
-
-    MDG_nodes = gpd.read_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_nodes_PROVA_MDG.geoparquet",
         )
     )
 

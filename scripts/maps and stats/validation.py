@@ -21,11 +21,9 @@ def load_config():
 
 def main(config):
     # 1. Load your data
-    incoming_data_path = config["paths"]["incoming_data"]
     processed_data_path = config["paths"]["data"]
     df = pd.read_csv(os.path.join(processed_data_path, "Validation sets", "ports.csv"))
 
-    features = ["Maritime ports database", "CIA"]
     # df = df.dropna(subset=['CIA'])
 
     # 2. Normalize the data

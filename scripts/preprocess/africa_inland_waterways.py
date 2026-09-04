@@ -59,7 +59,7 @@ def network_creation(
     from_node_column="from_node",
     to_node_column="to_node",
 ):
-    network = create_network_from_nodes_and_edges(
+    create_network_from_nodes_and_edges(
         nodes_df, edges_df, mode, snap_distance=snap_distance
     )
     edges, nodes = get_components_and_size(
@@ -118,7 +118,6 @@ def main():
         component_size_threshold = (
             750  # We checked this from the result of the previous step
         )
-        snap_distance_threshold = 6000
         edges = gpd.read_parquet(
             os.path.join(
                 incoming_data_path, "Africa_osm_rivers", "africa_river_edges.geoparquet"
@@ -222,12 +221,12 @@ def main():
         for o in range(len(ports) - 1):
             origin = ports[o]
             destinations = ports[o + 1 :]
-            e, c = network_od_path_estimations(
+            e, _c = network_od_path_estimations(
                 G, origin, destinations, "distance", "edge_id"
             )
             all_edges += e
 
-        all_edges = list(set([item for sublist in all_edges for item in sublist]))
+        all_edges = list({item for sublist in all_edges for item in sublist})
         africa_edges = edges[edges["edge_id"].isin(all_edges)]
 
         all_nodes = list(
@@ -282,7 +281,7 @@ def main():
         )
         africa_edges.drop("node_id", axis=1, inplace=True)
         africa_edges["length_m"] = africa_edges.geometry.length
-        africe_edges, africa_nodes = get_components_and_size(
+        africa_edges, africa_nodes = get_components_and_size(
             africa_edges, africa_nodes, network_crs=epsg_meters
         )
         africa_edges.rename(

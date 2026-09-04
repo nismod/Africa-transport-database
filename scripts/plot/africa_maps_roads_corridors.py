@@ -9,14 +9,13 @@ import pandas as pd
 from matplotlib import font_manager
 from tqdm import tqdm
 
-from aftdb.map.map_plotting_utils import *
+from aftdb.plot.map_plotting_utils import *
 
 tqdm.pandas()
 
 
 def main(config):
     data_path = config["paths"]["data"]
-    output_path = config["paths"]["results"]
     figure_path = config["paths"]["figures"]
 
     figures = os.path.join(figure_path)
@@ -50,7 +49,7 @@ def main(config):
 
     bold_font = font_manager.FontProperties(weight="bold", size=18)
 
-    fig, ax_plots = plt.subplots(
+    _fig, ax_plots = plt.subplots(
         1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
     )
     # Define color mapping with grey for 'Missing' or -1
@@ -67,7 +66,7 @@ def main(config):
     ]
 
     fig_legend, ax_legend = plt.subplots(figsize=(12, 12))
-    legend = ax_legend.legend(
+    ax_legend.legend(
         handles=legend_items,
         title="Corridor Names",
         title_fontproperties=bold_font,
@@ -110,8 +109,6 @@ def main(config):
     grouped_gdf = gdf_exploded.dissolve(by="corridor_id")
     grouped_gdf = grouped_gdf[~grouped_gdf["corridor_name"].isna()]
 
-    label_spacing = 1000  # distance in meters/units between labels (adjust as needed)
-    max_labels = 5  # optional: cap number of labels to avoid overplotting
 
     # for idx, row in grouped_gdf.iterrows():
     #     geom = row.geometry
@@ -178,12 +175,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 0:
@@ -199,12 +196,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 20:
@@ -220,12 +217,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
 
@@ -242,12 +239,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 13:
@@ -263,12 +260,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
                 ax.annotate(
@@ -281,12 +278,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 14:
@@ -302,12 +299,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
                 ax.annotate(
@@ -320,12 +317,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 15:
@@ -341,12 +338,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 16:
@@ -362,12 +359,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 3:
@@ -383,12 +380,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 4:
@@ -404,12 +401,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 1:
@@ -425,12 +422,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 2:
@@ -446,12 +443,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 25:
@@ -467,12 +464,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 6:
@@ -488,12 +485,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
                 ax.annotate(
@@ -506,12 +503,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 9:
@@ -527,12 +524,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
         elif idx == 28:
@@ -548,12 +545,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
                 # Second label (below)
@@ -565,12 +562,12 @@ def main(config):
                     fontsize=9,
                     color="black",
                     alpha=1,
-                    bbox=dict(
-                        boxstyle="round,pad=0.3",
-                        edgecolor="none",
-                        facecolor="white",
-                        alpha=0.6,
-                    ),
+                    bbox={
+                        "boxstyle": "round,pad=0.3",
+                        "edgecolor": "none",
+                        "facecolor": "white",
+                        "alpha": 0.6,
+                    },
                     zorder=8,
                 )
 

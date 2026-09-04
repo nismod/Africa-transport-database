@@ -363,7 +363,6 @@ def plot_africa_basemap2(ax):
     # Get bounds and set equal white space on left and right
     bounds = africa_df.total_bounds  # [minx, miny, maxx, maxy]
     width = bounds[2] - bounds[0]
-    height = bounds[3] - bounds[1]
 
     # Add padding for equal white space
     padding = width * 0.05  # 5% padding on each side
@@ -455,7 +454,7 @@ def generate_weight_bins(weights, n_steps=9, width_step=0.01, interpolation="lin
     elif interpolation == "equal bins":
         mins = np.array(
             [min_weight]
-            + sorted(set([cut.right for cut in pd.qcut(sorted(weights), n_steps - 1)]))[
+            + sorted({cut.right for cut in pd.qcut(sorted(weights), n_steps - 1)})[
                 :-1
             ]
             + [max_weight]
@@ -734,7 +733,7 @@ def line_map_plotting_colors_width(
     divisor,
     legend_label,
     value_label,
-    line_colors=["#c6dbef", "#6baed6", "#2171b5", "#08306b"],
+    line_colors=None,
     no_value_color="#969696",
     line_steps=4,
     width_step=0.02,
@@ -742,6 +741,8 @@ def line_map_plotting_colors_width(
     significance=0,
     interpolation="log",
 ):
+    if line_colors is None:
+        line_colors = ["#c6dbef", "#6baed6", "#2171b5", "#08306b"]
     column = df_column
     all_colors = [no_value_color] + line_colors
     line_geoms_by_category = {f"{j}": [] for j in range(len(all_colors))}
@@ -830,7 +831,7 @@ def point_map_plotting_color_width(
     divisor,
     legend_label,
     value_label,
-    point_colors=["#c6dbef", "#6baed6", "#2171b5", "#08306b"],
+    point_colors=None,
     no_value_color="#969696",
     point_steps=4,
     width_step=20,
@@ -838,15 +839,12 @@ def point_map_plotting_color_width(
     significance=0,
     interpolation="linear",
 ):
+    if point_colors is None:
+        point_colors = ["#c6dbef", "#6baed6", "#2171b5", "#08306b"]
     column = df_column
 
     all_colors = [no_value_color] + point_colors
     point_geoms_by_category = {f"{j}": [] for j in range(len(all_colors))}
-    # weights = [
-    #     getattr(record,column)
-    #     for record in df.itertuples() if getattr(record,column) > 0
-    # ]
-    max_weight = max(weights)
     width_by_range = generate_weight_bins(
         weights, width_step=width_step, n_steps=point_steps, interpolation=interpolation
     )
@@ -857,7 +855,6 @@ def point_map_plotting_color_width(
         for i, ((nmin, nmax), width) in enumerate(width_by_range.items()):
             if val == 0:
                 point_geoms_by_category[str(i)].append((geom, width / 2))
-                min_width = width / 5
                 break
             elif nmin <= val <= nmax:
                 point_geoms_by_category[str(i + 1)].append((geom, width))
@@ -913,10 +910,10 @@ def point_map_plotting_colors_width(
     column,
     weights,
     point_classify_column=None,
-    point_categories=["1", "2", "3", "4", "5"],
-    point_colors=["#7bccc4", "#6baed6", "#807dba", "#2171b5", "#08306b"],
-    point_labels=[None, None, None, None, None],
-    point_zorder=[6, 7, 8, 9, 10],
+    point_categories=None,
+    point_colors=None,
+    point_labels=None,
+    point_zorder=None,
     marker="o",
     divisor=1.0,
     legend_label="Legend",
@@ -931,14 +928,17 @@ def point_map_plotting_colors_width(
     significance=0,
 ):
 
+    if point_zorder is None:
+        point_zorder = [6, 7, 8, 9, 10]
+    if point_labels is None:
+        point_labels = [None, None, None, None, None]
+    if point_colors is None:
+        point_colors = ["#7bccc4", "#6baed6", "#807dba", "#2171b5", "#08306b"]
+    if point_categories is None:
+        point_categories = ["1", "2", "3", "4", "5"]
     layer_details = list(
         zip(point_categories, point_colors, point_labels, point_zorder)
     )
-    # weights = [
-    #     getattr(record,column)
-    #     for record in df.itertuples() if getattr(record,column) > 0
-    # ]
-    max_weight = max(weights)
     width_by_range = generate_weight_bins(
         weights, width_step=width_step, n_steps=point_steps, interpolation=interpolation
     )
@@ -993,8 +993,6 @@ def point_map_plotting_colors_width(
             for record in df[df[point_classify_column] == cat].itertuples():
                 geom = record.geometry
                 val = getattr(record, column)
-                buffered_geom = None
-                geom_key = label
                 for i, ((nmin, nmax), width) in enumerate(width_by_range.items()):
                     if val == 0:
                         point_geoms_by_category[no_value_label].append(

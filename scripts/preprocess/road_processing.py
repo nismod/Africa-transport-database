@@ -64,7 +64,6 @@ def get_asset_type(x):
 
 
 def main(config):
-    incoming_data_path = config["paths"]["incoming_data"]
     processed_data_path = config["paths"]["data"]
 
     edges = gpd.read_parquet(

@@ -236,7 +236,7 @@ def main(config):
                                 A[j], source, sinks, "length_m", road_id_column
                             )
                             connected_roads = list(
-                                set([item for sublist in n_r for item in sublist])
+                                {item for sublist in n_r for item in sublist}
                             )
                             nearest_roads += connected_roads
                         else:

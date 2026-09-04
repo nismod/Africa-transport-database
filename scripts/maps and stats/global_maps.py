@@ -26,7 +26,6 @@ def remove_nodes_and_edges(
     flow_df, nodes_df, data_path, output_path, year, mineral_class
 ):
     flow_df = flow_df[~flow_df.geometry.isna()]
-    flow_crs = flow_df.crs
     # port_routes = gpd.read_file(
     #                 os.path.join(data_path,
     #                     "infrastructure",
@@ -35,7 +34,6 @@ def remove_nodes_and_edges(
     # flow_df = pd.merge(flow_df,port_routes[["id","distance","length"]]).fillna(0)
     # flow_df = flow_df[(flow_df["distance"]<10000) & (flow_df["length"] < 350)]
     flow_df = flow_df[flow_df["id"] != "maritimeroute_6700"]
-    # flow_df = gpd.GeoDataFrame(flow_df,geometry="geometry",crs=flow_crs)
     od_ports_df = pd.read_csv(
         os.path.join(
             output_path, "flow_mapping", f"mining_city_node_level_ods_{year}.csv"
@@ -467,7 +465,7 @@ def main(config):
                             lambda x: select_nodes(x, oc, threshold_ton_flows), axis=1
                         )
                         ax_proj = get_projection(epsg=4326)
-                        fig, ax_plots = plt.subplots(
+                        _fig, ax_plots = plt.subplots(
                             1,
                             1,
                             subplot_kw={"projection": ax_proj},

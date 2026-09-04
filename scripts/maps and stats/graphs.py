@@ -13,18 +13,10 @@ tqdm.pandas()
 def main(config):
     config = load_config()
     incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
-    output_path = config["paths"]["results"]
     figure_path = config["paths"]["figures"]
 
     figures = os.path.join(figure_path)
 
-    ccg_countries = pd.read_csv(
-        os.path.join(processed_data_path, "admin_boundaries", "ccg_country_codes.csv")
-    )
-    ccg_isos = ccg_countries[ccg_countries["ccg_country"] == 1][
-        "iso_3digit_alpha"
-    ].values.tolist()
     # reference_mineral_colors = ["#cc4c02","#3690c0","#88419d","#d7301f","#252525","#737373"]
 
     roads_df = gpd.read_file(
@@ -37,15 +29,13 @@ def main(config):
     # print(roads_df.columns)
     # breakpoint()
 
-    output_column = "asset_type"
-    values_range = roads_df[output_column].values.tolist()
     ax_proj = get_projection(epsg=4326)
-    fig, ax_plots = plt.subplots(
+    _fig, ax_plots = plt.subplots(
         1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
     )
     # ax_plots = ax_plots.flatten()
 
-    ax = plot_africa_basemap(ax_plots)
+    plot_africa_basemap(ax_plots)
     breakpoint()
     roads_df.plot()
     # ax = point_map_plotting_colors_width(ax,roads_df,

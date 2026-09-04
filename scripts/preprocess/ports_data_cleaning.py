@@ -145,7 +145,7 @@ def main(config):
     # mapping.to_csv("corridor_port_matches.csv",index=False)
 
     # Find the nearest port from Corridor to USGG ports
-    mapping, new_ports_corridor = match_ports(
+    _mapping, new_ports_corridor = match_ports(
         new_ports_corridor.to_crs(epsg=epsg_meters),
         df_ports_shp.to_crs(epsg=epsg_meters),
         "Project_code",
@@ -156,7 +156,7 @@ def main(config):
     # mapping.to_csv("corridor_usgs_matches.csv",index=False)
 
     # Find the nearest port from USGS ports to the Global ports
-    mapping, new_ports_usgs = match_ports(
+    _mapping, new_ports_usgs = match_ports(
         df_ports_shp.to_crs(epsg=epsg_meters),
         df_global_ports.to_crs(epsg=epsg_meters),
         "FeatureUID",
@@ -360,7 +360,6 @@ def main(config):
     # global_edges = port_edges[["from_id","to_id","id","from_infra","to_infra","geometry"]].to_crs(epsg_meters)
     # global_edges["distance"] = global_edges.geometry.length
     global_edges = port_edges[["from_id", "to_id", "id", "distance"]]
-    africa_ports = port_nodes[port_nodes["Continent_Code"] == "AF"]
     G = ig.Graph.TupleList(
         global_edges.itertuples(index=False), edge_attrs=list(global_edges.columns)[2:]
     )
@@ -376,7 +375,7 @@ def main(config):
         e, _ = network_od_path_estimations(G, origin, destinations, "distance", "id")
         all_edges += e
 
-    all_edges = list(set([item for sublist in all_edges for item in sublist]))
+    all_edges = list({item for sublist in all_edges for item in sublist})
     all_edges += port_edges[port_edges.index > 9390]["id"].values.tolist()
     all_edges = list(set(all_edges))
     # africa_edges = port_edges[port_edges["id"].isin(all_edges)]

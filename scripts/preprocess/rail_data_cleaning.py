@@ -509,7 +509,6 @@ def main(config):
             max_edge_id = max(max_edge_id + 1 + df_edges.index.values)
             if inputs["find_nearest"] is True:
                 distance_threshold = inputs["distance_threshold"]
-                df_nodes_mod = []
                 c2 = rail_nodes.copy()[["oid", "geometry"]].to_crs(epsg=epsg_meters)
                 c1 = df_nodes.copy()[["oid", "geometry"]].to_crs(epsg=epsg_meters)
                 c1.rename(columns={"oid": "source"}, inplace=True)

@@ -11,7 +11,6 @@ def main(config):
     output_folder = config["paths"]["data"]
     # Folder containing your GPKG files
 
-    output_file = "merged_roadsurface_lines.gpkg"
 
     # Match all GPKG files
     gpkg_files = glob.glob(

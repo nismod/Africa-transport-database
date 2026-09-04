@@ -13,8 +13,6 @@ tqdm.pandas()
 
 def main(config):
     config = load_config()
-    incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
     output_path = config["paths"]["results"]
     figure_path = config["paths"]["figures"]
 
@@ -66,10 +64,10 @@ def main(config):
             ].values
         )
 
-    counts, edges, bars = ax1.hist(df, histtype="barstacked", bins=30)
+    counts, edges, _bars = ax1.hist(df, histtype="barstacked", bins=30)
     max_y = max([max(c) for c in counts])
 
-    fig, axe = plt.subplots(1, 1, figsize=(18, 9), dpi=500)
+    _fig, axe = plt.subplots(1, 1, figsize=(18, 9), dpi=500)
     for idx, (ct, cl) in enumerate(zip(closest_types, colors)):
         if idx == 0:
             axe.bar(

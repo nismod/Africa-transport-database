@@ -21,8 +21,6 @@ def main(config):
 
     road_id_column = "id"
     node_id_column = "id"
-    road_type_column = "tag_highway"
-    main_road_types = ["trunk", "motorway", "primary", "secondary"]
 
     # """
     # Assuming that the starting point is the road network with the main highways

@@ -16,11 +16,13 @@ processed_data_path = config["paths"]["data"]
 
 def get_mode_dataframe(
     mode,
-    rail_status=["open", "planned", "construction"],
+    rail_status=None,
     rail_to_mode_connection=False,
     rail_facilities=None,
     connection_type="passenger/freight",
 ):
+    if rail_status is None:
+        rail_status = ["open", "planned", "construction"]
     if mode == "air":
         nodes = gpd.read_file(
             os.path.join(

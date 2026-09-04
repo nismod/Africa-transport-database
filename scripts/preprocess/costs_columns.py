@@ -10,7 +10,6 @@ tqdm.pandas()
 
 def main(config):
 
-    incoming_data_path = config["paths"]["incoming_data"]
 
     processed_data_path = config["paths"]["data"]
 

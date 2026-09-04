@@ -20,10 +20,8 @@ def create_tag(x):
 
 def main(config):
 
-    incoming_data_path = config["paths"]["incoming_data"]
     processed_data_path = config["paths"]["data"]
     output_path = config["paths"]["results"]
-    figure_path = config["paths"]["figures"]
 
     epsg_meters = 3395
     # Write to a new GeoPackage
