@@ -41,19 +41,6 @@ def main(config):
 
     # Create a font property for bold text
     bold_font = font_manager.FontProperties(weight="bold")
-    # Select a colormap (e.g., 'viridis', 'plasma', 'tab20', 'Set1', etc.)
-    # colormap = [
-    # '#fddbcc',
-    # '#f97306',
-    # '#c1272d',
-    # '#801515',
-    # '#fbb03b',
-    # '#d0e4f7',
-    # '#8c8ccf',
-    # '#6a5acd',
-    # '#800080',
-    # '#d3d3d3',
-    # ]
     colormap = {
         "Abandoned": "#fddbcc",
         "Disused": "#f97306",
@@ -68,8 +55,6 @@ def main(config):
     }
 
     # Get color values from the colormap
-    # num_colors = len(pivot_data.columns)
-    # colors = [colormap[i] for i in range(num_colors)]
     colors = [colormap[status] for status in pivot_data.columns]
 
     # Plot with colormap

@@ -13,13 +13,6 @@ from aftdb.plot.maps import load_config, save_fig
 pd.options.mode.copy_on_write = True
 tqdm.pandas()
 
-# mpl.style.use('ggplot')
-# mpl.rcParams['font.size'] = 10.
-# mpl.rcParams['font.family'] = 'tahoma'
-# mpl.rcParams['axes.labelsize'] = 12.
-# mpl.rcParams['xtick.labelsize'] = 10.
-# mpl.rcParams['ytick.labelsize'] = 10.
-
 
 def plot_clustered_stacked(
     fig,
@@ -60,7 +53,6 @@ def plot_clustered_stacked(
     n_df = len(dfall)
     n_col = len(dfall[0].columns)
     n_ind = len(dfall[0].index)
-    # axe = plt.subplot(111)
 
     for d in range(len(dfall)):  # for each data frame
         df = dfall[d]
@@ -86,9 +78,7 @@ def plot_clustered_stacked(
                     rect.set_hatch(H * int(i / n_col))  # edited part
                 rect.set_width(1 / float(n_df + 1))
 
-    # sec.set_xticks([5, 15, 25], labels=['\nOughts', '\nTeens', '\nTwenties'])
     axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(n_df + 1)) / 2.0)
-    # axe.set_xticks(np.arange(0,n_ind, 1))
     axe.set_xticklabels(
         df.index, rotation=90, ma="left", fontsize=10, fontweight="bold"
     )

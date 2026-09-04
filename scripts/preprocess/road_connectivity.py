@@ -250,7 +250,6 @@ def main(config):
 
         print(f"* Done with country - {m_c}")
 
-    # print (nearest_roads)
     nearest_roads = list(set(nearest_roads + main_roads))
     nearest_roads = road_edges[road_edges[road_id_column].isin(nearest_roads)]
     nearest_roads = nearest_roads.to_crs(epsg=4326)

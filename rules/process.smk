@@ -10,10 +10,10 @@ build a layer live in ``validate.smk`` instead.
 """
 
 
+# ---------------------------------------------------------------------------
+# OpenStreetMap extracts
+# ---------------------------------------------------------------------------
 
-# ---------------------------------------------------------------------------
-# scripts/preprocess - OpenStreetMap extracts
-# ---------------------------------------------------------------------------
 
 rule osm_extract_v2:
     """Extract airport terminal footprints from the Africa OSM PBF extract.
@@ -46,13 +46,9 @@ rule extract_suez:
 
 
 # ---------------------------------------------------------------------------
-# scripts/preprocess - maritime ports
+# maritime ports
 # ---------------------------------------------------------------------------
 
-
-# ---------------------------------------------------------------------------
-# scripts/preprocess - maritime ports
-# ---------------------------------------------------------------------------
 
 rule ports_data_cleaning:
     """Match USGS, corridor and global port datasets into the maritime network.
@@ -181,13 +177,9 @@ rule port_cargo_attributes:
 
 
 # ---------------------------------------------------------------------------
-# scripts/preprocess - railways
+# railways
 # ---------------------------------------------------------------------------
 
-
-# ---------------------------------------------------------------------------
-# scripts/preprocess - railways
-# ---------------------------------------------------------------------------
 
 rule rail_data_cleaning:
     """Build the Africa railway network from OSM and corridor project data.
@@ -246,8 +238,9 @@ rule rails_costs:
 
 
 # ---------------------------------------------------------------------------
-# scripts/preprocess - roads
+# roads
 # ---------------------------------------------------------------------------
+
 
 rule road_connectivity:
     """Connect points of interest to the OSM road network (README step 1-5)."""
@@ -409,13 +402,9 @@ rule stats_rail_roads:
 
 
 # ---------------------------------------------------------------------------
-# scripts/preprocess - HeiGIT road surface validation
+# airports
 # ---------------------------------------------------------------------------
 
-
-# ---------------------------------------------------------------------------
-# scripts/preprocess - airports
-# ---------------------------------------------------------------------------
 
 rule airports_data_cleaning:
     """Rebuild airport route geometries and attach origin/destination ISO3."""
@@ -446,13 +435,9 @@ rule ourairports_data_layer:
 
 
 # ---------------------------------------------------------------------------
-# scripts/preprocess - inland waterways
+# inland waterways
 # ---------------------------------------------------------------------------
 
-
-# ---------------------------------------------------------------------------
-# scripts/preprocess - inland waterways
-# ---------------------------------------------------------------------------
 
 rule inland_waterways_cleaning:
     """Build the inland waterway network from IWW ports, lakes and rivers."""
@@ -471,20 +456,29 @@ rule inland_waterways_cleaning:
 
 
 rule africa_inland_waterways:
-    """Route IWW ports over the OSM river network (step 3 of the script).
+    """Build the inland waterway network from the OSM rivers extract.
 
-    Steps 1 and 2 are switched off in the script (``step = False``); when
-    enabled they read ``OpenStreetMap_Waterways_for_Africa.geoparquet``,
-    ``africa_river_edges.geoparquet`` and ``IWW_ports/africa_IWW_ports.xlsx``,
-    and write ``africa_river_{nodes,edges}.geoparquet`` and
-    ``africa_network_{nodes,edges}.geoparquet`` into ``Africa_osm_rivers``.
+    Three steps in one script: turn the waterways extract into a network, keep
+    the large connected rivers and snap the IWW ports onto them, then route
+    between the ports and drop the reaches that connect nothing. The two
+    intermediate river networks are written back into ``Africa_osm_rivers``
+    alongside the extract they come from.
+
+    Steps one and two were switched off in the script with a ``step = False``
+    flag - "this step takes a lot of time, so we have set it to false after
+    running it once". Snakemake skips the whole rule when its outputs are up to
+    date, so the flags are gone and all three steps run.
     """
     input:
         script=f"{PREPROCESS}/africa_inland_waterways.py",
-        network_edges=f"{INCOMING}/Africa_osm_rivers/africa_network_edges.geoparquet",
-        network_nodes=f"{INCOMING}/Africa_osm_rivers/africa_network_nodes.geoparquet",
+        waterways=f"{INCOMING}/Africa_osm_rivers/OpenStreetMap_Waterways_for_Africa.geoparquet",
+        iww_ports=f"{INCOMING}/IWW_ports/africa_IWW_ports.xlsx",
         africa_adm0=AFRICA_ADM0,
     output:
+        river_edges=f"{INCOMING}/Africa_osm_rivers/africa_river_edges.geoparquet",
+        river_nodes=f"{INCOMING}/Africa_osm_rivers/africa_river_nodes.geoparquet",
+        network_edges=f"{INCOMING}/Africa_osm_rivers/africa_network_edges.geoparquet",
+        network_nodes=f"{INCOMING}/Africa_osm_rivers/africa_network_nodes.geoparquet",
         network=f"{DATA}/infrastructure/africa_iww_network.gpkg",
     shell:
         """
@@ -493,13 +487,9 @@ rule africa_inland_waterways:
 
 
 # ---------------------------------------------------------------------------
-# scripts/preprocess - multi-modal links and finishing steps
+# multi-modal links and finishing passes
 # ---------------------------------------------------------------------------
 
-
-# ---------------------------------------------------------------------------
-# scripts/preprocess - multi-modal links and finishing steps
-# ---------------------------------------------------------------------------
 
 rule multi_modal_edges_creation:
     """Create the inter-modal links between sea, IWW, rail, air and road."""
@@ -559,8 +549,3 @@ rule source_column:
         """
         python {input.script}
         """
-
-
-# ---------------------------------------------------------------------------
-# scripts/plot - maps
-# ---------------------------------------------------------------------------

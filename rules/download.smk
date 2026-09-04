@@ -100,12 +100,17 @@ Other admin boundary lookups, compiled by the authors - manual
     {DATA}/admin_boundaries/country_codes.xlsx
     {DATA}/admin_boundaries/un_urban_population/un_pop_df.gpkg
 
+OpenStreetMap Waterways for Africa, via the Africa Geoportal
+https://africageoportal.maps.arcgis.com/home/item.html?id=82232d0415c04e7086414dff7eb1310f - manual
+    {INCOMING}/Africa_osm_rivers/OpenStreetMap_Waterways_for_Africa.geoparquet
+    The africa_river_* and africa_network_* geoparquets that sit beside it in
+    that folder are not inputs - ``africa_inland_waterways`` derives them from
+    this extract.
+
 Inland waterways and cost assumptions, compiled by the authors - manual
     {INCOMING}/IWW_ports/africa_IWW_ports.xlsx
     {INCOMING}/IWW_ports/edges_port_IWW_af.gpkg
     {INCOMING}/IWW_ports/hotosm_ssd_waterways.gpkg
-    {INCOMING}/Africa_osm_rivers/africa_network_edges.geoparquet
-    {INCOMING}/Africa_osm_rivers/africa_network_nodes.geoparquet
     {INCOMING}/Lobito_corridor.xlsx
     {INCOMING}/Rail_Costs.xlsx
     {INCOMING}/Roads_Costs.xlsx
@@ -182,11 +187,17 @@ they bite:
    continent attribute joined on. A download rule plus a small processing rule
    would replace the manual step.
 
-9. OSM snapshot. The Africa extract is pinned to a date Geofabrik no longer
+9. Inland waterway steps. ``africa_inland_waterways`` now runs all three of
+   its steps rather than the last one only, so the river networks it used to
+   need supplied by hand are built from the waterways extract. The first two
+   steps are slow, which is why they were switched off; snakemake skips them
+   once their outputs exist, but a first run of this rule is a long one.
+
+10. OSM snapshot. The Africa extract is pinned to a date Geofabrik no longer
    serves publicly. Either pin to a snapshot that stays reachable, or take the
    date from config so a refresh is a config change rather than a code change.
 
-10. Minerals rules. ``maps_global_maps``, ``maps_global_maps_transport``,
+11. Minerals rules. ``maps_global_maps``, ``maps_global_maps_transport``,
     ``plot_location_maps`` and ``plot_mine_ownership_maps`` read the outputs of
     the transport-critical-minerals workflow, including the BACI trade and
     mineral usage factor tables that ``location_maps.py`` reads through

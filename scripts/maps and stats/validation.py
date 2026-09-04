@@ -24,8 +24,6 @@ def main(config):
     processed_data_path = config["paths"]["data"]
     df = pd.read_csv(os.path.join(processed_data_path, "Validation sets", "ports.csv"))
 
-    # df = df.dropna(subset=['CIA'])
-
     # 2. Normalize the data
     scaler = StandardScaler()
     df["A_scaled"] = scaler.fit_transform(df[["Maritime ports database"]])

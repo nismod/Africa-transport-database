@@ -25,8 +25,6 @@ tqdm.pandas()
 def select_nodes(x, flow_column, threshold_ton_flows):
     if x["infra"] == "port":
         return 1
-    # elif (x["infra"] in ["station","stop","road"]) and (x["degree"] > 2) and (x[flow_column] > threshold_ton_flows):
-    #     return 1
     else:
         return 0
 
@@ -35,13 +33,6 @@ def remove_nodes_and_edges(
     flow_df, nodes_df, data_path, output_path, year, mineral_class
 ):
     flow_df = flow_df[~flow_df.geometry.isna()]
-    # port_routes = gpd.read_file(
-    #                 os.path.join(data_path,
-    #                     "infrastructure",
-    #                     "global_maritime_network.gpkg"),
-    #                 layer="edges")
-    # flow_df = pd.merge(flow_df,port_routes[["id","distance","length"]]).fillna(0)
-    # flow_df = flow_df[(flow_df["distance"]<10000) & (flow_df["length"] < 350)]
     flow_df = flow_df[flow_df["id"] != "maritimeroute_6700"]
     od_ports_df = pd.read_csv(
         os.path.join(
@@ -133,7 +124,6 @@ def main(config):
         _fig, ax_plots = plt.subplots(
             1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
         )
-        # ax_plots = ax_plots.flatten()
         ax = plot_africa_basemap(ax_plots)
         ax = point_map_plotting_colors_width(
             ax,
@@ -206,7 +196,6 @@ def main(config):
         _fig, ax_plots = plt.subplots(
             1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
         )
-        # ax_plots = ax_plots.flatten()
         ax = plot_africa_basemap(ax_plots)
         ax = point_map_plotting_colors_width(
             ax,
@@ -244,13 +233,11 @@ def main(config):
             lambda x: 1 if mineral.lower() in x["COMMODITIES_LIST"].lower() else 0,
             axis=1,
         )
-        # s_and_p_mines[["COMMODITIES_LIST","copper_mine_binary"]].to_csv("test.csv")
         commodity_column = "COMMODITY_PRODUCTION_TONNE_BY_PERIOD"
         years = [2022, 2030, 2040]
 
         for year in years:
             output_column = f"{commodity_column}_{year}_{mineral}"
-            # mine_sites_df = s_and_p_mines[s_and_p_mines[output_column] > 0]
             mine_sites_df = s_and_p_mines[s_and_p_mines["copper_mine_binary"] == 1]
             mine_sites_df[output_column] = mine_sites_df[output_column].fillna(0)
             values_range = mine_sites_df[output_column].values.tolist()
@@ -295,12 +282,6 @@ def main(config):
                 flow_df, pd.DataFrame(), data_path, output_path, year, mineral_class
             )
 
-            # print (flow_df.columns.values.tolist())
-            # output_columns = [f"{mineral_class}_mine_output_tons",
-            #                     f"{mineral_class}_refined_mine_output_tons",
-            #                     f"{mineral_class}_unrefined_mine_output_tons"]
-            # output_types = ["total","refined","unrefined"]
-            # output_colors = ['#7f0000',"#41ae76","#e31a1c"]
             output_columns = [f"{mineral_class}_final_stage_production_tons"]
             output_types = ["total"]
             output_colors = ["#cc4c02"]
@@ -318,7 +299,6 @@ def main(config):
                             figsize=(12, 6),
                             dpi=500,
                         )
-                        # ax_plots = ax_plots.flatten()
                         ax = plot_global_basemap(ax_plots)
                         ax = line_map_plotting_colors_width(
                             ax,
@@ -364,7 +344,6 @@ def main(config):
                 flow_df, nodes_df, data_path, output_path, year, mineral_class
             )
 
-            # print (flow_df.columns.values.tolist())
             output_columns = [
                 f"{mineral_class}_mine_output_tons",
                 f"{mineral_class}_refined_mine_output_tons",
@@ -453,12 +432,6 @@ def main(config):
                 flow_df, nodes_df, data_path, output_path, year, mineral_class
             )
 
-            # print (flow_df.columns.values.tolist())
-            # output_columns = [f"{mineral_class}_mine_output_tons",
-            #                     f"{mineral_class}_refined_mine_output_tons",
-            #                     f"{mineral_class}_unrefined_mine_output_tons"]
-            # output_types = ["total","refined","unrefined"]
-            # output_colors = ['#7f0000',"#41ae76","#e31a1c"]
             output_columns = [f"{mineral_class}_final_stage_production_tons"]
             output_types = ["total"]
             output_colors = ["#cc4c02"]
@@ -526,67 +499,6 @@ def main(config):
                             )
                         )
                         plt.close()
-    # if plot_flows is True:
-    #     flow_df = gpd.read_file(os.path.join(output_path,
-    #                                     "flow_mapping",
-    #                                     "copper_flows.gpkg"),
-    #                                     layer="edges")
-    #     flow_df = flow_df[~flow_df.geometry.isna()]
-    #     nodes_df = gpd.read_file(os.path.join(output_path,
-    #                                     "flow_mapping",
-    #                                     "copper_flows.gpkg"),
-    #                                     layer="nodes")
-    #     nodes_df = nodes_df[nodes_df["iso3"].isin(ccg_isos)]
-    #     # print (flow_df.columns.values.tolist())
-    #     output_columns = ["copper_mine_output_tons",
-    #                         "copper_refined_mine_output_tons",
-    #                         "copper_unrefined_mine_output_tons"]
-    #     output_types = ["total","refined","unrefined"]
-    #     output_colors = ['#7f0000',"#41ae76","#e31a1c"]
-    #     for idx,(oc,ot,ocl) in enumerate(zip(output_columns,output_types,output_colors)):
-    #         values_range = flow_df[oc].values.tolist()
-    #         threshold_ton_flows = nodes_df[oc].quantile(0.95)
-
-    #         nodes_df["select_nodes_binary"] = nodes_df.progress_apply(
-    #                                 lambda x:select_nodes(x,oc,threshold_ton_flows),
-    #                                 axis=1)
-    #         ax_proj = get_projection(epsg=4326)
-    #         fig, ax_plots = plt.subplots(1,1,
-    #                         subplot_kw={'projection': ax_proj},
-    #                         figsize=(12,12),
-    #                         dpi=500)
-    #         # ax_plots = ax_plots.flatten()
-    #         # ax = plot_global_basemap(ax_plots)
-    #         ax = plot_africa_basemap(ax_plots)
-    #         ax = line_map_plotting_colors_width(ax,flow_df,oc,
-    #                             1.0,f"{ot.title()} Annual output (tons)","flows",
-    #                             line_colors = 8*[ocl],
-    #                             no_value_color = '#969696',
-    #                             line_steps = 8,
-    #                             width_step = 0.08,
-    #                             interpolation='fisher-jenks')
-    #         n_df = nodes_df[nodes_df["select_nodes_binary"] == 1]
-    #         n_cls = ["sea","rail","road"]
-    #         print (n_df)
-    #         ax = point_map_plotting_colors_width(ax,n_df,
-    #                                 oc,
-    #                                 n_df[oc].values.tolist(),
-    #                                 point_classify_column="mode",
-    #                                 point_categories=n_cls,
-    #                                 point_colors=["#1f78b4","#00441b","#993404"],
-    #                                 point_labels=[s.upper() for s in n_cls],
-    #                                 point_zorder=[20,21,22,23],
-    #                                 point_steps=8,
-    #                                 width_step = 40.0,
-    #                                 interpolation = 'fisher-jenks',
-    #                                 legend_label="Annual output (tons)",
-    #                                 legend_size=16,
-    #                                 legend_weight=2.0,
-    #                                 no_value_label="No output",
-    #                                 )
-    #         plt.tight_layout()
-    #         save_fig(os.path.join(figures,f"ccg_copper_{ot}_node_edge_flows.png"))
-    #         plt.close()
 
 
 if __name__ == "__main__":

@@ -49,7 +49,6 @@ def haversine_distance(point1, point2):
     a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * asin(sqrt(a))
     r = 6371  # Radius of earth in kilometers
-    # print('Distance from beginning to end of route in km: ',round((c * r), 2),'\n')
     return c * r
 
 
@@ -290,27 +289,20 @@ def main(config):
     nodes_merged["vessel_cou"] = nodes_merged["vessel_cou"].fillna(0)
     nodes_merged = nodes_merged.sort_values(by="vessel_cou", ascending=False)
     nodes_merged = nodes_merged.drop_duplicates(subset=["id"], keep="first")
-    # print (nodes_merged)
 
     """Remove the edges which contain nodes not found in the node list
     """
-    # nodes = nodes_merged["id"].values.tolist()
     nodes = nodes_merged[
         (nodes_merged["infra"] == "port") & (nodes_merged["continent"] == "Africa")
     ]["id"].values.tolist()
     print(len(nodes))
-    # new_nodes = [n for n in nodes if n not in from_to_nodes]
     new_nodes = nodes
     print(df_edges)
     df_edges = df_edges[
         ~(df_edges["from_id"].isin(nodes) | df_edges["to_id"].isin(nodes))
     ]
     print(df_edges)
-    # df_edges = df_edges[~(df_edges["from_id"].isin(nodes) | df_edges["to_id"].isin(nodes))]
 
-    # df_origins = nodes_merged[
-    #                         nodes_merged["infra"] == "port"
-    #                         ][nodes_merged["id"].isin(new_nodes)][["id","infra","geometry"]]
     df_origins = nodes_merged[nodes_merged["infra"] == "port"][
         nodes_merged["id"].isin(new_nodes)
     ][["id", "infra", "geometry"]]
@@ -375,9 +367,6 @@ def main(config):
     port_edges["distance_km"] = port_edges.progress_apply(
         lambda x: modify_distance(x), axis=1
     )
-    # id_to_iso3 = nodes_merged.set_index("id")["iso3"]
-    # port_edges["from_iso3"] = port_edges["from_id"].map(id_to_iso3)
-    # port_edges["to_iso3"] = port_edges["to_id"].map(id_to_iso3)
     port_edges.to_file(
         os.path.join(
             processed_data_path,
@@ -418,8 +407,6 @@ def main(config):
         ),
         layer="nodes",
     )
-    # global_edges = port_edges[["from_id","to_id","id","from_infra","to_infra","geometry"]].to_crs(epsg_meters)
-    # global_edges["distance"] = global_edges.geometry.length
     global_edges = port_edges[["from_id", "to_id", "id", "distance"]]
     africa_ports = port_nodes[port_nodes["continent"] == "Africa"]
     G = ig.Graph.TupleList(
@@ -436,9 +423,7 @@ def main(config):
         all_edges += e
 
     all_edges = list({item for sublist in all_edges for item in sublist})
-    # all_edges += port_edges[port_edges.index > 9390]["id"].values.tolist()
     all_edges = list(set(all_edges))
-    # africa_edges = port_edges[port_edges["id"].isin(all_edges)]
     africa_edges = port_edges[port_edges["id"].isin(all_edges)][["from_id", "to_id"]]
     dup_df = africa_edges.copy()
     dup_df[["from_id", "to_id"]] = dup_df[["to_id", "from_id"]]
@@ -459,9 +444,6 @@ def main(config):
         )
     )
     africa_nodes = port_nodes[port_nodes["id"].isin(all_nodes)]
-    # id_to_iso3 = africa_nodes.set_index("id")["iso3"]
-    # africa_edges["from_iso3"] = africa_edges["from_id"].map(id_to_iso3)
-    # africa_edges["to_iso3"] = africa_edges["to_id"].map(id_to_iso3)
 
     africa_edges = africa_edges[
         ["id", "from_id", "to_id", "from_infra", "to_infra", "distance", "geometry"]

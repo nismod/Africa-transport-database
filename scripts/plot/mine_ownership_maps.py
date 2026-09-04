@@ -134,14 +134,12 @@ def main():
     color_df = pd.DataFrame(
         list(zip(commodities, commodities_colors)), columns=["commodity", "color"]
     )
-    # textfontsize = 12
 
     """Test Map"""
 
     figwidth = 12
     figheight = figwidth / (1 + 1 * w) / dxl * dyl / (1 - dt)
     plt.figure(figsize=(figwidth, figheight))
-    # plt.subplots_adjust(left=0, bottom=0, right=1, top=1-dt,wspace=w)
     ax = plt.subplot2grid([1, 1], [0, 0], 1, colspan=panel_span)
     ax.spines[["top", "right", "bottom", "left"]].set_visible(True)
     ax.set_aspect("equal")
@@ -187,7 +185,6 @@ def main():
     figheight = figwidth / (2 + 2 * w) / dxl * dyl / (1 - dt)
     figheight = 8
     plt.figure(figsize=(figwidth, figheight))
-    # plt.subplots_adjust(left=0, bottom=0, right=1, top=1-dt,wspace=0)
     plt.subplots_adjust(left=0, bottom=0, right=1, top=1 - dt, wspace=0, hspace=0)
     for jdx, (sc_n, sc_t, gdf, rowpos, colpos, rowspan, colspan) in enumerate(sc_dfs):
         ax = plt.subplot2grid(
@@ -305,7 +302,6 @@ def main():
     figwidth = 12
     figheight = figwidth / (1 + 1 * w) / dxl * dyl / (1 - dt)
     plt.figure(figsize=(figwidth, figheight))
-    # plt.subplots_adjust(left=0, bottom=0, right=1, top=1-dt,wspace=w)
     ax = plt.subplot2grid([1, 1], [0, 0], 1, colspan=panel_span)
     ax.spines[["top", "right", "bottom", "left"]].set_visible(False)
     ax.set_aspect("equal")
@@ -338,7 +334,6 @@ def main():
             )
 
     ins = ax.inset_axes([-0.05, -0.05, 0.2, 0.8])
-    # pie_colors = ["#1f78b4","#e31a1c","#969696"]
     # create inset plot
     keys = ["tonnage", "Ownership"]
     ins.spines[["top", "right", "bottom", "left"]].set_visible(False)
@@ -371,12 +366,6 @@ def main():
                 ins.text(
                     xk, yk[k], f"       {tonnage_key[k]:,.0f}", va="center", fontsize=10
                 )
-            # for n, p in enumerate(size_key):
-            #     circle = Circle(
-            #                         (xk, yk[n]),
-            #                         radius=(p)**0.5,
-            #                         fc='k')
-            #     ax.add_artist(circle)
         else:
             commodities = ["Unknown", "Foreign", "Domestic"]
             pie_colors = ["#4d4d4d", "#e31a1c", "#1f78b4"]

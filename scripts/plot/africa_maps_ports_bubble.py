@@ -75,7 +75,6 @@ def main(config):
         [bounds[0] - pad_x, bounds[2] + pad_x, bounds[1] - pad_y, bounds[3] + pad_y],
         crs=ccrs.PlateCarree(),
     )  # Because data is now in EPSG:4326
-    # merged_gdf.plot(ax=ax,zorder=4, column='TotalSeats', cmap='YlOrRd',markersize=15,legend=True, scheme="quantiles", label="Airport total seats")
     maritime_nodes["markersize"] = (
         marker_size_max * (maritime_nodes["vessel_count_total"] / tmax) ** 0.5
     )
@@ -104,7 +103,6 @@ def main(config):
 
     t_key = 10 ** np.arange(0.7, np.ceil(np.log10(tmax)), 0.6)[:-1]
 
-    # t_key = maritime_nodes["vessel_count_total"].quantile([0.25, 0.5, 0.75, 1.0]).values
     t_key = t_key[::-1]
     Nk = t_key.size
     yk = np.linspace(-2.45, 0.8, Nk)

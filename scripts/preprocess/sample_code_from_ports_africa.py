@@ -50,14 +50,8 @@ def main(config):
     ]
     print(duplicated_node_ids)
 
-    # This should have point geometry, not points with buffer geometry
-    # non_intersected["geometry"]  = non_intersected.geometry.centroid
-    # Also it should be just 1 point at one location, so probably
     # Group by FeatureUID
     non_intersected = non_intersected.groupby("FeatureUID").first().reset_index()
-    # non_intersected = non_intersected.set_crs(epsg=3395)
-    # Also probabble have to project this to EPSG = 4326 because the other data is in that system
-    # non_intersected = non_intersected.to_crs(epsg=4326)
     print(non_intersected)
 
     # Extract nodes for the port networkthat are not ports

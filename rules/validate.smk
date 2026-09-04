@@ -9,6 +9,10 @@ these rules run come from ``scripts/preprocess``, ``scripts/plot`` and
 """
 
 
+# ---------------------------------------------------------------------------
+# rail facilities against independently mapped locations
+# ---------------------------------------------------------------------------
+
 
 rule google_api_matches:
     """Match rail facilities against mines, ports, airports and Google places."""
@@ -33,14 +37,23 @@ rule google_api_matches:
         """
 
 
-# ---------------------------------------------------------------------------
-# scripts/preprocess - roads
-# ---------------------------------------------------------------------------
+rule plot_rail_facility_proximity:
+    """Histogram of rail facility distances to matched reference locations."""
+    input:
+        script=f"{PLOT}/rail_location_proximity_plot.py",
+        matches=f"{RESULTS}/africa-station-google-points/location_proximity_final.gpkg",
+    output:
+        figure=f"{FIGURES}/rail_facility_proximity.png",
+    shell:
+        """
+        python {input.script}
+        """
 
 
 # ---------------------------------------------------------------------------
-# scripts/preprocess - HeiGIT road surface validation
+# road surface and length against the HeiGIT dataset
 # ---------------------------------------------------------------------------
+
 
 rule merge_heigit_data:
     """Merge the per-country HeiGIT road surface GeoPackages into one file."""
@@ -91,28 +104,6 @@ rule roads_validation_comparison:
         """
 
 
-# ---------------------------------------------------------------------------
-# scripts/preprocess - airports
-# ---------------------------------------------------------------------------
-
-
-# ---------------------------------------------------------------------------
-# scripts/maps and stats
-# ---------------------------------------------------------------------------
-
-rule maps_validation:
-    """Cluster-compare the maritime port database against CIA port counts."""
-    input:
-        script=f"{MAPS_AND_STATS}/validation.py",
-        ports=f"{DATA}/Validation sets/ports.csv",
-    output:
-        clusters=f"{DATA}/Validation sets/port_cluster_comparison_k3.csv",
-    shell:
-        """
-        python {input.script}
-        """
-
-
 rule plot_heigit_bar_charts:
     """Bar charts comparing this database against HeiGIT and rail references."""
     input:
@@ -131,6 +122,29 @@ rule plot_heigit_bar_charts:
         """
 
 
+# ---------------------------------------------------------------------------
+# port counts against the CIA factbook
+# ---------------------------------------------------------------------------
+
+
+rule maps_validation:
+    """Cluster-compare the maritime port database against CIA port counts."""
+    input:
+        script=f"{MAPS_AND_STATS}/validation.py",
+        ports=f"{DATA}/Validation sets/ports.csv",
+    output:
+        clusters=f"{DATA}/Validation sets/port_cluster_comparison_k3.csv",
+    shell:
+        """
+        python {input.script}
+        """
+
+
+# ---------------------------------------------------------------------------
+# multi-modal link lengths
+# ---------------------------------------------------------------------------
+
+
 rule plot_multi_modal_proximity:
     """Histogram of multi-modal link lengths by connection type."""
     input:
@@ -138,19 +152,6 @@ rule plot_multi_modal_proximity:
         multimodal=f"{DATA}/infrastructure/africa_multimodal.gpkg",
     output:
         figure=f"{FIGURES}/multi_modal_proximity.png",
-    shell:
-        """
-        python {input.script}
-        """
-
-
-rule plot_rail_facility_proximity:
-    """Histogram of rail facility distances to matched reference locations."""
-    input:
-        script=f"{PLOT}/rail_location_proximity_plot.py",
-        matches=f"{RESULTS}/africa-station-google-points/location_proximity_final.gpkg",
-    output:
-        figure=f"{FIGURES}/rail_facility_proximity.png",
     shell:
         """
         python {input.script}

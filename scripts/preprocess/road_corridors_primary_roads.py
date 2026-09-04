@@ -44,10 +44,6 @@ def main(config):
 
     road_edges = road_edges.to_crs(epsg=epsg_meters)
     road_nodes = road_nodes.to_crs(epsg=epsg_meters)
-    # main_edges = gpd.read_parquet(os.path.join(
-    # processed_data_path,
-    # "infrastructure",
-    # "africa_roads_edges.geoparquet"))
 
     # """
     # Read the file with the start and end points of the corridor
@@ -135,8 +131,6 @@ def main(config):
         ["index_start", "index_end", "corridor_name_start"], axis=1, inplace=True
     )
     corridor_df.rename(columns={"corridor_name_end": "corridor_name"}, inplace=True)
-    # corridor_df = pd.concat([corridor_df, corridor_df2]axis=0)
-    # corridor_df = corridor_df.reindex(columns=['start_location','source','end_location','target','corridor_name'])
 
     graph = create_igraph_from_dataframe(
         road_edges[["from_id", "to_id", road_id_column, "length_m"]]

@@ -155,11 +155,6 @@ def main():
 
     multi_df = []
     for idx, (f_m, t_m) in enumerate(zip(from_modes, to_modes)):
-        # if f_m in["road_freight","road_passenger"]  or t_m in["road_freight","road_passenger"]:
-        #     distance_threshold = 4000   # Found this by manual check
-        # else:
-        #     distance_threshold = 3000   # Found this by manual check
-
         if f_m == "rail":
             if t_m == "road_freight":
                 f_df = get_mode_dataframe(
