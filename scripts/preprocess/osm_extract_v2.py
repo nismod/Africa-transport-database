@@ -1,20 +1,13 @@
-import json
 import os
 
+import quackosm as qo
 from tqdm import tqdm
 
+from aftdb.preprocess.utils import load_config
+
 tqdm.pandas()
-import quackosm as qo
 
 
-def load_config():
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-
-    config_path = os.path.join(script_dir, "..", "config.json")
-
-    with open(config_path, "r") as config_fh:
-        config = json.load(config_fh)
-    return config
 
 
 def main(config):
