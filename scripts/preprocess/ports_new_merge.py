@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os
 from math import asin, cos, radians, sin, sqrt
 

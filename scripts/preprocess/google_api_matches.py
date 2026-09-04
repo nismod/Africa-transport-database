@@ -51,7 +51,6 @@ def main(config):
     processed_data_path = config["paths"]["data"]
     output_path = config["paths"]["results"]
 
-
     epsg_meters = 3395
 
     rail_nodes = gpd.read_file(

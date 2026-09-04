@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # This file aims to merge the value/weight/utilisations files together with the consolidated ports datasets
 
 import os

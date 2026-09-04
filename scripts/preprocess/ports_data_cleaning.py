@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # (1) Merge three datasets; (2)Add ISO3 (4) extract non_intersected
 import os
 import re
@@ -134,7 +133,7 @@ def main(config):
         & ~(df_corridor["Project_code"].isin(["LTT0002", "KMI0001", "DLC0002"]))
     ]
 
-    mapping, new_ports_corridor = match_ports(
+    _mapping, new_ports_corridor = match_ports(
         df_corridor.to_crs(epsg=epsg_meters),
         df_global_ports.to_crs(epsg=epsg_meters),
         "Project_code",
@@ -187,9 +186,7 @@ def main(config):
     )
     # Get the maximum number of the port node ID because we want to create new nodes in the sequence
     prt = df_global_ports[df_global_ports["infra"] == "port"]
-    max_port_id = max(
-        [int(re.findall(r"\d+", v)[0]) for v in prt["id"].values.tolist()]
-    )
+    max_port_id = max(int(re.findall(r"\d+", v)[0]) for v in prt["id"].values.tolist())
     new_ports["id"] = list(max_port_id + 1 + new_ports.index.values)
     new_ports["id"] = new_ports.progress_apply(lambda x: f"port_{x.id}", axis=1)
     new_ports["Continent_Code"] = "AF"
@@ -297,7 +294,6 @@ def main(config):
         lambda x: add_lines(x, port_nodes, nodes, "id", "to_id"), axis=1
     )
     suez_lines.rename(columns={"id": "from_id"}, inplace=True)
-    breakpoint()
 
     edges.append(suez_lines[["from_id", "to_id", "from_infra", "to_infra", "geometry"]])
 

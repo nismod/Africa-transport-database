@@ -1,6 +1,7 @@
 """Road network risks and adaptation maps"""
 
 import os
+from functools import partial
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -95,7 +96,14 @@ def main(config):
     ccg_isos = ccg_countries[ccg_countries["ccg_country"] == 1][
         "iso_3digit_alpha"
     ].values.tolist()
-    # reference_minerals = ["copper","cobalt","manganese","lithium","graphite","nickel"]
+    reference_minerals = [
+        "copper",
+        "cobalt",
+        "manganese",
+        "lithium",
+        "graphite",
+        "nickel",
+    ]
     reference_mineral_colors = [
         "#cc4c02",
         "#3690c0",
@@ -118,14 +126,13 @@ def main(config):
         output_column = "status"
         values_range = mine_sites_df[output_column].values.tolist()
         ax_proj = get_projection(epsg=4326)
-        fig, ax_plots = plt.subplots(
+        _fig, ax_plots = plt.subplots(
             1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
         )
 
         # ax_plots = ax_plots.flatten()
 
         ax = plot_africa_basemap(ax_plots)
-        breakpoint()
         ax = point_map_plotting_colors_width(
             ax,
             mine_sites_df,
@@ -147,7 +154,6 @@ def main(config):
         plt.tight_layout()
         save_fig(os.path.join(figures, "railway_status.png"))
         plt.close()
-    breakpoint()
 
     plot_mine_sites = False
     if plot_mine_sites is True:
@@ -195,7 +201,7 @@ def main(config):
 
         values_range = all_mines["total_tons"].values.tolist()
         ax_proj = get_projection(epsg=4326)
-        fig, ax_plots = plt.subplots(
+        _fig, ax_plots = plt.subplots(
             1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
         )
         ax_plots = ax_plots.flatten()
@@ -248,7 +254,7 @@ def main(config):
             mine_sites_df[output_column] = mine_sites_df[output_column].fillna(0)
             values_range = mine_sites_df[output_column].values.tolist()
             ax_proj = get_projection(epsg=4326)
-            fig, ax_plots = plt.subplots(
+            _fig, ax_plots = plt.subplots(
                 1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
             )
             ax = plot_africa_basemap(ax_plots)
@@ -297,14 +303,12 @@ def main(config):
             output_columns = [f"{mineral_class}_final_stage_production_tons"]
             output_types = ["total"]
             output_colors = ["#cc4c02"]
-            for idx, (oc, ot, ocl) in enumerate(
-                zip(output_columns, output_types, output_colors)
-            ):
+            for oc, ot, ocl in zip(output_columns, output_types, output_colors):
                 if oc in flow_df.columns.values.tolist():
                     values_range = flow_df[oc].values.tolist()
                     if max(values_range) > 0:
                         ax_proj = get_projection(epsg=4326)
-                        fig, ax_plots = plt.subplots(
+                        _fig, ax_plots = plt.subplots(
                             1,
                             1,
                             subplot_kw={"projection": ax_proj},
@@ -374,10 +378,10 @@ def main(config):
                         threshold_ton_flows = nodes_df[oc].quantile(0.95)
 
                         nodes_df["select_nodes_binary"] = nodes_df.progress_apply(
-                            lambda x: select_nodes(x, oc, threshold_ton_flows), axis=1
+                            partial(select_nodes, oc, threshold_ton_flows), axis=1
                         )
                         ax_proj = get_projection(epsg=4326)
-                        fig, ax_plots = plt.subplots(
+                        _fig, ax_plots = plt.subplots(
                             1,
                             1,
                             subplot_kw={"projection": ax_proj},
@@ -464,7 +468,7 @@ def main(config):
                         threshold_ton_flows = nodes_df[oc].quantile(0.95)
 
                         nodes_df["select_nodes_binary"] = nodes_df.progress_apply(
-                            lambda x: select_nodes(x, oc, threshold_ton_flows), axis=1
+                            partial(select_nodes, oc, threshold_ton_flows), axis=1
                         )
                         ax_proj = get_projection(epsg=4326)
                         _fig, ax_plots = plt.subplots(

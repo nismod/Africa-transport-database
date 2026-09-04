@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Aim: to complete the attribution table for 'ports' in the 'africa_ports_modified.gpkg' file, specifically adding the 'node_id', 'name', and 'ISO3' fields.
 # The output file will be named 'output.gpkg' and will contain two layers: 'nodes' and 'edges'."
 
@@ -118,12 +116,17 @@ def main(config):
     condition = (merged_result["infra"] == "ports") & (merged_result["iso3"].isnull())
 
     # 8. Add values to the blank rows of 'iso3' columns
-    for idx, row in merged_result[condition].iterrows():
-        point = row["geometry"]
-        # Find the nearest country
-        distances = world["geometry"].apply(lambda country: country.distance(point))
-        nearest_country = world.loc[distances.idxmin(), "ISO_A3"]
-        merged_result.loc[idx, "iso3"] = nearest_country
+    missing_iso3 = gpd.GeoDataFrame(
+        merged_result.loc[condition, ["geometry"]],
+        geometry="geometry",
+        crs=world.crs,
+    )
+    nearest_iso3 = (
+        gpd.sjoin_nearest(missing_iso3, world[["ISO_A3", "geometry"]], how="left")
+        .groupby(level=0)["ISO_A3"]
+        .first()
+    )
+    merged_result.loc[nearest_iso3.index, "iso3"] = nearest_iso3
 
     # 8. Generate the new ouput
     gdf_merged_result = gpd.GeoDataFrame(merged_result, geometry="geometry")

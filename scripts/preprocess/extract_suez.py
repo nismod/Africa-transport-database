@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Code to extract the suez canal navigation route
 import os
 import re

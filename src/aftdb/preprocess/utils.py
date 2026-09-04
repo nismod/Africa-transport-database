@@ -108,10 +108,10 @@ def add_node_degree(edges_dataframe, nodes_dataframe):
         .rename_axis("id")
         .reset_index(name="degree")
     )
-    nodes_dataframe = pd.merge(nodes_dataframe, degree_df, how="left", on=["id"])
+    df = pd.merge(nodes_dataframe, degree_df, how="left", on=["id"])
 
     nodes_crs = nodes_dataframe.crs
-    return gpd.GeoDataFrame(nodes_flows_dataframe, geometry="geometry", crs=nodes_crs)
+    return gpd.GeoDataFrame(df, geometry="geometry", crs=nodes_crs)
 
 
 def add_lines(x, from_nodes_df, to_nodes_df, from_nodes_id, to_nodes_id):

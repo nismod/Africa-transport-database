@@ -24,7 +24,7 @@ def main(config):
 
     map_epsg = 4326
     ax_proj = get_projection(epsg=map_epsg)
-    fig, ax_plots = plt.subplots(
+    _fig, ax_plots = plt.subplots(
         1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
     )
 
@@ -108,7 +108,6 @@ def main(config):
 
     grouped_gdf = gdf_exploded.dissolve(by="corridor_id")
     grouped_gdf = grouped_gdf[~grouped_gdf["corridor_name"].isna()]
-
 
     # for idx, row in grouped_gdf.iterrows():
     #     geom = row.geometry
@@ -532,44 +531,41 @@ def main(config):
                     },
                     zorder=8,
                 )
-        elif idx == 28:
-            if row.geometry is not None and not row.geometry.is_empty:
-                centroid = row.geometry.centroid  # Get average centroid
-                ax.annotate(
-                    text=str(
-                        idx + 1
-                    ),  # Show corridor_id (+1 for human-friendly numbering)
-                    xy=(centroid.x, centroid.y),
-                    xytext=(3, 40),  # Small offset for visibility
-                    textcoords="offset points",
-                    fontsize=9,
-                    color="black",
-                    alpha=1,
-                    bbox={
-                        "boxstyle": "round,pad=0.3",
-                        "edgecolor": "none",
-                        "facecolor": "white",
-                        "alpha": 0.6,
-                    },
-                    zorder=8,
-                )
-                # Second label (below)
-                ax.annotate(
-                    text=str(idx + 1),
-                    xy=(centroid.x, centroid.y),
-                    xytext=(20, -15),  # This pushes the label down
-                    textcoords="offset points",
-                    fontsize=9,
-                    color="black",
-                    alpha=1,
-                    bbox={
-                        "boxstyle": "round,pad=0.3",
-                        "edgecolor": "none",
-                        "facecolor": "white",
-                        "alpha": 0.6,
-                    },
-                    zorder=8,
-                )
+        elif idx == 28 and row.geometry is not None and not row.geometry.is_empty:
+            centroid = row.geometry.centroid  # Get average centroid
+            ax.annotate(
+                text=str(idx + 1),  # Show corridor_id (+1 for human-friendly numbering)
+                xy=(centroid.x, centroid.y),
+                xytext=(3, 40),  # Small offset for visibility
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox={
+                    "boxstyle": "round,pad=0.3",
+                    "edgecolor": "none",
+                    "facecolor": "white",
+                    "alpha": 0.6,
+                },
+                zorder=8,
+            )
+            # Second label (below)
+            ax.annotate(
+                text=str(idx + 1),
+                xy=(centroid.x, centroid.y),
+                xytext=(20, -15),  # This pushes the label down
+                textcoords="offset points",
+                fontsize=9,
+                color="black",
+                alpha=1,
+                bbox={
+                    "boxstyle": "round,pad=0.3",
+                    "edgecolor": "none",
+                    "facecolor": "white",
+                    "alpha": 0.6,
+                },
+                zorder=8,
+            )
 
     plt.tight_layout()
 

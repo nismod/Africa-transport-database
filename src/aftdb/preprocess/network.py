@@ -51,7 +51,8 @@ if "SNKIT_PROCESSES" in os.environ:
     PARALLEL_PROCESS_COUNT = min([os.cpu_count(), requested_processes])
     import multiprocessing
 
-    logging.info(
+    logger = logging.getLogger(__name__)
+    logger.info(
         f"SNKIT_PROCESSES={processes_env_var}, using {PARALLEL_PROCESS_COUNT} processes"
     )
 else:
@@ -74,7 +75,6 @@ class Network:
     """
 
     def __init__(self, nodes=None, edges=None):
-        """ """
         if nodes is None:
             nodes = GeoDataFrame(geometry=[])
         self.nodes = nodes
@@ -282,7 +282,9 @@ def merge_multilinestring(geom):
                 return geom_inb
         else:
             return geom
-    except:
+    except Exception as e:  # noqa: BLE001
+        logger = logging.getLogger(__name__)
+        logger.debug(e)
         return GeometryCollection()
 
 

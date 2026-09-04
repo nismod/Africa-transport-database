@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import json
 import os
 import re
@@ -312,10 +311,7 @@ def main(config):
             edges = edges.set_crs(epsg=df_crs)
             nodes = nodes.set_crs(epsg=df_crs)
             max_edge_id = max(
-                [
-                    int(re.findall(r"\d+", v)[0])
-                    for v in edges["edge_id"].values.tolist()
-                ]
+                int(re.findall(r"\d+", v)[0]) for v in edges["edge_id"].values.tolist()
             )
 
             # Join network components which are very close
@@ -440,17 +436,14 @@ def main(config):
         )
         max_edge_id = max(rail_edges.oid.values.tolist())
         df_crs = int(str(rail_edges.crs).split(":")[1])
-        rail_nodes = json.load(
-            open(
-                os.path.join(
-                    incoming_data_path,
-                    "africa_rail_network",
-                    "network_data",
-                    "africa_rail_nodes.geojson",
-                ),
-                encoding="utf8",
-            )
+        rail_nodes_path = os.path.join(
+            incoming_data_path,
+            "africa_rail_network",
+            "network_data",
+            "africa_rail_nodes.geojson",
         )
+        with open(rail_nodes_path, encoding="utf8") as fh:
+            rail_nodes = json.load(fh)
         rail_nodes = convert_json_geopandas(rail_nodes)
         rail_nodes = rail_nodes.to_crs(epsg=4326)
         max_node_id = max(rail_nodes.oid.values.tolist())

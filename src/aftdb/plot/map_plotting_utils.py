@@ -454,9 +454,7 @@ def generate_weight_bins(weights, n_steps=9, width_step=0.01, interpolation="lin
     elif interpolation == "equal bins":
         mins = np.array(
             [min_weight]
-            + sorted({cut.right for cut in pd.qcut(sorted(weights), n_steps - 1)})[
-                :-1
-            ]
+            + sorted({cut.right for cut in pd.qcut(sorted(weights), n_steps - 1)})[:-1]
             + [max_weight]
         )
     # elif interpolation == 'htb':
@@ -484,7 +482,6 @@ def generate_weight_bins(weights, n_steps=9, width_step=0.01, interpolation="lin
 
 
 def find_significant_digits(divisor, significance, width_by_range):
-    divisor = divisor
     significance_ndigits = significance
     max_sig = []
     for i, ((nmin, nmax), line_style) in enumerate(width_by_range.items()):

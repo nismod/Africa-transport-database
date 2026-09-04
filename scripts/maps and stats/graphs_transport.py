@@ -36,10 +36,6 @@ def main(config):
 
     print(roads_df.columns)
 
-    output_column = "corridor_name"
-
-    breakpoint()
-
     # ax_proj = get_projection(epsg=4326)
     # fig, ax_plots = plt.subplots(1,1,
     #                      subplot_kw={'projection': ax_proj},
@@ -68,7 +64,6 @@ def main(config):
     plt.tight_layout()
     save_fig(os.path.join(figures, "roads_test.png"))
     plt.close()
-    breakpoint()
 
 
 # africa_boundaries = gpd.read_file(os.path.join(

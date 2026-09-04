@@ -4,6 +4,7 @@ WILL MODIFY LATER
 
 import json
 import os
+from math import asin, cos, radians, sin, sqrt
 
 import geopandas as gpd
 import igraph as ig

@@ -11,7 +11,6 @@ def main(config):
     output_folder = config["paths"]["data"]
     # Folder containing your GPKG files
 
-
     # Match all GPKG files
     gpkg_files = glob.glob(
         os.path.join(
@@ -36,7 +35,7 @@ def main(config):
             country_code = os.path.basename(gpkg_path).split("_")[1]
             gdf["country_iso_a3"] = str(country_code).upper()
             merged_gdf.append(gdf)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             print(f"Skipping {gpkg_path}: {e}")
 
     # Final merge

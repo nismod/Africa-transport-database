@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import itertools
 import os
 
@@ -274,11 +272,7 @@ def main():
 
     sum_cols = ["Total", "Local", "Foreign", "Unknown"]
     marker_size_max = 3000.0
-    df = (
-        df.groupby(["region mine"])
-        .agg({c: "sum" for c in sum_cols})
-        .reset_index()
-    )
+    df = df.groupby(["region mine"]).agg({c: "sum" for c in sum_cols}).reset_index()
     df["Foreign"] = np.where(df["Foreign"] < 0, 0, df["Foreign"])
     df = pd.merge(
         centroid_df[["ADM0_A3", "geometry"]],

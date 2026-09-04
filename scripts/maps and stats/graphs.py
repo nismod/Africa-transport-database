@@ -2,7 +2,6 @@ import os
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
-import pandas as pd
 from tqdm import tqdm
 
 from aftdb.map.map_plotting_utils import *
@@ -27,7 +26,6 @@ def main(config):
     # roads_df["geometry"] = roads_df.geometry.centroid
 
     # print(roads_df.columns)
-    # breakpoint()
 
     ax_proj = get_projection(epsg=4326)
     _fig, ax_plots = plt.subplots(
@@ -36,7 +34,6 @@ def main(config):
     # ax_plots = ax_plots.flatten()
 
     plot_africa_basemap(ax_plots)
-    breakpoint()
     roads_df.plot()
     # ax = point_map_plotting_colors_width(ax,roads_df,
     #                                 output_column,

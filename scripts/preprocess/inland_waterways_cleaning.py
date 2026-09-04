@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # (1) Merge three datasets; (2)Add ISO3 (4) extraxt non_intersected
 import os
 

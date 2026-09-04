@@ -1,6 +1,6 @@
-#!/usr/bin/env python
 # (1) Merge three datasets; (2)Add ISO3 (4) extract non_intersected
 import os
+from functools import partial
 
 import geopandas as gpd
 import pandas as pd
@@ -182,7 +182,7 @@ def main(config):
     ]
     for ref_m in reference_minerals:
         port_matches[f"{ref_m}_export_binary"] = port_matches.progress_apply(
-            lambda x: find_ref_mineral(x, ref_m), axis=1
+            partial(find_ref_mineral, m=ref_m), axis=1
         )
 
     port_df = gpd.read_file(

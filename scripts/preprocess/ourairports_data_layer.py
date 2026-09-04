@@ -13,7 +13,6 @@ def main(config):
     incoming_data_path = config["paths"]["incoming_data"]
     processed_data_path = config["paths"]["data"]
 
-
     df_airports_ourairports = gpd.read_file(
         os.path.join(incoming_data_path, "airports", "africa_airports_ourairport.gpkg")
     )

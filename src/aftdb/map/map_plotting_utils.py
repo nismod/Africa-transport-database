@@ -125,7 +125,7 @@ def scale_bar_and_direction(
     arrow_location=(0.80, 0.08),
     scalebar_location=(0.88, 0.05),
     scalebar_distance=25,
-    zorder=None
+    zorder=None,
 ):
     """Draw a scale bar and direction arrow
 
@@ -588,9 +588,7 @@ def generate_weight_bins(weights, n_steps=9, width_step=0.01, interpolation="lin
     elif interpolation == "equal bins":
         mins = np.array(
             [min_weight]
-            + sorted({cut.right for cut in pd.qcut(sorted(weights), n_steps - 1)})[
-                :-1
-            ]
+            + sorted({cut.right for cut in pd.qcut(sorted(weights), n_steps - 1)})[:-1]
             + [max_weight]
         )
     # elif interpolation == 'htb':
@@ -618,7 +616,6 @@ def generate_weight_bins(weights, n_steps=9, width_step=0.01, interpolation="lin
 
 
 def find_significant_digits(divisor, significance, width_by_range):
-    divisor = divisor
     significance_ndigits = significance
     max_sig = []
     for i, ((nmin, nmax), line_style) in enumerate(width_by_range.items()):

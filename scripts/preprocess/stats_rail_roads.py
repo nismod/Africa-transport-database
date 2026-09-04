@@ -10,7 +10,6 @@ tqdm.pandas()
 
 def main(config):
 
-
     processed_data_path = config["paths"]["data"]
 
     roads_df = gpd.read_parquet(

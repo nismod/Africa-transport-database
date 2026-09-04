@@ -1,6 +1,7 @@
 """Road network risks and adaptation maps"""
 
 import os
+from functools import partial
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -121,7 +122,7 @@ def main(config):
         output_column = "mine_output_approx_copper"
         values_range = mine_sites_df[output_column].values.tolist()
         ax_proj = get_projection(epsg=4326)
-        fig, ax_plots = plt.subplots(
+        _fig, ax_plots = plt.subplots(
             1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
         )
         # ax_plots = ax_plots.flatten()
@@ -194,7 +195,7 @@ def main(config):
 
         values_range = all_mines["total_tons"].values.tolist()
         ax_proj = get_projection(epsg=4326)
-        fig, ax_plots = plt.subplots(
+        _fig, ax_plots = plt.subplots(
             1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
         )
         # ax_plots = ax_plots.flatten()
@@ -246,7 +247,7 @@ def main(config):
             mine_sites_df[output_column] = mine_sites_df[output_column].fillna(0)
             values_range = mine_sites_df[output_column].values.tolist()
             ax_proj = get_projection(epsg=4326)
-            fig, ax_plots = plt.subplots(
+            _fig, ax_plots = plt.subplots(
                 1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
             )
             ax = plot_africa_basemap(ax_plots)
@@ -302,7 +303,7 @@ def main(config):
                     values_range = flow_df[oc].values.tolist()
                     if max(values_range) > 0:
                         ax_proj = get_projection(epsg=4326)
-                        fig, ax_plots = plt.subplots(
+                        _fig, ax_plots = plt.subplots(
                             1,
                             1,
                             subplot_kw={"projection": ax_proj},
@@ -372,10 +373,10 @@ def main(config):
                         threshold_ton_flows = nodes_df[oc].quantile(0.95)
 
                         nodes_df["select_nodes_binary"] = nodes_df.progress_apply(
-                            lambda x: select_nodes(x, oc, threshold_ton_flows), axis=1
+                            partial(select_nodes, oc, threshold_ton_flows), axis=1
                         )
                         ax_proj = get_projection(epsg=4326)
-                        fig, ax_plots = plt.subplots(
+                        _fig, ax_plots = plt.subplots(
                             1,
                             1,
                             subplot_kw={"projection": ax_proj},
@@ -462,7 +463,7 @@ def main(config):
                         threshold_ton_flows = nodes_df[oc].quantile(0.95)
 
                         nodes_df["select_nodes_binary"] = nodes_df.progress_apply(
-                            lambda x: select_nodes(x, oc, threshold_ton_flows), axis=1
+                            partial(select_nodes, oc, threshold_ton_flows), axis=1
                         )
                         ax_proj = get_projection(epsg=4326)
                         _fig, ax_plots = plt.subplots(

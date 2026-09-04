@@ -56,7 +56,7 @@ def main(config):
     )
     df = []
     closest_types = list(set(proximity_matches["closest_class"].values.tolist()))
-    fig, ax1 = plt.subplots()
+    _fig, ax1 = plt.subplots()
     for ct in closest_types:
         df.append(
             proximity_matches[proximity_matches["closest_class"] == ct][
@@ -65,7 +65,7 @@ def main(config):
         )
 
     counts, edges, _bars = ax1.hist(df, histtype="barstacked", bins=30)
-    max_y = max([max(c) for c in counts])
+    max_y = max(max(c) for c in counts)
 
     _fig, axe = plt.subplots(1, 1, figsize=(18, 9), dpi=500)
     for idx, (ct, cl) in enumerate(zip(closest_types, colors)):

@@ -38,7 +38,6 @@ def main(config):
 
     processed_data_path = config["paths"]["data"]
 
-
     df_airports_flow = gpd.read_file(
         os.path.join(
             processed_data_path, "infrastructure", "africa_airport_network.gpkg"

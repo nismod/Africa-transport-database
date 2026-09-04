@@ -10,7 +10,6 @@ tqdm.pandas()
 
 def main(config):
 
-
     processed_data_path = config["paths"]["data"]
 
     # maritime_nodes = gpd.read_file(os.path.join(processed_data_path,

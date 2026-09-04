@@ -37,7 +37,7 @@ def main(config):
     proximity_matches = pd.merge(proximity_matches, cl_df, how="left", on=["link_type"])
     df = []
     closest_types = list(set(proximity_matches["link_class"].values.tolist()))
-    fig, ax1 = plt.subplots()
+    _fig, ax1 = plt.subplots()
     for ct in closest_types:
         df.append(
             proximity_matches[proximity_matches["link_class"] == ct]["length_m"].values
