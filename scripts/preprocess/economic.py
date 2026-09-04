@@ -16,7 +16,13 @@ def main(config):
     incoming_data_path = config["paths"]["incoming_data"]
     processed_data_path = config["paths"]["data"]
     # Read USGS dataset
-    shapefile_path = r"C:\\Users\\engs2461\\Documents\\Git_project\\transport-critical-minerals\\Incoming data\\Africa_GIS Supporting Data\\a. Africa_GIS Shapefiles\\AFR_Infra_Transport_Ports.shp\\AFR_Infra_Transport_Ports.shp"
+    shapefile_path = os.path.join(
+        incoming_data_path,
+        "Africa_GIS Supporting Data",
+        "a. Africa_GIS Shapefiles",
+        "AFR_Infra_Transport_Ports.shp",
+        "AFR_Infra_Transport_Ports.shp",
+    )
     USGS_gdf = gpd.read_file(shapefile_path)
     # Rename columns
     USGS_gdf.rename(
