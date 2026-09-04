@@ -7,6 +7,9 @@ figures/*
 processed_data/*
 .bak/*
 
+# Snakemake
+.snakemake/
+
 # Editor config
 .vscode
 config.json
