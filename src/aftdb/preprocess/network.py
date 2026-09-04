@@ -1,8 +1,7 @@
-"""Network representation and utilities
-"""
+"""Network representation and utilities"""
+
 import logging
 import os
-from typing import Optional
 import warnings
 
 import geopandas
@@ -17,18 +16,18 @@ try:
 except ImportError:
     USE_NX = False
 
+from collections import Counter
+
 from geopandas import GeoDataFrame
 from shapely.geometry import (
-    Point,
-    MultiPoint,
-    LineString,
     GeometryCollection,
-    shape,
+    LineString,
+    MultiPoint,
+    Point,
     mapping,
+    shape,
 )
-from shapely.ops import split, linemerge, unary_union
-
-from collections import Counter
+from shapely.ops import linemerge, split, unary_union
 
 # optional progress bars
 if "SNKIT_PROGRESS" in os.environ and os.environ["SNKIT_PROGRESS"] in ("1", "TRUE"):
@@ -52,7 +51,8 @@ if "SNKIT_PROCESSES" in os.environ:
     PARALLEL_PROCESS_COUNT = min([os.cpu_count(), requested_processes])
     import multiprocessing
 
-    logging.info(
+    logger = logging.getLogger(__name__)
+    logger.info(
         f"SNKIT_PROCESSES={processes_env_var}, using {PARALLEL_PROCESS_COUNT} processes"
     )
 else:
@@ -75,7 +75,6 @@ class Network:
     """
 
     def __init__(self, nodes=None, edges=None):
-        """ """
         if nodes is None:
             nodes = GeoDataFrame(geometry=[])
         self.nodes = nodes
@@ -176,8 +175,8 @@ def add_ids(network, id_col="id", edge_prefix="edge", node_prefix="node"):
     if not edges.empty:
         edges = edges.reset_index(drop=True)
 
-    nodes[id_col] = ["{}_{}".format(node_prefix, i) for i in range(len(nodes))]
-    edges[id_col] = ["{}_{}".format(edge_prefix, i) for i in range(len(edges))]
+    nodes[id_col] = [f"{node_prefix}_{i}" for i in range(len(nodes))]
+    edges[id_col] = [f"{edge_prefix}_{i}" for i in range(len(edges))]
 
     return Network(nodes=nodes, edges=edges)
 
@@ -283,7 +282,9 @@ def merge_multilinestring(geom):
                 return geom_inb
         else:
             return geom
-    except:
+    except Exception as e:  # noqa: BLE001
+        logger = logging.getLogger(__name__)
+        logger.debug(e)
         return GeometryCollection()
 
 
@@ -331,7 +332,7 @@ def _split_edges_at_nodes(
 
 
 def split_edges_at_nodes(
-    network: Network, tolerance: float = 1e-9, chunk_size: Optional[int] = None
+    network: Network, tolerance: float = 1e-9, chunk_size: int | None = None
 ):
     """
     Split network edges where they intersect node geometries.
@@ -500,8 +501,8 @@ def merge_edges(network, id_col="id", by=None):
         if len(d2_set) % 1000 == 0:
             print(len(d2_set))
         popped_node = d2_set.pop()
-        node_path = set([popped_node])
-        candidates = set([popped_node])
+        node_path = {popped_node}
+        candidates = {popped_node}
         while candidates:
             popped_cand = candidates.pop()
             matches = set(
@@ -742,9 +743,9 @@ def line_endpoints(line):
         coords = np.array(line.coords)
         start = Point(coords[0])
         end = Point(coords[-1])
-    except NotImplementedError as e:
+    except NotImplementedError:
         print(line)
-        raise e
+        raise
     return start, end
 
 
