@@ -1,0 +1,29 @@
+name: aftdb
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.14
+  - cartopy
+  - country_converter
+  - fiona
+  - geopandas
+  - haversine
+  - jenkspy
+  - mapclassify
+  - matplotlib
+  - matplotlib-scalebar
+  - networkx
+  - numpy
+  - pandas
+  - pip:
+      - -e .
+  - pyrosm
+  - python-igraph
+  - quackosm
+  - scikit-learn
+  - scipy
+  - seaborn
+  - shapely
+  - snkit
+  - tqdm
