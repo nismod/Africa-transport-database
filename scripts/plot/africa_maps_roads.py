@@ -9,7 +9,12 @@ from matplotlib import font_manager
 from matplotlib.colors import ListedColormap
 from tqdm import tqdm
 
-from aftdb.plot.map_plotting_utils import *
+from aftdb.plot.map_plotting_utils import (
+    get_projection,
+    load_config,
+    plot_africa_basemap2,
+    save_fig,
+)
 
 tqdm.pandas()
 

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib import font_manager
 from tqdm import tqdm
 
-from aftdb.map.map_plotting_utils import *
+from aftdb.map.map_plotting_utils import load_config, save_fig
 
 tqdm.pandas()
 

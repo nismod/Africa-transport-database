@@ -4,7 +4,7 @@ import os
 import geopandas as gpd
 import pandas as pd
 
-from aftdb.preprocess.utils import *
+from aftdb.preprocess.utils import load_config
 
 
 def main(config):
@@ -86,8 +86,8 @@ def main(config):
         rsuffix="_africa",
     )
     merged_shp_corridor = gpd.sjoin(
-        df_africa_ports,
-        corridor_port_data,
+        df_africa_ports_proj,
+        df_corridor_proj,
         how="inner",
         predicate="intersects",
         lsuffix="_africa",
@@ -116,8 +116,8 @@ def main(config):
             merged_shp_corridor,
             merged_three,
             df_ports_shp_proj,
-            df_africa_ports,
-            corridor_port_data,
+            df_africa_ports_proj,
+            df_corridor_proj,
         ],
         ignore_index=True,
     )
@@ -155,7 +155,7 @@ def main(config):
     merged_with_iso.to_csv(output_csv_path, index=False)
 
     # Projections  df_africa_ports.crs to merged_all.CRS
-    df_africa_ports_proj = df_africa_ports.to_crs(merged_all.crs)
+    df_africa_ports_proj = df_africa_ports_proj.to_crs(merged_all.crs)
 
     # Points that not included into df_africa_ports_proj
     non_intersected_from_merged = merged_all.loc[

@@ -7,7 +7,12 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.plot.map_plotting_utils import *
+from aftdb.map.map_plotting_utils import (
+    load_config,
+    map_background_and_bounds,
+    plot_global_basemap,
+    save_fig,
+)
 
 pd.options.mode.copy_on_write = True
 tqdm.pandas()
@@ -80,7 +85,18 @@ def main():
         centroid_df["longitude_shift"], centroid_df["latitude_shift"]
     )
 
-    _, _, xl, yl = map_background_and_bounds(include_continents=continents)
+    boundary_gdf = gpd.read_file(
+        os.path.join(
+            processed_data_path,
+            "admin_boundaries",
+            "ne_10m_admin_0_countries",
+            "ne_10m_admin_0_countries.shp",
+        ),
+        encoding="utf-8",
+    )
+    _, _, xl, yl = map_background_and_bounds(
+        boundary_gdf, include_continents=continents
+    )
     dxl = abs(np.diff(xl))[0]
     dyl = abs(np.diff(yl))[0]
     w = 0.003

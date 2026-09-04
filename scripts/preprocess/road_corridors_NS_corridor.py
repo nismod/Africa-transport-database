@@ -1,10 +1,15 @@
 import os
 
 import geopandas as gpd
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.preprocess.utils_new import *
+from aftdb.preprocess.utils_new import (
+    components,
+    create_igraph_from_dataframe,
+    load_config,
+)
 
 tqdm.pandas()
 

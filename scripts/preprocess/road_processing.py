@@ -4,12 +4,12 @@ import geopandas as gpd
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.preprocess.utils import *
+from aftdb.preprocess.utils import load_config
 
 tqdm.pandas()
 
 
-def get_road_condition(row: pd.Series) -> Tuple[str, str]:
+def get_road_condition(row: pd.Series) -> tuple[str, str]:
     """
     Given a series with 'surface' and 'highway' labels, infer road:
         - paved status (boolean)

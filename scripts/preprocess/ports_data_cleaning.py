@@ -5,11 +5,17 @@ from math import asin, cos, radians, sin, sqrt
 
 import geopandas as gpd
 import igraph as ig
+import numpy as np
 import pandas as pd
 from haversine import haversine
 from tqdm import tqdm
 
-from aftdb.preprocess.utils_new import *
+from aftdb.preprocess.utils_new import (
+    add_lines,
+    ckdnearest,
+    load_config,
+    network_od_path_estimations,
+)
 
 tqdm.pandas()
 

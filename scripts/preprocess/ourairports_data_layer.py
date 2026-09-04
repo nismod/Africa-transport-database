@@ -3,7 +3,7 @@ import os
 import geopandas as gpd
 from tqdm import tqdm
 
-from aftdb.preprocess.utils_new import *
+from aftdb.preprocess.utils_new import load_config
 
 tqdm.pandas()
 

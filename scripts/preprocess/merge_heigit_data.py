@@ -2,8 +2,9 @@ import glob
 import os
 
 import geopandas as gpd
+import pandas as pd
 
-from aftdb.preprocess.utils_new import *
+from aftdb.preprocess.utils_new import load_config
 
 
 def main(config):

@@ -6,7 +6,12 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-from aftdb.map.map_plotting_utils import *
+from aftdb.map.map_plotting_utils import (
+    get_projection,
+    load_config,
+    plot_africa_basemap,
+    save_fig,
+)
 
 tqdm.pandas()
 

@@ -2,10 +2,11 @@ import math
 import os
 
 import geopandas as gpd
+import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.preprocess.utils_new import *
+from aftdb.preprocess.utils_new import load_config
 
 tqdm.pandas()
 

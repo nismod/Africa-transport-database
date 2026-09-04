@@ -3,11 +3,18 @@ import os
 
 import geopandas as gpd
 import igraph as ig
+import numpy as np
 import pandas as pd
 from shapely.geometry import LineString
 from tqdm import tqdm
 
-from aftdb.preprocess.utils import *
+from aftdb.preprocess.utils import (
+    add_iso_code,
+    components,
+    create_network_from_nodes_and_edges,
+    load_config,
+    network_od_path_estimations,
+)
 
 tqdm.pandas()
 
@@ -58,12 +65,12 @@ def network_creation(
     from_node_column="from_node",
     to_node_column="to_node",
 ):
-    create_network_from_nodes_and_edges(
+    network = create_network_from_nodes_and_edges(
         nodes_df, edges_df, mode, snap_distance=snap_distance
     )
     edges, nodes = get_components_and_size(
-        edges,
-        nodes,
+        network.edges,
+        network.nodes,
         node_id_column=node_id_column,
         edge_id_column=edge_id_column,
         from_node_column=from_node_column,

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.map.map_plotting_utils import *
+from aftdb.map.map_plotting_utils import load_config, save_fig
 
 tqdm.pandas()
 

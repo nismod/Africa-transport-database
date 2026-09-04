@@ -1193,3 +1193,41 @@ def point_map_plotting_colors_width(
     print("* Plotting ", plot_title)
     # legend_from_style_spec(ax, styles,fontsize=legend_size,loc='lower left')
     return ax, legend_handles
+
+
+def map_background_and_bounds(
+    boundary_gdf,
+    include_continents=None,
+    include_countries=None,
+    xmin_offset=0.0,
+    xmax_offset=0.0,
+    ymin_offset=0.0,
+    ymax_offset=0.0,
+):
+    if include_continents is not None:
+        continent_gdf = boundary_gdf[boundary_gdf["CONTINENT"].isin(include_continents)]
+    else:
+        continent_gdf = boundary_gdf.copy()
+
+    if include_countries is not None:
+        boundary_gdf = boundary_gdf[boundary_gdf["ADM0_A3_US"].isin(include_countries)]
+
+    # proj = ccrs.PlateCarree() # See more on projections here: https://scitools.org.uk/cartopy/docs/v0.15/crs/projections.html#cartopy-projections
+    bounds = (
+        boundary_gdf.geometry.total_bounds
+    )  # this gives your boundaries of the map as (xmin,ymin,xmax,ymax)
+    if include_countries is not None:
+        xmin = bounds[0] + xmin_offset
+        xmax = bounds[2] + xmax_offset
+        ymin = bounds[1] + ymin_offset
+        ymax = bounds[3] + ymax_offset
+    else:
+        xmin = bounds[0]
+        xmax = bounds[2]
+        ymin = bounds[1]
+        ymax = bounds[3]
+
+    xlims = [xmin, xmax]
+    ylims = [ymin, ymax]
+
+    return continent_gdf, boundary_gdf, xlims, ylims

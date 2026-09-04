@@ -7,9 +7,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from trade_functions import *
 
-from aftdb.map.map_plotting_utils import *
+from aftdb.map.map_plotting_utils import (
+    load_config,
+    map_background_and_bounds,
+    plot_ccg_basemap,
+    save_fig,
+)
 
 pd.options.mode.chained_assignment = None  # default='warn'
 tqdm.pandas()
@@ -18,6 +22,188 @@ config = load_config()
 processed_data_path = config["paths"]["data"]
 output_path = config["paths"]["results"]
 figure_path = config["paths"]["figures"]
+
+
+def get_columns_names():
+    data_type = {"initial_refined_stage": "str", "final_refined_stage": "str"}
+    export_country_columns = [
+        "export_country_name",
+        "export_country_code",
+        "export_continent",
+        "export_landlocked",
+    ]
+    import_country_columns = [
+        "import_country_name",
+        "import_country_code",
+        "import_continent",
+        "import_landlocked",
+    ]
+    product_columns = [
+        "product_code",
+        "product_description",
+        "refining_stage",
+        "reference_mineral",
+        "processing_level",
+    ]
+    conversion_factor_column = "aggregate_ratio"
+
+    trade_balance_columns = [
+        "export_country_code",
+        "reference_mineral",
+        "refining_stage_cam",
+        "initial_processing_stage",
+        "final_processing_stage",
+        "initial_processing_location",
+        "initial_processed_tons",
+        "final_processed_tons",
+        "trade_type",
+    ]
+    final_trade_columns = (
+        export_country_columns
+        + import_country_columns
+        + product_columns
+        + [
+            "initial_processing_stage",
+            "final_processing_stage",
+            "initial_processing_location",
+            "final_processing_location",
+            "trade_type",
+            "initial_stage_production_tons",
+            "final_stage_production_tons",
+        ]
+    )
+    reference_minerals = [
+        "copper",
+        "cobalt",
+        "manganese",
+        "lithium",
+        "graphite",
+        "nickel",
+    ]
+
+    return (
+        data_type,
+        export_country_columns,
+        import_country_columns,
+        product_columns,
+        conversion_factor_column,
+        trade_balance_columns,
+        final_trade_columns,
+        reference_minerals,
+    )
+
+
+def get_common_input_dataframes(data_type, refining_year, trade_year):
+    # Read the data on the conversion factors to go from one stage to another
+    # This will help in understanding material requirements for production of a stage output
+    # from the inputs of another stage
+    pr_conv_factors_df = pd.read_excel(
+        os.path.join(
+            processed_data_path, "mineral_usage_factors", "aggregated_stages.xlsx"
+        ),
+        dtype=data_type,
+    )[
+        [
+            "reference_mineral",
+            "initial_refined_stage",
+            "final_refined_stage",
+            "aggregate_ratio",
+        ]
+    ]
+    # Read the data on the usage of stage 1 (or metal content converted to higher stage)
+    mineral_usage_factor_df = pd.read_excel(
+        os.path.join(
+            processed_data_path, "mineral_usage_factors", "mineral_usage_factors.xlsx"
+        )
+    )[["reference_mineral", "final_refined_stage", "usage_factor"]]
+    mineral_usage_factor_df = mineral_usage_factor_df.drop_duplicates(
+        subset=["reference_mineral", "final_refined_stage"], keep="first"
+    )
+    # Read the data on how much metal content goes into ores and concentrates
+    metal_content_factors_df = pd.read_csv(
+        os.path.join(processed_data_path, "mineral_usage_factors", "metal_content.csv")
+    )
+    metal_content_factors_df.rename(
+        columns={
+            "Reference mineral": "reference_mineral",
+            "Input metal content": "metal_content_factor",
+        },
+        inplace=True,
+    )
+
+    # Read the finalised version of the BACI trade data
+    ccg_countries = pd.read_csv(
+        os.path.join(processed_data_path, "baci", "ccg_country_codes.csv")
+    )
+    ccg_countries = ccg_countries[ccg_countries["ccg_country"] == 1][
+        "iso_3digit_alpha"
+    ].values.tolist()
+
+    # Read the data on the highest stages at the mines
+    # This will help identify which stage goes to mine and which outside
+    mine_city_stages = pd.read_csv(
+        os.path.join(processed_data_path, "baci", "mine_city_stages.csv")
+    )
+    mine_city_stages = mine_city_stages[mine_city_stages["year"] == refining_year][
+        ["reference_mineral", "mine_final_refined_stage"]
+    ]
+
+    trade_df = pd.read_csv(
+        os.path.join(
+            processed_data_path,
+            "baci",
+            f"baci_ccg_minerals_trade_{trade_year}_bgs_corrected.csv",
+        )
+    )
+    trade_df = trade_df[trade_df["trade_quantity_tons"] > 0]
+
+    return (
+        pr_conv_factors_df,
+        metal_content_factors_df,
+        ccg_countries,
+        mine_city_stages,
+        trade_df,
+        mineral_usage_factor_df,
+    )
+
+
+def modify_mineral_usage_factors(future_year=2030, baseline_year=2022):
+    (data_type, _, _, _, _, _, _, _) = get_columns_names()
+    (_, _, _, mcs_df, _, muf_df) = get_common_input_dataframes(
+        data_type, future_year, baseline_year
+    )
+
+    muf_df["mod_usage_factor"] = muf_df.groupby(["reference_mineral"])[
+        "usage_factor"
+    ].cumprod()
+    muf_df = pd.merge(muf_df, mcs_df, how="left", on=["reference_mineral"])
+    muf_df["mod_usage_factor"] = np.where(
+        muf_df["final_refined_stage"] > muf_df["mine_final_refined_stage"],
+        0,
+        muf_df["mod_usage_factor"],
+    )
+    muf_df = muf_df.sort_values(
+        by=["reference_mineral", "final_refined_stage"], ascending=False
+    )
+    muf_df["final_usage_factor"] = muf_df.groupby(["reference_mineral"])[
+        "mod_usage_factor"
+    ].diff()
+    muf_df["final_usage_factor"] = muf_df["final_usage_factor"].fillna(
+        muf_df["mod_usage_factor"]
+    )
+    muf_df["usage_factor"] = muf_df["final_usage_factor"]
+    muf_df["cum_usage_factor"] = (
+        muf_df[muf_df["final_refined_stage"] > 1.0]
+        .groupby(["reference_mineral"])["usage_factor"]
+        .transform("sum")
+    )
+    muf_df["cum_usage_factor"] = muf_df["cum_usage_factor"].fillna(0)
+    muf_df.drop(
+        ["mod_usage_factor", "final_usage_factor", "mine_final_refined_stage"],
+        axis=1,
+        inplace=True,
+    )
+    return muf_df[(muf_df["usage_factor"] > 0) & (muf_df["cum_usage_factor"] > 0)]
 
 
 def main():
@@ -40,7 +226,16 @@ def main():
         "iso_3digit_alpha"
     ].values.tolist()
 
-    _, _, xl, yl = map_background_and_bounds(include_countries=ccg_isos)
+    boundary_gdf = gpd.read_file(
+        os.path.join(
+            processed_data_path,
+            "admin_boundaries",
+            "ne_10m_admin_0_countries",
+            "ne_10m_admin_0_countries.shp",
+        ),
+        encoding="utf-8",
+    )
+    _, _, xl, yl = map_background_and_bounds(boundary_gdf, include_countries=ccg_isos)
     dxl = abs(np.diff(xl))[0]
     dyl = abs(np.diff(yl))[0]
     w = 0.03

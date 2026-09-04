@@ -7,7 +7,7 @@ import pandas as pd
 from shapely import wkt
 from tqdm import tqdm
 
-from aftdb.preprocess.utils import *
+from aftdb.preprocess.utils import load_config
 
 tqdm.pandas()
 
@@ -185,7 +185,7 @@ def main(config):
         subset="id", keep="first"
     )
 
-    result = merged_file.merge(ports_weightvalues_unique, on="id", how="left")
+    result_df = merged_file.merge(ports_weightvalues_unique, on="id", how="left")
     missing_coords_df = result_df[
         result_df["Latitude"].isnull() | result_df["Longitude"].isnull()
     ]
@@ -197,7 +197,7 @@ def main(config):
     result_path = os.path.join(processed_data_path, "economic results2.csv")
     missing_coords_path = os.path.join(processed_data_path, "missing_coords.csv")
     merged_file.to_csv(merged_file_path, index=False)
-    result.to_csv(result_path, index=False)
+    result_df.to_csv(result_path, index=False)
     missing_coords_df.to_csv(missing_coords_path, index=False)
 
 
