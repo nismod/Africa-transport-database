@@ -21,6 +21,7 @@ dependencies:
   - pyrosm
   - python-igraph
   - quackosm
+  - ruff
   - scikit-learn
   - scipy
   - seaborn

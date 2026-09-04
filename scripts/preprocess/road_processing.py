@@ -1,14 +1,14 @@
 #!/usr/bin/env python
-# coding: utf-8
 import os
 
-import pandas as pd
 import geopandas as gpd
+import pandas as pd
 from tqdm import tqdm
 
 from aftdb.preprocess.utils import *
 
 tqdm.pandas()
+
 
 def get_road_condition(row: pd.Series) -> Tuple[str, str]:
     """
@@ -53,6 +53,7 @@ def get_road_condition(row: pd.Series) -> Tuple[str, str]:
     else:
         return False, row.tag_surface
 
+
 def get_asset_type(x):
     if x["tag_bridge"] == "yes":
         return "road_bridge"
@@ -63,39 +64,40 @@ def get_asset_type(x):
 
 
 def main(config):
-    incoming_data_path = config['paths']['incoming_data']
-    processed_data_path = config['paths']['data']
+    incoming_data_path = config["paths"]["incoming_data"]
+    processed_data_path = config["paths"]["data"]
 
-    edges = gpd.read_parquet(os.path.join(
-                            processed_data_path,
-                            "infrastructure",
-                            "africa_roads_edges_FINAL.geoparquet"))
+    edges = gpd.read_parquet(
+        os.path.join(
+            processed_data_path, "infrastructure", "africa_roads_edges_FINAL.geoparquet"
+        )
+    )
 
     # infer paved status and material type from 'surface' column
-    edges["paved_material"] = edges.apply(
-        lambda x: get_road_condition(x), axis=1
-    )
+    edges["paved_material"] = edges.apply(lambda x: get_road_condition(x), axis=1)
     # unpack 2 item iterable into two columns
-    edges[["paved", "material"]] = edges["paved_material"].apply(
-        pd.Series
-    )
+    edges[["paved", "material"]] = edges["paved_material"].apply(pd.Series)
 
     # drop the now redundant columns
     edges.drop(["paved_material"], axis=1, inplace=True)
-    edges["asset_type"] = edges.apply(lambda x:get_asset_type(x),axis=1)
+    edges["asset_type"] = edges.apply(lambda x: get_asset_type(x), axis=1)
 
-    edges.to_parquet(os.path.join(
-                            processed_data_path,
-                            "infrastructure",
-                            "africa_roads_edges_FINAL_last.geoparquet"))
-    edges.to_file(os.path.join(
-                            processed_data_path,
-                            "infrastructure",
-                            "africa_roads_network.gpkg"),layer="edges",driver="GPKG")
+    edges.to_parquet(
+        os.path.join(
+            processed_data_path,
+            "infrastructure",
+            "africa_roads_edges_FINAL_last.geoparquet",
+        )
+    )
+    edges.to_file(
+        os.path.join(
+            processed_data_path, "infrastructure", "africa_roads_network.gpkg"
+        ),
+        layer="edges",
+        driver="GPKG",
+    )
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     CONFIG = load_config()
     main(CONFIG)

@@ -28,12 +28,14 @@ def htb(data):
         Array of data to apply ht-breaks
     Returns
     -------
-    results : list 
+    results : list
         List of data representing break points
     """
     # test input
     assert data, "Input must not be empty."
-    assert all(isinstance(datum, int) or isinstance(datum, float) for datum in data), "All input values must be numeric."
+    assert all(isinstance(datum, int) or isinstance(datum, float) for datum in data), (
+        "All input values must be numeric."
+    )
 
     results = []  # array of break points
 

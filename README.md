@@ -49,6 +49,21 @@ Activate the environment (once per work session):
 micromamba activate aftdb
 ```
 
+Reinstall or update the environment (after adding or updating dependencies):
+
+```bash
+micromamba install -f environment.yml -y
+```
+
+#### Lint and format
+
+Use [ruff](https://docs.astral.sh/ruff/) to format and check scripts and source code:
+
+```bash
+ruff format
+ruff check
+```
+
 ### Road network creation
 The road topological network creation follows 5 main steps: <br/>
 <br/>

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# coding: utf-8
 import os
 
 import geopandas as gpd
@@ -10,14 +9,15 @@ from aftdb.preprocess.utils_new import *
 tqdm.pandas()
 
 config = load_config()
-incoming_data_path = config['paths']['incoming_data']
-processed_data_path = config['paths']['data']
+incoming_data_path = config["paths"]["incoming_data"]
+processed_data_path = config["paths"]["data"]
+
 
 def main():
 
-    incoming_data_path = config['paths']['incoming_data']
-    processed_data_path = config['paths']['data']
-    epsg_meters = 3395 # To convert geometries to measure distances in meters
+    incoming_data_path = config["paths"]["incoming_data"]
+    processed_data_path = config["paths"]["data"]
+    epsg_meters = 3395  # To convert geometries to measure distances in meters
 
     # ports_nodes = gpd.read_file(os.path.join(processed_data_path,
     #                                 "infrastructure",
@@ -95,7 +95,6 @@ def main():
     # ports_edges = ports_edges.to_crs(epsg=4326)
     # ports_edges["distance_km"] = ports_edges.progress_apply(lambda x:modify_distance(x),axis=1)
 
-
     # print(ports_edges.columns)
     # print (ports_edges.head())
 
@@ -109,7 +108,6 @@ def main():
     #                         "africa_maritime_network_last.gpkg"),
     #                     layer="nodes",driver="GPKG")
     # print("Africa maritime network created successfully.")
-
 
     # air_nodes_df = gpd.read_file(os.path.join(
     #                         processed_data_path,
@@ -129,22 +127,32 @@ def main():
     # afr_connected_airports = air_nodes_df[air_nodes_df["id"].isin(connected_airports)]
     # print (afr_connected_airports)
 
-    multi_df = gpd.read_file(os.path.join(
-                            processed_data_path,
-                            "infrastructure",
-                            "africa_multimodal.gpkg"
-                                ),
-                            layer="edges"
-                            )
+    multi_df = gpd.read_file(
+        os.path.join(processed_data_path, "infrastructure", "africa_multimodal.gpkg"),
+        layer="edges",
+    )
 
-    multi_df = multi_df[["id","from_id", "to_id","from_infra","to_infra","from_iso3","to_iso3","link_type","length_m","geometry"]]
+    multi_df = multi_df[
+        [
+            "id",
+            "from_id",
+            "to_id",
+            "from_infra",
+            "to_infra",
+            "from_iso3",
+            "to_iso3",
+            "link_type",
+            "length_m",
+            "geometry",
+        ]
+    ]
 
-    multi_df.to_file(os.path.join(processed_data_path,
-                            "infrastructure",
-                            "africa_multimodal.gpkg"),
-                            layer="edges",driver="GPKG")
+    multi_df.to_file(
+        os.path.join(processed_data_path, "infrastructure", "africa_multimodal.gpkg"),
+        layer="edges",
+        driver="GPKG",
+    )
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

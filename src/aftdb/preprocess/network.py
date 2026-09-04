@@ -1,8 +1,7 @@
-"""Network representation and utilities
-"""
+"""Network representation and utilities"""
+
 import logging
 import os
-from typing import Optional
 import warnings
 
 import geopandas
@@ -17,18 +16,18 @@ try:
 except ImportError:
     USE_NX = False
 
+from collections import Counter
+
 from geopandas import GeoDataFrame
 from shapely.geometry import (
-    Point,
-    MultiPoint,
-    LineString,
     GeometryCollection,
-    shape,
+    LineString,
+    MultiPoint,
+    Point,
     mapping,
+    shape,
 )
-from shapely.ops import split, linemerge, unary_union
-
-from collections import Counter
+from shapely.ops import linemerge, split, unary_union
 
 # optional progress bars
 if "SNKIT_PROGRESS" in os.environ and os.environ["SNKIT_PROGRESS"] in ("1", "TRUE"):
@@ -176,8 +175,8 @@ def add_ids(network, id_col="id", edge_prefix="edge", node_prefix="node"):
     if not edges.empty:
         edges = edges.reset_index(drop=True)
 
-    nodes[id_col] = ["{}_{}".format(node_prefix, i) for i in range(len(nodes))]
-    edges[id_col] = ["{}_{}".format(edge_prefix, i) for i in range(len(edges))]
+    nodes[id_col] = [f"{node_prefix}_{i}" for i in range(len(nodes))]
+    edges[id_col] = [f"{edge_prefix}_{i}" for i in range(len(edges))]
 
     return Network(nodes=nodes, edges=edges)
 
@@ -331,7 +330,7 @@ def _split_edges_at_nodes(
 
 
 def split_edges_at_nodes(
-    network: Network, tolerance: float = 1e-9, chunk_size: Optional[int] = None
+    network: Network, tolerance: float = 1e-9, chunk_size: int | None = None
 ):
     """
     Split network edges where they intersect node geometries.
