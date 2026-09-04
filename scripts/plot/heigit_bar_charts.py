@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.map.map_plotting_utils import load_config, save_fig
+from aftdb.plot.maps import load_config, save_fig
 
 pd.options.mode.copy_on_write = True
 tqdm.pandas()

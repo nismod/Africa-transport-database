@@ -1,6 +1,5 @@
 """Road network risks and adaptation maps"""
 
-import json
 import math
 import os
 from collections import OrderedDict, namedtuple
@@ -12,24 +11,20 @@ import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from aftdb.map.scalebar import scale_bar
 from matplotlib.lines import Line2D
 
-# from aftdb.map.htb import htb
+from aftdb.config import load_config
+from aftdb.plot.scalebar import scale_bar
+
+# from aftdb.plot.htb import htb
+
+__all__ = ["load_config"]
 
 Style = namedtuple("Style", ["color", "zindex", "label"])
 Style.__doc__ += """: class to hold an element's styles
 Used to generate legend entries, apply uniform style to groups of map elements
 (See network_map.py for example.)
 """
-
-
-def load_config():
-    """Read config.json"""
-    config_path = os.path.join(os.path.dirname(__file__), "..", "..", "config.json")
-    with open(config_path, "r") as config_fh:
-        config = json.load(config_fh)
-    return config
 
 
 def within_extent(x, y, extent):
@@ -213,7 +208,16 @@ def plot_global_basemap(
     arrow_location=(0.82, 0.08),
     scalebar_distance=100,
     label_size=6.0,
+    xmin_offset=2.0,
+    xmax_offset=6.0,
+    ymin_offset=4.0,
+    ymax_offset=2.0,
 ):
+    """Draw country outlines, either global or for a selection of countries
+
+    The ``*_offset`` arguments pad the extent around the selected countries, in
+    degrees. They are only applied when ``include_countries`` is given.
+    """
     data_path = load_config()["paths"][
         "data"
     ]  # "/Users/raghavpant/Desktop/china_study"
@@ -234,10 +238,10 @@ def plot_global_basemap(
         boundary_gdp.geometry.total_bounds
     )  # this gives your boundaries of the map as (xmin,ymin,xmax,ymax)
     if include_countries is not None:
-        xmin = bounds[0]
-        xmax = bounds[2] + 50.0
-        ymin = bounds[1]
-        ymax = bounds[3] + 50.0
+        xmin = bounds[0] + xmin_offset
+        xmax = bounds[2] + xmax_offset
+        ymin = bounds[1] + ymin_offset
+        ymax = bounds[3] + ymax_offset
     else:
         xmin = bounds[0]
         xmax = bounds[2]
@@ -264,7 +268,6 @@ def plot_global_basemap(
         plot_basemap_labels(
             ax, labels=labels, label_column="ISO_A3_EH", label_size=label_size
         )
-
     scale_bar_and_direction(
         ax,
         arrow_location=arrow_location,
@@ -277,6 +280,14 @@ def plot_global_basemap(
 
 def plot_africa_basemap(ax):
     data_path = load_config()["paths"]["data"]
+    ccg_countries = pd.read_csv(
+        os.path.join(data_path, "admin_boundaries", "ccg_country_codes.csv")
+    )
+    ccg_isos = ccg_countries[ccg_countries["ccg_country"] == 1][
+        "iso_3digit_alpha"
+    ].values.tolist()
+    del ccg_countries
+
     global_map_df = gpd.read_file(
         os.path.join(
             data_path,
@@ -285,6 +296,7 @@ def plot_africa_basemap(ax):
             "ne_10m_admin_0_countries.shp",
         )
     )
+    ccg_map_df = global_map_df[global_map_df["ADM0_A3_US"].isin(ccg_isos)]
     global_lake_df = gpd.read_file(
         os.path.join(data_path, "admin_boundaries", "ne_10m_lakes", "ne_10m_lakes.shp")
     )
@@ -297,6 +309,15 @@ def plot_africa_basemap(ax):
     )
     del global_map_df
     ax = plot_global_basemap(ax, include_countries=africa_isos)
+    for ccg_country in ccg_map_df.itertuples():
+        ax.add_geometries(
+            [ccg_country.geometry],
+            crs=ccrs.PlateCarree(),
+            edgecolor="white",
+            facecolor="#d9d9d9",
+            zorder=2,
+        )
+    plot_basemap_labels(ax, labels=ccg_map_df, label_column="ADM0_A3_US", label_size=10)
     for lake in global_lake_df.itertuples():
         ax.add_geometries(
             [lake.geometry],
@@ -309,6 +330,7 @@ def plot_africa_basemap(ax):
 
 
 def plot_africa_basemap2(ax):
+    """Africa basemap with country names, no CCG highlight and a wider extent"""
     data_path = load_config()["paths"]["data"]
 
     # Load country and lake shapefiles
@@ -329,7 +351,14 @@ def plot_africa_basemap2(ax):
 
     # Plot African basemap
     africa_isos = list(set(africa_df["ADM0_A3_US"].values.tolist()))
-    ax = plot_global_basemap(ax, include_countries=africa_isos)
+    ax = plot_global_basemap(
+        ax,
+        include_countries=africa_isos,
+        xmin_offset=0.0,
+        xmax_offset=50.0,
+        ymin_offset=0.0,
+        ymax_offset=50.0,
+    )
 
     # Plot lakes
     for lake in global_lake_df.itertuples():
@@ -376,6 +405,194 @@ def plot_africa_basemap2(ax):
         crs=ccrs.PlateCarree(),
     )
 
+    return ax
+
+
+def plot_ccg_basemap(
+    ax,
+    scalebar_location=(0.12, 0.05),
+    arrow_location=(0.06, 0.08),
+    scalebar_distance=100,
+    label_size=6.0,
+):
+    data_path = load_config()["paths"]["data"]
+    ccg_countries = pd.read_csv(
+        os.path.join(data_path, "admin_boundaries", "ccg_country_codes.csv")
+    )
+    ccg_isos = ccg_countries[ccg_countries["ccg_country"] == 1][
+        "iso_3digit_alpha"
+    ].values.tolist()
+    boundary_isos = [
+        "RWA",
+        "LSO",
+        "SWZ",
+        "COG",
+        "GNQ",
+        "GAB",
+        "SOM",
+        "ETH",
+        "SDS",
+        "CAF",
+        "CMR",
+    ]
+    del ccg_countries
+
+    global_map_df = gpd.read_file(
+        os.path.join(
+            data_path,
+            "admin_boundaries",
+            "ne_10m_admin_0_countries",
+            "ne_10m_admin_0_countries.shp",
+        )
+    )
+    ccg_map_df = global_map_df[
+        global_map_df["ADM0_A3_US"].isin(ccg_isos + boundary_isos)
+    ]
+    global_lake_df = gpd.read_file(
+        os.path.join(data_path, "admin_boundaries", "ne_10m_lakes", "ne_10m_lakes.shp")
+    )
+    bounds = (
+        ccg_map_df.geometry.total_bounds
+    )  # this gives your boundaries of the map as (xmin,ymin,xmax,ymax)
+    xmin = bounds[0]
+    xmax = bounds[2]
+    ymin = bounds[1] - 5.0
+    ymax = bounds[3] - 9.0
+
+    # See more on projections here: https://scitools.org.uk/cartopy/docs/v0.15/crs/projections.html#cartopy-projections
+    ax = get_axes(
+        ax, extent=(xmin, xmax, ymin, ymax), epsg=4326
+    )  # extent requires (xmin,xmax,ymin,ymax) you might have to adjust the offsets a bit manually as I have done here by +/-0.1
+    ax.set_facecolor("#c6e0ff")
+
+    for ccg_country in ccg_map_df.itertuples():
+        iso = ccg_country.ADM0_A3_US
+        if iso in ccg_isos:
+            facecolor = "#d9d9d9"
+        else:
+            facecolor = "#e0e0e0"
+        ax.add_geometries(
+            [ccg_country.geometry],
+            crs=ccrs.PlateCarree(),
+            edgecolor="white",
+            facecolor=facecolor,
+            zorder=2,
+        )
+    plot_basemap_labels(
+        ax,
+        labels=ccg_map_df[ccg_map_df["ADM0_A3_US"].isin(ccg_isos)],
+        label_column="ADM0_A3_US",
+        label_size=10,
+    )
+    for lake in global_lake_df.itertuples():
+        ax.add_geometries(
+            [lake.geometry],
+            crs=ccrs.PlateCarree(),
+            edgecolor="#c6e0ff",
+            facecolor="#c6e0ff",
+            zorder=3,
+        )
+    scale_bar_and_direction(
+        ax,
+        arrow_location=arrow_location,
+        scalebar_location=scalebar_location,
+        scalebar_distance=100,
+    )
+    return ax
+
+
+def plot_ccg_country_basemap(
+    ax,
+    country_isos,
+    boundary_isos=None,
+    scalebar_location=(0.12, 0.05),
+    arrow_location=(0.06, 0.08),
+    scalebar_distance=100,
+    label_size=6.0,
+):
+    if boundary_isos is None:
+        boundary_isos = []
+    data_path = load_config()["paths"]["data"]
+    global_map_df = gpd.read_file(
+        os.path.join(
+            data_path,
+            "admin_boundaries",
+            "ne_10m_admin_1_states_provinces",
+            "ne_10m_admin_1_states_provinces.shp",
+        )
+    )
+    country_map_df = global_map_df[global_map_df["adm0_a3"].isin(country_isos)]
+    country_map_df = country_map_df[["adm0_a3", "name", "geometry"]]
+    ccg_isos = country_map_df["name"].values.tolist()
+    del global_map_df
+
+    if len(boundary_isos) > 0:
+        global_map_df = gpd.read_file(
+            os.path.join(
+                data_path,
+                "admin_boundaries",
+                "ne_10m_admin_0_countries",
+                "ne_10m_admin_0_countries.shp",
+            )
+        )
+        boundary_map_df = global_map_df[global_map_df["ADM0_A3_US"].isin(boundary_isos)]
+        boundary_map_df.rename(
+            columns={"ADM0_A3_US": "adm0_a3", "NAME": "name"}, inplace=True
+        )
+        boundary_map_df = boundary_map_df[["adm0_a3", "name", "geometry"]]
+
+    ccg_map_df = gpd.GeoDataFrame(
+        pd.concat([country_map_df, boundary_map_df], axis=0, ignore_index=True),
+        geometry="geometry",
+        crs=country_map_df.crs,
+    )
+
+    global_lake_df = gpd.read_file(
+        os.path.join(data_path, "admin_boundaries", "ne_10m_lakes", "ne_10m_lakes.shp")
+    )
+
+    bounds = (
+        country_map_df.geometry.total_bounds
+    )  # this gives your boundaries of the map as (xmin,ymin,xmax,ymax)
+    xmin = bounds[0] - 2.0
+    xmax = bounds[2] + 0.5
+    ymin = bounds[1] - 0.5
+    ymax = bounds[3] + 3.0
+
+    # See more on projections here: https://scitools.org.uk/cartopy/docs/v0.15/crs/projections.html#cartopy-projections
+    ax = get_axes(
+        ax, extent=(xmin, xmax, ymin, ymax), epsg=4326
+    )  # extent requires (xmin,xmax,ymin,ymax) you might have to adjust the offsets a bit manually as I have done here by +/-0.1
+    ax.set_facecolor("#c6e0ff")
+
+    for ccg_country in ccg_map_df.itertuples():
+        iso = ccg_country.name
+        if iso in ccg_isos:
+            facecolor = "#d9d9d9"
+        else:
+            facecolor = "#e0e0e0"
+        ax.add_geometries(
+            [ccg_country.geometry],
+            crs=ccrs.PlateCarree(),
+            edgecolor="white",
+            facecolor=facecolor,
+            zorder=2,
+        )
+    plot_basemap_labels(ax, labels=ccg_map_df, label_column="name", label_size=10)
+    for lake in global_lake_df.itertuples():
+        ax.add_geometries(
+            [lake.geometry],
+            crs=ccrs.PlateCarree(),
+            edgecolor="#c6e0ff",
+            facecolor="#c6e0ff",
+            zorder=3,
+        )
+    scale_bar_and_direction(
+        ax,
+        arrow_location=arrow_location,
+        scalebar_location=scalebar_location,
+        scalebar_distance=100,
+    )
     return ax
 
 
@@ -842,6 +1059,10 @@ def point_map_plotting_color_width(
 
     all_colors = [no_value_color] + point_colors
     point_geoms_by_category = {f"{j}": [] for j in range(len(all_colors))}
+    # weights = [
+    #     getattr(record,column)
+    #     for record in df.itertuples() if getattr(record,column) > 0
+    # ]
     width_by_range = generate_weight_bins(
         weights, width_step=width_step, n_steps=point_steps, interpolation=interpolation
     )
@@ -1055,3 +1276,41 @@ def point_map_plotting_colors_width(
     print("* Plotting ", plot_title)
     # legend_from_style_spec(ax, styles,fontsize=legend_size,loc='lower left')
     return ax, legend_handles
+
+
+def map_background_and_bounds(
+    boundary_gdf,
+    include_continents=None,
+    include_countries=None,
+    xmin_offset=0.0,
+    xmax_offset=0.0,
+    ymin_offset=0.0,
+    ymax_offset=0.0,
+):
+    if include_continents is not None:
+        continent_gdf = boundary_gdf[boundary_gdf["CONTINENT"].isin(include_continents)]
+    else:
+        continent_gdf = boundary_gdf.copy()
+
+    if include_countries is not None:
+        boundary_gdf = boundary_gdf[boundary_gdf["ADM0_A3_US"].isin(include_countries)]
+
+    # proj = ccrs.PlateCarree() # See more on projections here: https://scitools.org.uk/cartopy/docs/v0.15/crs/projections.html#cartopy-projections
+    bounds = (
+        boundary_gdf.geometry.total_bounds
+    )  # this gives your boundaries of the map as (xmin,ymin,xmax,ymax)
+    if include_countries is not None:
+        xmin = bounds[0] + xmin_offset
+        xmax = bounds[2] + xmax_offset
+        ymin = bounds[1] + ymin_offset
+        ymax = bounds[3] + ymax_offset
+    else:
+        xmin = bounds[0]
+        xmax = bounds[2]
+        ymin = bounds[1]
+        ymax = bounds[3]
+
+    xlims = [xmin, xmax]
+    ylims = [ymin, ymax]
+
+    return continent_gdf, boundary_gdf, xlims, ylims

@@ -8,7 +8,7 @@ import pandas as pd
 from shapely.geometry import LineString
 from tqdm import tqdm
 
-from aftdb.preprocess.utils_new import (
+from aftdb.utils import (
     add_iso_code,
     components,
     create_network_from_nodes_and_edges,
@@ -113,6 +113,8 @@ def main(config):
         "iww",
         snap_distance=6000,
         geometry_precision=True,
+        drop_duplicate_nodes=True,
+        check_linestrings=False,
     )
     edges = network.edges.set_crs(epsg=epsg_meters)
     nodes = network.nodes.set_crs(epsg=epsg_meters)

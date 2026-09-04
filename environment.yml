@@ -6,18 +6,20 @@ dependencies:
   - python=3.14
   - cartopy
   - country_converter
+  - curl
   - fiona
   - geopandas
   - haversine
   - jenkspy
   - mapclassify
   - matplotlib
-  - matplotlib-scalebar
   - networkx
   - numpy
+  - openpyxl
   - pandas
   - pip:
       - -e .
+  - pyarrow
   - pyrosm
   - python-igraph
   - quackosm
@@ -26,5 +28,6 @@ dependencies:
   - scipy
   - seaborn
   - shapely
+  - snakemake
   - snkit
   - tqdm

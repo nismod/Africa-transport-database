@@ -64,6 +64,40 @@ ruff format
 ruff check
 ```
 
+#### Configure the data paths
+
+Copy `config.template.json` to `config.json` and edit the four paths in it to
+point at your local data directories. The workflow and the scripts both read
+that file, so they always resolve the same locations. Relative paths are
+relative to the repository root, which is where snakemake runs.
+
+#### Run the workflow
+
+```bash
+snakemake --dry-run                       # what would run, and why
+snakemake --cores 1                       # build the published network layers
+snakemake --cores 1 plot_roads_typology   # or name a single rule or output file
+snakemake --list                          # every rule, with what it does
+```
+
+The workflow is split into stages, one rule file per stage:
+
+| File                 | Stage                                                |
+| -------------------- | ---------------------------------------------------- |
+| `rules/download.smk` | fetch the incoming data that can be fetched           |
+| `rules/process.smk`  | build the database from the incoming data             |
+| `rules/validate.smk` | compare the database against reference datasets       |
+| `rules/plot.smk`     | map and chart the finished database                   |
+
+The `Snakefile` itself holds only what the stages share: the config, the data
+paths, the datasets several rules read, and the default target.
+
+Most of the incoming data cannot be downloaded automatically. The docstring at
+the top of `rules/download.smk` inventories every external input, where it
+comes from, and which ones still have to be put in place by hand. It also
+lists the gaps that stop the workflow running end to end, as a starting point
+for the next round of work.
+
 ### Road network creation
 The road topological network creation follows 5 main steps: <br/>
 <br/>

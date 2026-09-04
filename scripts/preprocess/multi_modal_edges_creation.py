@@ -4,7 +4,7 @@ import geopandas as gpd
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.preprocess.utils_new import create_edges_from_nearest_node_joins, load_config
+from aftdb.utils import create_edges_from_nearest_node_joins, load_config
 
 tqdm.pandas()
 

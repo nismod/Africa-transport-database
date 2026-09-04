@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.preprocess.utils_new import components, load_config
+from aftdb.utils import components, load_config
 
 tqdm.pandas()
 

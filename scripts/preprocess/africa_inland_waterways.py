@@ -8,7 +8,7 @@ import pandas as pd
 from shapely.geometry import LineString
 from tqdm import tqdm
 
-from aftdb.preprocess.utils import (
+from aftdb.utils import (
     add_iso_code,
     components,
     create_network_from_nodes_and_edges,

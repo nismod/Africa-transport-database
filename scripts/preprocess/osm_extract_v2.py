@@ -3,11 +3,9 @@ import os
 import quackosm as qo
 from tqdm import tqdm
 
-from aftdb.preprocess.utils import load_config
+from aftdb.utils import load_config
 
 tqdm.pandas()
-
-
 
 
 def main(config):

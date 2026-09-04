@@ -9,7 +9,7 @@ from haversine import haversine
 from shapely.geometry import LineString
 from tqdm import tqdm
 
-from aftdb.preprocess.utils_new import load_config, network_od_path_estimations
+from aftdb.utils import load_config, network_od_path_estimations
 
 tqdm.pandas()
 

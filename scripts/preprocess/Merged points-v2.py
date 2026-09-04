@@ -4,7 +4,7 @@ import os
 import geopandas as gpd
 import pandas as pd
 
-from aftdb.preprocess.utils import load_config
+from aftdb.utils import load_config
 
 
 def main(config):

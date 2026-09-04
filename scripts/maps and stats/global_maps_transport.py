@@ -11,7 +11,7 @@ from cartopy.mpl.geoaxes import GeoAxes
 from matplotlib.axes import Axes
 from tqdm import tqdm
 
-from aftdb.map.map_plotting_utils import (
+from aftdb.plot.maps import (
     get_projection,
     line_map_plotting_colors_width,
     load_config,

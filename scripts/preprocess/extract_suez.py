@@ -6,7 +6,7 @@ import geopandas as gpd
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.preprocess.utils import (
+from aftdb.utils import (
     components,
     create_network_from_nodes_and_edges,
     load_config,

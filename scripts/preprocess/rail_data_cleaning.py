@@ -8,7 +8,7 @@ import pandas as pd
 from shapely.geometry import LineString
 from tqdm import tqdm
 
-from aftdb.preprocess.utils_new import (
+from aftdb.utils import (
     ckdnearest,
     components,
     convert_json_geopandas,
@@ -303,7 +303,12 @@ def main(config):
             df_crs = int(str(df_lines.crs).split(":")[1])
 
             network = create_network_from_nodes_and_edges(
-                df_points, df_lines, "", geometry_precision=True
+                df_points,
+                df_lines,
+                "",
+                geometry_precision=True,
+                drop_duplicate_nodes=True,
+                check_linestrings=False,
             )
 
             edges, nodes = components(
