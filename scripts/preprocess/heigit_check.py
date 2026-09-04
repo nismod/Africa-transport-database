@@ -74,8 +74,6 @@ def main(config):
         b_df["country_iso_a3"] = country
         database_clipped_df.append(b_df[b_df["border_road"] == 0])
         b_df = b_df[b_df["border_road"] == 1]
-        # df = gpd.clip(b_df,boundary_df)
-        # df = b_df.intersection(boundary_df)
         df = gpd.overlay(b_df, boundary_df, how="intersection")
         if len(df.index) > 0:
             df["length_m"] = df.geometry.length

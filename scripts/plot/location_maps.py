@@ -208,15 +208,11 @@ def modify_mineral_usage_factors(future_year=2030, baseline_year=2022):
 
 def main():
     figures = os.path.join(figure_path, "regional_figures")
-    # if os.path.exists(figures) is False:
-    #     os.mkdir(figures)
     os.makedirs(figures, exist_ok=True)
 
     figures = os.path.join(
         figure_path, "regional_figures", "mine_and_processing_locations"
     )
-    # if os.path.exists(figures) is False:
-    #     os.mkdir(figures)
     os.makedirs(figures, exist_ok=True)
 
     ccg_countries = pd.read_csv(
@@ -404,12 +400,6 @@ def main():
                     if ton_type == "initial_stage_production_tons":
                         cols = [f"{rf}_{ton_type}_0.0_in_{sc_nm}"]
                     else:
-                        # stages = stage_mapping_df[
-                        #                 (
-                        #                     stage_mapping_df["reference_mineral"] == rf
-                        #                 ) & (
-                        #                     stage_mapping_df["processing_type"].isin(st_type)
-                        #                 )]["processing_stage"].values.tolist()
                         stages = mine_city_stages[
                             mine_city_stages["reference_mineral"] == rf
                         ]["final_refined_stage"].values.tolist()
@@ -440,14 +430,12 @@ def main():
                 figheight = (
                     figwidth / (2 + len(layers_names) * w) / dxl * dyl / (1 - dt)
                 )
-                # figheight = 5
                 textfontsize = 12
             else:
                 figwidth = 16
                 figheight = (
                     figwidth / (2.5 + len(layers_names) * w) / dxl * dyl / (1 - dt)
                 )
-                # figheight = 8
                 textfontsize = 16
             plt.figure(figsize=(figwidth, figheight))
             plt.subplots_adjust(left=0, bottom=0, right=1, top=1 - dt, wspace=w)

@@ -53,8 +53,6 @@ def main(config):
     bold_font = font_manager.FontProperties(weight="bold", size=18)
 
     ax = plot_africa_basemap2(ax_plots)
-    # main_roads.plot(ax=ax,zorder=5, column=output_column, cmap='magma', linewidth=2, legend=True)
-    # roads_df.plot(ax=ax,zorder=6,column=output_column, cmap='tab20',linewidth=5,missing_kwds={'color': 'black', 'linewidth': 1,'zorder':4})
     # Categories in the order you want
     categories = ["Primary", "Secondary", "Trunk", "Motorway", "Other"]
 

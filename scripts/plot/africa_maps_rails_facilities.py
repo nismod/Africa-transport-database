@@ -33,9 +33,6 @@ def main(config):
         1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
     )
 
-    # save_fig(os.path.join(figures,"africa_basemap.png"))
-    # plt.close()
-
     edges_df = gpd.read_file(
         os.path.join(data_path, "infrastructure", "africa_railways_network.gpkg"),
         layer="edges",
@@ -44,8 +41,6 @@ def main(config):
         os.path.join(data_path, "infrastructure", "africa_railways_network.gpkg"),
         layer="nodes",
     )
-
-    # roads_df["geometry"] = roads_df.geometry.centroid
 
     output_column = "facility"
 

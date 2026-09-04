@@ -78,21 +78,16 @@ def main(config):
     MDG_edges = MDG_edges[
         MDG_edges["corridor_name"] == "Madagascar – Port Beira Corridor"
     ]
-    # MDG_nodes = MDG_nodes[MDG_nodes["corridor_name"] == "Madagascar – Port Beira Corridor" ]
 
     NS_edges = NS_edges[
         NS_edges["corridor_name"] == "North-South Corridor (North section)"
     ]
-    # NS_nodes = NS_nodes[NS_nodes["corridor_name"] == "North-South Corridor (North section)" ]
 
     Lobito_edges = Lobito_edges[Lobito_edges["corridor_name"] == "Lobito Corridor"]
-    # Lobito_nodes = Lobito_nodes[Lobito_nodes["corridor_name"] == "Lobito Corridor" ]
 
     TA_edges = TA_edges[TA_edges["corridor_name"] == "Tunisia – Algeria"]
-    # TA_nodes = TA_nodes[TA_nodes["corridor_name"] == "Tunisia – Algeria" ]
 
     TSH_edges = TSH_edges[TSH_edges["corridor_name"] == "Central Corridor of the TSH"]
-    # TSH_nodes = TSH_nodes[TSH_nodes["corridor_name"] == "Central Corridor of the TSH" ]
 
     road_edges = road_edges.to_crs(epsg=epsg_meters)
     MDG_edges = MDG_edges.to_crs(epsg=epsg_meters)

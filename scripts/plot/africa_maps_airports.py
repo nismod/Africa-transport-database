@@ -37,7 +37,6 @@ def main(config):
     )
 
     ax = plot_africa_basemap2(ax_plots)
-    # air_nodes.plot(ax=ax,zorder=4, column='TotalSeats', cmap='YlOrRd',markersize=15,legend=True, scheme="quantiles", label="Airport total seats")
     air_nodes["markersize"] = marker_size_max * (air_nodes["TotalSeats"] / tmax) ** 0.5
     air_nodes = air_nodes.sort_values(by="TotalSeats", ascending=False)
     air_nodes.geometry.plot(

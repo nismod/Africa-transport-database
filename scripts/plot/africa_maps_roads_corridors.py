@@ -33,9 +33,6 @@ def main(config):
         1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
     )
 
-    # save_fig(os.path.join(figures,"africa_basemap.png"))
-    # plt.close()
-
     roads_df = gpd.read_parquet(
         os.path.join(data_path, "infrastructure", "africa_roads_edges_FINAL.geoparquet")
     )
@@ -47,8 +44,6 @@ def main(config):
     gdf_exploded["corridor_id"], corridor_labels = pd.factorize(
         gdf_exploded["corridor_name"]
     )
-    # roads_df["geometry"] = roads_df.geometry.centroid
-    # gdf_exploded['corridor_id'] = gdf_exploded['corridor_id'].fillna(-1)
     gdf_exploded = gdf_exploded.to_crs(epsg=4326)
     output_column = "corridor_id"
 
@@ -61,7 +56,6 @@ def main(config):
     n_colors = len(corridor_labels)
     colors = plt.cm.Set1.colors
     color_map = {i: colors[i % len(colors)] for i in range(n_colors)}
-    # color_map[-1] = 'grey'  # Assign grey to missing corridors
     legend_items = [
         mpatches.Patch(
             color=color_map[i],
@@ -93,7 +87,6 @@ def main(config):
     ax_proj = get_projection(epsg=map_epsg)
 
     ax = plot_africa_basemap2(ax_plots)
-    # ax.set_aspect('equal')
     gdf_na = gdf_exploded[gdf_exploded["corridor_name"].isna()]
     gdf_colored = gdf_exploded[~gdf_exploded["corridor_name"].isna()]
 
@@ -113,40 +106,6 @@ def main(config):
 
     grouped_gdf = gdf_exploded.dissolve(by="corridor_id")
     grouped_gdf = grouped_gdf[~grouped_gdf["corridor_name"].isna()]
-
-    # for idx, row in grouped_gdf.iterrows():
-    #     geom = row.geometry
-
-    #     line_length = geom.length
-
-    #     if line_length > label_spacing:
-    #         num_labels = min(int(line_length // label_spacing), max_labels)
-    #         for i in range(1, num_labels + 1):
-    #             point = geom.interpolate(i * line_length / (num_labels + 1))
-    #             ax.annotate(
-    #                 text=str(idx + 1),
-    #                 xy=(point.x, point.y),
-    #                 xytext=(3, 10),
-    #                 textcoords="offset points",
-    #                 fontsize=9,
-    #                 color="black",
-    #                 alpha=1,
-    #                 bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
-    #                 zorder=8
-    #             )
-    #     else:
-    #         centroid = geom.centroid
-    #         ax.annotate(
-    #             text=str(idx + 1),
-    #             xy=(centroid.x, centroid.y),
-    #             xytext=(3, 10),
-    #             textcoords="offset points",
-    #             fontsize=9,
-    #             color="black",
-    #             alpha=1,
-    #             bbox=dict(boxstyle="round,pad=0.3", edgecolor="none", facecolor="white", alpha=0.6),
-    #             zorder=8
-    #         )
 
     # Add labels only once at the centroid of each group
     for idx, row in grouped_gdf.iterrows():

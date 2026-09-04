@@ -246,15 +246,6 @@ def main(config):
         ),
         index=False,
     )
-    # df = []
-    # for col in columns_merge:
-    #     df.append(port_utilisation.groupby(['id'])[col].agg(
-    #             [(col,  lambda x: ';'.join(map(str, x)))]))
-
-    # df = pd.concat(df,axis=1).reset_index()
-    # df.to_csv(os.path.join(processed_data_path,
-    #                     "port_statistics",
-    #                     "port_vessel_types_and_capacities.csv"),index=False)
 
 
 if __name__ == "__main__":

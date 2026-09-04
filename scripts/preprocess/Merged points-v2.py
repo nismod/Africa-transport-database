@@ -53,7 +53,6 @@ def main(config):
         & ~(df_corridor["Project_code"].isin(["LTT0002", "KMI0001", "DLC0002"]))
     ]
     # Create FeatureUID according to Project_code
-    # df_corridor = df_corridor.copy()
     df_corridor.loc[:, "FeatureUID"] = (
         df_corridor["Project_code"].str[:3] + df_corridor["Project_code"].str[-2:]
     )

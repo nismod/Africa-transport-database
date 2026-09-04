@@ -113,58 +113,6 @@ def main(config):
         driver="GPKG",
     )
 
-    # df_airports_flow= add_iso_code(df_airports_flow,"Country1",incoming_data_path)
-    # df_airports_flow.rename(columns={"iso3": "iso3_1"},inplace=True)
-    # df_airports_flow.drop(columns=["index_right"], inplace = True)
-
-    # df_airports_flow = add_iso_code(df_airports_flow,"Country2",incoming_data_path)
-    # df_airports_flow.rename(columns={"iso3": "iso3_2"},inplace=True)
-
-    # df_airports_flow.drop(columns = ["level_0"], inplace=True)
-
-    # cc = coco.CountryConverter()
-    # df_airports_flow["continent1"]  = cc.pandas_convert(df_airports_flow["Country1"], to='Continent')
-    # df_airports_flow["continent2"]  = cc.pandas_convert(df_airports_flow["Country2"], to='Continent')
-
-    # print(df_airports_flow)
-
-    # df_airports_nodes["geom"] = gpd.points_from_xy(
-    #                         df_airports_nodes["Airport1Longitude"],df_airports_nodes["Airport1Latitude"])
-    # df_airports_nodes.drop("geometry",axis=1,inplace=True)
-    # df_airports_nodes.rename(columns={"geom":"geometry"},inplace=True)
-
-    # df_airports_nodes = gpd.GeoDataFrame(df_airports_nodes,geometry="geometry",crs="EPSG:4326")
-
-    # df_airports_nodes= df_airports_nodes.to_crs(epsg=4326)
-
-    # df_airports_nodes = add_iso_code(df_airports_nodes,"Country Name",incoming_data_path)
-
-    # df_airports_nodes["infra"] = "airport"
-
-    # df_airports_nodes["continent"]  = cc.pandas_convert(df_airports_nodes["Country Name"], to='Continent')
-
-    # print(df_airports_nodes)
-
-    # Get the airports for Africa
-
-    # airport_edges = gpd.read_file(os.path.join(processed_data_path,
-    #                         "infrastructure",
-    #                         "global_airport_network.gpkg"),layer="edges")
-    # airport_nodes = gpd.read_file(os.path.join(processed_data_path,
-    #                         "infrastructure",
-    #                         "global_airport_network.gpkg"),layer="nodes")
-
-    # africa_airports = airport_nodes[airport_nodes["continent"] == "Africa"]
-
-    # africa_air_tracks = airport_edges[airport_edges["continent1" or "continent2"] == "Africa"]
-
-    # print(africa_airports)
-
-    # df_airports_nodes.to_file(os.path.join(processed_data_path,
-    #                         "infrastructure",
-    #                         "africa_airport_network.gpkg"),
-    #                     layer="nodes",driver="GPKG")
-
 
 if __name__ == "__main__":
     CONFIG = load_config()
