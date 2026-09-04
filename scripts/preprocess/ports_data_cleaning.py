@@ -10,7 +10,7 @@ import pandas as pd
 from haversine import haversine
 from tqdm import tqdm
 
-from aftdb.preprocess.utils_new import (
+from aftdb.utils import (
     add_lines,
     ckdnearest,
     load_config,

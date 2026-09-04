@@ -5,7 +5,7 @@ import os
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-from aftdb.map.map_plotting_utils import (
+from aftdb.plot.maps import (
     get_projection,
     load_config,
     plot_africa_basemap,

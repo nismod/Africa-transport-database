@@ -7,7 +7,7 @@ import pandas as pd
 from shapely import wkt
 from tqdm import tqdm
 
-from aftdb.preprocess.utils import load_config
+from aftdb.utils import load_config
 
 tqdm.pandas()
 

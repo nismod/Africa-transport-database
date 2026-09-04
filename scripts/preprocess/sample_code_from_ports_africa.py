@@ -5,7 +5,7 @@ import geopandas as gpd
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.preprocess.utils import add_lines, ckdnearest, load_config
+from aftdb.utils import add_lines, ckdnearest, load_config
 
 tqdm.pandas()
 

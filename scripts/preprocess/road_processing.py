@@ -4,7 +4,7 @@ import geopandas as gpd
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.preprocess.utils import load_config
+from aftdb.utils import load_config
 
 tqdm.pandas()
 
