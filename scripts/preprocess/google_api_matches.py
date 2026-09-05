@@ -1,11 +1,8 @@
-import os
-
+import click
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-
-from aftdb.utils import load_config
 
 tqdm.pandas()
 
@@ -45,18 +42,32 @@ def get_closest_match(x, tuple_columns):
     return tuple(sets[0].values.tolist())
 
 
-def main(config):
-    config = load_config()
-    incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
-    output_path = config["paths"]["results"]
-
+@click.command()
+@click.option("--rail-network", required=True, type=click.Path(exists=True))
+@click.option("--google-points", required=True, type=click.Path(exists=True))
+@click.option("--global-mines", required=True, type=click.Path(exists=True))
+@click.option("--usgs-facilities", required=True, type=click.Path(exists=True))
+@click.option("--airports", required=True, type=click.Path(exists=True))
+@click.option("--maritime", required=True, type=click.Path(exists=True))
+@click.option("--iww", required=True, type=click.Path(exists=True))
+@click.option("--previous-matches", required=True, type=click.Path(exists=True))
+@click.option("--output-matches", required=True, type=click.Path())
+def main(
+    rail_network,
+    google_points,
+    global_mines,
+    usgs_facilities,
+    airports,
+    maritime,
+    iww,
+    previous_matches,
+    output_matches,
+):
+    """Match rail facilities against mines, ports, airports and Google places"""
     epsg_meters = 3395
 
     rail_nodes = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_railways_network.gpkg"
-        ),
+        rail_network,
         layer="nodes",
     )
     rail_nodes = rail_nodes[~rail_nodes["facility"].isna()]
@@ -64,13 +75,7 @@ def main(config):
 
     tuple_columns = []
     # Get the google API matches
-    google_matches = pd.read_csv(
-        os.path.join(
-            incoming_data_path,
-            "africa-station-google-points",
-            "stations_with_google_api_points.csv",
-        )
-    )
+    google_matches = pd.read_csv(google_points)
     google_matches = google_matches.sort_values(by=["point_distance"], ascending=True)
     google_matches = google_matches.drop_duplicates(subset=["id"], keep="first")
     google_matches["google"] = "google"
@@ -86,14 +91,7 @@ def main(config):
     tuple_columns.append(["displayName.text", "google", "point_distance"])
 
     # Get the mines layers
-    global_mines = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Supplementary 1：mine area polygons",
-            "74548 mine polygons",
-            "74548_projected.shp",
-        )
-    )
+    global_mines = gpd.read_file(global_mines)
     global_mines = global_mines.to_crs(epsg=epsg_meters)
     global_mines["mines"] = "mine"
     matches_dataframe, tuple_columns = match_and_merge(
@@ -106,15 +104,7 @@ def main(config):
         type_column="mines",
     )
 
-    usgs_data = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Africa_GIS Supporting Data",
-            "a. Africa_GIS Shapefiles",
-            "AFR_Mineral_Facilities.shp",
-            "AFR_Mineral_Facilities.shp",
-        )
-    )
+    usgs_data = gpd.read_file(usgs_facilities)
     usgs_data = usgs_data.to_crs(epsg=epsg_meters)
     matches_dataframe, tuple_columns = match_and_merge(
         rail_nodes,
@@ -127,9 +117,7 @@ def main(config):
     )
     # Get the google API matches
     airports = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_airport_network.gpkg"
-        ),
+        airports,
         layer="nodes",
     )
     airports["infra_air"] = "air"
@@ -146,9 +134,7 @@ def main(config):
     )
 
     ports = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_maritime_network.gpkg"
-        ),
+        maritime,
         layer="nodes",
     )
     ports = ports[ports["infra"] == "port"]
@@ -164,7 +150,7 @@ def main(config):
         type_column="infra_maritime",
     )
     ports = gpd.read_file(
-        os.path.join(processed_data_path, "infrastructure", "africa_iww_network.gpkg"),
+        iww,
         layer="nodes",
     )
     ports = ports[ports["infra"] == "IWW port"]
@@ -195,11 +181,7 @@ def main(config):
         matches_dataframe, geometry="geometry", crs=f"EPSG:{epsg_meters}"
     )
     matches_dataframe = matches_dataframe.to_crs(epsg=4326)
-    final_matches = gpd.read_file(
-        os.path.join(
-            output_path, "africa-station-google-points", "location_proximity_final.gpkg"
-        )
-    )
+    final_matches = gpd.read_file(previous_matches)
     final_matches.rename(
         columns={
             "closest_type": "closest_type_final",
@@ -256,15 +238,10 @@ def main(config):
         ["closest_type_final", "closest_distance_final"], axis=1, inplace=True
     )
     matches_dataframe.to_file(
-        os.path.join(
-            incoming_data_path,
-            "africa-station-google-points",
-            "location_proximity_final.gpkg",
-        ),
+        output_matches,
         driver="GPKG",
     )
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

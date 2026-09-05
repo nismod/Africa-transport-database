@@ -1,28 +1,32 @@
-# (1) Merge three datasets; (2)Add ISO3 (3) extraxt non_intersected
-import os
+import click
 
+# (1) Merge three datasets; (2)Add ISO3 (3) extraxt non_intersected
 import geopandas as gpd
 import pandas as pd
 
-from aftdb.utils import load_config
 
-
-def main(config):
-    # Get the data from the config.json
-    incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
-
+@click.command()
+@click.option("--usgs-ports", required=True, type=click.Path(exists=True))
+@click.option("--global-ports", required=True, type=click.Path(exists=True))
+@click.option("--corridor-db", required=True, type=click.Path(exists=True))
+@click.option("--world-boundaries", required=True, type=click.Path(exists=True))
+@click.option("--output-merged-gpkg", required=True, type=click.Path())
+@click.option("--output-merged-csv", required=True, type=click.Path())
+@click.option("--output-non-intersected-gpkg", required=True, type=click.Path())
+@click.option("--output-non-intersected-csv", required=True, type=click.Path())
+def main(
+    usgs_ports,
+    global_ports,
+    corridor_db,
+    world_boundaries,
+    output_merged_gpkg,
+    output_merged_csv,
+    output_non_intersected_gpkg,
+    output_non_intersected_csv,
+):
+    """Merge USGS, global and corridor port points and add ISO3 codes"""
     # 1. Read USGS data, Africa prots dataset,African development corriodor datasets
-    path = incoming_data_path
-    df_ports_shp = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Africa_GIS Supporting Data",
-            "a. Africa_GIS Shapefiles",
-            "AFR_Infra_Transport_Ports.shp",
-            "AFR_Infra_Transport_Ports.shp",
-        )
-    )
+    df_ports_shp = gpd.read_file(usgs_ports)
     # This contains some wrong geometry, which we will have to convert to Point from Latitude and Longitude values
     df_ports_shp["geom"] = gpd.points_from_xy(
         df_ports_shp["Longitude"], df_ports_shp["Latitude"]
@@ -32,16 +36,10 @@ def main(config):
     df_ports_shp = gpd.GeoDataFrame(df_ports_shp, geometry="geometry", crs="EPSG:4326")
 
     # We will read the global ports dataset
-    df_ports = gpd.read_file(
-        os.path.join(incoming_data_path, "ports", "nodes_maritime.gpkg")
-    )
+    df_ports = gpd.read_file(global_ports)
     # Read the Africa Corridor data
     df_corridor = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "africa_corridor_developments",
-            "AfricanDevelopmentCorridorDatabase2022.gpkg",
-        ),
+        corridor_db,
         layer="point",
     )
 
@@ -126,9 +124,7 @@ def main(config):
     merged_all["geometry"] = merged_all["geometry"].centroid
 
     # Insert countries' boundary
-    path_to_shp = (
-        f"{path}/ports/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp"
-    )
+    path_to_shp = world_boundaries
     world = gpd.read_file(path_to_shp)
 
     #  merged_all projections "EPSG:4326"
@@ -146,11 +142,11 @@ def main(config):
     )
 
     # Set the GeoPackage output
-    output_gpkg_path = os.path.join(processed_data_path, "merged_with_iso2.gpkg")
+    output_gpkg_path = output_merged_gpkg
     merged_with_iso.to_file(output_gpkg_path, driver="GPKG")
 
     # Set the merged_iso CSV output
-    output_csv_path = os.path.join(processed_data_path, "merged_with_iso2.csv")
+    output_csv_path = output_merged_csv
     merged_with_iso.to_csv(output_csv_path, index=False)
 
     # Projections  df_africa_ports.crs to merged_all.CRS
@@ -169,21 +165,16 @@ def main(config):
     ]
 
     # Save gpkg and csv files
-    non_intersected_gpkg_path = os.path.join(
-        processed_data_path, "non_intersected_from_merged.gpkg"
-    )
+    non_intersected_gpkg_path = output_non_intersected_gpkg
     non_intersected_from_merged.to_file(non_intersected_gpkg_path, driver="GPKG")
 
     print(
         f"Total entries in non_intersected_from_merged: {len(non_intersected_from_merged)}"
     )
 
-    non_intersected_csv_path = os.path.join(
-        processed_data_path, "non_intersected_from_merged.csv"
-    )
+    non_intersected_csv_path = output_non_intersected_csv
     non_intersected_from_merged.to_csv(non_intersected_csv_path, index=False)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

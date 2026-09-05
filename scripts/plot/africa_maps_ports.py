@@ -1,6 +1,7 @@
+import click
+
 """Road network risks and adaptation maps"""
 
-import os
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -8,7 +9,6 @@ from tqdm import tqdm
 
 from aftdb.plot.maps import (
     get_projection,
-    load_config,
     plot_africa_basemap,
     save_fig,
 )
@@ -16,13 +16,15 @@ from aftdb.plot.maps import (
 tqdm.pandas()
 
 
-def main(config):
-    data_path = config["paths"]["data"]
-    figure_path = config["paths"]["figures"]
-
-    figures = os.path.join(figure_path)
-    if os.path.exists(figures) is False:
-        os.mkdir(figures)
+@click.command()
+@click.option("--maritime", required=True, type=click.Path(exists=True))
+@click.option("--iww", required=True, type=click.Path(exists=True))
+@click.option("--countries", required=True, type=click.Path(exists=True))
+@click.option("--lakes", required=True, type=click.Path(exists=True))
+@click.option("--ccg-countries", required=True, type=click.Path(exists=True))
+@click.option("--output-figure", required=True, type=click.Path())
+def main(maritime, iww, countries, lakes, ccg_countries, output_figure):
+    """Map maritime ports, inland ports and their routes"""
 
     map_epsg = 4326
     ax_proj = get_projection(epsg=map_epsg)
@@ -31,19 +33,19 @@ def main(config):
     )
 
     maritime_edges = gpd.read_file(
-        os.path.join(data_path, "infrastructure", "africa_maritime_network.gpkg"),
+        maritime,
         layer="edges",
     )
     maritime_nodes = gpd.read_file(
-        os.path.join(data_path, "infrastructure", "africa_maritime_network.gpkg"),
+        maritime,
         layer="nodes",
     )
     IWW_edges = gpd.read_file(
-        os.path.join(data_path, "infrastructure", "africa_iww_network.gpkg"),
+        iww,
         layer="edges",
     )
     IWW_nodes = gpd.read_file(
-        os.path.join(data_path, "infrastructure", "africa_iww_network.gpkg"),
+        iww,
         layer="nodes",
     )
 
@@ -53,9 +55,9 @@ def main(config):
     maritime_nodes["geometry"] = maritime_nodes.geometry.centroid
     IWW_nodes["geometry"] = IWW_nodes.geometry.centroid
 
-    ax = plot_africa_basemap(ax_plots)
+    ax = plot_africa_basemap(ax_plots, countries, lakes, ccg_countries)
 
-    ax = plot_africa_basemap(ax_plots)
+    ax = plot_africa_basemap(ax_plots, countries, lakes, ccg_countries)
     maritime_nodes.plot(
         ax=ax, zorder=4, color="blue", markersize=10, label="maritime port"
     )
@@ -69,10 +71,9 @@ def main(config):
     plt.legend(loc="upper right")
 
     plt.tight_layout()
-    save_fig(os.path.join(figures, "IWW_and_ports.png"))
+    save_fig(output_figure)
     plt.close()
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

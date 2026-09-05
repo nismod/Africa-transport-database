@@ -1,28 +1,25 @@
+import click
+
 """Road network risks and adaptation maps"""
 
-import os
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
 from tqdm import tqdm
 
-from aftdb.plot.maps import load_config, save_fig
+from aftdb.plot.maps import save_fig
 
 tqdm.pandas()
 
 
-def main(config):
-    data_path = config["paths"]["data"]
-    figure_path = config["paths"]["figures"]
+@click.command()
+@click.option("--road-edges", required=True, type=click.Path(exists=True))
+@click.option("--output-figure", required=True, type=click.Path())
+def main(road_edges, output_figure):
+    """Stacked bar chart of road length by corridor and typology"""
 
-    figures = os.path.join(figure_path)
-    if os.path.exists(figures) is False:
-        os.mkdir(figures)
-
-    roads_df = gpd.read_parquet(
-        os.path.join(data_path, "infrastructure", "africa_roads_edges_FINAL.geoparquet")
-    )
+    roads_df = gpd.read_parquet(road_edges)
 
     # Convert length from meters to kilometers
     roads_df["length_km"] = roads_df["length_m"] / 1000
@@ -87,9 +84,8 @@ def main(config):
     plt.subplots_adjust(bottom=0.1)
     plt.tight_layout()
 
-    save_fig(os.path.join(figures, "roads_hist_cap2_grid.png"))
+    save_fig(output_figure)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

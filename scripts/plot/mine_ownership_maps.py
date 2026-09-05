@@ -1,6 +1,7 @@
 import itertools
 import os
 
+import click
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,7 +9,6 @@ import pandas as pd
 from tqdm import tqdm
 
 from aftdb.plot.maps import (
-    load_config,
     map_background_and_bounds,
     plot_global_basemap,
     save_fig,
@@ -16,11 +16,6 @@ from aftdb.plot.maps import (
 
 pd.options.mode.copy_on_write = True
 tqdm.pandas()
-
-config = load_config()
-processed_data_path = config["paths"]["data"]
-output_data_path = config["paths"]["results"]
-figure_path = config["paths"]["figures"]
 
 
 def draw_pie(dist, xpos, ypos, size, color_map, ax=None):
@@ -60,40 +55,23 @@ def draw_pie(dist, xpos, ypos, size, color_map, ax=None):
     return ax
 
 
-def main():
-    figures = os.path.join(figure_path, "mine_ownership")
-    os.makedirs(figures, exist_ok=True)
-
-    global_df = gpd.read_file(
-        os.path.join(
-            processed_data_path,
-            "admin_boundaries",
-            "ne_10m_admin_0_countries",
-            "ne_10m_admin_0_countries.shp",
-        ),
-        encoding="utf-8",
-    )
+@click.command()
+@click.option("--countries", required=True, type=click.Path(exists=True))
+@click.option("--centroids", required=True, type=click.Path(exists=True))
+@click.option("--ownership", required=True, type=click.Path(exists=True))
+@click.option("--output-dir", required=True, type=click.Path())
+def main(countries, centroids, ownership, output_dir):
+    """Global maps of mine output and ownership shares by country"""
+    global_df = gpd.read_file(countries, encoding="utf-8")
     global_df = global_df[global_df["CONTINENT"] != "Antarctica"]
     continents = list(set(global_df["CONTINENT"].values.tolist()))
-    countries = list(set(global_df["ADM0_A3"].values.tolist()))
-    centroid_df = pd.read_csv(
-        os.path.join(
-            processed_data_path, "admin_boundaries/centroids", "countries_iso3_code.csv"
-        )
-    )
+    country_isos = list(set(global_df["ADM0_A3"].values.tolist()))
+    centroid_df = pd.read_csv(centroids)
     centroid_df["geometry"] = gpd.points_from_xy(
         centroid_df["longitude_shift"], centroid_df["latitude_shift"]
     )
 
-    boundary_gdf = gpd.read_file(
-        os.path.join(
-            processed_data_path,
-            "admin_boundaries",
-            "ne_10m_admin_0_countries",
-            "ne_10m_admin_0_countries.shp",
-        ),
-        encoding="utf-8",
-    )
+    boundary_gdf = gpd.read_file(countries, encoding="utf-8")
     _, _, xl, yl = map_background_and_bounds(
         boundary_gdf, include_continents=continents
     )
@@ -146,19 +124,15 @@ def main():
     ax.set_xticks([])
     ax.set_yticks([])
 
-    ax = plot_global_basemap(
-        ax, include_continents=continents, include_countries=countries, facecolor=None
-    )
+    ax = plot_global_basemap(ax, countries, include_countries=country_isos)
 
     plt.tight_layout()
-    save_fig(os.path.join(figures, "global_basemap"))
+    save_fig(os.path.join(output_dir, "global_basemap.png"))
     plt.close()
 
     """Read the mine ownership data
     """
-    ownership_df = pd.read_csv(
-        os.path.join(output_data_path, "mine_ownership", "df_maps_2022.csv")
-    )
+    ownership_df = pd.read_csv(ownership)
     df = pd.merge(
         centroid_df[["ADM0_A3", "geometry"]],
         ownership_df,
@@ -258,12 +232,7 @@ def main():
                             ms=10,
                         )
         else:
-            ax = plot_global_basemap(
-                ax,
-                include_continents=continents,
-                include_countries=countries,
-                facecolor=None,
-            )
+            ax = plot_global_basemap(ax, countries, include_countries=country_isos)
             gdf["markersize"] = marker_size_max * (gdf[sc_n] / tmax) ** 0.5
             gdf = gdf.sort_values(by=sc_n, ascending=False)
             gdf.geometry.plot(
@@ -278,7 +247,7 @@ def main():
             )
 
     plt.tight_layout()
-    save_fig(os.path.join(figures, "mine_totals.svg"))
+    save_fig(os.path.join(output_dir, "mine_totals.svg"))
     plt.close()
 
     """Ownership Map"""
@@ -308,9 +277,7 @@ def main():
     ax.set_xticks([])
     ax.set_yticks([])
 
-    ax = plot_global_basemap(
-        ax, include_continents=continents, include_countries=countries, facecolor=None
-    )
+    ax = plot_global_basemap(ax, countries, include_countries=country_isos)
     for row in df.itertuples():
         values = [row.Local, row.Foreign, row.Unknown]
         colors = pie_colors.copy()
@@ -384,7 +351,7 @@ def main():
                 ins.plot(xk, yk[k], "s", mfc=pie_colors[k], mec=pie_colors[k], ms=10)
 
     plt.tight_layout()
-    save_fig(os.path.join(figures, "country_totals_by_ownership.svg"))
+    save_fig(os.path.join(output_dir, "country_totals_by_ownership.svg"))
     plt.close()
 
 

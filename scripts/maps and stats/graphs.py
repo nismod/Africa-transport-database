@@ -1,12 +1,10 @@
-import os
-
+import click
 import geopandas as gpd
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 from aftdb.plot.maps import (
     get_projection,
-    load_config,
     plot_africa_basemap,
     save_fig,
 )
@@ -14,15 +12,16 @@ from aftdb.plot.maps import (
 tqdm.pandas()
 
 
-def main(config):
-    config = load_config()
-    incoming_data_path = config["paths"]["incoming_data"]
-    figure_path = config["paths"]["figures"]
-
-    figures = os.path.join(figure_path)
-
+@click.command()
+@click.option("--ccg-countries", required=True, type=click.Path(exists=True))
+@click.option("--main-roads", required=True, type=click.Path(exists=True))
+@click.option("--countries", required=True, type=click.Path(exists=True))
+@click.option("--lakes", required=True, type=click.Path(exists=True))
+@click.option("--output-figure", required=True, type=click.Path())
+def main(ccg_countries, main_roads, countries, lakes, output_figure):
+    """Plot the main road network over the Africa basemap"""
     roads_df = gpd.read_file(
-        os.path.join(incoming_data_path, "africa_roads", "africa_main_roads.gpkg"),
+        main_roads,
         layer="edges",
     )
 
@@ -31,13 +30,12 @@ def main(config):
         1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
     )
 
-    plot_africa_basemap(ax_plots)
+    plot_africa_basemap(ax_plots, countries, lakes, ccg_countries)
     roads_df.plot()
     plt.tight_layout()
-    save_fig(os.path.join(figures, "roads_test.png"))
+    save_fig(output_figure)
     plt.close()
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

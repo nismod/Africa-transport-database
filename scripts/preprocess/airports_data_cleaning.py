@@ -1,55 +1,23 @@
-import os
-
+import click
 import geopandas as gpd
-import pandas as pd
 from shapely.geometry import LineString
 from tqdm import tqdm
-
-from aftdb.utils import load_config
 
 tqdm.pandas()
 
 
-def add_iso_code(df, df_id_column, incoming_data_path):
-    # Insert countries' ISO CODE
-    africa_boundaries = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Africa_GIS Supporting Data",
-            "a. Africa_GIS Shapefiles",
-            "AFR_Political_ADM0_Boundaries.shp",
-            "AFR_Political_ADM0_Boundaries.shp",
-        )
-    )
-    africa_boundaries.rename(columns={"DsgAttr03": "iso3"}, inplace=True)
-    # Spatial join
-    m = gpd.sjoin(
-        df, africa_boundaries[["geometry", "iso3"]], how="left", predicate="within"
-    ).reset_index()
-    m = m[~m["iso3"].isna()]
-    un = df[~df[df_id_column].isin(m[df_id_column].values.tolist())]
-    un = gpd.sjoin_nearest(
-        un, africa_boundaries[["geometry", "iso3"]], how="left"
-    ).reset_index()
-    m = pd.concat([m, un], axis=0, ignore_index=True)
-    return m
-
-
-def main(config):
-
-    processed_data_path = config["paths"]["data"]
-
+@click.command()
+@click.option("--airport-network", required=True, type=click.Path(exists=True))
+@click.option("--output-network", required=True, type=click.Path())
+def main(airport_network, output_network):
+    """Rebuild airport route geometries and attach origin and destination ISO3 codes"""
     df_airports_flow = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_airport_network.gpkg"
-        ),
+        airport_network,
         layer="edges",
     )
 
     df_airports_nodes = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_airport_network.gpkg"
-        ),
+        airport_network,
         layer="nodes",
     )
 
@@ -99,21 +67,16 @@ def main(config):
     df_airports_flow = df_airports_flow[df_airports_flow.geometry.notnull()]
 
     df_airports_nodes.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_airport_network_last.gpkg"
-        ),
+        output_network,
         layer="nodes",
         driver="GPKG",
     )
     df_airports_flow.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_airport_network_last.gpkg"
-        ),
+        output_network,
         layer="edges",
         driver="GPKG",
     )
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

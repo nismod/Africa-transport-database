@@ -1,12 +1,10 @@
 # (1) Merge three datasets; (2)Add ISO3 (4) extract non_intersected
-import os
 from functools import partial
 
+import click
 import geopandas as gpd
 import pandas as pd
 from tqdm import tqdm
-
-from aftdb.utils import load_config
 
 tqdm.pandas()
 
@@ -56,20 +54,30 @@ def find_ref_mineral(x, m):
         return 0
 
 
-def main(config):
-    incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
-
+@click.command()
+@click.option("--port-matches", required=True, type=click.Path(exists=True))
+@click.option("--corridor-db", required=True, type=click.Path(exists=True))
+@click.option("--usgs-ports", required=True, type=click.Path(exists=True))
+@click.option("--global-network", required=True, type=click.Path(exists=True))
+@click.option("--port-utilisation", required=True, type=click.Path(exists=True))
+@click.option("--output-vessel-capacities", required=True, type=click.Path())
+@click.option("--output-commodities", required=True, type=click.Path())
+def main(
+    port_matches,
+    corridor_db,
+    usgs_ports,
+    global_network,
+    port_utilisation,
+    output_vessel_capacities,
+    output_commodities,
+):
+    """Derive traded commodities and annual capacities per port"""
     port_matches = pd.read_excel(
-        os.path.join(incoming_data_path, "ports", "all_ports_matches.xlsx"),
+        port_matches,
         sheet_name="matches",
     )
     port_corridor = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "africa_corridor_developments",
-            "AfricanDevelopmentCorridorDatabase2022.gpkg",
-        ),
+        corridor_db,
         layer="point",
     )[["Project_code", "Commodities_traded_or_transported"]]
     port_corridor.rename(
@@ -83,15 +91,7 @@ def main(config):
     port_matches = pd.merge(
         port_matches, port_corridor, how="left", on=["Project_code"]
     )
-    usgs_ports = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Africa_GIS Supporting Data",
-            "a. Africa_GIS Shapefiles",
-            "AFR_Infra_Transport_Ports.shp",
-            "AFR_Infra_Transport_Ports.shp",
-        )
-    )
+    usgs_ports = gpd.read_file(usgs_ports)
     usgs_ports["capacity_convert_tons"] = usgs_ports.progress_apply(
         lambda x: convert_units(x["DsgAttr06"]), axis=1
     )
@@ -186,15 +186,11 @@ def main(config):
         )
 
     port_df = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "global_maritime_network.gpkg"
-        ),
+        global_network,
         layer="nodes",
     )
     port_df.drop("geometry", axis=1, inplace=True)
-    port_utilisation = pd.read_csv(
-        os.path.join(processed_data_path, "port_statistics", "port_utilization.csv")
-    )
+    port_utilisation = pd.read_csv(port_utilisation)
 
     port_utilisation["annual_vessel_capacity_tons"] = (
         52.0 * port_utilisation["dwt_per_week"]
@@ -232,22 +228,15 @@ def main(config):
     all_ports_utilisations[
         ["id", "name", "iso3", "vessel_type_main", "annual_vessel_capacity_tons"]
     ].to_csv(
-        os.path.join(
-            processed_data_path,
-            "port_statistics",
-            "port_vessel_types_and_capacities.csv",
-        ),
+        output_vessel_capacities,
         index=False,
     )
 
     port_matches.to_csv(
-        os.path.join(
-            processed_data_path, "port_statistics", "port_known_commodities_traded.csv"
-        ),
+        output_commodities,
         index=False,
     )
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

@@ -1,28 +1,38 @@
+import click
+
 # This file aims to merge the value/weight/utilisations files together with the consolidated ports datasets
-
-import os
-
 import geopandas as gpd
 import pandas as pd
 from shapely import wkt
 from tqdm import tqdm
 
-from aftdb.utils import load_config
-
 tqdm.pandas()
 
 
-def main(config):
-    incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
+@click.command()
+@click.option("--usgs-ports", required=True, type=click.Path(exists=True))
+@click.option("--ports-weight", required=True, type=click.Path(exists=True))
+@click.option("--ports-value", required=True, type=click.Path(exists=True))
+@click.option("--ports-utilization", required=True, type=click.Path(exists=True))
+@click.option("--merged-csv", required=True, type=click.Path(exists=True))
+@click.option("--output-weightvalues", required=True, type=click.Path())
+@click.option("--output-merged2", required=True, type=click.Path())
+@click.option("--output-results", required=True, type=click.Path())
+@click.option("--output-missing-coords", required=True, type=click.Path())
+def main(
+    usgs_ports,
+    ports_weight,
+    ports_value,
+    ports_utilization,
+    merged_csv,
+    output_weightvalues,
+    output_merged2,
+    output_results,
+    output_missing_coords,
+):
+    """Join port weight, value and utilisation statistics to the merged ports"""
     # Read USGS dataset
-    shapefile_path = os.path.join(
-        incoming_data_path,
-        "Africa_GIS Supporting Data",
-        "a. Africa_GIS Shapefiles",
-        "AFR_Infra_Transport_Ports.shp",
-        "AFR_Infra_Transport_Ports.shp",
-    )
+    shapefile_path = usgs_ports
     USGS_gdf = gpd.read_file(shapefile_path)
     # Rename columns
     USGS_gdf.rename(
@@ -41,30 +51,15 @@ def main(config):
     )
 
     # Read weight and value files
-    portsweight_path = os.path.join(
-        incoming_data_path,
-        "Global port supply-chains",
-        "Port_statistics",
-        "port_locations_weight.csv",
-    )
-    portsvalue_path = os.path.join(
-        incoming_data_path,
-        "Global port supply-chains",
-        "Port_statistics",
-        "port_locations_value.csv",
-    )
-    ports_utilization_path = os.path.join(
-        incoming_data_path,
-        "Global port supply-chains",
-        "Port_statistics",
-        "port_utilization.csv",
-    )
+    portsweight_path = ports_weight
+    portsvalue_path = ports_value
+    ports_utilization_path = ports_utilization
     portsweight = pd.read_csv(portsweight_path)
     portsvalue = pd.read_csv(portsvalue_path)
     ports_utilization = pd.read_csv(ports_utilization_path)
 
     # Read merged file with iso3
-    merged_file_path = os.path.join(processed_data_path, "merged_with_iso2.csv")
+    merged_file_path = merged_csv
     merged_file = pd.read_csv(merged_file_path)
 
     merged_file.rename(
@@ -182,9 +177,7 @@ def main(config):
     cols_to_remove = [col for col in ports_weightvalues.columns if col.endswith("_y")]
     ports_weightvalues.drop(columns=cols_to_remove, inplace=True)
     ports_weightvalues.columns = ports_weightvalues.columns.str.replace("_x", "")
-    ports_weightvalues_path = os.path.join(
-        processed_data_path, "ports_weightvalues.csv"
-    )
+    ports_weightvalues_path = output_weightvalues
     ports_weightvalues.to_csv(ports_weightvalues_path, index=True)
 
     ports_weightvalues_unique = ports_weightvalues.drop_duplicates(
@@ -199,14 +192,13 @@ def main(config):
         missing_coords_df["lat"].isnull() | missing_coords_df["lon"].isnull()
     ]
     # save the output files
-    merged_file_path = os.path.join(processed_data_path, "merged2.csv")
-    result_path = os.path.join(processed_data_path, "economic results2.csv")
-    missing_coords_path = os.path.join(processed_data_path, "missing_coords.csv")
+    merged_file_path = output_merged2
+    result_path = output_results
+    missing_coords_path = output_missing_coords
     merged_file.to_csv(merged_file_path, index=False)
     result_df.to_csv(result_path, index=False)
     missing_coords_df.to_csv(missing_coords_path, index=False)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

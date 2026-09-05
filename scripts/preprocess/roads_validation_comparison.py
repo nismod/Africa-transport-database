@@ -1,10 +1,9 @@
 import os
 
+import click
 import geopandas as gpd
 import numpy as np
 import pandas as pd
-
-from aftdb.utils import load_config
 
 
 def create_tag(x):
@@ -20,26 +19,26 @@ def create_tag(x):
         return 3
 
 
-def main(config):
-    input_folder = config["paths"]["incoming_data"]
-    output_folder = config["paths"]["data"]
-
+@click.command()
+@click.option("--database-lines", required=True, type=click.Path(exists=True))
+@click.option("--boundaries", required=True, type=click.Path(exists=True))
+@click.option("--heigit-folder", required=True, type=click.Path(exists=True))
+@click.option("--output-merged", required=True, type=click.Path())
+@click.option("--output-pivot", required=True, type=click.Path())
+@click.option("--output-counts", required=True, type=click.Path())
+def main(
+    database_lines,
+    boundaries,
+    heigit_folder,
+    output_merged,
+    output_pivot,
+    output_counts,
+):
+    """Clip database and HeiGIT roads by country and compare paved lengths"""
     epsg_meters = 32736
     # Write to a new GeoPackage
-    heigit_folder = os.path.join(input_folder, "Randhawaetal_2025_Locations")
-    database_lines = gpd.read_parquet(
-        os.path.join(
-            output_folder, "infrastructure", "africa_roads_edges_FINAL_last.geoparquet"
-        )
-    )
-    global_boundaries = gpd.read_file(
-        os.path.join(
-            output_folder,
-            "admin_boundaries",
-            "gadm36_levels_gpkg",
-            "gadm36_levels_continents.gpkg",
-        )
-    )
+    database_lines = gpd.read_parquet(database_lines)
+    global_boundaries = gpd.read_file(boundaries)
     countries = list(
         set(
             database_lines["from_iso_a3"].values.tolist()
@@ -154,16 +153,10 @@ def main(config):
 
     # Select the columns you're interested in
     # Export the full merged dataset
-    merged.to_parquet(
-        os.path.join(
-            output_folder, "infrastructure", "merged_validation_datasets.parquet"
-        )
-    )
+    merged.to_parquet(output_merged)
 
     # Export the pivot table
-    pivot_table.to_csv(
-        os.path.join(output_folder, "infrastructure", "merged_validation_datasets.csv")
-    )
+    pivot_table.to_csv(output_pivot)
 
     merged["check"] = merged.apply(lambda x: create_tag(x), axis=1)
     merged = merged.value_counts(
@@ -174,13 +167,8 @@ def main(config):
     )
     merged["proportion"] = 100.0 * merged["count"] / merged["country_total"]
 
-    merged.to_csv(
-        os.path.join(
-            output_folder, "infrastructure", "merged_validation_datasets_counts.csv"
-        )
-    )
+    merged.to_csv(output_counts)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

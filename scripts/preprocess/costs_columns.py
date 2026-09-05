@@ -1,27 +1,21 @@
-import os
-
+import click
 import geopandas as gpd
 from tqdm import tqdm
-
-from aftdb.utils import load_config
 
 tqdm.pandas()
 
 
-def main(config):
+@click.command()
+@click.option("--nodes", required=True, type=click.Path(exists=True))
+@click.option("--edges", required=True, type=click.Path(exists=True))
+@click.option("--output-network", required=True, type=click.Path())
+def main(nodes, edges, output_network):
+    """Tidy the road node and edge columns and cap the lane count
 
-    processed_data_path = config["paths"]["data"]
-
-    roads_nodes = gpd.read_parquet(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_nodes_FINAL.geoparquet"
-        )
-    )
-    roads_edges = gpd.read_parquet(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_edges_FINAL.geoparquet"
-        )
-    )
+    The two geoparquets are read and written back in place.
+    """
+    roads_nodes = gpd.read_parquet(nodes)
+    roads_edges = gpd.read_parquet(edges)
 
     roads_nodes = roads_nodes.rename(columns={"iso_a3": "iso3"})
 
@@ -72,33 +66,12 @@ def main(config):
     roads_edges = gpd.GeoDataFrame(roads_edges, geometry="geometry", crs="EPSG:4326")
     roads_nodes = gpd.GeoDataFrame(roads_nodes, geometry="geometry", crs="EPSG:4326")
 
-    roads_nodes.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_network.gpkg"
-        ),
-        layer="nodes",
-        driver="GPKG",
-    )
-    roads_edges.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_network.gpkg"
-        ),
-        layer="edges",
-        driver="GPKG",
-    )
+    roads_nodes.to_file(output_network, layer="nodes", driver="GPKG")
+    roads_edges.to_file(output_network, layer="edges", driver="GPKG")
 
-    roads_nodes.to_parquet(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_nodes_FINAL.geoparquet"
-        )
-    )
-    roads_edges.to_parquet(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_edges_FINAL.geoparquet"
-        )
-    )
+    roads_nodes.to_parquet(nodes)
+    roads_edges.to_parquet(edges)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

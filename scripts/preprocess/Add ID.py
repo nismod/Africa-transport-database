@@ -1,47 +1,39 @@
+import click
+
 # Aim: to complete the attribution table for 'ports' in the 'africa_ports_modified.gpkg' file, specifically adding the 'node_id', 'name', and 'ISO3' fields.
 # The output file will be named 'output.gpkg' and will contain two layers: 'nodes' and 'edges'."
-
-import os
-
 import geopandas as gpd
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.utils import load_config
-
 tqdm.pandas()
 
 
-def main(config):
-    incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
-
+@click.command()
+@click.option("--non-intersected", required=True, type=click.Path(exists=True))
+@click.option("--modified-ports", required=True, type=click.Path(exists=True))
+@click.option("--world-boundaries", required=True, type=click.Path(exists=True))
+@click.option("--merged-csv", required=True, type=click.Path(exists=True))
+@click.option("--output-output-gpkg", required=True, type=click.Path())
+def main(
+    non_intersected, modified_ports, world_boundaries, merged_csv, output_output_gpkg
+):
+    """Fill in node_id, name and ISO3 for the merged port nodes"""
     # 1. Read files
     # (1) Read the non-intersected gpkg
-    non_intersected = gpd.read_file(
-        os.path.join(processed_data_path, "non_intersected_from_merged.gpkg")
-    )
+    non_intersected = gpd.read_file(non_intersected)
     # (2) Read the merged gpkg
     # nodes
-    df = gpd.read_file(
-        os.path.join(processed_data_path, "africa_ports_modified.gpkg"), layer="nodes"
-    )
+    df = gpd.read_file(modified_ports, layer="nodes")
     # lines
-    df_lines = gpd.read_file(
-        os.path.join(processed_data_path, "africa_ports_modified.gpkg"), layer="edges"
-    )
+    df_lines = gpd.read_file(modified_ports, layer="edges")
 
     # (3) Read the country boundary and extracted the ISO3 code
-    path_to_shp = os.path.join(
-        incoming_data_path,
-        "ports",
-        "ne_110m_admin_0_countries",
-        "ne_110m_admin_0_countries.shp",
-    )
+    path_to_shp = world_boundaries
     world = gpd.read_file(path_to_shp)
 
     # （4）Read merged file with iso3
-    merged_file_path = os.path.join(processed_data_path, "merged_with_iso2.csv")
+    merged_file_path = merged_csv
     merged_file = pd.read_csv(merged_file_path)
 
     # 2. Fill in the blank values in the column of node_id
@@ -130,14 +122,9 @@ def main(config):
 
     # 8. Generate the new ouput
     gdf_merged_result = gpd.GeoDataFrame(merged_result, geometry="geometry")
-    df_lines.to_file(
-        os.path.join(processed_data_path, "output.gpkg"), layer="edges", driver="GPKG"
-    )
-    gdf_merged_result.to_file(
-        os.path.join(processed_data_path, "output.gpkg"), layer="nodes", driver="GPKG"
-    )
+    df_lines.to_file(output_output_gpkg, layer="edges", driver="GPKG")
+    gdf_merged_result.to_file(output_output_gpkg, layer="nodes", driver="GPKG")
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

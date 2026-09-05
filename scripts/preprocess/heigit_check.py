@@ -1,10 +1,7 @@
-import os
-
+import click
 import geopandas as gpd
 import numpy as np
 import pandas as pd
-
-from aftdb.utils import load_config
 
 
 def create_tag(x):
@@ -20,31 +17,27 @@ def create_tag(x):
         return 3
 
 
-def main(config):
-
-    processed_data_path = config["paths"]["data"]
-    output_path = config["paths"]["results"]
-
+@click.command()
+@click.option("--database-lines", required=True, type=click.Path(exists=True))
+@click.option("--heigit-lines", required=True, type=click.Path(exists=True))
+@click.option("--boundaries", required=True, type=click.Path(exists=True))
+@click.option("--output-merged", required=True, type=click.Path())
+@click.option("--output-pivot", required=True, type=click.Path())
+@click.option("--output-pivot-corrected", required=True, type=click.Path())
+def main(
+    database_lines,
+    heigit_lines,
+    boundaries,
+    output_merged,
+    output_pivot,
+    output_pivot_corrected,
+):
+    """Compare database road surfaces against the merged HeiGIT dataset"""
     epsg_meters = 3395
     # Write to a new GeoPackage
-    database_lines = gpd.read_parquet(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_edges.geoparquet"
-        )
-    )
-    heigit_lines = gpd.read_parquet(
-        os.path.join(
-            processed_data_path, "infrastructure", "validation_file_merge.geoparquet"
-        )
-    )
-    global_boundaries = gpd.read_file(
-        os.path.join(
-            processed_data_path,
-            "admin_boundaries",
-            "gadm36_levels_gpkg",
-            "gadm36_levels_continents.gpkg",
-        )
-    )
+    database_lines = gpd.read_parquet(database_lines)
+    heigit_lines = gpd.read_parquet(heigit_lines)
+    global_boundaries = gpd.read_file(boundaries)
     countries = list(
         set(
             database_lines["from_iso_a3"].values.tolist()
@@ -119,9 +112,7 @@ def main(config):
     matched_df["length_heigit_m"] = matched_df["length_m"]
     matched_df["length_db_m"] = matched_df["length_m"]
     matched_df.drop("length_m", axis=1, inplace=True)
-    matched_df.to_parquet(
-        os.path.join(output_path, "merged_validation_datasets.parquet")
-    )
+    matched_df.to_parquet(output_merged)
 
     # Group by ISO3 and surface class
     # Heigit grouping
@@ -154,18 +145,15 @@ def main(config):
     # Merge both
     pivot_table = heigit_summary.join(db_summary, how="outer").fillna(0).reset_index()
     # Export the pivot table
-    pivot_table.to_csv(os.path.join(output_path, "merged_validation_datasets.csv"))
+    pivot_table.to_csv(output_pivot)
 
     # Merge both
     pivot_table = (
         heigit_summary_corr.join(db_summary, how="outer").fillna(0).reset_index()
     )
     # Export the pivot table
-    pivot_table.to_csv(
-        os.path.join(output_path, "merged_validation_datasets_corrected.csv")
-    )
+    pivot_table.to_csv(output_pivot_corrected)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

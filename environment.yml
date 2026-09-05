@@ -5,6 +5,7 @@ channels:
 dependencies:
   - python=3.14
   - cartopy
+  - click
   - country_converter
   - curl
   - fiona

@@ -1,6 +1,7 @@
+import click
+
 """Road network risks and adaptation maps"""
 
-import os
 
 import cartopy.crs as ccrs
 import geopandas as gpd
@@ -11,7 +12,6 @@ from tqdm import tqdm
 
 from aftdb.plot.maps import (
     get_projection,
-    load_config,
     plot_africa_basemap2,
     save_fig,
 )
@@ -19,31 +19,33 @@ from aftdb.plot.maps import (
 tqdm.pandas()
 
 
-def main(config):
-    data_path = config["paths"]["data"]
-    figure_path = config["paths"]["figures"]
-
-    figures = os.path.join(figure_path)
-    os.makedirs(figures, exist_ok=True)
+@click.command()
+@click.option("--maritime", required=True, type=click.Path(exists=True))
+@click.option("--iww", required=True, type=click.Path(exists=True))
+@click.option("--countries", required=True, type=click.Path(exists=True))
+@click.option("--lakes", required=True, type=click.Path(exists=True))
+@click.option("--output-figure", required=True, type=click.Path())
+def main(maritime, iww, countries, lakes, output_figure):
+    """Map maritime and inland ports as proportional bubbles"""
 
     marker_size_max = 2000
 
     maritime_nodes = gpd.read_file(
-        os.path.join(data_path, "infrastructure", "africa_maritime_network.gpkg"),
+        maritime,
         layer="nodes",
     )
     maritime_edges = gpd.read_file(
-        os.path.join(data_path, "infrastructure", "africa_maritime_network.gpkg"),
+        maritime,
         layer="edges",
     )
 
     IWW_nodes = gpd.read_file(
-        os.path.join(data_path, "infrastructure", "africa_iww_network.gpkg"),
+        iww,
         layer="nodes",
     )
 
     IWW_edges = gpd.read_file(
-        os.path.join(data_path, "infrastructure", "africa_iww_network.gpkg"),
+        iww,
         layer="edges",
     )
 
@@ -64,7 +66,7 @@ def main(config):
         1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
     )
 
-    ax = plot_africa_basemap2(ax_plots)
+    ax = plot_africa_basemap2(ax_plots, countries, lakes)
 
     # Expand limits a bit
     bounds = maritime_nodes.total_bounds  # [minx, miny, maxx, maxy]
@@ -155,10 +157,9 @@ def main(config):
 
     plt.tight_layout()
 
-    save_fig(os.path.join(figures, "ports_with_edges_last.png"))
+    save_fig(output_figure)
     plt.close()
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

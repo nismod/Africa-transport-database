@@ -1,12 +1,10 @@
 import math
-import os
 
+import click
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-
-from aftdb.utils import load_config
 
 tqdm.pandas()
 
@@ -35,21 +33,14 @@ def calculate_discounting_rate_factor(
     return np.array(discount_rates)
 
 
-def main(config):
-
-    incoming_data_path = config["paths"]["incoming_data"]
-
-    processed_data_path = config["paths"]["data"]
-
-    rails_edges = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_railways_network.gpkg"
-        ),
-        layer="edges",
-        driver="GPKG",
-    )
-
-    costs_df = pd.read_excel(os.path.join(incoming_data_path, "Rail_Costs.xlsx"))
+@click.command()
+@click.option("--rail-network", required=True, type=click.Path(exists=True))
+@click.option("--costs", required=True, type=click.Path(exists=True))
+@click.option("--output-costs", required=True, type=click.Path())
+def main(rail_network, costs, output_costs):
+    """Estimate capital, O&M and investment costs per railway line"""
+    rails_edges = gpd.read_file(rail_network, layer="edges", driver="GPKG")
+    costs_df = pd.read_excel(costs)
 
     rails_edges["length_km"] = rails_edges["length_m"] / 1000
 
@@ -153,11 +144,8 @@ def main(config):
         .reset_index()
     )
 
-    grouped_data.to_csv(
-        os.path.join(processed_data_path, "infrastructure", "africa_rails_costs.csv")
-    )
+    grouped_data.to_csv(output_costs)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

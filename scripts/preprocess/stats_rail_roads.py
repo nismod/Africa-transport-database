@@ -1,28 +1,19 @@
-import os
-
+import click
 import geopandas as gpd
 from tqdm import tqdm
-
-from aftdb.utils import load_config
 
 tqdm.pandas()
 
 
-def main(config):
-
-    processed_data_path = config["paths"]["data"]
-
-    roads_df = gpd.read_parquet(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_edges_FINAL.geoparquet"
-        )
-    )
-    rail_df = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_railways_network.gpkg"
-        ),
-        layer="edges",
-    )
+@click.command()
+@click.option("--road-edges", required=True, type=click.Path(exists=True))
+@click.option("--rail-network", required=True, type=click.Path(exists=True))
+@click.option("--output-rail-stats", required=True, type=click.Path())
+@click.option("--output-paved-stats", required=True, type=click.Path())
+def main(road_edges, rail_network, output_rail_stats, output_paved_stats):
+    """Summarise rail length by status and road length by corridor and surface"""
+    roads_df = gpd.read_parquet(road_edges)
+    rail_df = gpd.read_file(rail_network, layer="edges")
 
     # Convert length from meters to kilometers - railways
     rail_df["length_km"] = rail_df["length_m"] / 1000
@@ -32,10 +23,7 @@ def main(config):
     ) * 100
     print(grouped_data_rail)
     # Save the grouped data to a CSV file
-    grouped_data_rail.to_csv(
-        os.path.join(processed_data_path, "infrastructure", "rail_stats.csv"),
-        index=False,
-    )
+    grouped_data_rail.to_csv(output_rail_stats, index=False)
 
     # Convert length from meters to kilometers - roads
     roads_df["length_km"] = roads_df["length_m"] / 1000
@@ -74,12 +62,8 @@ def main(config):
         grouped_data["length_km"] / grouped_data["total_km"]
     ) * 100
 
-    grouped_data.to_csv(
-        os.path.join(processed_data_path, "infrastructure", "paved_stats2.csv"),
-        index=False,
-    )
+    grouped_data.to_csv(output_paved_stats, index=False)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

@@ -13,12 +13,9 @@ import numpy as np
 import pandas as pd
 from matplotlib.lines import Line2D
 
-from aftdb.config import load_config
 from aftdb.plot.scalebar import scale_bar
 
 # from aftdb.plot.htb import htb
-
-__all__ = ["load_config"]
 
 Style = namedtuple("Style", ["color", "zindex", "label"])
 Style.__doc__ += """: class to hold an element's styles
@@ -161,46 +158,9 @@ def save_fig(output_filename):
     plt.savefig(output_filename)
 
 
-def plot_basemap(ax, include_labels=False):
-    data_path = load_config()["paths"][
-        "data"
-    ]  # "/Users/raghavpant/Desktop/china_study"
-    boundary_gdp = gpd.read_file(
-        os.path.join(data_path, "admin_boundaries", "China_regions.gpkg"),
-        encoding="utf-8",
-    )
-
-    proj = ccrs.PlateCarree()  # See more on projections here: https://scitools.org.uk/cartopy/docs/v0.15/crs/projections.html#cartopy-projections
-    bounds = (
-        boundary_gdp.geometry.total_bounds
-    )  # this gives your boundaries of the map as (xmin,ymin,xmax,ymax)
-    # print (bounds)
-    ax = get_axes(
-        ax, extent=(bounds[0] + 5, bounds[2] - 10, bounds[1], bounds[3])
-    )  # extent requires (xmin,xmax,ymin,ymax) you might have to adjust the offsets a bit manually as I have done here by +/-0.1
-    # labels = []
-    # label_font = 10
-    for boundary in boundary_gdp.itertuples():
-        ax.add_geometries(
-            [boundary.geometry],
-            crs=proj,
-            edgecolor="white",
-            facecolor="#e0e0e0",
-            zorder=1,
-        )
-
-    if include_labels is True:
-        # labels = pd.read_csv(os.path.join(data_path,'region_names.csv'))
-        labels = boundary_gdp[["Region", "geometry"]]
-    else:
-        labels = None
-    plot_basemap_labels(ax, labels=labels)
-    plot_scale_bar(ax, scalebar_location=(0.57, 0.04), scalebar_distance=100, zorder=20)
-    return ax
-
-
 def plot_global_basemap(
     ax,
+    countries,
     include_countries=None,
     include_labels=False,
     label_countries=None,
@@ -215,21 +175,15 @@ def plot_global_basemap(
 ):
     """Draw country outlines, either global or for a selection of countries
 
+    Parameters
+    ----------
+    countries : str
+        Path to the Natural Earth admin 0 countries shapefile.
+
     The ``*_offset`` arguments pad the extent around the selected countries, in
     degrees. They are only applied when ``include_countries`` is given.
     """
-    data_path = load_config()["paths"][
-        "data"
-    ]  # "/Users/raghavpant/Desktop/china_study"
-    boundary_gdp = gpd.read_file(
-        os.path.join(
-            data_path,
-            "admin_boundaries",
-            "ne_10m_admin_0_countries",
-            "ne_10m_admin_0_countries.shp",
-        ),
-        encoding="utf-8",
-    )
+    boundary_gdp = gpd.read_file(countries, encoding="utf-8")
     if include_countries is not None:
         boundary_gdp = boundary_gdp[boundary_gdp["ADM0_A3_US"].isin(include_countries)]
 
@@ -262,7 +216,6 @@ def plot_global_basemap(
         )
 
     if include_labels is True:
-        # labels = pd.read_csv(os.path.join(data_path,'region_names.csv'))
         labels = boundary_gdp[["ADM0_A3_US", "geometry"]]
         labels = labels[labels["ADM0_A3_US"].isin(label_countries)]
         plot_basemap_labels(
@@ -278,28 +231,17 @@ def plot_global_basemap(
     return ax
 
 
-def plot_africa_basemap(ax):
-    data_path = load_config()["paths"]["data"]
-    ccg_countries = pd.read_csv(
-        os.path.join(data_path, "admin_boundaries", "ccg_country_codes.csv")
-    )
+def plot_africa_basemap(ax, countries, lakes, ccg_country_codes):
+    """Africa basemap with the CCG countries picked out in a darker grey"""
+    ccg_countries = pd.read_csv(ccg_country_codes)
     ccg_isos = ccg_countries[ccg_countries["ccg_country"] == 1][
         "iso_3digit_alpha"
     ].values.tolist()
     del ccg_countries
 
-    global_map_df = gpd.read_file(
-        os.path.join(
-            data_path,
-            "admin_boundaries",
-            "ne_10m_admin_0_countries",
-            "ne_10m_admin_0_countries.shp",
-        )
-    )
+    global_map_df = gpd.read_file(countries)
     ccg_map_df = global_map_df[global_map_df["ADM0_A3_US"].isin(ccg_isos)]
-    global_lake_df = gpd.read_file(
-        os.path.join(data_path, "admin_boundaries", "ne_10m_lakes", "ne_10m_lakes.shp")
-    )
+    global_lake_df = gpd.read_file(lakes)
     africa_isos = list(
         set(
             global_map_df[global_map_df["CONTINENT"] == "Africa"][
@@ -308,7 +250,7 @@ def plot_africa_basemap(ax):
         )
     )
     del global_map_df
-    ax = plot_global_basemap(ax, include_countries=africa_isos)
+    ax = plot_global_basemap(ax, countries, include_countries=africa_isos)
     for ccg_country in ccg_map_df.itertuples():
         ax.add_geometries(
             [ccg_country.geometry],
@@ -329,22 +271,10 @@ def plot_africa_basemap(ax):
     return ax
 
 
-def plot_africa_basemap2(ax):
+def plot_africa_basemap2(ax, countries, lakes):
     """Africa basemap with country names, no CCG highlight and a wider extent"""
-    data_path = load_config()["paths"]["data"]
-
-    # Load country and lake shapefiles
-    global_map_df = gpd.read_file(
-        os.path.join(
-            data_path,
-            "admin_boundaries",
-            "ne_10m_admin_0_countries",
-            "ne_10m_admin_0_countries.shp",
-        )
-    )
-    global_lake_df = gpd.read_file(
-        os.path.join(data_path, "admin_boundaries", "ne_10m_lakes", "ne_10m_lakes.shp")
-    )
+    global_map_df = gpd.read_file(countries)
+    global_lake_df = gpd.read_file(lakes)
 
     # Get list of African countries
     africa_df = global_map_df[global_map_df["CONTINENT"] == "Africa"]
@@ -353,6 +283,7 @@ def plot_africa_basemap2(ax):
     africa_isos = list(set(africa_df["ADM0_A3_US"].values.tolist()))
     ax = plot_global_basemap(
         ax,
+        countries,
         include_countries=africa_isos,
         xmin_offset=0.0,
         xmax_offset=50.0,
@@ -410,15 +341,16 @@ def plot_africa_basemap2(ax):
 
 def plot_ccg_basemap(
     ax,
+    countries,
+    lakes,
+    ccg_country_codes,
     scalebar_location=(0.12, 0.05),
     arrow_location=(0.06, 0.08),
     scalebar_distance=100,
     label_size=6.0,
 ):
-    data_path = load_config()["paths"]["data"]
-    ccg_countries = pd.read_csv(
-        os.path.join(data_path, "admin_boundaries", "ccg_country_codes.csv")
-    )
+    """Basemap of the CCG countries and their immediate neighbours"""
+    ccg_countries = pd.read_csv(ccg_country_codes)
     ccg_isos = ccg_countries[ccg_countries["ccg_country"] == 1][
         "iso_3digit_alpha"
     ].values.tolist()
@@ -437,20 +369,11 @@ def plot_ccg_basemap(
     ]
     del ccg_countries
 
-    global_map_df = gpd.read_file(
-        os.path.join(
-            data_path,
-            "admin_boundaries",
-            "ne_10m_admin_0_countries",
-            "ne_10m_admin_0_countries.shp",
-        )
-    )
+    global_map_df = gpd.read_file(countries)
     ccg_map_df = global_map_df[
         global_map_df["ADM0_A3_US"].isin(ccg_isos + boundary_isos)
     ]
-    global_lake_df = gpd.read_file(
-        os.path.join(data_path, "admin_boundaries", "ne_10m_lakes", "ne_10m_lakes.shp")
-    )
+    global_lake_df = gpd.read_file(lakes)
     bounds = (
         ccg_map_df.geometry.total_bounds
     )  # this gives your boundaries of the map as (xmin,ymin,xmax,ymax)
@@ -503,6 +426,9 @@ def plot_ccg_basemap(
 
 def plot_ccg_country_basemap(
     ax,
+    countries,
+    lakes,
+    states_provinces,
     country_isos,
     boundary_isos=None,
     scalebar_location=(0.12, 0.05),
@@ -510,31 +436,17 @@ def plot_ccg_country_basemap(
     scalebar_distance=100,
     label_size=6.0,
 ):
+    """Basemap of one or more countries, drawn at admin level 1"""
     if boundary_isos is None:
         boundary_isos = []
-    data_path = load_config()["paths"]["data"]
-    global_map_df = gpd.read_file(
-        os.path.join(
-            data_path,
-            "admin_boundaries",
-            "ne_10m_admin_1_states_provinces",
-            "ne_10m_admin_1_states_provinces.shp",
-        )
-    )
+    global_map_df = gpd.read_file(states_provinces)
     country_map_df = global_map_df[global_map_df["adm0_a3"].isin(country_isos)]
     country_map_df = country_map_df[["adm0_a3", "name", "geometry"]]
     ccg_isos = country_map_df["name"].values.tolist()
     del global_map_df
 
     if len(boundary_isos) > 0:
-        global_map_df = gpd.read_file(
-            os.path.join(
-                data_path,
-                "admin_boundaries",
-                "ne_10m_admin_0_countries",
-                "ne_10m_admin_0_countries.shp",
-            )
-        )
+        global_map_df = gpd.read_file(countries)
         boundary_map_df = global_map_df[global_map_df["ADM0_A3_US"].isin(boundary_isos)]
         boundary_map_df.rename(
             columns={"ADM0_A3_US": "adm0_a3", "NAME": "name"}, inplace=True
@@ -547,9 +459,7 @@ def plot_ccg_country_basemap(
         crs=country_map_df.crs,
     )
 
-    global_lake_df = gpd.read_file(
-        os.path.join(data_path, "admin_boundaries", "ne_10m_lakes", "ne_10m_lakes.shp")
-    )
+    global_lake_df = gpd.read_file(lakes)
 
     bounds = (
         country_map_df.geometry.total_bounds
