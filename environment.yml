@@ -12,11 +12,13 @@ dependencies:
   - geopandas
   - haversine
   - jenkspy
+  - jq
   - mapclassify
   - matplotlib
   - networkx
   - numpy
   - openpyxl
+  - osmium-tool
   - pandas
   - pip:
       - -e .
@@ -32,3 +34,4 @@ dependencies:
   - snakemake
   - snkit
   - tqdm
+  - unzip

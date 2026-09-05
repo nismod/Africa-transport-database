@@ -20,7 +20,7 @@ rule osm_extract_v2:
     """
     input:
         script=f"{PREPROCESS}/osm_extract_v2.py",
-        pbf=f"{INCOMING}/osm/africa-260219.osm.pbf",
+        pbf=OSM_AFRICA_PBF,
     output:
         parquet=f"{INCOMING}/infrastructure/africa_osm_airports_terminals.parquet",
     shell:
