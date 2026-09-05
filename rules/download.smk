@@ -244,22 +244,18 @@ they bite:
 
 11. Rebuilding the rail network. ``download_africa_rail_network`` takes the
    published network out of the trg-rail repository at a pinned commit, which
-   is the useful thing to do: the repository's own build is not a workflow
-   step that can be vendored as a submodule and re-run. Its network is
-   assembled in a PostgreSQL/PostGIS database by
-   ``network_sql_scripts/generate_combined_network.sql`` over 25 directories
-   of per-country SQL, and those country scripts encode hand research - line
-   names, gauges, statuses, freight-or-passenger use, and fictitious edges
-   inserted to make stations route - recorded per country in
-   ``countries_research/``. The OSM extract is only the starting geometry:
-   ``data/africa-rail.gpkg`` in that repository was cut from the Geofabrik
-   africa-211101 extract with a script from nismod/east-africa-transport. So
-   a rebuild-from-OSM rule would mean standing up PostGIS, loading a current
-   extract, and re-running research SQL written against 2021 OSM ids. If that
-   is wanted, the shape is: add the repository as a submodule, add a rule that
-   loads the extract and runs the SQL against a database named in config, and
-   treat the published GeoJSON as the fallback. Until then the pinned commit
-   is the reproducible choice, and refreshing the network means bumping
+   is the right thing to do today. Porting that repository's build so the
+   workflow could rebuild the network itself is scoped in
+   ``spikes/rail_network_port/README.md``, with a working prototype of its
+   first stage. In short: DuckDB and igraph can replace PostGIS and pgRouting,
+   and the ported first stage reproduces every row count the original records.
+   But the 24 country scripts that hold the research are a working notebook
+   rather than a runnable build - 17 of them open with a deliberate syntax
+   error to stop anyone running the whole file - and they are keyed on 4,503
+   feature ids that are row numbers from a 2021 snkit run. So replaying the
+   build on its own inputs is feasible; rebuilding from a current OSM extract
+   needs those edits re-keyed to OSM ids first, and is a separate project.
+   Until either is done, refreshing the network means bumping
    ``AFRICA_RAIL_COMMIT``.
 
 12. Minerals rules. ``maps_global_maps``, ``maps_global_maps_transport``,
