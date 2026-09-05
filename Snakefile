@@ -12,7 +12,8 @@ handful of datasets several rules read, and the default target.
 
 Paths come from ``config.json`` - copy ``config.template.json`` and edit it.
 Relative paths in ``config.json`` are relative to the repository root, which is
-where snakemake and the scripts both run.
+where snakemake and the scripts both run. ``config.json`` also carries the
+OpenStreetMap snapshot date to build from.
 """
 
 import os
@@ -54,6 +55,12 @@ CORRIDOR_DB = (
     "AfricanDevelopmentCorridorDatabase2022.gpkg"
 )
 NE_110M_COUNTRIES = f"{INCOMING}/ports/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp"
+
+# The OpenStreetMap snapshot to build from, as yymmdd. Planet files are cut on
+# Mondays, so this has to be a Monday - rules/download.smk cuts the Africa
+# extract out of the planet file for this date.
+OSM_SNAPSHOT = config.get("osm_snapshot", "260216")
+OSM_AFRICA_PBF = f"{INCOMING}/osm/africa-{OSM_SNAPSHOT}.osm.pbf"
 
 
 rule all:

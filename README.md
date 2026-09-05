@@ -100,11 +100,25 @@ its own - `python "scripts/plot/mine_ownership_maps.py" --help` lists what a
 script needs. Nothing under `scripts/` reads `config.json`: the rule that
 calls a script is the only place its paths are written down.
 
-Most of the incoming data cannot be downloaded automatically. The docstring at
-the top of `rules/download.smk` inventories every external input, where it
-comes from, and which ones still have to be put in place by hand. It also
-lists the gaps that stop the workflow running end to end, as a starting point
-for the next round of work.
+The docstring at the top of `rules/download.smk` inventories every external
+input, where it comes from, and whether a rule fetches it or it has to be put
+in place by hand. Some sources - the corridor project alignments, the Google
+Places matches, the cost spreadsheets - were compiled or digitised by the
+authors and cannot be fetched at all; that docstring says so for each one, and
+lists the gaps that stop the workflow running end to end.
+
+Each download rule there is marked *tested* or *drafted*. A drafted rule
+follows the source's documented download API but has not been run against it,
+so the first person to run one should check that what comes out of the archive
+lands at the paths the rule declares.
+
+The road and rail networks are built from OpenStreetMap. `osm_extract_africa`
+cuts the Africa extract out of a weekly planet file from the OpenStreetMap
+Foundation's S3 bucket, which keeps every snapshot, rather than from a
+Geofabrik extract, which is only served for 90 days. The snapshot to build
+from is the `osm_snapshot` date in `config.json`; planet files are cut on
+Mondays, so it has to be a Monday. That download is around 90GB and the
+extract reads all of it, so it is much the longest step in the workflow.
 
 ### Road network creation
 The road topological network creation follows 5 main steps: <br/>
