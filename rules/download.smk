@@ -247,8 +247,9 @@ they bite:
    is the right thing to do today. Porting that repository's build so the
    workflow could rebuild the network itself is scoped in
    ``spikes/rail_network_port/README.md``, with a working prototype of its
-   first stage. In short: DuckDB and igraph can replace PostGIS and pgRouting,
-   and the ported first stage reproduces every row count the original records.
+   first stage. In short: SedonaDB and igraph can replace PostGIS and
+   pgRouting, and the ported first stage reproduces every row count the
+   original records, in 14 seconds against 9 minutes on DuckDB.
    But the 24 country scripts that hold the research are a working notebook
    rather than a runnable build - 17 of them open with a deliberate syntax
    error to stop anyone running the whole file - and they are keyed on 4,503
