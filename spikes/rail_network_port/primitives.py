@@ -12,17 +12,28 @@ uses has an equivalent here in DuckDB's spatial extension plus igraph:
     hvt.rn_change_source(...)     change_source()    rebuilt vertex list
     hvt.rn_change_target(...)     change_target()
 
-DuckDB spatial 1.5 has no ST_Split, ST_AddPoint, ST_LineLocateN or
-ST_SetPoint, which is what the four substitutions above are for. Run
-``python primitives.py`` to check them against worked examples.
+Neither DuckDB spatial 1.5 nor SedonaDB 0.4 has ST_Split, ST_AddPoint,
+ST_LineLocateN or ST_SetPoint, which is what the four substitutions above are
+for. Both have everything the substitutions need, so the SQL here is portable;
+this module is written against DuckDB because it holds tables in a file, and
+``python primitives.py`` checks each substitution against a worked example and
+then runs the same expressions on SedonaDB to show they agree.
 
-This is spike code - see README.md. It is not part of the workflow.
+Derived from the build in trg-rail/africa_rail_network, adapted with the
+author's permission. This is spike code - see README.md. It is not part of the
+workflow.
 """
 
 import duckdb
 import igraph
 
-SPHEROID = 'SPHEROID["WGS 84",6378137,298.257223563]'
+# DuckDB's ST_Length_Spheroid takes its coordinates as (latitude, longitude),
+# the opposite way round from PostGIS ST_LengthSpheroid. Feeding it lon/lat
+# silently returns the wrong length - 15% out at South African latitudes - so
+# every length here flips first. That matches PostGIS on 95% of edges to the
+# centimetre; ``prepare_network.measure_lengths`` uses pyproj instead, which
+# manages 99.93%.
+LENGTH_M = "round(st_length_spheroid(st_flipcoordinates({geom}))::numeric, 2)"
 
 
 def connect(database=":memory:"):
@@ -69,8 +80,7 @@ def split_edge(con, edge_oid, node_oid, edges="edges", nodes="nodes"):
                 ? as oid,
                 ? as source,
                 ? as target,
-                round(st_length_spheroid(st_linesubstring(geom, ?, ?))::numeric, 2)
-                    as length,
+                {LENGTH_M.format(geom="st_linesubstring(geom, ?, ?)")} as length,
                 st_linesubstring(geom, ?, ?) as geom
             from {edges} where oid = ?
             """,
@@ -107,7 +117,7 @@ def insert_edge(con, start_node, end_node, oid, edges="edges", nodes="nodes"):
         f"""
         insert into {edges} (oid, source, target, country, length, geom)
         select ?, ?, ?, a.country,
-            round(st_length_spheroid(st_makeline(a.geom, b.geom))::numeric, 2),
+            {LENGTH_M.format(geom="st_makeline(a.geom, b.geom)")},
             st_makeline(a.geom, b.geom)
         from {nodes} a, {nodes} b
         where a.oid = ? and b.oid = ?
@@ -200,7 +210,7 @@ class RouteGraph:
 
 def _fixture(con):
     con.execute(
-        """
+        f"""
         create table nodes as select * from (values
             (1::bigint, 'Gabon', st_point(0, 0)),
             (2::bigint, 'Gabon', st_point(3, 0)),
@@ -211,7 +221,7 @@ def _fixture(con):
             (10::bigint, 1::bigint, 2::bigint, 'Gabon', 0.0::double,
              st_geomfromtext('LINESTRING(0 0, 1 0, 2 0, 3 0)'))
         ) as t(oid, source, target, country, length, geom);
-        update edges set length = round(st_length_spheroid(geom)::numeric, 2);
+        update edges set length = {LENGTH_M.format(geom="geom")};
         """
     )
 
@@ -242,7 +252,7 @@ def main():
            (10, 1, 2, 'Gabon', 0.0,
             st_geomfromtext('LINESTRING(0 0, 1 0, 2 0, 3 0)'))"""
     )
-    con.execute("update edges set length = round(st_length_spheroid(geom)::numeric, 2)")
+    con.execute("update edges set length = " + LENGTH_M.format(geom="geom"))
     new_node, _ = copy_node_to_edge(con, 3, 10)
     print("\ncopy_node_to_edge (rn_copy_node)")
     print(
@@ -268,6 +278,73 @@ def main():
     graph = RouteGraph(con)
     print("\nRouteGraph (pgr_dijkstra)")
     print(f"  1 -> 3          {graph.route_edges(1, 3)}")
+
+    check_engines_agree()
+
+
+# The substitutions as plain SQL, per engine, so both can be asked the same
+# question. Where an engine spells one differently, that is the finding.
+LINE = "ST_GeomFromText('LINESTRING(0 0, 1 0, 2 0, 3 0)')"
+SHORT = "ST_GeomFromText('LINESTRING(0 0, 1 0, 2 0)')"
+POINT = "ST_Point(1.6, 0.4)"
+
+SUBSTITUTIONS = {
+    "ST_Split, first part": {
+        "duckdb": f"ST_AsText(ST_LineSubstring({LINE}, 0, ST_LineLocatePoint({LINE}, {POINT})))",
+        "sedonadb": f"ST_AsText(ST_LineSubstring({LINE}, 0, ST_LineLocatePoint({LINE}, {POINT})))",
+    },
+    "ST_Split, second part": {
+        "duckdb": f"ST_AsText(ST_LineSubstring({LINE}, ST_LineLocatePoint({LINE}, {POINT}), 1))",
+        "sedonadb": f"ST_AsText(ST_LineSubstring({LINE}, ST_LineLocatePoint({LINE}, {POINT}), 1))",
+    },
+    # SedonaDB registers ST_ClosestPoint but has no kernel for two geometries;
+    # interpolating at the located fraction gives the same point.
+    "closest point on the line": {
+        "duckdb": f"ST_AsText(ST_ClosestPoint({LINE}, {POINT}))",
+        "sedonadb": f"ST_AsText(ST_LineInterpolatePoint({LINE}, ST_LineLocatePoint({LINE}, {POINT})))",
+    },
+    # SedonaDB's ST_MakeLine takes two geometries, not a list, so a line
+    # cannot be rebuilt from its vertices in SQL - do those 30 edits in
+    # Python, or on DuckDB.
+    "ST_SetPoint on the first vertex": {
+        "duckdb": (
+            f"ST_AsText(ST_MakeLine(list_prepend(ST_Point(-0.5, 0.1),"
+            f" [ST_PointN({SHORT}, i::int)"
+            f" for i in range(2, ST_NPoints({SHORT}) + 1)])))"
+        ),
+        "sedonadb": None,
+    },
+}
+
+
+def check_engines_agree():
+    """Ask DuckDB and SedonaDB the same substitutions and compare the answers."""
+    try:
+        import sedonadb
+    except ImportError:
+        print("\nsedonadb not installed, skipping the cross-engine check")
+        return
+
+    con = connect()
+    sd = sedonadb.connect()
+
+    def ask(engine, expression):
+        if expression is None:
+            return "no equivalent"
+        try:
+            if engine == "duckdb":
+                return str(con.execute(f"select {expression}").fetchone()[0])
+            return str(sd.sql(f"select {expression}").to_pandas().values[0][0])
+        except (duckdb.Error, RuntimeError, ValueError) as error:
+            return f"failed: {str(error).splitlines()[0][:30]}"
+
+    print(f"\n{'substitution':<34} {'duckdb':<26} {'sedonadb':<26} same")
+    for label, per_engine in SUBSTITUTIONS.items():
+        duck = ask("duckdb", per_engine["duckdb"])
+        sedona = ask("sedonadb", per_engine["sedonadb"])
+        # The two print geometries slightly differently, so compare loosely.
+        same = duck.replace(" ", "") == sedona.replace(" ", "")
+        print(f"{label:<34} {duck:<26} {sedona:<26} {'yes' if same else 'no'}")
 
 
 if __name__ == "__main__":
