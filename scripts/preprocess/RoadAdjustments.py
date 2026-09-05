@@ -1,115 +1,103 @@
-import os
-
+import click
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.utils import components, load_config
+from aftdb.utils import components
 
 tqdm.pandas()
 
 
-def main(config):
-
-    processed_data_path = config["paths"]["data"]
-
+@click.command()
+@click.option("--lobito-edges", required=True, type=click.Path(exists=True))
+@click.option("--ta-edges", required=True, type=click.Path(exists=True))
+@click.option("--tsh-edges", required=True, type=click.Path(exists=True))
+@click.option("--ns-edges", required=True, type=click.Path(exists=True))
+@click.option("--mdg-edges", required=True, type=click.Path(exists=True))
+@click.option("--road-edges", required=True, type=click.Path(exists=True))
+@click.option("--road-nodes", required=True, type=click.Path(exists=True))
+@click.option("--output-nodes", required=True, type=click.Path())
+@click.option("--output-edges", required=True, type=click.Path())
+@click.option("--output-network", required=True, type=click.Path())
+def main(
+    lobito_edges,
+    ta_edges,
+    tsh_edges,
+    ns_edges,
+    mdg_edges,
+    road_edges,
+    road_nodes,
+    output_nodes,
+    output_edges,
+    output_network,
+):
+    """Merge the per-corridor road extracts into the final road network"""
     epsg_meters = 3395  # To convert geometries to measure distances in meters
 
     # Read the road edges data for Africa
     node_id_column = "id"
 
-    Lobito_edges = gpd.read_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_edges_PROVA_Lobito_corridor.geoparquet",
-        )
-    )
+    lobito_edges_df = gpd.read_parquet(lobito_edges)
 
-    TA_edges = gpd.read_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_edges_PROVA_TA_corridor.geoparquet",
-        )
-    )
+    ta_edges_df = gpd.read_parquet(ta_edges)
 
-    TSH_edges = gpd.read_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_edges_PROVA_TSH_corridor.geoparquet",
-        )
-    )
+    tsh_edges_df = gpd.read_parquet(tsh_edges)
 
-    NS_edges = gpd.read_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_edges_PROVA_NS_corridor.geoparquet",
-        )
-    )
+    ns_edges_df = gpd.read_parquet(ns_edges)
 
-    MDG_edges = gpd.read_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_edges_PROVA_MDG.geoparquet",
-        )
-    )
+    mdg_edges_df = gpd.read_parquet(mdg_edges)
 
-    road_edges = gpd.read_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_edges_withcorridors.geoparquet",
-        )
-    )
+    road_edges_df = gpd.read_parquet(road_edges)
 
-    road_nodes = gpd.read_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_nodes_withcorridors.geoparquet",
-        )
-    )
+    road_nodes_df = gpd.read_parquet(road_nodes)
 
-    MDG_edges = MDG_edges[
-        MDG_edges["corridor_name"] == "Madagascar – Port Beira Corridor"
+    mdg_edges_df = mdg_edges_df[
+        mdg_edges_df["corridor_name"] == "Madagascar – Port Beira Corridor"
     ]
 
-    NS_edges = NS_edges[
-        NS_edges["corridor_name"] == "North-South Corridor (North section)"
+    ns_edges_df = ns_edges_df[
+        ns_edges_df["corridor_name"] == "North-South Corridor (North section)"
     ]
 
-    Lobito_edges = Lobito_edges[Lobito_edges["corridor_name"] == "Lobito Corridor"]
+    lobito_edges_df = lobito_edges_df[
+        lobito_edges_df["corridor_name"] == "Lobito Corridor"
+    ]
 
-    TA_edges = TA_edges[TA_edges["corridor_name"] == "Tunisia – Algeria"]
+    ta_edges_df = ta_edges_df[ta_edges_df["corridor_name"] == "Tunisia – Algeria"]
 
-    TSH_edges = TSH_edges[TSH_edges["corridor_name"] == "Central Corridor of the TSH"]
+    tsh_edges_df = tsh_edges_df[
+        tsh_edges_df["corridor_name"] == "Central Corridor of the TSH"
+    ]
 
-    road_edges = road_edges.to_crs(epsg=epsg_meters)
-    MDG_edges = MDG_edges.to_crs(epsg=epsg_meters)
-    NS_edges = NS_edges.to_crs(epsg=epsg_meters)
-    Lobito_edges = Lobito_edges.to_crs(epsg=epsg_meters)
-    TA_edges = TA_edges.to_crs(epsg=epsg_meters)
-    TSH_edges = TSH_edges.to_crs(epsg=epsg_meters)
+    road_edges_df = road_edges_df.to_crs(epsg=epsg_meters)
+    mdg_edges_df = mdg_edges_df.to_crs(epsg=epsg_meters)
+    ns_edges_df = ns_edges_df.to_crs(epsg=epsg_meters)
+    lobito_edges_df = lobito_edges_df.to_crs(epsg=epsg_meters)
+    ta_edges_df = ta_edges_df.to_crs(epsg=epsg_meters)
+    tsh_edges_df = tsh_edges_df.to_crs(epsg=epsg_meters)
 
-    road_edges = pd.concat(
-        [road_edges, MDG_edges, NS_edges, Lobito_edges, TA_edges, TSH_edges]
+    road_edges_df = pd.concat(
+        [
+            road_edges_df,
+            mdg_edges_df,
+            ns_edges_df,
+            lobito_edges_df,
+            ta_edges_df,
+            tsh_edges_df,
+        ]
     )
 
     connected_nodes = list(
-        set(road_edges.from_id.values.tolist() + road_edges.to_id.values.tolist())
+        set(road_edges_df.from_id.values.tolist() + road_edges_df.to_id.values.tolist())
     )
-    nearest_nodes = road_nodes[road_nodes[node_id_column].isin(connected_nodes)]
+    nearest_nodes = road_nodes_df[road_nodes_df[node_id_column].isin(connected_nodes)]
     nearest_nodes.rename(columns={node_id_column: "id"}, inplace=True)
     nearest_nodes = nearest_nodes.to_crs(epsg=4326)
 
     # Find the network components
 
-    edges = road_edges[
+    edges = road_edges_df[
         [
             "from_id",
             "to_id",
@@ -143,32 +131,19 @@ def main(config):
     edges = gpd.GeoDataFrame(edges, geometry="geometry", crs="EPSG:3395")
     edges = edges.to_crs(epsg=4326)
 
-    nearest_nodes.to_parquet(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_nodes_FINAL.geoparquet"
-        )
-    )
-    edges.to_parquet(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_edges_FINAL.geoparquet"
-        )
-    )
+    nearest_nodes.to_parquet(output_nodes)
+    edges.to_parquet(output_edges)
     nearest_nodes.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_network.gpkg"
-        ),
+        output_network,
         layer="nodes",
         driver="GPKG",
     )
     edges.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_network.gpkg"
-        ),
+        output_network,
         layer="edges",
         driver="GPKG",
     )
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

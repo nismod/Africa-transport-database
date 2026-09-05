@@ -25,7 +25,9 @@ rule osm_extract_v2:
         parquet=f"{INCOMING}/infrastructure/africa_osm_airports_terminals.parquet",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --pbf "{input.pbf}" \
+            --output-parquet "{output.parquet}"
         """
 
 
@@ -41,7 +43,11 @@ rule extract_suez:
         network=f"{INCOMING}/egypt-latest-free.shp/suez_canal_network.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --waterways "{input.waterways}" \
+            --suez-ids "{input.suez_ids}" \
+            --global-ports "{input.global_ports}" \
+            --output-network "{output.network}"
         """
 
 
@@ -66,7 +72,15 @@ rule ports_data_cleaning:
         africa_network=f"{DATA}/infrastructure/africa_maritime_network.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --global-ports "{input.global_ports}" \
+            --usgs-ports "{input.usgs_ports}" \
+            --corridor-db "{input.corridor_db}" \
+            --africa-adm0 "{input.africa_adm0}" \
+            --maritime-edges "{input.maritime_edges}" \
+            --suez-network "{input.suez_network}" \
+            --output-global-network "{output.global_network}" \
+            --output-africa-network "{output.africa_network}"
         """
 
 
@@ -84,7 +98,14 @@ rule ports_new_merge:
         africa_network=f"{DATA}/infrastructure/africa_maritime_network_PROVA_NEW1.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --global-network "{input.global_network}" \
+            --ports-2025 "{input.ports_2025}" \
+            --port-calls "{input.port_calls}" \
+            --port-capacity "{input.port_capacity}" \
+            --port-turnaround "{input.port_turnaround}" \
+            --output-global-network "{output.global_network}" \
+            --output-africa-network "{output.africa_network}"
         """
 
 
@@ -103,7 +124,15 @@ rule merged_points_v2:
         non_intersected_csv=f"{DATA}/non_intersected_from_merged.csv",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --usgs-ports "{input.usgs_ports}" \
+            --global-ports "{input.global_ports}" \
+            --corridor-db "{input.corridor_db}" \
+            --world-boundaries "{input.world_boundaries}" \
+            --output-merged-gpkg "{output.merged_gpkg}" \
+            --output-merged-csv "{output.merged_csv}" \
+            --output-non-intersected-gpkg "{output.non_intersected_gpkg}" \
+            --output-non-intersected-csv "{output.non_intersected_csv}"
         """
 
 
@@ -117,7 +146,10 @@ rule sample_code_from_ports_africa:
         modified=f"{DATA}/africa_ports_modified.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --africa-ports "{input.africa_ports}" \
+            --non-intersected "{input.non_intersected}" \
+            --output-modified "{output.modified}"
         """
 
 
@@ -133,7 +165,12 @@ rule add_id:
         output_gpkg=f"{DATA}/output.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --non-intersected "{input.non_intersected}" \
+            --modified-ports "{input.modified_ports}" \
+            --world-boundaries "{input.world_boundaries}" \
+            --merged-csv "{input.merged_csv}" \
+            --output-output-gpkg "{output.output_gpkg}"
         """
 
 
@@ -154,7 +191,16 @@ rule economic:
         missing_coords=f"{DATA}/missing_coords.csv",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --usgs-ports "{input.usgs_ports}" \
+            --ports-weight "{input.ports_weight}" \
+            --ports-value "{input.ports_value}" \
+            --ports-utilization "{input.ports_utilization}" \
+            --merged-csv "{input.merged_csv}" \
+            --output-weightvalues "{output.weightvalues}" \
+            --output-merged2 "{output.merged2}" \
+            --output-results "{output.results}" \
+            --output-missing-coords "{output.missing_coords}"
         """
 
 
@@ -172,7 +218,14 @@ rule port_cargo_attributes:
         commodities=f"{DATA}/port_statistics/port_known_commodities_traded.csv",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --port-matches "{input.port_matches}" \
+            --corridor-db "{input.corridor_db}" \
+            --usgs-ports "{input.usgs_ports}" \
+            --global-network "{input.global_network}" \
+            --port-utilisation "{input.port_utilisation}" \
+            --output-vessel-capacities "{output.vessel_capacities}" \
+            --output-commodities "{output.commodities}"
         """
 
 
@@ -217,9 +270,16 @@ rule rail_data_cleaning:
         tanzania_sgr=f"{INCOMING}/africa_corridor_developments/tanzania_standard_gauge_railway.gpkg",
         standard_gauge=f"{INCOMING}/africa_corridor_developments/standard_gauge_railway.gpkg",
         network=f"{DATA}/infrastructure/africa_railways_network.gpkg",
+    params:
+        corridor_dir=f"{INCOMING}/africa_corridor_developments",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --africa-adm0 "{input.africa_adm0}" \
+            --africa-railways "{input.africa_railways}" \
+            --africa-rail-nodes "{input.africa_rail_nodes}" \
+            --corridor-dir "{params.corridor_dir}" \
+            --output-network "{output.network}"
         """
 
 
@@ -233,7 +293,10 @@ rule rails_costs:
         costs=f"{DATA}/infrastructure/africa_rails_costs.csv",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --rail-network "{input.rail_network}" \
+            --costs "{input.costs}" \
+            --output-costs "{output.costs}"
         """
 
 
@@ -259,7 +322,17 @@ rule road_connectivity:
         main_roads=f"{INCOMING}/africa_roads/africa_main_roads.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --population "{input.population}" \
+            --airports "{input.airports}" \
+            --maritime "{input.maritime}" \
+            --iww "{input.iww}" \
+            --railways "{input.railways}" \
+            --road-edges "{input.road_edges}" \
+            --road-nodes "{input.road_nodes}" \
+            --output-nodes "{output.nodes}" \
+            --output-edges "{output.edges}" \
+            --output-main-roads "{output.main_roads}"
         """
 
 
@@ -275,7 +348,12 @@ rule road_corridors_primary_roads:
         edges=f"{DATA}/infrastructure/africa_roads_edges_withcorridors.geoparquet",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --road-edges "{input.road_edges}" \
+            --road-nodes "{input.road_nodes}" \
+            --corridors "{input.corridors}" \
+            --output-nodes "{output.nodes}" \
+            --output-edges "{output.edges}"
         """
 
 
@@ -295,12 +373,20 @@ rule road_corridors_ns_corridor:
         edges=f"{DATA}/infrastructure/africa_roads_edges_PROVA_Lobito_corridor.geoparquet",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --road-edges "{input.road_edges}" \
+            --road-nodes "{input.road_nodes}" \
+            --corridor "{input.corridor}" \
+            --output-nodes "{output.nodes}" \
+            --output-edges "{output.edges}"
         """
 
 
 rule road_adjustments:
     """Merge the per-corridor road extracts into the final road network.
+
+    Only the edge layers are read: the filter that used the matching node layers
+    was commented out, so those are no longer inputs.
 
     This script also writes the ``nodes`` and ``edges`` layers of
 
@@ -313,23 +399,30 @@ rule road_adjustments:
     input:
         script=f"{PREPROCESS}/RoadAdjustments.py",
         lobito_edges=f"{DATA}/infrastructure/africa_roads_edges_PROVA_Lobito_corridor.geoparquet",
-        lobito_nodes=f"{DATA}/infrastructure/africa_roads_nodes_PROVA_Lobito_corridor.geoparquet",
         ta_edges=f"{DATA}/infrastructure/africa_roads_edges_PROVA_TA_corridor.geoparquet",
-        ta_nodes=f"{DATA}/infrastructure/africa_roads_nodes_PROVA_TA_corridor.geoparquet",
         tsh_edges=f"{DATA}/infrastructure/africa_roads_edges_PROVA_TSH_corridor.geoparquet",
-        tsh_nodes=f"{DATA}/infrastructure/africa_roads_nodes_PROVA_TSH_corridor.geoparquet",
         ns_edges=f"{DATA}/infrastructure/africa_roads_edges_PROVA_NS_corridor.geoparquet",
-        ns_nodes=f"{DATA}/infrastructure/africa_roads_nodes_PROVA_NS_corridor.geoparquet",
         mdg_edges=f"{DATA}/infrastructure/africa_roads_edges_PROVA_MDG.geoparquet",
-        mdg_nodes=f"{DATA}/infrastructure/africa_roads_nodes_PROVA_MDG.geoparquet",
         road_edges=f"{DATA}/infrastructure/africa_roads_edges_withcorridors.geoparquet",
         road_nodes=f"{DATA}/infrastructure/africa_roads_nodes_withcorridors.geoparquet",
     output:
         nodes=f"{DATA}/infrastructure/africa_roads_nodes_FINAL.geoparquet",
         edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
+    params:
+        network=f"{DATA}/infrastructure/africa_roads_network.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --lobito-edges "{input.lobito_edges}" \
+            --ta-edges "{input.ta_edges}" \
+            --tsh-edges "{input.tsh_edges}" \
+            --ns-edges "{input.ns_edges}" \
+            --mdg-edges "{input.mdg_edges}" \
+            --road-edges "{input.road_edges}" \
+            --road-nodes "{input.road_nodes}" \
+            --output-nodes "{output.nodes}" \
+            --output-edges "{output.edges}" \
+            --output-network "{params.network}"
         """
 
 
@@ -353,7 +446,10 @@ rule costs_columns:
         network=f"{DATA}/infrastructure/africa_roads_network.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --nodes "{input.nodes}" \
+            --edges "{input.edges}" \
+            --output-network "{output.network}"
         """
 
 
@@ -367,7 +463,10 @@ rule road_processing:
         network=f"{DATA}/infrastructure/africa_roads_network.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --edges "{input.edges}" \
+            --output-edges "{output.edges}" \
+            --output-network "{output.network}"
         """
 
 
@@ -382,7 +481,11 @@ rule corridors_costs:
         corridor_costs=f"{DATA}/infrastructure/africa_corridors_costs.csv",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --road-network "{input.road_network}" \
+            --costs "{input.costs}" \
+            --output-merged-costs "{output.merged_costs}" \
+            --output-corridor-costs "{output.corridor_costs}"
         """
 
 
@@ -397,7 +500,11 @@ rule stats_rail_roads:
         paved_stats=f"{DATA}/infrastructure/paved_stats2.csv",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --road-edges "{input.road_edges}" \
+            --rail-network "{input.rail_network}" \
+            --output-rail-stats "{output.rail_stats}" \
+            --output-paved-stats "{output.paved_stats}"
         """
 
 
@@ -415,7 +522,9 @@ rule airports_data_cleaning:
         network=f"{DATA}/infrastructure/africa_airport_network_last.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --airport-network "{input.airport_network}" \
+            --output-network "{output.network}"
         """
 
 
@@ -430,7 +539,11 @@ rule ourairports_data_layer:
         network=f"{DATA}/infrastructure/africa_airport_network_rev.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --ourairports "{input.ourairports}" \
+            --airport-network "{input.airport_network}" \
+            --output-ourairports "{output.ourairports}" \
+            --output-network "{output.network}"
         """
 
 
@@ -451,7 +564,12 @@ rule inland_waterways_cleaning:
         network=f"{DATA}/infrastructure/africa_iww_network.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --iww-ports "{input.iww_ports}" \
+            --congo-rivers "{input.congo_rivers}" \
+            --south-sudan "{input.south_sudan}" \
+            --africa-adm0 "{input.africa_adm0}" \
+            --output-network "{output.network}"
         """
 
 
@@ -482,7 +600,15 @@ rule africa_inland_waterways:
         network=f"{DATA}/infrastructure/africa_iww_network.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --waterways "{input.waterways}" \
+            --iww-ports "{input.iww_ports}" \
+            --africa-adm0 "{input.africa_adm0}" \
+            --output-river-edges "{output.river_edges}" \
+            --output-river-nodes "{output.river_nodes}" \
+            --output-network-edges "{output.network_edges}" \
+            --output-network-nodes "{output.network_nodes}" \
+            --output-network "{output.network}"
         """
 
 
@@ -504,7 +630,13 @@ rule multi_modal_edges_creation:
         multimodal=f"{DATA}/infrastructure/africa_multimodal_rev.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --airports "{input.airports}" \
+            --maritime "{input.maritime}" \
+            --iww "{input.iww}" \
+            --railways "{input.railways}" \
+            --road-nodes "{input.road_nodes}" \
+            --output-multimodal "{output.multimodal}"
         """
 
 
@@ -524,7 +656,8 @@ rule data_checks:
         multimodal=f"{DATA}/infrastructure/africa_multimodal.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --multimodal "{output.multimodal}"
         """
 
 
@@ -547,5 +680,17 @@ rule source_column:
         iww=f"{DATA}/infrastructure/africa_iww_network_withsources.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --maritime "{input.maritime}" \
+            --airports "{input.airports}" \
+            --multimodal "{input.multimodal}" \
+            --roads "{input.roads}" \
+            --railways "{input.railways}" \
+            --iww "{input.iww}" \
+            --output-maritime "{output.maritime}" \
+            --output-airports "{output.airports}" \
+            --output-multimodal "{output.multimodal}" \
+            --output-roads "{output.roads}" \
+            --output-railways "{output.railways}" \
+            --output-iww "{output.iww}"
         """

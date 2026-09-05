@@ -1,6 +1,7 @@
+import click
+
 """Road network risks and adaptation maps"""
 
-import os
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -11,7 +12,6 @@ from tqdm import tqdm
 
 from aftdb.plot.maps import (
     get_projection,
-    load_config,
     plot_africa_basemap2,
     save_fig,
 )
@@ -19,13 +19,13 @@ from aftdb.plot.maps import (
 tqdm.pandas()
 
 
-def main(config):
-    data_path = config["paths"]["data"]
-    figure_path = config["paths"]["figures"]
-
-    figures = os.path.join(figure_path)
-    if os.path.exists(figures) is False:
-        os.mkdir(figures)
+@click.command()
+@click.option("--railways", required=True, type=click.Path(exists=True))
+@click.option("--countries", required=True, type=click.Path(exists=True))
+@click.option("--lakes", required=True, type=click.Path(exists=True))
+@click.option("--output-figure", required=True, type=click.Path())
+def main(railways, countries, lakes, output_figure):
+    """Map the railway network coloured by gauge"""
 
     map_epsg = 4326
     ax_proj = get_projection(epsg=map_epsg)
@@ -34,7 +34,7 @@ def main(config):
     )
 
     rail_df = gpd.read_file(
-        os.path.join(data_path, "infrastructure", "africa_railways_network.gpkg"),
+        railways,
         layer="edges",
     )
 
@@ -48,7 +48,7 @@ def main(config):
     # Create a font property for bold text
     bold_font = font_manager.FontProperties(weight="bold", size=18)
 
-    ax = plot_africa_basemap2(ax_plots)
+    ax = plot_africa_basemap2(ax_plots, countries, lakes)
 
     num_colors = len(rail_df["gauge"].unique())
     colormap = [
@@ -90,9 +90,8 @@ def main(config):
         text.set_text(text.get_text().capitalize())
 
     plt.tight_layout()
-    save_fig(os.path.join(figures, "rail_test_gauge.png"))
+    save_fig(output_figure)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

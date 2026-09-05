@@ -1,6 +1,7 @@
+import click
+
 """Road network risks and adaptation maps"""
 
-import os
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -9,7 +10,6 @@ from tqdm import tqdm
 
 from aftdb.plot.maps import (
     get_projection,
-    load_config,
     plot_africa_basemap2,
     save_fig,
 )
@@ -17,16 +17,17 @@ from aftdb.plot.maps import (
 tqdm.pandas()
 
 
-def main(config):
-    data_path = config["paths"]["data"]
-    figure_path = config["paths"]["figures"]
-
-    figures = os.path.join(figure_path)
-    os.makedirs(figures, exist_ok=True)
+@click.command()
+@click.option("--airports", required=True, type=click.Path(exists=True))
+@click.option("--countries", required=True, type=click.Path(exists=True))
+@click.option("--lakes", required=True, type=click.Path(exists=True))
+@click.option("--output-figure", required=True, type=click.Path())
+def main(airports, countries, lakes, output_figure):
+    """Map airports sized by total annual seats"""
 
     marker_size_max = 2000
     air_nodes = gpd.read_file(
-        os.path.join(data_path, "infrastructure", "africa_airport_network.gpkg"),
+        airports,
         layer="nodes",
     )
     tmax = air_nodes["TotalSeats"].max()
@@ -36,7 +37,7 @@ def main(config):
         1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
     )
 
-    ax = plot_africa_basemap2(ax_plots)
+    ax = plot_africa_basemap2(ax_plots, countries, lakes)
     air_nodes["markersize"] = marker_size_max * (air_nodes["TotalSeats"] / tmax) ** 0.5
     air_nodes = air_nodes.sort_values(by="TotalSeats", ascending=False)
     air_nodes.geometry.plot(
@@ -69,10 +70,9 @@ def main(config):
     for k in range(Nk):
         ins.text(xk, yk[k], f"       {t_key[k]:,.0f}", va="center", fontsize=12)
     plt.tight_layout()
-    save_fig(os.path.join(figures, "airports.png"))
+    save_fig(output_figure)
     plt.close()
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

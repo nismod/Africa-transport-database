@@ -1,27 +1,22 @@
-import os
-
+import click
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.plot.maps import load_config, save_fig
+from aftdb.plot.maps import save_fig
 
 tqdm.pandas()
 
 
-def main(config):
-    config = load_config()
-    output_path = config["paths"]["results"]
-    figure_path = config["paths"]["figures"]
+@click.command()
+@click.option("--matches", required=True, type=click.Path(exists=True))
+@click.option("--output-figure", required=True, type=click.Path())
+def main(matches, output_figure):
+    """Histogram of rail facility distances to matched reference locations"""
 
-    figures = os.path.join(figure_path)
-    proximity_matches = gpd.read_file(
-        os.path.join(
-            output_path, "africa-station-google-points", "location_proximity_final.gpkg"
-        )
-    )
+    proximity_matches = gpd.read_file(matches)
     closest_classes = [
         ("air", "Airports"),
         ("Mineral Processing Plants", "Mineral Processing Plants - USGS"),
@@ -122,10 +117,9 @@ def main(config):
     )
     axe.set_axisbelow(True)
     axe.grid(which="major", axis="y", linestyle="-", zorder=0)
-    save_fig(os.path.join(figures, "rail_facility_proximity.png"))
+    save_fig(output_figure)
     plt.close()
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

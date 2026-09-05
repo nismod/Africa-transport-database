@@ -1,6 +1,4 @@
-import json
-import os
-
+import click
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -9,20 +7,13 @@ from sklearn.metrics import adjusted_rand_score
 from sklearn.preprocessing import StandardScaler
 
 
-def load_config():
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-
-    config_path = os.path.join(script_dir, "..", "..", "config.json")
-
-    with open(config_path, "r") as config_fh:
-        config = json.load(config_fh)
-    return config
-
-
-def main(config):
+@click.command()
+@click.option("--ports", required=True, type=click.Path(exists=True))
+@click.option("--output-clusters", required=True, type=click.Path())
+def main(ports, output_clusters):
+    """Cluster-compare the maritime port database against CIA port counts"""
     # 1. Load your data
-    processed_data_path = config["paths"]["data"]
-    df = pd.read_csv(os.path.join(processed_data_path, "Validation sets", "ports.csv"))
+    df = pd.read_csv(ports)
 
     # 2. Normalize the data
     scaler = StandardScaler()
@@ -55,13 +46,10 @@ def main(config):
 
     # 6. Export cluster assignments
     df.to_csv(
-        os.path.join(
-            processed_data_path, "Validation sets", "port_cluster_comparison_k3.csv"
-        ),
+        output_clusters,
         index=False,
     )
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

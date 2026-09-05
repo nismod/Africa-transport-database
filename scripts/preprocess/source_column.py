@@ -1,31 +1,44 @@
-import os
-
+import click
 import geopandas as gpd
 from tqdm import tqdm
 
-from aftdb.utils import load_config
-
 tqdm.pandas()
 
-config = load_config()
-incoming_data_path = config["paths"]["incoming_data"]
-processed_data_path = config["paths"]["data"]
 
-
-def main():
-
-    processed_data_path = config["paths"]["data"]
-
+@click.command()
+@click.option("--maritime", required=True, type=click.Path(exists=True))
+@click.option("--airports", required=True, type=click.Path(exists=True))
+@click.option("--multimodal", required=True, type=click.Path(exists=True))
+@click.option("--roads", required=True, type=click.Path(exists=True))
+@click.option("--railways", required=True, type=click.Path(exists=True))
+@click.option("--iww", required=True, type=click.Path(exists=True))
+@click.option("--output-maritime", required=True, type=click.Path())
+@click.option("--output-airports", required=True, type=click.Path())
+@click.option("--output-multimodal", required=True, type=click.Path())
+@click.option("--output-roads", required=True, type=click.Path())
+@click.option("--output-railways", required=True, type=click.Path())
+@click.option("--output-iww", required=True, type=click.Path())
+def main(
+    maritime,
+    airports,
+    multimodal,
+    roads,
+    railways,
+    iww,
+    output_maritime,
+    output_airports,
+    output_multimodal,
+    output_roads,
+    output_railways,
+    output_iww,
+):
+    """Add the data-source citation column to every published network layer"""
     ports_nodes = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_maritime_network.gpkg"
-        ),
+        maritime,
         layer="nodes",
     )
     ports_edges = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_maritime_network.gpkg"
-        ),
+        maritime,
         layer="edges",
     )
 
@@ -64,34 +77,22 @@ def main():
     ] * len(ports_edges)
 
     ports_edges.to_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_maritime_network_withsources.gpkg",
-        ),
+        output_maritime,
         layer="edges",
         driver="GPKG",
     )
     ports_nodes.to_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_maritime_network_withsources.gpkg",
-        ),
+        output_maritime,
         layer="nodes",
         driver="GPKG",
     )
 
     air_nodes_df = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_airport_network_rev.gpkg"
-        ),
+        airports,
         layer="nodes",
     )
     air_edges_df = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_airport_network_rev.gpkg"
-        ),
+        airports,
         layer="edges",
     )
 
@@ -112,28 +113,18 @@ def main():
     print(air_edges_df)
 
     air_edges_df.to_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_airport_network_withsources.gpkg",
-        ),
+        output_airports,
         layer="edges",
         driver="GPKG",
     )
     air_nodes_df.to_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_airport_network_withsources.gpkg",
-        ),
+        output_airports,
         layer="nodes",
         driver="GPKG",
     )
 
     multi_df = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_multimodal_rev.gpkg"
-        ),
+        multimodal,
         layer="edges",
     )
 
@@ -142,23 +133,17 @@ def main():
     print(multi_df)
 
     multi_df.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_multimodal_withsources.gpkg"
-        ),
+        output_multimodal,
         layer="edges",
         driver="GPKG",
     )
 
     roads_nodes_df = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_network.gpkg"
-        ),
+        roads,
         layer="nodes",
     )
     roads_edges_df = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_network.gpkg"
-        ),
+        roads,
         layer="edges",
     )
 
@@ -194,34 +179,22 @@ def main():
     ] * len(roads_nodes_df)
 
     roads_nodes_df.to_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_network_withsources.gpkg",
-        ),
+        output_roads,
         layer="nodes",
         driver="GPKG",
     )
     roads_edges_df.to_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_network_withsources.gpkg",
-        ),
+        output_roads,
         layer="edges",
         driver="GPKG",
     )
 
     rail_nodes_df = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_railways_network.gpkg"
-        ),
+        railways,
         layer="nodes",
     )
     rail_edges_df = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_railways_network.gpkg"
-        ),
+        railways,
         layer="edges",
     )
 
@@ -267,30 +240,22 @@ def main():
     ].apply(lambda _: source_rail_edges2, axis=1)
 
     rail_nodes_df.to_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_railways_network_withsources.gpkg",
-        ),
+        output_railways,
         layer="nodes",
         driver="GPKG",
     )
     rail_edges_df.to_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_railways_network_withsources.gpkg",
-        ),
+        output_railways,
         layer="edges",
         driver="GPKG",
     )
 
     iww_df_nodes = gpd.read_file(
-        os.path.join(processed_data_path, "infrastructure", "africa_iww_network.gpkg"),
+        iww,
         layer="nodes",
     )
     iww_df_edges = gpd.read_file(
-        os.path.join(processed_data_path, "infrastructure", "africa_iww_network.gpkg"),
+        iww,
         layer="edges",
     )
 
@@ -357,16 +322,12 @@ def main():
     )
 
     iww_df_nodes.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_iww_network_withsources.gpkg"
-        ),
+        output_iww,
         layer="nodes",
         driver="GPKG",
     )
     iww_df_edges.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_iww_network_withsources.gpkg"
-        ),
+        output_iww,
         layer="edges",
         driver="GPKG",
     )

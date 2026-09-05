@@ -33,7 +33,16 @@ rule google_api_matches:
         matches=f"{INCOMING}/africa-station-google-points/location_proximity_final.gpkg",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --rail-network "{input.rail_network}" \
+            --google-points "{input.google_points}" \
+            --global-mines "{input.global_mines}" \
+            --usgs-facilities "{input.usgs_facilities}" \
+            --airports "{input.airports}" \
+            --maritime "{input.maritime}" \
+            --iww "{input.iww}" \
+            --previous-matches "{input.previous_matches}" \
+            --output-matches "{output.matches}"
         """
 
 
@@ -46,7 +55,9 @@ rule plot_rail_facility_proximity:
         figure=f"{FIGURES}/rail_facility_proximity.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --matches "{input.matches}" \
+            --output-figure "{output.figure}"
         """
 
 
@@ -65,7 +76,9 @@ rule merge_heigit_data:
         merged=f"{DATA}/infrastructure/validation_file_merge.geoparquet",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --heigit-folder "{input.heigit_folder}" \
+            --output-merged "{output.merged}"
         """
 
 
@@ -82,7 +95,13 @@ rule heigit_check:
         pivot_corrected=f"{RESULTS}/merged_validation_datasets_corrected.csv",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --database-lines "{input.database_lines}" \
+            --heigit-lines "{input.heigit_lines}" \
+            --boundaries "{input.boundaries}" \
+            --output-merged "{output.merged}" \
+            --output-pivot "{output.pivot}" \
+            --output-pivot-corrected "{output.pivot_corrected}"
         """
 
 
@@ -100,7 +119,13 @@ rule roads_validation_comparison:
         counts=f"{DATA}/infrastructure/merged_validation_datasets_counts.csv",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --database-lines "{input.database_lines}" \
+            --boundaries "{input.boundaries}" \
+            --heigit-folder "{input.heigit_folder}" \
+            --output-merged "{output.merged}" \
+            --output-pivot "{output.pivot}" \
+            --output-counts "{output.counts}"
         """
 
 
@@ -118,7 +143,14 @@ rule plot_heigit_bar_charts:
         rail_comparisons=f"{FIGURES}/rail_comparisons.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --validation "{input.validation}" \
+            --country-codes "{input.country_codes}" \
+            --rails "{input.rails}" \
+            --output-comparison "{output.comparison}" \
+            --output-differences-csv "{output.differences_csv}" \
+            --output-differences "{output.differences}" \
+            --output-rail-comparisons "{output.rail_comparisons}"
         """
 
 
@@ -136,7 +168,9 @@ rule maps_validation:
         clusters=f"{DATA}/Validation sets/port_cluster_comparison_k3.csv",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --ports "{input.ports}" \
+            --output-clusters "{output.clusters}"
         """
 
 
@@ -154,5 +188,7 @@ rule plot_multi_modal_proximity:
         figure=f"{FIGURES}/multi_modal_proximity.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --multimodal "{input.multimodal}" \
+            --output-figure "{output.figure}"
         """

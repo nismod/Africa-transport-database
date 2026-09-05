@@ -1,20 +1,20 @@
-import os
-
+import click
 import geopandas as gpd
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.utils import create_edges_from_nearest_node_joins, load_config
+from aftdb.utils import create_edges_from_nearest_node_joins
 
 tqdm.pandas()
-
-config = load_config()
-incoming_data_path = config["paths"]["incoming_data"]
-processed_data_path = config["paths"]["data"]
 
 
 def get_mode_dataframe(
     mode,
+    airports,
+    maritime,
+    iww,
+    railways,
+    road_nodes,
     rail_status=None,
     rail_to_mode_connection=False,
     rail_facilities=None,
@@ -24,33 +24,25 @@ def get_mode_dataframe(
         rail_status = ["open", "planned", "construction"]
     if mode == "air":
         nodes = gpd.read_file(
-            os.path.join(
-                processed_data_path, "infrastructure", "africa_airport_network.gpkg"
-            ),
+            airports,
             layer="nodes",
         )
         nodes = nodes[nodes["infra"] == "airport"]
     elif mode == "sea":
         nodes = gpd.read_file(
-            os.path.join(
-                processed_data_path, "infrastructure", "africa_maritime_network.gpkg"
-            ),
+            maritime,
             layer="nodes",
         )
         nodes = nodes[nodes["infra"] == "port"]
     elif mode == "IWW":
         nodes = gpd.read_file(
-            os.path.join(
-                processed_data_path, "infrastructure", "africa_iww_network.gpkg"
-            ),
+            iww,
             layer="nodes",
         )
         nodes = nodes[nodes["infra"] != "IWW route"]
     elif mode == "rail":
         rail_edges = gpd.read_file(
-            os.path.join(
-                processed_data_path, "infrastructure", "africa_railways_network.gpkg"
-            ),
+            railways,
             layer="edges",
         )
         rail_edges = rail_edges[rail_edges["status"].isin(rail_status)]
@@ -61,9 +53,7 @@ def get_mode_dataframe(
             )
         )
         nodes = gpd.read_file(
-            os.path.join(
-                processed_data_path, "infrastructure", "africa_railways_network.gpkg"
-            ),
+            railways,
             layer="nodes",
         )
         nodes = nodes[
@@ -87,19 +77,22 @@ def get_mode_dataframe(
             else:
                 nodes = nodes[(~nodes["facility"].isin(freight_facility_types))]
     else:
-        nodes = gpd.read_parquet(
-            os.path.join(
-                processed_data_path,
-                "infrastructure",
-                "africa_roads_nodes_FINAL.geoparquet",
-            )
-        )
+        nodes = gpd.read_parquet(road_nodes)
         nodes.rename(columns={"iso_a3": "iso3"}, inplace=True)
 
     return nodes
 
 
-def main():
+@click.command()
+@click.option("--airports", required=True, type=click.Path(exists=True))
+@click.option("--maritime", required=True, type=click.Path(exists=True))
+@click.option("--iww", required=True, type=click.Path(exists=True))
+@click.option("--railways", required=True, type=click.Path(exists=True))
+@click.option("--road-nodes", required=True, type=click.Path(exists=True))
+@click.option("--output-multimodal", required=True, type=click.Path())
+def main(airports, maritime, iww, railways, road_nodes, output_multimodal):
+    """Create the inter-modal links between sea, inland waterway, rail, air and road"""
+    modes = (airports, maritime, iww, railways, road_nodes)
     epsg_meters = 3395  # To convert geometries to measure distances in meters
     from_modes = ["sea", "sea", "IWW", "IWW", "rail", "rail", "air", "air"]
     to_modes = [
@@ -159,31 +152,34 @@ def main():
             if t_m == "road_freight":
                 f_df = get_mode_dataframe(
                     f_m,
+                    *modes,
                     rail_to_mode_connection=True,
                     connection_type="freight",
                     rail_facilities=rail_facility_types[t_m],
                 )
-                t_df = get_mode_dataframe(t_m)
+                t_df = get_mode_dataframe(t_m, *modes)
 
             elif t_m == "road_passenger":
                 f_df = get_mode_dataframe(
                     f_m,
+                    *modes,
                     rail_to_mode_connection=True,
                     connection_type="passenger",
                     rail_facilities=rail_facility_types[t_m],
                 )
-                t_df = get_mode_dataframe(t_m)
+                t_df = get_mode_dataframe(t_m, *modes)
 
         elif t_m == "rail":
             t_df = get_mode_dataframe(
                 t_m,
+                *modes,
                 rail_to_mode_connection=True,
                 rail_facilities=rail_facility_types[f_m],
             )
-            f_df = get_mode_dataframe(f_m)
+            f_df = get_mode_dataframe(f_m, *modes)
         else:
-            f_df = get_mode_dataframe(f_m)
-            t_df = get_mode_dataframe(t_m)
+            f_df = get_mode_dataframe(f_m, *modes)
+            t_df = get_mode_dataframe(t_m, *modes)
         f_t_df = create_edges_from_nearest_node_joins(
             f_df.to_crs(epsg=epsg_meters),
             t_df.to_crs(epsg=epsg_meters),
@@ -277,9 +273,7 @@ def main():
     ]
 
     multi_df.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_multimodal_rev.gpkg"
-        ),
+        output_multimodal,
         layer="edges",
         driver="GPKG",
     )

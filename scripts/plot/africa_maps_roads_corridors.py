@@ -1,6 +1,7 @@
+import click
+
 """Road network risks and adaptation maps"""
 
-import os
 
 import geopandas as gpd
 import matplotlib.patches as mpatches
@@ -11,7 +12,6 @@ from tqdm import tqdm
 
 from aftdb.plot.maps import (
     get_projection,
-    load_config,
     plot_africa_basemap2,
     save_fig,
 )
@@ -19,13 +19,14 @@ from aftdb.plot.maps import (
 tqdm.pandas()
 
 
-def main(config):
-    data_path = config["paths"]["data"]
-    figure_path = config["paths"]["figures"]
-
-    figures = os.path.join(figure_path)
-    if os.path.exists(figures) is False:
-        os.mkdir(figures)
+@click.command()
+@click.option("--road-edges", required=True, type=click.Path(exists=True))
+@click.option("--countries", required=True, type=click.Path(exists=True))
+@click.option("--lakes", required=True, type=click.Path(exists=True))
+@click.option("--output-legend", required=True, type=click.Path())
+@click.option("--output-figure", required=True, type=click.Path())
+def main(road_edges, countries, lakes, output_legend, output_figure):
+    """Map the road network coloured by development corridor"""
 
     map_epsg = 4326
     ax_proj = get_projection(epsg=map_epsg)
@@ -33,9 +34,7 @@ def main(config):
         1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
     )
 
-    roads_df = gpd.read_parquet(
-        os.path.join(data_path, "infrastructure", "africa_roads_edges_FINAL.geoparquet")
-    )
+    roads_df = gpd.read_parquet(road_edges)
 
     roads_df["corridor_name"] = roads_df["corridor_name"].str.split("/")
 
@@ -80,13 +79,13 @@ def main(config):
 
     ax_legend.axis("off")
     # Save the legend as a separate image
-    fig_legend.savefig(os.path.join(figures, "roads_corridors_legend_LAST.png"))
+    fig_legend.savefig(output_legend)
     plt.close()
 
     map_epsg = 4326
     ax_proj = get_projection(epsg=map_epsg)
 
-    ax = plot_africa_basemap2(ax_plots)
+    ax = plot_africa_basemap2(ax_plots, countries, lakes)
     gdf_na = gdf_exploded[gdf_exploded["corridor_name"].isna()]
     gdf_colored = gdf_exploded[~gdf_exploded["corridor_name"].isna()]
 
@@ -533,10 +532,9 @@ def main(config):
 
     plt.tight_layout()
 
-    save_fig(os.path.join(figures, "roads_corridors_LAST.png"))
+    save_fig(output_figure)
     plt.close()
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

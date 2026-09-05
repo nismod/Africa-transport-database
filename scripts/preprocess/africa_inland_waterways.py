@@ -1,6 +1,4 @@
-# (1) Merge three datasets; (2)Add ISO3 (4) extraxt non_intersected
-import os
-
+import click
 import geopandas as gpd
 import igraph as ig
 import numpy as np
@@ -12,15 +10,10 @@ from aftdb.utils import (
     add_iso_code,
     components,
     create_network_from_nodes_and_edges,
-    load_config,
     network_od_path_estimations,
 )
 
 tqdm.pandas()
-
-config = load_config()
-incoming_data_path = config["paths"]["incoming_data"]
-processed_data_path = config["paths"]["data"]
 
 
 def get_components_and_size(
@@ -56,8 +49,9 @@ def get_components_and_size(
 def network_creation(
     nodes_df,
     edges_df,
+    edges_path,
+    nodes_path,
     mode="iww",
-    write_file_name="network",
     snap_distance=None,
     network_crs=4326,
     node_id_column="node_id",
@@ -82,49 +76,46 @@ def network_creation(
         edges = edges.to_crs(epsg=4326)
         nodes = nodes.to_crs(epsg=4326)
 
-    edges.to_parquet(
-        os.path.join(
-            incoming_data_path,
-            "Africa_osm_rivers",
-            f"{write_file_name}_edges.geoparquet",
-        )
-    )
-    nodes.to_parquet(
-        os.path.join(
-            incoming_data_path,
-            "Africa_osm_rivers",
-            f"{write_file_name}_nodes.geoparquet",
-        )
-    )
+    edges.to_parquet(edges_path)
+    nodes.to_parquet(nodes_path)
 
     return edges, nodes
 
 
-def main():
+@click.command()
+@click.option("--waterways", required=True, type=click.Path(exists=True))
+@click.option("--iww-ports", required=True, type=click.Path(exists=True))
+@click.option("--africa-adm0", required=True, type=click.Path(exists=True))
+@click.option("--output-river-edges", required=True, type=click.Path())
+@click.option("--output-river-nodes", required=True, type=click.Path())
+@click.option("--output-network-edges", required=True, type=click.Path())
+@click.option("--output-network-nodes", required=True, type=click.Path())
+@click.option("--output-network", required=True, type=click.Path())
+def main(
+    waterways,
+    iww_ports,
+    africa_adm0,
+    output_river_edges,
+    output_river_nodes,
+    output_network_edges,
+    output_network_nodes,
+    output_network,
+):
+    """Build the inland waterway network from the OpenStreetMap rivers extract"""
     epsg_meters = 3395
     # Step 1: Take the OSM rivers data and convert it into a network
-    edges = gpd.read_parquet(
-        os.path.join(
-            incoming_data_path,
-            "Africa_osm_rivers",
-            "OpenStreetMap_Waterways_for_Africa.geoparquet",
-        )
-    )
+    edges = gpd.read_parquet(waterways)
 
     edges = edges[
         edges["waterway"] == "river"
     ]  # Only select the rivers because they will be used for navigation
-    edges, nodes = network_creation(None, edges, write_file_name="africa_river")
+    edges, nodes = network_creation(None, edges, output_river_edges, output_river_nodes)
 
     # Step 2: Select the big connected rivers across Africa based on the largest component sizes
     component_size_threshold = (
         750  # We checked this from the result of the previous step
     )
-    edges = gpd.read_parquet(
-        os.path.join(
-            incoming_data_path, "Africa_osm_rivers", "africa_river_edges.geoparquet"
-        )
-    )
+    edges = gpd.read_parquet(output_river_edges)
     edges = edges[edges["component_size"] > component_size_threshold]
     edges.drop(
         ["edge_id", "from_node", "to_node", "component", "component_size"],
@@ -136,7 +127,7 @@ def main():
     # then we produced a final version of the selected ports and routes between them by manual cleaning
     # IWW ports
     df_ports = pd.read_excel(
-        os.path.join(incoming_data_path, "IWW_ports", "africa_IWW_ports.xlsx"),
+        iww_ports,
         sheet_name="selected_ports",
     )
     df_ports["geometry"] = gpd.points_from_xy(df_ports["lon"], df_ports["lat"])
@@ -146,7 +137,7 @@ def main():
     # known lake routes connecting ports - merge ports and routing files
 
     df_lake_routes = pd.read_excel(
-        os.path.join(incoming_data_path, "IWW_ports", "africa_IWW_ports.xlsx"),
+        iww_ports,
         sheet_name="known_connections",
     )
 
@@ -186,26 +177,15 @@ def main():
     edges, nodes = network_creation(
         df_ports.to_crs(epsg=epsg_meters),
         df_routes.to_crs(epsg=epsg_meters),
+        output_network_edges,
+        output_network_nodes,
         snap_distance=6000,
         network_crs=epsg_meters,
-        write_file_name="africa_network",
     )
 
     # Step 3: Get the specific routes that connect IWW ports in Congo basin, reject other routes
-    edges = gpd.read_parquet(
-        os.path.join(
-            incoming_data_path,
-            "Africa_osm_rivers",
-            "africa_network_edges.geoparquet",
-        )
-    )
-    nodes = gpd.read_parquet(
-        os.path.join(
-            incoming_data_path,
-            "Africa_osm_rivers",
-            "africa_network_nodes.geoparquet",
-        )
-    )
+    edges = gpd.read_parquet(output_network_edges)
+    nodes = gpd.read_parquet(output_network_nodes)
 
     edges = edges.to_crs(epsg=epsg_meters)
     nodes = nodes.to_crs(epsg=epsg_meters)
@@ -243,9 +223,7 @@ def main():
     # Adding missing iso3 codes
 
     missing_isos = africa_nodes[africa_nodes["iso3"].isna()]
-    missing_isos = add_iso_code(
-        missing_isos, "node_id", incoming_data_path, epsg=epsg_meters
-    )
+    missing_isos = add_iso_code(missing_isos, "node_id", africa_adm0, epsg=epsg_meters)
     for del_col in ["index", "index_right", "lat", "lon"]:
         if del_col in missing_isos.columns.values.tolist():
             missing_isos.drop(del_col, axis=1, inplace=True)
@@ -303,7 +281,7 @@ def main():
             "geometry",
         ]
     ].to_file(
-        os.path.join(processed_data_path, "infrastructure", "africa_iww_network.gpkg"),
+        output_network,
         layer="nodes",
         driver="GPKG",
     )
@@ -321,7 +299,7 @@ def main():
             "geometry",
         ]
     ].to_file(
-        os.path.join(processed_data_path, "infrastructure", "africa_iww_network.gpkg"),
+        output_network,
         layer="edges",
         driver="GPKG",
     )

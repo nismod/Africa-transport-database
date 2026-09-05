@@ -1,25 +1,22 @@
-import os
-
+import click
 import geopandas as gpd
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.plot.maps import load_config, save_fig
+from aftdb.plot.maps import save_fig
 
 tqdm.pandas()
 
 
-def main(config):
-    config = load_config()
-    processed_data_path = config["paths"]["data"]
-    figure_path = config["paths"]["figures"]
+@click.command()
+@click.option("--multimodal", required=True, type=click.Path(exists=True))
+@click.option("--output-figure", required=True, type=click.Path())
+def main(multimodal, output_figure):
+    """Histogram of multi-modal link lengths by connection type"""
 
-    figures = os.path.join(figure_path)
-    proximity_matches = gpd.read_file(
-        os.path.join(processed_data_path, "infrastructure", "africa_multimodal.gpkg")
-    )
+    proximity_matches = gpd.read_file(multimodal)
     class_types = list(set(proximity_matches["link_type"].values.tolist()))
     closest_classes = [(c, str(c).upper()) for c in class_types]
     colors = [
@@ -100,10 +97,9 @@ def main(config):
     )
     axe.set_axisbelow(True)
     axe.grid(which="major", axis="y", linestyle="-", zorder=0)
-    save_fig(os.path.join(figures, "multi_modal_proximity.png"))
+    save_fig(output_figure)
     plt.close()
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

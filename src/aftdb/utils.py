@@ -1,6 +1,5 @@
 """Helper functions for building and analysing the transport networks"""
 
-import os
 from math import asin, cos, radians, sin, sqrt
 
 import geopandas as gpd
@@ -13,10 +12,6 @@ from haversine import haversine
 from scipy.spatial import cKDTree
 from shapely.geometry import LineString, shape
 from tqdm import tqdm
-
-from aftdb.config import load_config
-
-__all__ = ["load_config"]
 
 tqdm.pandas()
 
@@ -82,17 +77,9 @@ def add_attributes(dataframe, columns_attributes):
     return dataframe
 
 
-def add_iso_code(df, df_id_column, incoming_data_path, epsg=4326):
-    # Insert countries' ISO CODE
-    africa_boundaries = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Africa_GIS Supporting Data",
-            "a. Africa_GIS Shapefiles",
-            "AFR_Political_ADM0_Boundaries.shp",
-            "AFR_Political_ADM0_Boundaries.shp",
-        )
-    )
+def add_iso_code(df, df_id_column, africa_adm0, epsg=4326):
+    """Insert each row's country ISO3 code, from the Africa ADM0 boundaries"""
+    africa_boundaries = gpd.read_file(africa_adm0)
     africa_boundaries.rename(
         columns={"DsgAttr03": "iso3", "Country": "country"}, inplace=True
     )

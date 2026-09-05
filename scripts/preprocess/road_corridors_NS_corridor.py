@@ -1,23 +1,22 @@
-import os
-
+import click
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.utils import (
-    components,
-    create_igraph_from_dataframe,
-    load_config,
-)
+from aftdb.utils import components, create_igraph_from_dataframe
 
 tqdm.pandas()
 
 
-def main(config):
-    incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
-
+@click.command()
+@click.option("--road-edges", required=True, type=click.Path(exists=True))
+@click.option("--road-nodes", required=True, type=click.Path(exists=True))
+@click.option("--corridor", required=True, type=click.Path(exists=True))
+@click.option("--output-nodes", required=True, type=click.Path())
+@click.option("--output-edges", required=True, type=click.Path())
+def main(road_edges, road_nodes, corridor, output_nodes, output_edges):
+    """Route the Lobito corridor over the AGO/COD/ZMB road network"""
     epsg_meters = 3395  # To convert geometries to measure distances in meters
 
     # Read the road edges data for Africa
@@ -29,26 +28,18 @@ def main(config):
     # Because main corridors should be along main highways
     # """
 
-    road_edges = gpd.read_parquet(
-        os.path.join(
-            incoming_data_path, "africa_roads", "edges_with_topology.geoparquet"
-        )
-    )
-    road_nodes = gpd.read_parquet(
-        os.path.join(
-            incoming_data_path, "africa_roads", "nodes_with_topology.geoparquet"
-        )
-    )
-    road_edges = road_edges[
+    road_edges_df = gpd.read_parquet(road_edges)
+    road_nodes_df = gpd.read_parquet(road_nodes)
+    road_edges_df = road_edges_df[
         (
-            road_edges["from_iso_a3"].isin(["AGO", "COD", "ZMB"])
-            & road_edges["to_iso_a3"].isin(["AGO", "COD", "ZMB"])
+            road_edges_df["from_iso_a3"].isin(["AGO", "COD", "ZMB"])
+            & road_edges_df["to_iso_a3"].isin(["AGO", "COD", "ZMB"])
         )
     ]
-    road_nodes = road_nodes[road_nodes["iso_a3"].isin(["AGO", "COD", "ZMB"])]
+    road_nodes_df = road_nodes_df[road_nodes_df["iso_a3"].isin(["AGO", "COD", "ZMB"])]
 
-    road_edges = road_edges.to_crs(epsg=epsg_meters)
-    road_nodes = road_nodes.to_crs(epsg=epsg_meters)
+    road_edges_df = road_edges_df.to_crs(epsg=epsg_meters)
+    road_nodes_df = road_nodes_df.to_crs(epsg=epsg_meters)
 
     # """
     # Read the file with the start and end points of the corridor
@@ -64,9 +55,7 @@ def main(config):
     end_location_column = "end_location"
     corridor_name_column = "corridor_name"
 
-    corridor_df = pd.read_excel(
-        os.path.join(incoming_data_path, "Lobito_corridor.xlsx")
-    )
+    corridor_df = pd.read_excel(corridor)
     corridor_df2 = corridor_df.copy()
     columns = [
         (
@@ -98,7 +87,7 @@ def main(config):
 
         corridor_df = gpd.sjoin_nearest(
             corridor_df[[l_id, c1, "geometry"]],
-            road_nodes[["id", "geometry"]],
+            road_nodes_df[["id", "geometry"]],
             how="left",
         ).reset_index()
 
@@ -120,7 +109,7 @@ def main(config):
 
         corridor_df2 = gpd.sjoin_nearest(
             corridor_df2[[l_id2, c2, "geometry"]],
-            road_nodes[["id", "geometry"]],
+            road_nodes_df[["id", "geometry"]],
             how="left",
         ).reset_index()
 
@@ -140,7 +129,7 @@ def main(config):
     corridor_df.rename(columns={"corridor_name_end": "corridor_name"}, inplace=True)
 
     graph = create_igraph_from_dataframe(
-        road_edges[["from_id", "to_id", road_id_column, "length_m"]]
+        road_edges_df[["from_id", "to_id", road_id_column, "length_m"]]
     )
 
     roads_with_corridors = []
@@ -175,19 +164,19 @@ def main(config):
 
     print(roads_with_corridors)
 
-    road_edges = pd.merge(road_edges, roads_with_corridors, how="left", on=["id"])
-    print(road_edges)
+    road_edges_df = pd.merge(road_edges_df, roads_with_corridors, how="left", on=["id"])
+    print(road_edges_df)
 
     connected_nodes = list(
-        set(road_edges.from_id.values.tolist() + road_edges.to_id.values.tolist())
+        set(road_edges_df.from_id.values.tolist() + road_edges_df.to_id.values.tolist())
     )
-    nearest_nodes = road_nodes[road_nodes[node_id_column].isin(connected_nodes)]
+    nearest_nodes = road_nodes_df[road_nodes_df[node_id_column].isin(connected_nodes)]
     nearest_nodes.rename(columns={node_id_column: "id"}, inplace=True)
     nearest_nodes = nearest_nodes.to_crs(epsg=4326)
 
     """Find the network components
     """
-    edges = road_edges[
+    edges = road_edges_df[
         [
             "from_id",
             "to_id",
@@ -222,22 +211,9 @@ def main(config):
     edges = gpd.GeoDataFrame(edges, geometry="geometry", crs="EPSG:3395")
     edges = edges.to_crs(epsg=4326)
 
-    nearest_nodes.to_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_nodes_PROVA_Lobito_corridor.geoparquet",
-        )
-    )
-    edges.to_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_edges_PROVA_Lobito_corridor.geoparquet",
-        )
-    )
+    nearest_nodes.to_parquet(output_nodes)
+    edges.to_parquet(output_edges)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

@@ -1,3 +1,5 @@
+import click
+
 """Mine and processing location volume plots"""
 
 import os
@@ -9,7 +11,6 @@ import pandas as pd
 from tqdm import tqdm
 
 from aftdb.plot.maps import (
-    load_config,
     map_background_and_bounds,
     plot_ccg_basemap,
     save_fig,
@@ -17,11 +18,6 @@ from aftdb.plot.maps import (
 
 pd.options.mode.chained_assignment = None  # default='warn'
 tqdm.pandas()
-
-config = load_config()
-processed_data_path = config["paths"]["data"]
-output_path = config["paths"]["results"]
-figure_path = config["paths"]["figures"]
 
 
 def get_columns_names():
@@ -93,14 +89,22 @@ def get_columns_names():
     )
 
 
-def get_common_input_dataframes(data_type, refining_year, trade_year):
+def get_common_input_dataframes(
+    data_type,
+    refining_year,
+    trade_year,
+    aggregated_stages,
+    usage_factors,
+    metal_content,
+    baci_countries,
+    mine_city_stages_file,
+    baci_trade,
+):
     # Read the data on the conversion factors to go from one stage to another
     # This will help in understanding material requirements for production of a stage output
     # from the inputs of another stage
     pr_conv_factors_df = pd.read_excel(
-        os.path.join(
-            processed_data_path, "mineral_usage_factors", "aggregated_stages.xlsx"
-        ),
+        aggregated_stages,
         dtype=data_type,
     )[
         [
@@ -111,18 +115,14 @@ def get_common_input_dataframes(data_type, refining_year, trade_year):
         ]
     ]
     # Read the data on the usage of stage 1 (or metal content converted to higher stage)
-    mineral_usage_factor_df = pd.read_excel(
-        os.path.join(
-            processed_data_path, "mineral_usage_factors", "mineral_usage_factors.xlsx"
-        )
-    )[["reference_mineral", "final_refined_stage", "usage_factor"]]
+    mineral_usage_factor_df = pd.read_excel(usage_factors)[
+        ["reference_mineral", "final_refined_stage", "usage_factor"]
+    ]
     mineral_usage_factor_df = mineral_usage_factor_df.drop_duplicates(
         subset=["reference_mineral", "final_refined_stage"], keep="first"
     )
     # Read the data on how much metal content goes into ores and concentrates
-    metal_content_factors_df = pd.read_csv(
-        os.path.join(processed_data_path, "mineral_usage_factors", "metal_content.csv")
-    )
+    metal_content_factors_df = pd.read_csv(metal_content)
     metal_content_factors_df.rename(
         columns={
             "Reference mineral": "reference_mineral",
@@ -132,29 +132,19 @@ def get_common_input_dataframes(data_type, refining_year, trade_year):
     )
 
     # Read the finalised version of the BACI trade data
-    ccg_countries = pd.read_csv(
-        os.path.join(processed_data_path, "baci", "ccg_country_codes.csv")
-    )
+    ccg_countries = pd.read_csv(baci_countries)
     ccg_countries = ccg_countries[ccg_countries["ccg_country"] == 1][
         "iso_3digit_alpha"
     ].values.tolist()
 
     # Read the data on the highest stages at the mines
     # This will help identify which stage goes to mine and which outside
-    mine_city_stages = pd.read_csv(
-        os.path.join(processed_data_path, "baci", "mine_city_stages.csv")
-    )
+    mine_city_stages = pd.read_csv(mine_city_stages_file)
     mine_city_stages = mine_city_stages[mine_city_stages["year"] == refining_year][
         ["reference_mineral", "mine_final_refined_stage"]
     ]
 
-    trade_df = pd.read_csv(
-        os.path.join(
-            processed_data_path,
-            "baci",
-            f"baci_ccg_minerals_trade_{trade_year}_bgs_corrected.csv",
-        )
-    )
+    trade_df = pd.read_csv(baci_trade)
     trade_df = trade_df[trade_df["trade_quantity_tons"] > 0]
 
     return (
@@ -167,10 +157,27 @@ def get_common_input_dataframes(data_type, refining_year, trade_year):
     )
 
 
-def modify_mineral_usage_factors(future_year=2030, baseline_year=2022):
+def modify_mineral_usage_factors(
+    aggregated_stages,
+    usage_factors,
+    metal_content,
+    baci_countries,
+    mine_city_stages_file,
+    baci_trade,
+    future_year=2030,
+    baseline_year=2022,
+):
     (data_type, _, _, _, _, _, _, _) = get_columns_names()
     (_, _, _, mcs_df, _, muf_df) = get_common_input_dataframes(
-        data_type, future_year, baseline_year
+        data_type,
+        future_year,
+        baseline_year,
+        aggregated_stages,
+        usage_factors,
+        metal_content,
+        baci_countries,
+        mine_city_stages_file,
+        baci_trade,
     )
 
     muf_df["mod_usage_factor"] = muf_df.groupby(["reference_mineral"])[
@@ -206,31 +213,42 @@ def modify_mineral_usage_factors(future_year=2030, baseline_year=2022):
     return muf_df[(muf_df["usage_factor"] > 0) & (muf_df["cum_usage_factor"] > 0)]
 
 
-def main():
-    figures = os.path.join(figure_path, "regional_figures")
-    os.makedirs(figures, exist_ok=True)
-
-    figures = os.path.join(
-        figure_path, "regional_figures", "mine_and_processing_locations"
-    )
-    os.makedirs(figures, exist_ok=True)
-
-    ccg_countries = pd.read_csv(
-        os.path.join(processed_data_path, "admin_boundaries", "ccg_country_codes.csv")
-    )
+@click.command()
+@click.option("--ccg-countries", required=True, type=click.Path(exists=True))
+@click.option("--stage-mapping", required=True, type=click.Path(exists=True))
+@click.option("--aggregated-stages", required=True, type=click.Path(exists=True))
+@click.option("--usage-factors", required=True, type=click.Path(exists=True))
+@click.option("--metal-content", required=True, type=click.Path(exists=True))
+@click.option("--baci-countries", required=True, type=click.Path(exists=True))
+@click.option("--mine-city-stages", required=True, type=click.Path(exists=True))
+@click.option("--baci-trade", required=True, type=click.Path(exists=True))
+@click.option("--countries", required=True, type=click.Path(exists=True))
+@click.option("--lakes", required=True, type=click.Path(exists=True))
+@click.option("--locations-dir", required=True, type=click.Path())
+@click.option("--output-dir", required=True, type=click.Path())
+def main(
+    ccg_countries,
+    stage_mapping,
+    aggregated_stages,
+    usage_factors,
+    metal_content,
+    baci_countries,
+    mine_city_stages,
+    baci_trade,
+    countries,
+    lakes,
+    locations_dir,
+    output_dir,
+):
+    """Maps of optimised mine and processing locations"""
+    mine_city_stages_file = mine_city_stages
+    ccg_country_codes = ccg_countries
+    ccg_countries = pd.read_csv(ccg_country_codes)
     ccg_isos = ccg_countries[ccg_countries["ccg_country"] == 1][
         "iso_3digit_alpha"
     ].values.tolist()
 
-    boundary_gdf = gpd.read_file(
-        os.path.join(
-            processed_data_path,
-            "admin_boundaries",
-            "ne_10m_admin_0_countries",
-            "ne_10m_admin_0_countries.shp",
-        ),
-        encoding="utf-8",
-    )
+    boundary_gdf = gpd.read_file(countries, encoding="utf-8")
     _, _, xl, yl = map_background_and_bounds(boundary_gdf, include_countries=ccg_isos)
     dxl = abs(np.diff(xl))[0]
     dyl = abs(np.diff(yl))[0]
@@ -359,9 +377,7 @@ def main():
     # result_type = ["noncombined","combined"]
     result_type = ["combined"]
     pd.read_excel(
-        os.path.join(
-            processed_data_path, "mineral_usage_factors", "stage_mapping.xlsx"
-        ),
+        stage_mapping,
         sheet_name="stage_maps",
     )
     for rt in result_type:
@@ -389,10 +405,18 @@ def main():
                 else:
                     fname = f"node_locations_for_energy_conversion_{sc}.gpkg"
                 mine_sites_df = gpd.read_file(
-                    os.path.join(output_path, "optimised_processing_locations", fname),
+                    os.path.join(locations_dir, fname),
                     layer=lyr,
                 )
-                mine_city_stages = modify_mineral_usage_factors(future_year=y)
+                mine_city_stages = modify_mineral_usage_factors(
+                    aggregated_stages,
+                    usage_factors,
+                    metal_content,
+                    baci_countries,
+                    mine_city_stages_file,
+                    baci_trade,
+                    future_year=y,
+                )
                 dfs = []
                 for kdx, (rf, rc) in enumerate(
                     zip(reference_minerals, reference_mineral_colors)
@@ -512,6 +536,9 @@ def main():
                 else:
                     ax = plot_ccg_basemap(
                         ax,
+                        countries,
+                        lakes,
+                        ccg_country_codes,
                         include_continents=["Africa"],
                         include_countries=ccg_isos,
                         include_labels=True,
@@ -549,7 +576,7 @@ def main():
                 fig_nm = fig_nm + "_" + "_".join(list(set(scenario_names)))
                 fig_file = f"{rt}_processing_locations_maps_{fig_nm}.png"
             plt.tight_layout()
-            save_fig(os.path.join(figures, fig_file))
+            save_fig(os.path.join(output_dir, fig_file))
             plt.close()
 
 

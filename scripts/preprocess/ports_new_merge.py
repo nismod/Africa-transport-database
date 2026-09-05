@@ -1,6 +1,6 @@
-import os
 from math import asin, cos, radians, sin, sqrt
 
+import click
 import geopandas as gpd
 import igraph as ig
 import numpy as np
@@ -9,7 +9,7 @@ from haversine import haversine
 from shapely.geometry import LineString
 from tqdm import tqdm
 
-from aftdb.utils import load_config, network_od_path_estimations
+from aftdb.utils import network_od_path_estimations
 
 tqdm.pandas()
 
@@ -106,31 +106,6 @@ def match_ports(df1, df2, df1_id_column, df2_id_column, cutoff_distance):
     ]
 
 
-def add_iso_code(df, df_id_column, incoming_data_path):
-    # Insert countries' ISO CODE
-    africa_boundaries = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Africa_GIS Supporting Data",
-            "a. Africa_GIS Shapefiles",
-            "AFR_Political_ADM0_Boundaries.shp",
-            "AFR_Political_ADM0_Boundaries.shp",
-        )
-    )
-    africa_boundaries.rename(columns={"DsgAttr03": "iso3"}, inplace=True)
-    # Spatial join
-    m = gpd.sjoin(
-        df, africa_boundaries[["geometry", "iso3"]], how="left", predicate="within"
-    ).reset_index()
-    m = m[~m["iso3"].isna()]
-    un = df[~df[df_id_column].isin(m[df_id_column].values.tolist())]
-    un = gpd.sjoin_nearest(
-        un, africa_boundaries[["geometry", "iso3"]], how="left"
-    ).reset_index()
-    m = pd.concat([m, un], axis=0, ignore_index=True)
-    return m
-
-
 def get_continent(x):
     if x == "AF":
         return "Africa"
@@ -146,17 +121,28 @@ def get_continent(x):
         return x
 
 
-def main(config):
-
-    incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
-
+@click.command()
+@click.option("--global-network", required=True, type=click.Path(exists=True))
+@click.option("--ports-2025", required=True, type=click.Path(exists=True))
+@click.option("--port-calls", required=True, type=click.Path(exists=True))
+@click.option("--port-capacity", required=True, type=click.Path(exists=True))
+@click.option("--port-turnaround", required=True, type=click.Path(exists=True))
+@click.option("--output-global-network", required=True, type=click.Path())
+@click.option("--output-africa-network", required=True, type=click.Path())
+def main(
+    global_network,
+    ports_2025,
+    port_calls,
+    port_capacity,
+    port_turnaround,
+    output_global_network,
+    output_africa_network,
+):
+    """Merge the 2025 IMF PortWatch port statistics into the maritime network"""
     epsg_meters = 3395  # To convert geometries to measure distances in meters
     # 1. Read the previously created dataset
     df = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "global_maritime_network.gpkg"
-        ),
+        global_network,
         layer="nodes",
     )
     df["country"] = df.progress_apply(
@@ -169,43 +155,13 @@ def main(config):
     )
     df["continent"] = df["Continent_Code"].progress_apply(lambda x: get_continent(x))
     df_edges = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "global_maritime_network.gpkg"
-        ),
+        global_network,
         layer="edges",
     )
-    df_new = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Global port supply-chains",
-            "Ports Updated 2025",
-            "Ports.shp",
-        )
-    )
-    maritime_values_calls = pd.read_csv(
-        os.path.join(
-            incoming_data_path,
-            "Global port supply-chains",
-            "Ports Updated 2025",
-            "port_calls_average_2019-2024.csv",
-        )
-    )
-    maritime_values_cap = pd.read_csv(
-        os.path.join(
-            incoming_data_path,
-            "Global port supply-chains",
-            "Ports Updated 2025",
-            "port_capacity_called_average_2019-2024.csv",
-        )
-    )
-    maritime_values_turn = pd.read_csv(
-        os.path.join(
-            incoming_data_path,
-            "Global port supply-chains",
-            "Ports Updated 2025",
-            "port_turn_around_time_average_2019-2024.csv",
-        )
-    )
+    df_new = gpd.read_file(ports_2025)
+    maritime_values_calls = pd.read_csv(port_calls)
+    maritime_values_cap = pd.read_csv(port_capacity)
+    maritime_values_turn = pd.read_csv(port_turnaround)
 
     merged_gdf = df_new.merge(
         maritime_values_calls, on="portid", how="left", suffixes=("", "_csv")
@@ -368,11 +324,7 @@ def main(config):
         lambda x: modify_distance(x), axis=1
     )
     port_edges.to_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "global_maritime_network_PROVA_NEW1.gpkg",
-        ),
+        output_global_network,
         layer="edges",
         driver="GPKG",
     )
@@ -380,11 +332,7 @@ def main(config):
     nodes_merged["id"] = nodes_merged["id"].str.replace("maritime", "maritime_")
     nodes_merged["id"] = nodes_merged["id"].str.replace("port", "port_")
     nodes_merged.to_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "global_maritime_network_PROVA_NEW1.gpkg",
-        ),
+        output_global_network,
         layer="nodes",
         driver="GPKG",
     )
@@ -392,19 +340,11 @@ def main(config):
     # Get the ports for AFRICA
 
     port_edges = gpd.read_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "global_maritime_network_PROVA_NEW1.gpkg",
-        ),
+        output_global_network,
         layer="edges",
     )
     port_nodes = gpd.read_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "global_maritime_network_PROVA_NEW1.gpkg",
-        ),
+        output_global_network,
         layer="nodes",
     )
     global_edges = port_edges[["from_id", "to_id", "id", "distance"]]
@@ -514,20 +454,12 @@ def main(config):
     )
 
     africa_nodes.to_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_maritime_network_PROVA_NEW1.gpkg",
-        ),
+        output_africa_network,
         layer="nodes",
         driver="GPKG",
     )
     africa_edges.to_file(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_maritime_network_PROVA_NEW1.gpkg",
-        ),
+        output_africa_network,
         layer="edges",
         driver="GPKG",
     )
@@ -535,5 +467,4 @@ def main(config):
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

@@ -1,29 +1,26 @@
 import glob
 import os
 
+import click
 import geopandas as gpd
 import pandas as pd
 
-from aftdb.utils import load_config
 
-
-def main(config):
-    input_folder = config["paths"]["incoming_data"]
-    output_folder = config["paths"]["data"]
+@click.command()
+@click.option("--heigit-folder", required=True, type=click.Path(exists=True))
+@click.option("--output-merged", required=True, type=click.Path())
+def main(heigit_folder, output_merged):
+    """Merge the per-country HeiGIT road surface GeoPackages into one file"""
     # Folder containing your GPKG files
 
     # Match all GPKG files
     gpkg_files = glob.glob(
-        os.path.join(
-            input_folder,
-            "Randhawaetal_2025_Locations",
-            "heigit_*_roadsurface_lines.gpkg",
-        )
+        os.path.join(heigit_folder, "heigit_*_roadsurface_lines.gpkg")
     )
 
     if not gpkg_files:
         raise FileNotFoundError(
-            f"No files found in '{input_folder}' matching pattern 'heigit_*_roadsurface_lines.gpkg'."
+            f"No files found in '{heigit_folder}' matching 'heigit_*_roadsurface_lines.gpkg'."
         )
 
     merged_gdf = []
@@ -52,13 +49,8 @@ def main(config):
     # Save to GeoPackage
 
     # Write to a new GeoPackage
-    final_gdf.to_parquet(
-        os.path.join(
-            output_folder, "infrastructure", "validation_file_merge.geoparquet"
-        )
-    )
+    final_gdf.to_parquet(output_merged)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

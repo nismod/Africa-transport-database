@@ -1,12 +1,10 @@
 import math
-import os
 
+import click
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-
-from aftdb.utils import load_config
 
 tqdm.pandas()
 
@@ -35,24 +33,15 @@ def calculate_discounting_rate_factor(
     return np.array(discount_rates)
 
 
-def main(config):
-
-    incoming_data_path = config["paths"]["incoming_data"]
-
-    processed_data_path = config["paths"]["data"]
-
-    roads_edges = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_network.gpkg"
-        ),
-        layer="edges",
-        driver="GPKG",
-    )
-
-    costs_df = pd.read_excel(
-        os.path.join(incoming_data_path, "Roads_Costs.xlsx"),
-        sheet_name="Roads_Costs_equal",
-    )
+@click.command()
+@click.option("--road-network", required=True, type=click.Path(exists=True))
+@click.option("--costs", required=True, type=click.Path(exists=True))
+@click.option("--output-merged-costs", required=True, type=click.Path())
+@click.option("--output-corridor-costs", required=True, type=click.Path())
+def main(road_network, costs, output_merged_costs, output_corridor_costs):
+    """Estimate capital, O&M and investment costs per road corridor"""
+    roads_edges = gpd.read_file(road_network, layer="edges", driver="GPKG")
+    costs_df = pd.read_excel(costs, sheet_name="Roads_Costs_equal")
 
     roads_edges = roads_edges[~roads_edges["corridor_name"].isna()]
     roads_edges["length_km"] = roads_edges["length_m"] / 1000
@@ -134,9 +123,7 @@ def main(config):
         * (1.8)
     )
 
-    merged_data.to_csv(
-        os.path.join(processed_data_path, "infrastructure", "merged_costs_data.csv")
-    )
+    merged_data.to_csv(output_merged_costs)
 
     maintain_years = calculate_discounting_rate_factor(
         discount_rate=2,
@@ -173,13 +160,8 @@ def main(config):
         .reset_index()
     )
 
-    merged_data.to_csv(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_corridors_costs.csv"
-        )
-    )
+    merged_data.to_csv(output_corridor_costs)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

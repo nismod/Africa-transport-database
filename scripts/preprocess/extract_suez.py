@@ -1,47 +1,35 @@
 # Code to extract the suez canal navigation route
-import os
 import re
 
+import click
 import geopandas as gpd
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.utils import (
-    components,
-    create_network_from_nodes_and_edges,
-    load_config,
-)
+from aftdb.utils import components, create_network_from_nodes_and_edges
 
 tqdm.pandas()
 
 
-def main(config):
-    incoming_data_path = config["paths"]["incoming_data"]
+@click.command()
+@click.option("--waterways", required=True, type=click.Path(exists=True))
+@click.option("--suez-ids", required=True, type=click.Path(exists=True))
+@click.option("--global-ports", required=True, type=click.Path(exists=True))
+@click.option("--output-network", required=True, type=click.Path())
+def main(waterways, suez_ids, global_ports, output_network):
+    """Turn the Suez Canal OpenStreetMap waterways into a topological network"""
     # Read the OSM data and the suez canal IDs
-    waterways = gpd.read_file(
-        os.path.join(
-            incoming_data_path, "egypt-latest-free.shp", "gis_osm_waterways_free_1.shp"
-        )
-    )
-    waterways["osm_id"] = waterways["osm_id"].astype(int)
-    suez_ids = pd.read_csv(
-        os.path.join(incoming_data_path, "egypt-latest-free.shp", "suez_canal_ids.csv")
-    )
+    waterways_df = gpd.read_file(waterways)
+    waterways_df["osm_id"] = waterways_df["osm_id"].astype(int)
+    suez_ids = pd.read_csv(suez_ids)
     suez_ids = [int(n) for n in suez_ids["osm_id"].values.tolist()]
-    suez_canal = waterways[waterways["osm_id"].isin(suez_ids)]
+    suez_canal = waterways_df[waterways_df["osm_id"].isin(suez_ids)]
     # Convert to a topological network
     network = create_network_from_nodes_and_edges(None, suez_canal, "water")
     edges, nodes = components(network.edges, network.nodes, "node_id")
 
     # Rename nodes to match global nodes layer
-    df_global_ports = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Global port supply-chains",
-            "Network",
-            "nodes_maritime.gpkg",
-        )
-    )
+    df_global_ports = gpd.read_file(global_ports)
 
     nodes["infra"] = "maritime"
     prt = df_global_ports[df_global_ports["infra"] == "maritime"]
@@ -71,22 +59,13 @@ def main(config):
     edges["from_infra"] = "maritime"
     edges["to_infra"] = "maritime"
     # Write the Suez Canal routes to a GPKG
-    gpd.GeoDataFrame(edges, geometry="geometry", crs=waterways.crs).to_file(
-        os.path.join(
-            incoming_data_path, "egypt-latest-free.shp", "suez_canal_network.gpkg"
-        ),
-        layer="edges",
-        driver="GPKG",
+    gpd.GeoDataFrame(edges, geometry="geometry", crs=waterways_df.crs).to_file(
+        output_network, layer="edges", driver="GPKG"
     )
-    gpd.GeoDataFrame(nodes, geometry="geometry", crs=waterways.crs).to_file(
-        os.path.join(
-            incoming_data_path, "egypt-latest-free.shp", "suez_canal_network.gpkg"
-        ),
-        layer="nodes",
-        driver="GPKG",
+    gpd.GeoDataFrame(nodes, geometry="geometry", crs=waterways_df.crs).to_file(
+        output_network, layer="nodes", driver="GPKG"
     )
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

@@ -1,32 +1,25 @@
-import os
-
+import click
 import geopandas as gpd
 from tqdm import tqdm
-
-from aftdb.utils import load_config
 
 tqdm.pandas()
 
 
-def main(config):
-
-    incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
-
-    df_airports_ourairports = gpd.read_file(
-        os.path.join(incoming_data_path, "airports", "africa_airports_ourairport.gpkg")
-    )
+@click.command()
+@click.option("--ourairports", required=True, type=click.Path(exists=True))
+@click.option("--airport-network", required=True, type=click.Path(exists=True))
+@click.option("--output-ourairports", required=True, type=click.Path())
+@click.option("--output-network", required=True, type=click.Path())
+def main(ourairports, airport_network, output_ourairports, output_network):
+    """Filter the OurAirports layer to the airports already in the network"""
+    df_airports_ourairports = gpd.read_file(ourairports)
 
     df_airports_nodes = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_airport_network.gpkg"
-        ),
+        airport_network,
         layer="nodes",
     )
     df_airports_edges = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_airport_network.gpkg"
-        ),
+        airport_network,
         layer="edges",
     )
 
@@ -48,29 +41,22 @@ def main(config):
     print(df_airports_ourairports_filtered)
 
     df_airports_ourairports_filtered.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_airport_ourairport_rev.gpkg"
-        ),
+        output_ourairports,
         layer="nodes",
         driver="GPKG",
     )
 
     df_airports_nodes.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_airport_network_rev.gpkg"
-        ),
+        output_network,
         layer="nodes",
         driver="GPKG",
     )
     df_airports_edges.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_airport_network_rev.gpkg"
-        ),
+        output_network,
         layer="edges",
         driver="GPKG",
     )
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

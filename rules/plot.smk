@@ -21,11 +21,16 @@ rule plot_africa_basemap:
         script=f"{PLOT}/africa_maps.py",
         countries=BASEMAP_COUNTRIES,
         lakes=BASEMAP_LAKES,
+        ccg_countries=CCG_COUNTRY_CODES,
     output:
         figure=f"{FIGURES}/africa_basemap.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --countries "{input.countries}" \
+            --lakes "{input.lakes}" \
+            --ccg-countries "{input.ccg_countries}" \
+            --output-figure "{output.figure}"
         """
 
 
@@ -40,7 +45,11 @@ rule plot_airports:
         figure=f"{FIGURES}/airports.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --airports "{input.airports}" \
+            --countries "{input.countries}" \
+            --lakes "{input.lakes}" \
+            --output-figure "{output.figure}"
         """
 
 
@@ -52,11 +61,18 @@ rule plot_ports_and_iww:
         iww=f"{DATA}/infrastructure/africa_iww_network.gpkg",
         countries=BASEMAP_COUNTRIES,
         lakes=BASEMAP_LAKES,
+        ccg_countries=CCG_COUNTRY_CODES,
     output:
         figure=f"{FIGURES}/IWW_and_ports.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --maritime "{input.maritime}" \
+            --iww "{input.iww}" \
+            --countries "{input.countries}" \
+            --lakes "{input.lakes}" \
+            --ccg-countries "{input.ccg_countries}" \
+            --output-figure "{output.figure}"
         """
 
 
@@ -72,7 +88,12 @@ rule plot_ports_bubble:
         figure=f"{FIGURES}/ports_with_edges_last.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --maritime "{input.maritime}" \
+            --iww "{input.iww}" \
+            --countries "{input.countries}" \
+            --lakes "{input.lakes}" \
+            --output-figure "{output.figure}"
         """
 
 
@@ -87,7 +108,11 @@ rule plot_rails_gauge:
         figure=f"{FIGURES}/rail_test_gauge.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --railways "{input.railways}" \
+            --countries "{input.countries}" \
+            --lakes "{input.lakes}" \
+            --output-figure "{output.figure}"
         """
 
 
@@ -102,7 +127,11 @@ rule plot_rails_facilities:
         figure=f"{FIGURES}/rail_test_facility.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --railways "{input.railways}" \
+            --countries "{input.countries}" \
+            --lakes "{input.lakes}" \
+            --output-figure "{output.figure}"
         """
 
 
@@ -117,7 +146,11 @@ rule plot_roads_typology:
         figure=f"{FIGURES}/roads_typology2_LAST.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --road-edges "{input.road_edges}" \
+            --countries "{input.countries}" \
+            --lakes "{input.lakes}" \
+            --output-figure "{output.figure}"
         """
 
 
@@ -133,7 +166,12 @@ rule plot_roads_corridors:
         figure=f"{FIGURES}/roads_corridors_LAST.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --road-edges "{input.road_edges}" \
+            --countries "{input.countries}" \
+            --lakes "{input.lakes}" \
+            --output-legend "{output.legend}" \
+            --output-figure "{output.figure}"
         """
 
 
@@ -151,7 +189,9 @@ rule plot_rail_histogram:
         figure=f"{FIGURES}/rail_hist_cap_withgrid.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --railways "{input.railways}" \
+            --output-figure "{output.figure}"
         """
 
 
@@ -164,7 +204,9 @@ rule plot_roads_histogram:
         figure=f"{FIGURES}/roads_hist_cap2_grid.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --road-edges "{input.road_edges}" \
+            --output-figure "{output.figure}"
         """
 
 
@@ -213,28 +255,51 @@ rule plot_location_maps:
                 "2040_mid_region",
             ],
         ),
+    params:
+        locations_dir=f"{RESULTS}/optimised_processing_locations",
+        output_dir=f"{FIGURES}/regional_figures/mine_and_processing_locations",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --ccg-countries "{input.ccg_countries}" \
+            --stage-mapping "{input.stage_mapping}" \
+            --aggregated-stages "{input.aggregated_stages}" \
+            --usage-factors "{input.usage_factors}" \
+            --metal-content "{input.metal_content}" \
+            --baci-countries "{input.baci_countries}" \
+            --mine-city-stages "{input.mine_city_stages}" \
+            --baci-trade "{input.baci_trade}" \
+            --countries "{input.countries}" \
+            --lakes "{input.lakes}" \
+            --locations-dir "{params.locations_dir}" \
+            --output-dir "{params.output_dir}"
         """
 
 
 rule plot_mine_ownership_maps:
-    """Global maps of mine ownership shares by country.
+    """Global maps of mine output and ownership shares by country.
+
+    The script names its own output files, so the directory is passed as a
+    parameter and the individual figures are declared as outputs.
     """
     input:
         script=f"{PLOT}/mine_ownership_maps.py",
         countries=BASEMAP_COUNTRIES,
-        lakes=BASEMAP_LAKES,
         centroids=f"{DATA}/admin_boundaries/centroids/countries_iso3_code.csv",
         ownership=f"{RESULTS}/mine_ownership/df_maps_2022.csv",
     output:
         basemap=f"{FIGURES}/mine_ownership/global_basemap.png",
         totals=f"{FIGURES}/mine_ownership/mine_totals.svg",
         by_ownership=f"{FIGURES}/mine_ownership/country_totals_by_ownership.svg",
+    params:
+        output_dir=f"{FIGURES}/mine_ownership",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --countries "{input.countries}" \
+            --centroids "{input.centroids}" \
+            --ownership "{input.ownership}" \
+            --output-dir "{params.output_dir}"
         """
 
 
@@ -251,7 +316,12 @@ rule maps_graphs:
         figure=f"{FIGURES}/roads_test.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --ccg-countries "{input.ccg_countries}" \
+            --main-roads "{input.main_roads}" \
+            --countries "{input.countries}" \
+            --lakes "{input.lakes}" \
+            --output-figure "{output.figure}"
         """
 
 
@@ -263,11 +333,17 @@ rule maps_graphs_transport:
         road_edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
         countries=BASEMAP_COUNTRIES,
         lakes=BASEMAP_LAKES,
+        ccg_countries=CCG_COUNTRY_CODES,
     output:
         figure=f"{FIGURES}/roads_test.png",
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --road-edges "{input.road_edges}" \
+            --countries "{input.countries}" \
+            --lakes "{input.lakes}" \
+            --ccg-countries "{input.ccg_countries}" \
+            --output-figure "{output.figure}"
         """
 
 
@@ -290,9 +366,19 @@ rule maps_global_maps:
         lakes=BASEMAP_LAKES,
     output:
         figure=f"{FIGURES}/ccg_copper_total_africa_node_edge_flows_2022.png",
+    params:
+        output_dir=FIGURES,
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --ccg-countries "{input.ccg_countries}" \
+            --edge-flows "{input.edge_flows}" \
+            --node-flows "{input.node_flows}" \
+            --od-ports "{input.od_ports}" \
+            --port-commodities "{input.port_commodities}" \
+            --countries "{input.countries}" \
+            --lakes "{input.lakes}" \
+            --output-dir "{params.output_dir}"
         """
 
 
@@ -318,7 +404,19 @@ rule maps_global_maps_transport:
         lakes=BASEMAP_LAKES,
     output:
         railway_status=f"{FIGURES}/railway_status.png",
+    params:
+        output_dir=FIGURES,
     shell:
         """
-        python {input.script}
+        python "{input.script}" \
+            --ccg-countries "{input.ccg_countries}" \
+            --railways "{input.railways}" \
+            --edge-flows "{input.edge_flows}" \
+            --node-flows "{input.node_flows}" \
+            --od-ports "{input.od_ports}" \
+            --port-commodities "{input.port_commodities}" \
+            --countries "{input.countries}" \
+            --lakes "{input.lakes}" \
+            --output-railway-status "{output.railway_status}" \
+            --output-dir "{params.output_dir}"
         """

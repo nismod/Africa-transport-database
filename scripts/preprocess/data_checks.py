@@ -1,23 +1,19 @@
-import os
-
+import click
 import geopandas as gpd
 from tqdm import tqdm
 
-from aftdb.utils import load_config
-
 tqdm.pandas()
 
-config = load_config()
-incoming_data_path = config["paths"]["incoming_data"]
-processed_data_path = config["paths"]["data"]
 
+@click.command()
+@click.option("--multimodal", required=True, type=click.Path())
+def main(multimodal):
+    """Reduce the multi-modal edge layer to the published set of columns
 
-def main():
-
-    processed_data_path = config["paths"]["data"]
-
+    The GeoPackage is read and written back in place.
+    """
     multi_df = gpd.read_file(
-        os.path.join(processed_data_path, "infrastructure", "africa_multimodal.gpkg"),
+        multimodal,
         layer="edges",
     )
 
@@ -37,7 +33,7 @@ def main():
     ]
 
     multi_df.to_file(
-        os.path.join(processed_data_path, "infrastructure", "africa_multimodal.gpkg"),
+        multimodal,
         layer="edges",
         driver="GPKG",
     )

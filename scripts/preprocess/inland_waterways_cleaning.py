@@ -1,6 +1,6 @@
-# (1) Merge three datasets; (2)Add ISO3 (4) extraxt non_intersected
-import os
+import click
 
+# (1) Merge three datasets; (2)Add ISO3 (4) extraxt non_intersected
 import geopandas as gpd
 import igraph as ig
 import numpy as np
@@ -12,17 +12,20 @@ from aftdb.utils import (
     add_iso_code,
     components,
     create_network_from_nodes_and_edges,
-    load_config,
     network_od_path_estimations,
 )
 
 tqdm.pandas()
 
 
-def main(config):
-    incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
-
+@click.command()
+@click.option("--iww-ports", required=True, type=click.Path(exists=True))
+@click.option("--congo-rivers", required=True, type=click.Path(exists=True))
+@click.option("--south-sudan", required=True, type=click.Path(exists=True))
+@click.option("--africa-adm0", required=True, type=click.Path(exists=True))
+@click.option("--output-network", required=True, type=click.Path())
+def main(iww_ports, congo_rivers, south_sudan, africa_adm0, output_network):
+    """Build the inland waterway network from IWW ports, lake routes and rivers"""
     epsg_meters = 3395  # To convert geometries to measure distances in meters
 
     # IWW_ports: IWW ports data from different datasets were taken and combined,
@@ -31,7 +34,7 @@ def main(config):
     # IWW ports
 
     df_ports = pd.read_excel(
-        os.path.join(incoming_data_path, "IWW_ports", "africa_IWW_ports.xlsx"),
+        iww_ports,
         sheet_name="selected_ports",
     )
     df_ports["geometry"] = gpd.points_from_xy(df_ports["lon"], df_ports["lat"])
@@ -42,7 +45,7 @@ def main(config):
     # known lake routes connecting ports - merge ports and routing files
 
     df_lake_routes = pd.read_excel(
-        os.path.join(incoming_data_path, "IWW_ports", "africa_IWW_ports.xlsx"),
+        iww_ports,
         sheet_name="known_connections",
     )
 
@@ -71,9 +74,7 @@ def main(config):
 
     # Add lines for Congo ports based on the routing along the rivers
 
-    df_congo_rivers = gpd.read_file(
-        os.path.join(incoming_data_path, "IWW_ports", "edges_port_IWW_af.gpkg")
-    )
+    df_congo_rivers = gpd.read_file(congo_rivers)
 
     df_congo_ports = df_ports[df_ports["iso3"].isin(["CAF", "COD", "COG"])]
     lake_ids = list(
@@ -84,9 +85,7 @@ def main(config):
     )
     df_congo_ports = df_congo_ports[~df_congo_ports["name"].isin(lake_ids)]
 
-    df_south_sudan = gpd.read_file(
-        os.path.join(incoming_data_path, "IWW_ports", "hotosm_ssd_waterways.gpkg")
-    )
+    df_south_sudan = gpd.read_file(south_sudan)
     df_south_sudan = df_south_sudan.loc[
         df_south_sudan.geometry.geometry.type == "LineString"
     ]
@@ -164,9 +163,7 @@ def main(config):
     # Adding missing iso3 codes
 
     missing_isos = africa_nodes[africa_nodes["iso3"].isna()]
-    missing_isos = add_iso_code(
-        missing_isos, "node_id", incoming_data_path, epsg=epsg_meters
-    )
+    missing_isos = add_iso_code(missing_isos, "node_id", africa_adm0, epsg=epsg_meters)
     for del_col in ["index", "index_right", "lat", "lon"]:
         if del_col in missing_isos.columns.values.tolist():
             missing_isos.drop(del_col, axis=1, inplace=True)
@@ -218,17 +215,16 @@ def main(config):
     africa_edges = africa_edges.to_crs(epsg=4326)
     africa_nodes = africa_nodes.to_crs(epsg=4326)
     africa_nodes.to_file(
-        os.path.join(processed_data_path, "infrastructure", "africa_iww_network.gpkg"),
+        output_network,
         layer="nodes",
         driver="GPKG",
     )
     africa_edges.to_file(
-        os.path.join(processed_data_path, "infrastructure", "africa_iww_network.gpkg"),
+        output_network,
         layer="edges",
         driver="GPKG",
     )
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

@@ -1,8 +1,8 @@
 # (1) Merge three datasets; (2)Add ISO3 (4) extract non_intersected
-import os
 import re
 from math import asin, cos, radians, sin, sqrt
 
+import click
 import geopandas as gpd
 import igraph as ig
 import numpy as np
@@ -11,9 +11,9 @@ from haversine import haversine
 from tqdm import tqdm
 
 from aftdb.utils import (
+    add_iso_code,
     add_lines,
     ckdnearest,
-    load_config,
     network_od_path_estimations,
 )
 
@@ -64,55 +64,31 @@ def match_ports(df1, df2, df1_id_column, df2_id_column, cutoff_distance):
     return matches, df1[~(df1[df1_id_column].isin(matched_ids))]
 
 
-def add_iso_code(df, df_id_column, incoming_data_path):
-    # Insert countries' ISO CODE
-    africa_boundaries = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Africa_GIS Supporting Data",
-            "a. Africa_GIS Shapefiles",
-            "AFR_Political_ADM0_Boundaries.shp",
-            "AFR_Political_ADM0_Boundaries.shp",
-        )
-    )
-    africa_boundaries.rename(columns={"DsgAttr03": "iso3"}, inplace=True)
-    # Spatial join
-    m = gpd.sjoin(
-        df, africa_boundaries[["geometry", "iso3"]], how="left", predicate="within"
-    ).reset_index()
-    m = m[~m["iso3"].isna()]
-    un = df[~df[df_id_column].isin(m[df_id_column].values.tolist())]
-    un = gpd.sjoin_nearest(
-        un, africa_boundaries[["geometry", "iso3"]], how="left"
-    ).reset_index()
-    m = pd.concat([m, un], axis=0, ignore_index=True)
-    return m
-
-
-def main(config):
-    incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
-
+@click.command()
+@click.option("--global-ports", required=True, type=click.Path(exists=True))
+@click.option("--usgs-ports", required=True, type=click.Path(exists=True))
+@click.option("--corridor-db", required=True, type=click.Path(exists=True))
+@click.option("--africa-adm0", required=True, type=click.Path(exists=True))
+@click.option("--maritime-edges", required=True, type=click.Path(exists=True))
+@click.option("--suez-network", required=True, type=click.Path(exists=True))
+@click.option("--output-global-network", required=True, type=click.Path())
+@click.option("--output-africa-network", required=True, type=click.Path())
+def main(
+    global_ports,
+    usgs_ports,
+    corridor_db,
+    africa_adm0,
+    maritime_edges,
+    suez_network,
+    output_global_network,
+    output_africa_network,
+):
+    """Match USGS, corridor and global port datasets into the maritime network"""
     epsg_meters = 3395  # To convert geometries to measure distances in meters
     cutoff_distance = 6600  # We assume ports within 6.6km are the same
     # 1. Read USGS data, Global ports dataset, African development corridor datasets
-    df_global_ports = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Global port supply-chains",
-            "Network",
-            "nodes_maritime.gpkg",
-        )
-    )
-    df_ports_shp = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Africa_GIS Supporting Data",
-            "a. Africa_GIS Shapefiles",
-            "AFR_Infra_Transport_Ports.shp",
-            "AFR_Infra_Transport_Ports.shp",
-        )
-    )
+    df_global_ports = gpd.read_file(global_ports)
+    df_ports_shp = gpd.read_file(usgs_ports)
     # This contains geometry is wrong, which we will have to convert to Point from Latitude and Longitude values
     df_ports_shp["geom"] = gpd.points_from_xy(
         df_ports_shp["Longitude"], df_ports_shp["Latitude"]
@@ -122,11 +98,7 @@ def main(config):
     df_ports_shp = gpd.GeoDataFrame(df_ports_shp, geometry="geometry", crs="EPSG:4326")
 
     df_corridor = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "africa_corridor_developments",
-            "AfricanDevelopmentCorridorDatabase2022.gpkg",
-        ),
+        corridor_db,
         layer="point",
     )
 
@@ -175,10 +147,8 @@ def main(config):
     new_ports_corridor = new_ports_corridor.to_crs(epsg=4326)
     new_ports_usgs = new_ports_usgs.to_crs(epsg=4326)
 
-    new_ports_corridor = add_iso_code(
-        new_ports_corridor, "Project_code", incoming_data_path
-    )
-    new_ports_usgs = add_iso_code(new_ports_usgs, "FeatureUID", incoming_data_path)
+    new_ports_corridor = add_iso_code(new_ports_corridor, "Project_code", africa_adm0)
+    new_ports_usgs = add_iso_code(new_ports_usgs, "FeatureUID", africa_adm0)
     new_ports_corridor["name"] = new_ports_corridor.progress_apply(
         lambda x: f"{x['Project_name']}_{x['Country']}", axis=1
     )
@@ -203,9 +173,7 @@ def main(config):
 
     new_ports = gpd.GeoDataFrame(new_ports, geometry="geometry", crs="EPSG:4326")
     # Get the maximum number of the port edges ID because we want to create new edges in the sequence
-    port_edges = gpd.read_file(
-        os.path.join(incoming_data_path, "ports", "edges_maritime_corrected.gpkg")
-    )
+    port_edges = gpd.read_file(maritime_edges)
     # Find nearest node in pn to every point in non_intersectedcd
     pn = df_global_ports[df_global_ports["infra"] != "port"]
     pn.rename(columns={"id": "to_id"}, inplace=True)
@@ -256,12 +224,8 @@ def main(config):
         )
     ]
     # Add the suez canal
-    suez_canal_nodes = gpd.read_file(
-        os.path.join(incoming_data_path, "suez_canal_network.gpkg"), layer="nodes"
-    )
-    suez_canal_edges = gpd.read_file(
-        os.path.join(incoming_data_path, "suez_canal_network.gpkg"), layer="edges"
-    )
+    suez_canal_nodes = gpd.read_file(suez_network, layer="nodes")
+    suez_canal_edges = gpd.read_file(suez_network, layer="edges")
     nodes = suez_canal_nodes.copy()
     nodes.rename(columns={"node_id": "to_id", "infra": "to_infra"}, inplace=True)
 
@@ -320,9 +284,7 @@ def main(config):
         lambda x: modify_distance(x), axis=1
     )
     port_edges.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "global_maritime_network.gpkg"
-        ),
+        output_global_network,
         layer="edges",
         driver="GPKG",
     )
@@ -338,24 +300,18 @@ def main(config):
         crs="EPSG:4326",
     )
     port_nodes.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "global_maritime_network.gpkg"
-        ),
+        output_global_network,
         layer="nodes",
         driver="GPKG",
     )
 
     # Get the ports for Africa
     port_edges = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "global_maritime_network.gpkg"
-        ),
+        output_global_network,
         layer="edges",
     )
     port_nodes = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "global_maritime_network.gpkg"
-        ),
+        output_global_network,
         layer="nodes",
     )
     global_edges = port_edges[["from_id", "to_id", "id", "distance"]]
@@ -398,24 +354,18 @@ def main(config):
     africa_nodes = port_nodes[port_nodes["id"].isin(all_nodes)]
 
     africa_nodes.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_maritime_network.gpkg"
-        ),
+        output_africa_network,
         layer="nodes",
         driver="GPKG",
     )
     africa_edges.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_maritime_network.gpkg"
-        ),
+        output_africa_network,
         layer="edges",
         driver="GPKG",
     )
 
     port_edges = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "global_maritime_network.gpkg"
-        ),
+        output_global_network,
         layer="edges",
     )
     port_edges["from_infra"] = port_edges.progress_apply(
@@ -441,19 +391,14 @@ def main(config):
         crs="EPSG:4326",
     )
     port_edges.drop("duplicates", axis=1, inplace=True)
-    port_edges.to_csv("test2.csv")
     port_edges.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "global_maritime_network.gpkg"
-        ),
+        output_global_network,
         layer="edges",
         driver="GPKG",
     )
 
     port_edges = gpd.read_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_maritime_network.gpkg"
-        ),
+        output_africa_network,
         layer="edges",
     )
     port_edges["from_infra"] = port_edges.progress_apply(
@@ -463,14 +408,11 @@ def main(config):
         lambda x: re.sub("[^a-zA-Z]+", "", x["to_id"]), axis=1
     )
     port_edges.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_maritime_network.gpkg"
-        ),
+        output_africa_network,
         layer="edges",
         driver="GPKG",
     )
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

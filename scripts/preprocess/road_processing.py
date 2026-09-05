@@ -1,10 +1,7 @@
-import os
-
+import click
 import geopandas as gpd
 import pandas as pd
 from tqdm import tqdm
-
-from aftdb.utils import load_config
 
 tqdm.pandas()
 
@@ -62,14 +59,13 @@ def get_asset_type(x):
         return "road_unpaved"
 
 
-def main(config):
-    processed_data_path = config["paths"]["data"]
-
-    edges = gpd.read_parquet(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_edges_FINAL.geoparquet"
-        )
-    )
+@click.command()
+@click.option("--edges", required=True, type=click.Path(exists=True))
+@click.option("--output-edges", required=True, type=click.Path())
+@click.option("--output-network", required=True, type=click.Path())
+def main(edges, output_edges, output_network):
+    """Infer paved status, surface material and asset type for road edges"""
+    edges = gpd.read_parquet(edges)
 
     # infer paved status and material type from 'surface' column
     edges["paved_material"] = edges.apply(lambda x: get_road_condition(x), axis=1)
@@ -80,22 +76,9 @@ def main(config):
     edges.drop(["paved_material"], axis=1, inplace=True)
     edges["asset_type"] = edges.apply(lambda x: get_asset_type(x), axis=1)
 
-    edges.to_parquet(
-        os.path.join(
-            processed_data_path,
-            "infrastructure",
-            "africa_roads_edges_FINAL_last.geoparquet",
-        )
-    )
-    edges.to_file(
-        os.path.join(
-            processed_data_path, "infrastructure", "africa_roads_network.gpkg"
-        ),
-        layer="edges",
-        driver="GPKG",
-    )
+    edges.to_parquet(output_edges)
+    edges.to_file(output_network, layer="edges", driver="GPKG")
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()
