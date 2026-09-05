@@ -246,17 +246,21 @@ they bite:
    published network out of the trg-rail repository at a pinned commit, which
    is the right thing to do today. Porting that repository's build so the
    workflow could rebuild the network itself is scoped in
-   ``spikes/rail_network_port/README.md``, with a working prototype of its
-   first stage. In short: SedonaDB and igraph can replace PostGIS and
-   pgRouting, and the ported first stage reproduces every row count the
-   original records, in 14 seconds against 9 minutes on DuckDB.
-   But the 24 country scripts that hold the research are a working notebook
-   rather than a runnable build - 17 of them open with a deliberate syntax
-   error to stop anyone running the whole file - and they are keyed on 4,503
-   feature ids that are row numbers from a 2021 snkit run. So replaying the
-   build on its own inputs is feasible; rebuilding from a current OSM extract
-   needs those edits re-keyed to OSM ids first, and is a separate project.
-   Until either is done, refreshing the network means bumping
+   ``spikes/rail_network_port/README.md``, with both of its stages written
+   and checked against the original. SedonaDB, shapely and igraph replace
+   PostGIS and pgRouting: the ported first stage reproduces every row count
+   the original records, in 14 seconds against 9 minutes on DuckDB, and
+   replaying Gabon's edits reproduces its published network exactly - all
+   three lines, on edge count and length. What is left is transcription. The
+   24 country scripts that hold the research are a working notebook rather
+   than a runnable build - 17 of them open with a deliberate syntax error to
+   stop anyone running the whole file - and the roughly 3,200 real edits in
+   them have to be read out and written down as data, which Gabon shows takes
+   19 records for 211 lines of SQL. They are also keyed on 4,503 feature ids
+   that are row numbers from a 2021 snkit run, so replaying the build on its
+   own inputs is feasible while rebuilding from a current OSM extract needs
+   those edits re-keyed to OSM ids first, and is a separate project. Until
+   either is done, refreshing the network means bumping
    ``AFRICA_RAIL_COMMIT``.
 
 12. Minerals rules. ``maps_global_maps``, ``maps_global_maps_transport``,

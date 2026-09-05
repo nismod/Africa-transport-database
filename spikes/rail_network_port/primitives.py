@@ -1,23 +1,34 @@
 """The primitives the trg-rail country SQL is built from, without PostGIS.
 
 The upstream build runs in PostgreSQL/PostGIS with pgRouting. Everything it
-uses has an equivalent here in DuckDB's spatial extension plus igraph:
+uses has an equivalent here, in three pieces rather than one:
 
-    pgr_dijkstra(...)             route_edges()      igraph shortest path
-    hvt.rn_split_edge(...)        split_edge()       ST_LineLocatePoint
-                                                     + ST_LineSubstring
-    hvt.rn_copy_node(...)         copy_node_to_edge()  ST_ClosestPoint, then
-                                                       the same split
-    hvt.rn_insert_edge(...)       insert_edge()      ST_MakeLine
-    hvt.rn_change_source(...)     change_source()    rebuilt vertex list
+    pgr_dijkstra(...)             route_edges()        igraph shortest path
+    hvt.rn_split_edge(...)        split_edge()         shapely substring
+    hvt.rn_copy_node(...)         copy_node_to_edge()  shapely project and
+                                                       interpolate, then split
+    hvt.rn_insert_edge(...)       insert_edge()        shapely LineString
+    hvt.rn_change_source(...)     change_source()      rebuilt vertex list
     hvt.rn_change_target(...)     change_target()
 
-Neither DuckDB spatial 1.5 nor SedonaDB 0.4 has ST_Split, ST_AddPoint,
-ST_LineLocateN or ST_SetPoint, which is what the four substitutions above are
-for. Both have everything the substitutions need, so the SQL here is portable;
-this module is written against DuckDB because it holds tables in a file, and
-``python primitives.py`` checks each substitution against a worked example and
-then runs the same expressions on SedonaDB to show they agree.
+The table lives in DuckDB and the set-based work is SQL, but the geometry
+surgery is done in shapely, one feature at a time, because neither SQL engine
+can be trusted with it:
+
+- Neither DuckDB spatial 1.5 nor SedonaDB 0.4 has ST_Split, ST_AddPoint,
+  ST_LineLocateN or ST_SetPoint. ST_LineLocatePoint with ST_LineSubstring
+  substitutes for the first three.
+- DuckDB's ST_LineSubstring then returns a geometry beginning ``-nan -nan``
+  when the line starts with a repeated vertex - which its own previous
+  substring produced. Splits chain in this build (an edge split at a station
+  is split again for the next one), so that is fatal, and it fails as a NaN
+  length rather than an error. SedonaDB and shapely both handle it, and agree.
+- SedonaDB registers ST_ClosestPoint but has no kernel for two geometries.
+
+Splits and copies are inherently row-at-a-time - 1,016 of them in the corpus -
+so shapely is the natural tool for them anyway, and it keeps this module
+working on either engine's tables. Run ``python primitives.py`` to check each
+operation against a worked example.
 
 Derived from the build in trg-rail/africa_rail_network, adapted with the
 author's permission. This is spike code - see README.md. It is not part of the
@@ -26,14 +37,19 @@ workflow.
 
 import duckdb
 import igraph
+import shapely
+from pyproj import Geod
+from shapely.ops import substring
 
-# DuckDB's ST_Length_Spheroid takes its coordinates as (latitude, longitude),
-# the opposite way round from PostGIS ST_LengthSpheroid. Feeding it lon/lat
-# silently returns the wrong length - 15% out at South African latitudes - so
-# every length here flips first. That matches PostGIS on 95% of edges to the
-# centimetre; ``prepare_network.measure_lengths`` uses pyproj instead, which
-# manages 99.93%.
-LENGTH_M = "round(st_length_spheroid(st_flipcoordinates({geom}))::numeric, 2)"
+# Lengths are measured the way prepare_network.py measures them, on the WGS84
+# ellipsoid with pyproj - neither engine's own spheroid length matches the
+# PostGIS numbers the published network carries.
+GEOD = Geod(ellps="WGS84")
+
+
+def length_m(geometry):
+    """Length in metres on the WGS84 ellipsoid, rounded as upstream rounds."""
+    return round(GEOD.geometry_length(geometry), 2)
 
 
 def connect(database=":memory:"):
@@ -51,28 +67,29 @@ def connect(database=":memory:"):
 def split_edge(con, edge_oid, node_oid, edges="edges", nodes="nodes"):
     """Split one edge at a node lying on it, as ``hvt.rn_split_edge`` does.
 
-    PostGIS splits with ST_Split, which DuckDB has no equivalent for. Locating
-    the node as a fraction along the line and cutting with ST_LineSubstring
-    gives the same two parts, and inserts the vertex at the cut for free -
-    which is what ``rn_copy_node`` needed ST_AddPoint and ST_LineLocateN for.
-
-    Returns the two new oids, numbered as upstream does: the original oid with
-    a row number appended.
+    Returns the two new oids, numbered as upstream numbers them: the original
+    oid with a row number appended. Ids further down a country's edit list
+    refer to these, so the numbering has to match.
     """
-    fraction, source, target = con.execute(
+    line_wkb, source, target, point_wkb = con.execute(
         f"""
-        select st_linelocatepoint(e.geom, n.geom), e.source, e.target
+        select st_aswkb(e.geom), e.source, e.target, st_aswkb(n.geom)
         from {edges} e, {nodes} n
         where e.oid = ? and n.oid = ?
         """,
         [edge_oid, node_oid],
     ).fetchone()
 
-    # The parts are cut straight out of the stored geometry, so nothing has to
-    # travel through Python as WKB and back.
+    line = shapely.from_wkb(bytes(line_wkb))
+    fraction = line.project(shapely.from_wkb(bytes(point_wkb)), normalized=True)
+    parts = [
+        substring(line, 0, fraction, normalized=True),
+        substring(line, fraction, 1, normalized=True),
+    ]
+
     new_oids = [int(f"{edge_oid}{row}") for row in (1, 2)]
-    cuts = [(0.0, fraction, source, node_oid), (fraction, 1.0, node_oid, target)]
-    for new_oid, (start, stop, new_source, new_target) in zip(new_oids, cuts):
+    ends = [(source, node_oid), (node_oid, target)]
+    for new_oid, part, (new_source, new_target) in zip(new_oids, parts, ends):
         con.execute(
             f"""
             insert into {edges} by name
@@ -80,11 +97,18 @@ def split_edge(con, edge_oid, node_oid, edges="edges", nodes="nodes"):
                 ? as oid,
                 ? as source,
                 ? as target,
-                {LENGTH_M.format(geom="st_linesubstring(geom, ?, ?)")} as length,
-                st_linesubstring(geom, ?, ?) as geom
+                ? as length,
+                st_geomfromwkb(?) as geom
             from {edges} where oid = ?
             """,
-            [new_oid, new_source, new_target, start, stop, start, stop, edge_oid],
+            [
+                new_oid,
+                new_source,
+                new_target,
+                length_m(part),
+                shapely.to_wkb(part),
+                edge_oid,
+            ],
         )
     con.execute(f"delete from {edges} where oid = ?", [edge_oid])
     return new_oids
@@ -97,54 +121,75 @@ def copy_node_to_edge(con, node_oid, edge_oid, edges="edges", nodes="nodes"):
     oid plus 1000000, and sits on the line rather than beside it.
     """
     new_node = node_oid + 1000000
-    con.execute(
+    line_wkb, point_wkb = con.execute(
         f"""
-        insert into {nodes} by name
-        select n.* exclude (oid, geom),
-            ? as oid,
-            st_closestpoint(e.geom, n.geom) as geom
+        select st_aswkb(e.geom), st_aswkb(n.geom)
         from {nodes} n, {edges} e
         where n.oid = ? and e.oid = ?
         """,
-        [new_node, node_oid, edge_oid],
+        [node_oid, edge_oid],
+    ).fetchone()
+
+    line = shapely.from_wkb(bytes(line_wkb))
+    point = shapely.from_wkb(bytes(point_wkb))
+    on_line = line.interpolate(line.project(point))
+
+    con.execute(
+        f"""
+        insert into {nodes} by name
+        select n.* exclude (oid, geom), ? as oid, st_geomfromwkb(?) as geom
+        from {nodes} n where n.oid = ?
+        """,
+        [new_node, shapely.to_wkb(on_line), node_oid],
     )
     return new_node, split_edge(con, edge_oid, new_node, edges=edges, nodes=nodes)
 
 
 def insert_edge(con, start_node, end_node, oid, edges="edges", nodes="nodes"):
     """Join two nodes with a straight edge, as ``hvt.rn_insert_edge`` does."""
+    start_wkb, end_wkb, country = con.execute(
+        f"""
+        select st_aswkb(a.geom), st_aswkb(b.geom), a.country
+        from {nodes} a, {nodes} b where a.oid = ? and b.oid = ?
+        """,
+        [start_node, end_node],
+    ).fetchone()
+
+    line = shapely.LineString(
+        [shapely.from_wkb(bytes(start_wkb)), shapely.from_wkb(bytes(end_wkb))]
+    )
     con.execute(
         f"""
         insert into {edges} (oid, source, target, country, length, geom)
-        select ?, ?, ?, a.country,
-            {LENGTH_M.format(geom="st_makeline(a.geom, b.geom)")},
-            st_makeline(a.geom, b.geom)
-        from {nodes} a, {nodes} b
-        where a.oid = ? and b.oid = ?
+        values (?, ?, ?, ?, ?, st_geomfromwkb(?))
         """,
-        [oid, start_node, end_node, start_node, end_node],
+        [oid, start_node, end_node, country, length_m(line), shapely.to_wkb(line)],
     )
     return oid
 
 
 def _move_end(con, edge_oid, node_oid, end, edges, nodes):
     """ST_SetPoint on the first or last vertex, by rebuilding the vertex list."""
-    keep = (
-        "list_prepend(n.geom, [st_pointn(e.geom, i::int) "
-        "for i in range(2, st_npoints(e.geom) + 1)])"
-        if end == "source"
-        else "list_append([st_pointn(e.geom, i::int) "
-        "for i in range(1, st_npoints(e.geom))], n.geom)"
-    )
+    line_wkb, point_wkb = con.execute(
+        f"""
+        select st_aswkb(e.geom), st_aswkb(n.geom)
+        from {edges} e, {nodes} n where e.oid = ? and n.oid = ?
+        """,
+        [edge_oid, node_oid],
+    ).fetchone()
+
+    coords = list(shapely.from_wkb(bytes(line_wkb)).coords)
+    moved = shapely.from_wkb(bytes(point_wkb))
+    coords[0 if end == "source" else -1] = (moved.x, moved.y)
+    line = shapely.LineString(coords)
+
     con.execute(
         f"""
-        update {edges} set
-            geom = (select st_makeline({keep}) from {edges} e, {nodes} n
-                    where e.oid = ? and n.oid = ?),
-            {end} = ?
+        update {edges}
+        set geom = st_geomfromwkb(?), length = ?, {end} = ?
         where oid = ?
         """,
-        [edge_oid, node_oid, node_oid, edge_oid],
+        [shapely.to_wkb(line), length_m(line), node_oid, edge_oid],
     )
 
 
@@ -208,9 +253,12 @@ class RouteGraph:
 # ---------------------------------------------------------------------------
 
 
+FIXTURE_LINE = shapely.LineString([(0, 0), (1, 0), (2, 0), (3, 0)])
+
+
 def _fixture(con):
     con.execute(
-        f"""
+        """
         create table nodes as select * from (values
             (1::bigint, 'Gabon', st_point(0, 0)),
             (2::bigint, 'Gabon', st_point(3, 0)),
@@ -221,9 +269,9 @@ def _fixture(con):
             (10::bigint, 1::bigint, 2::bigint, 'Gabon', 0.0::double,
              st_geomfromtext('LINESTRING(0 0, 1 0, 2 0, 3 0)'))
         ) as t(oid, source, target, country, length, geom);
-        update edges set length = {LENGTH_M.format(geom="geom")};
         """
     )
+    con.execute("update edges set length = ?", [length_m(FIXTURE_LINE)])
 
 
 def main():
@@ -252,7 +300,7 @@ def main():
            (10, 1, 2, 'Gabon', 0.0,
             st_geomfromtext('LINESTRING(0 0, 1 0, 2 0, 3 0)'))"""
     )
-    con.execute("update edges set length = " + LENGTH_M.format(geom="geom"))
+    con.execute("update edges set length = ?", [length_m(FIXTURE_LINE)])
     new_node, _ = copy_node_to_edge(con, 3, 10)
     print("\ncopy_node_to_edge (rn_copy_node)")
     print(
