@@ -120,6 +120,13 @@ from is the `osm_snapshot` date in `config.json`; planet files are cut on
 Mondays, so it has to be a Monday. That download is around 90GB and the
 extract reads all of it, so it is much the longest step in the workflow.
 
+#### Spikes
+
+`spikes/` holds investigations that are not part of the workflow, each with a
+README saying what was asked, what was found and what it would take to do.
+`spikes/rail_network_port` scopes rebuilding the rail network from
+OpenStreetMap instead of downloading it.
+
 ### Road network creation
 The road topological network creation follows 5 main steps: <br/>
 <br/>
