@@ -16,7 +16,8 @@ slope  <- rast("D:\\Data\\GEE Africa\\Af_slope.tif")
 aspect <- rast("D:\\Data\\GEE Africa\\Af_aspect.tif")
 
 DB <- "D:\\RIDE_Project\\AfTS-Db.gpkg"
-roads_seg <- st_read(DB, layer = "roads_with_gradient2") |> select(id2, geometry = geom)
+roads_seg <- st_read(DB, layer = "africa_roads_network — edges") |> select(id, geometry = geom) # added AFTR-DB id for join process and link to original road edges
+roads_seg$id2 <- seq_len(nrow(roads_seg)) # add unique numerical ID for processing
 
 # ----------------------------
 # 2. Project to EPSG: 27701 (Manual method required as not on PROJ database)
@@ -81,6 +82,7 @@ segment_road <- function( road,  segment_length = 150,  min_segment = 50){
   
   segments <- st_sf(
     id2 = rep(road$id2, length(geom_list)),
+    id = road$id, # added for AFTR-DB unique ID joining
     segment_no =  seq_along(geom_list),
     segment_id =  paste0(road$id2, "_", seq_along(geom_list)),
     start_dist =  starts,
