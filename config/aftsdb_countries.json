@@ -1,0 +1,12 @@
+{
+  "_comment": "ISO3 codes AfTS-Db actually covers that count as Africa. Derived from from_iso3/to_iso3 in africa_roads_network.gpkg (61 unique codes), minus 4 non-Africa codes (ESP Spain, ISR Israel -- bbox overflow from the original OSM 'africa-latest' extract; Planet does have data for these two, excluded anyway; ESH Western Sahara, PSE Palestine, SHN Saint Helena, NAM Namibia -- Planet has no dataset for these, so they're not in this list either way). Checked 2026-09-18: standard 54 African states + Mayotte (MYT) + Reunion (REU), matches the earlier '55/58 geographic entities' figure.",
+  "generated_date": "2026-09-18",
+  "iso3_codes": [
+    "AGO", "BDI", "BEN", "BFA", "BWA", "CAF", "CIV", "CMR", "COD", "COG",
+    "COM", "CPV", "DJI", "DZA", "EGY", "ERI", "ETH", "GAB", "GHA", "GIN",
+    "GMB", "GNB", "GNQ", "KEN", "LBR", "LBY", "LSO", "MAR", "MDG", "MLI",
+    "MOZ", "MRT", "MUS", "MWI", "MYT", "NER", "NGA", "REU", "RWA", "SDN",
+    "SEN", "SLE", "SOM", "SSD", "STP", "SWZ", "SYC", "TCD", "TGO", "TUN",
+    "TZA", "UGA", "ZAF", "ZMB", "ZWE"
+  ]
+}
