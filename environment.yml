@@ -1,0 +1,10 @@
+name: roadsurface
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.12
+  - geopandas
+  - pandas
+  - pyogrio
+  - requests
