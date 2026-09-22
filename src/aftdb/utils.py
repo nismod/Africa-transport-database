@@ -205,39 +205,6 @@ def ckdnearest(gdA, gdB):
     return gdf
 
 
-def gdf_geom_clip(gdf_in, clip_geom):
-    """Filter a dataframe to contain only features within a clipping geometry
-
-    Parameters
-    ---------
-    gdf_in
-        geopandas dataframe to be clipped in
-    province_geom
-        shapely geometry of province for what we do the calculation
-
-    Returns
-    -------
-    filtered dataframe
-    """
-    return gdf_in.loc[
-        gdf_in["geometry"].apply(lambda x: x.within(clip_geom))
-    ].reset_index(drop=True)
-
-
-def get_nearest_values(x, input_gdf, column_name):
-    polygon_index = input_gdf.distance(x.geometry).sort_values().index[0]
-    return input_gdf.loc[polygon_index, column_name]
-
-
-def extract_gdf_values_containing_nodes(x, input_gdf, column_name):
-    a = input_gdf.loc[list(input_gdf.geometry.contains(x.geometry))]
-    if len(a.index) > 0:
-        return a[column_name].values[0]
-    else:
-        polygon_index = input_gdf.distance(x.geometry).sort_values().index[0]
-        return input_gdf.loc[polygon_index, column_name]
-
-
 def create_network_from_nodes_and_edges(
     nodes,
     edges,
@@ -459,18 +426,3 @@ def create_igraph_from_dataframe(graph_dataframe, directed=False, simple=False):
     )
 
     return graph
-
-
-def add_node_degree(edges_dataframe, nodes_dataframe):
-    """Count the edges meeting at each node and add them as a "degree" column"""
-    degree_df = (
-        edges_dataframe[["from_id", "to_id"]]
-        .stack()
-        .value_counts()
-        .rename_axis("id")
-        .reset_index(name="degree")
-    )
-    df = pd.merge(nodes_dataframe, degree_df, how="left", on=["id"])
-
-    nodes_crs = nodes_dataframe.crs
-    return gpd.GeoDataFrame(df, geometry="geometry", crs=nodes_crs)
