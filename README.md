@@ -93,6 +93,13 @@ The workflow is split into stages, one rule file per stage:
 The `Snakefile` itself holds only what the stages share: the config, the data
 paths, the datasets several rules read, and the default target.
 
+`docs/workflow_tree.txt` lists every file the rules name, as a tree, marking
+which rule writes each one. Regenerate it after changing any rule:
+
+```bash
+python tools/workflow_tree.py --output docs/workflow_tree.txt
+```
+
 Each rule runs one script, and passes every file that script reads or writes
 as a command line argument. The scripts take those paths with
 [click](https://click.palletsprojects.com/), so any of them can also be run on

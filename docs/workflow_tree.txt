@@ -1,0 +1,274 @@
+Files named by the rules in Snakefile, from snakemake's own parse of the
+workflow. Paths are as config.template.json sets them.
+
+    in            read by a rule
+    out <- rule   written by that rule
+    ({n} files)    a wildcard rule, and the {n} concrete paths folded into it
+
+Regenerate with: python tools/workflow_tree.py
+
+incoming_data
+├── africa-station-google-points
+│   ├── location_proximity_final.gpkg                            out  <- google_api_matches
+│   └── stations_with_google_api_points.csv                  in
+├── africa_corridor_developments
+│   ├── 17D.1.gpkg                                           in
+│   ├── AfricanDevelopmentCorridorDatabase2022.gpkg          in out  <- download_african_development_corridors
+│   ├── conakry-kankan_railway.gpkg                              out  <- rail_data_cleaning
+│   ├── Dar_es.gpkg                                          in
+│   ├── east_africa_railway.gpkg                                 out  <- rail_data_cleaning
+│   ├── eastafrica_rail.gpkg                                 in
+│   ├── ghana_burkina_faso.gpkg                                  out  <- rail_data_cleaning
+│   ├── guinea_lines.gpkg                                    in
+│   ├── guinea_rail.shp                                      in
+│   ├── isaka_kigali_gitega_railway.gpkg                         out  <- rail_data_cleaning
+│   ├── kinsasha_rail.gpkg                                   in
+│   ├── kinshasa_ilebo_railway.gpkg                              out  <- rail_data_cleaning
+│   ├── simandou_railway_project.gpkg                            out  <- rail_data_cleaning
+│   ├── standard_gauge_railway.gpkg                              out  <- rail_data_cleaning
+│   ├── tanzania_sgr_lines.gpkg                              in
+│   ├── tanzania_standard_gauge_railway.gpkg                     out  <- rail_data_cleaning
+│   ├── Team.gpkg                                            in
+│   ├── togo_lines.gpkg                                      in
+│   └── togo_rail.gpkg                                           out  <- rail_data_cleaning
+├── Africa_GIS Supporting Data
+│   └── a. Africa_GIS Shapefiles
+│       ├── AFR_Infra_Transport_Ports.shp
+│       │   └── AFR_Infra_Transport_Ports.shp                in out  <- download_usgs_africa_gis
+│       ├── AFR_Mineral_Facilities.shp
+│       │   └── AFR_Mineral_Facilities.shp                   in out  <- download_usgs_africa_gis
+│       └── AFR_Political_ADM0_Boundaries.shp
+│           └── AFR_Political_ADM0_Boundaries.shp            in out  <- download_usgs_africa_gis
+├── Africa_osm_rivers
+│   ├── africa_network_edges.geoparquet                          out  <- africa_inland_waterways
+│   ├── africa_network_nodes.geoparquet                          out  <- africa_inland_waterways
+│   ├── africa_river_edges.geoparquet                            out  <- africa_inland_waterways
+│   ├── africa_river_nodes.geoparquet                            out  <- africa_inland_waterways
+│   ├── OpenStreetMap_Waterways_for_Africa.geojson           in out  <- download_osm_waterways_africa
+│   └── OpenStreetMap_Waterways_for_Africa.geoparquet        in out  <- convert_osm_waterways_africa
+├── africa_rail_network
+│   └── network_data
+│       ├── africa_rail_network.geojson                      in out  <- download_africa_rail_network
+│       ├── africa_rail_nodes.geojson                        in out  <- download_africa_rail_network
+│       └── africa_railways.gpkg                             in out  <- convert_africa_railways
+├── africa_roads
+│   ├── africa_main_roads.gpkg                                   out  <- road_connectivity
+│   ├── edges_with_topology.geoparquet                       in
+│   ├── edges_with_topology.gpq                              in
+│   ├── nodes_with_topology.geoparquet                       in
+│   └── nodes_with_topology.gpq                              in
+├── airports
+│   ├── africa_airports_ourairport.gpkg                      in out  <- ourairports_africa_layer
+│   └── airports.csv                                         in out  <- download_ourairports
+├── egypt-latest-free.shp
+│   ├── gis_osm_waterways_free_1.shp                         in out  <- download_geofabrik_egypt_shapefiles
+│   ├── suez_canal_ids.csv                                   in
+│   └── suez_canal_network.gpkg                                  out  <- extract_suez
+├── Global port supply-chains
+│   ├── Network
+│   │   └── nodes_maritime.gpkg                              in out  <- download_global_port_supply_chains
+│   ├── Port_statistics
+│   │   ├── port_locations_value.csv                         in out  <- download_global_port_supply_chains
+│   │   ├── port_locations_weight.csv                        in out  <- download_global_port_supply_chains
+│   │   └── port_utilization.csv                             in out  <- download_global_port_supply_chains
+│   └── Ports Updated 2025
+│       ├── daily_port_activity.csv                              out  <- download_portwatch_ports
+│       ├── port_calls_average_2019-2024.csv                 in
+│       ├── port_capacity_called_average_2019-2024.csv       in
+│       ├── port_turn_around_time_average_2019-2024.csv      in
+│       └── Ports.shp                                        in out  <- download_portwatch_ports
+├── infrastructure
+│   └── africa_osm_airports_terminals.parquet                    out  <- osm_extract_v2
+├── IWW_ports
+│   ├── africa_IWW_ports.xlsx                                in
+│   ├── edges_port_IWW_af.gpkg                               in
+│   └── hotosm_ssd_waterways.gpkg                            in
+├── osm
+│   ├── africa-{snapshot}.osm.pbf                            in out  <- osm_extract_africa
+│   ├── africa.geojson                                       in out  <- africa_clip_polygon
+│   └── planet-{snapshot}.osm.pbf                            in out  <- download_osm_planet
+├── ports
+│   ├── ne_110m_admin_0_countries
+│   │   ├── ne_110m_admin_0_countries.cpg                        out  <- download_natural_earth_countries_110m
+│   │   ├── ne_110m_admin_0_countries.dbf                        out  <- download_natural_earth_countries_110m
+│   │   ├── ne_110m_admin_0_countries.prj                        out  <- download_natural_earth_countries_110m
+│   │   ├── ne_110m_admin_0_countries.shp                    in out  <- download_natural_earth_countries_110m
+│   │   └── ne_110m_admin_0_countries.shx                        out  <- download_natural_earth_countries_110m
+│   ├── africa_ports.gpkg                                    in
+│   ├── all_ports_matches.xlsx                               in
+│   ├── edges_maritime_corrected.gpkg                        in
+│   └── nodes_maritime.gpkg                                  in
+├── Randhawaetal_2025_Locations                              in
+│   └── heigit_{iso3}_roadsurface_lines.gpkg                 in out  <- download_heigit_road_surface  (54 files)
+├── Supplementary 1：mine area polygons
+│   └── 74548 mine polygons
+│       └── 74548_projected.shp                              in out  <- download_global_mine_polygons
+├── Lobito_corridor.xlsx                                     in
+├── Rail_Costs.xlsx                                          in
+├── road_corridors.xlsx                                      in
+├── Roads_Costs.xlsx                                         in
+└── suez_canal_network.gpkg                                  in
+
+processed_data
+├── admin_boundaries
+│   ├── gadm36_levels_gpkg
+│   │   ├── gadm36_levels.gpkg                               in out  <- download_gadm
+│   │   └── gadm36_levels_continents.gpkg                    in out  <- gadm_continents
+│   ├── ne_10m_admin_0_countries
+│   │   ├── ne_10m_admin_0_countries.cpg                         out  <- download_natural_earth_countries
+│   │   ├── ne_10m_admin_0_countries.dbf                         out  <- download_natural_earth_countries
+│   │   ├── ne_10m_admin_0_countries.prj                         out  <- download_natural_earth_countries
+│   │   ├── ne_10m_admin_0_countries.shp                     in out  <- download_natural_earth_countries
+│   │   └── ne_10m_admin_0_countries.shx                         out  <- download_natural_earth_countries
+│   ├── ne_10m_lakes
+│   │   ├── ne_10m_lakes.cpg                                     out  <- download_natural_earth_lakes
+│   │   ├── ne_10m_lakes.dbf                                     out  <- download_natural_earth_lakes
+│   │   ├── ne_10m_lakes.prj                                     out  <- download_natural_earth_lakes
+│   │   ├── ne_10m_lakes.shp                                 in out  <- download_natural_earth_lakes
+│   │   └── ne_10m_lakes.shx                                     out  <- download_natural_earth_lakes
+│   ├── un_urban_population
+│   │   └── un_pop_df.gpkg                                   in
+│   ├── country_codes.csv                                    in
+│   └── country_codes.xlsx                                   in
+├── infrastructure
+│   ├── africa_airport_network.gpkg                          in
+│   ├── africa_airport_network_last.gpkg                     in out  <- airports_data_cleaning
+│   ├── africa_airport_network_rev.gpkg                      in out  <- ourairports_data_layer
+│   ├── africa_airport_network_withsources.gpkg                  out  <- source_column
+│   ├── africa_airport_ourairport.gpkg                           out  <- ourairports_data_layer
+│   ├── africa_corridors_costs.csv                               out  <- corridors_costs
+│   ├── africa_iww_network.gpkg                              in out  <- africa_inland_waterways, inland_waterways_cleaning
+│   ├── africa_iww_network_withsources.gpkg                      out  <- source_column
+│   ├── africa_maritime_network.gpkg                         in out  <- ports_data_cleaning
+│   ├── africa_maritime_network_PROVA_NEW1.gpkg                  out  <- ports_new_merge
+│   ├── africa_maritime_network_withsources.gpkg                 out  <- source_column
+│   ├── africa_multimodal.gpkg                               in out  <- data_checks
+│   ├── africa_multimodal_rev.gpkg                           in out  <- multi_modal_edges_creation
+│   ├── africa_multimodal_withsources.gpkg                       out  <- source_column
+│   ├── africa_rails_costs.csv                                   out  <- rails_costs
+│   ├── africa_railways_network.gpkg                         in out  <- rail_data_cleaning
+│   ├── africa_railways_network_withsources.gpkg                 out  <- source_column
+│   ├── africa_roads_edges.geoparquet                        in out  <- road_connectivity
+│   ├── africa_roads_edges_FINAL.geoparquet                  in out  <- road_adjustments
+│   ├── africa_roads_edges_FINAL_last.geoparquet             in out  <- road_processing
+│   ├── africa_roads_edges_PROVA_Lobito_corridor.geoparquet  in out  <- road_corridors_ns_corridor
+│   ├── africa_roads_edges_PROVA_MDG.geoparquet              in
+│   ├── africa_roads_edges_PROVA_NS_corridor.geoparquet      in
+│   ├── africa_roads_edges_PROVA_TA_corridor.geoparquet      in
+│   ├── africa_roads_edges_PROVA_TSH_corridor.geoparquet     in
+│   ├── africa_roads_edges_withcorridors.geoparquet          in out  <- road_corridors_primary_roads
+│   ├── africa_roads_network.gpkg                            in out  <- costs_columns, road_processing
+│   ├── africa_roads_network_withsources.gpkg                    out  <- source_column
+│   ├── africa_roads_nodes.geoparquet                        in out  <- road_connectivity
+│   ├── africa_roads_nodes_FINAL.geoparquet                  in out  <- road_adjustments
+│   ├── africa_roads_nodes_PROVA_Lobito_corridor.geoparquet      out  <- road_corridors_ns_corridor
+│   ├── africa_roads_nodes_withcorridors.geoparquet          in out  <- road_corridors_primary_roads
+│   ├── global_maritime_network.gpkg                         in out  <- ports_data_cleaning
+│   ├── global_maritime_network_PROVA_NEW1.gpkg                  out  <- ports_new_merge
+│   ├── merged_costs_data.csv                                    out  <- corridors_costs
+│   ├── merged_validation_datasets.csv                           out  <- roads_validation_comparison
+│   ├── merged_validation_datasets.parquet                       out  <- roads_validation_comparison
+│   ├── merged_validation_datasets_counts.csv                    out  <- roads_validation_comparison
+│   ├── paved_stats2.csv                                         out  <- stats_rail_roads
+│   ├── rail_stats.csv                                           out  <- stats_rail_roads
+│   ├── validation_file_merge.geoparquet                     in out  <- merge_heigit_data
+│   └── world_bank_global_airports.zip                           out  <- download_world_bank_global_airports
+├── port_statistics
+│   ├── port_known_commodities_traded.csv                        out  <- port_cargo_attributes
+│   ├── port_utilization.csv                                 in
+│   └── port_vessel_types_and_capacities.csv                     out  <- port_cargo_attributes
+├── Validation sets
+│   ├── port_cluster_comparison_k3.csv                           out  <- maps_validation
+│   └── ports.csv                                            in
+├── africa_ports_modified.gpkg                               in out  <- sample_code_from_ports_africa
+├── economic results2.csv                                        out  <- economic
+├── merged2.csv                                                  out  <- economic
+├── merged_with_iso2.csv                                     in out  <- merged_points_v2
+├── merged_with_iso2.gpkg                                        out  <- merged_points_v2
+├── missing_coords.csv                                           out  <- economic
+├── non_intersected_from_merged.csv                              out  <- merged_points_v2
+├── non_intersected_from_merged.gpkg                         in out  <- merged_points_v2
+├── output.gpkg                                                  out  <- add_id
+└── ports_weightvalues.csv                                       out  <- economic
+
+results
+├── africa-station-google-points
+│   └── location_proximity_final.gpkg                        in
+├── merged_validation_datasets.csv                               out  <- heigit_check
+├── merged_validation_datasets.parquet                           out  <- heigit_check
+├── merged_validation_datasets_corrected.csv                 in out  <- heigit_check
+├── merged_validation_datasets_differences.csv                   out  <- plot_heigit_bar_charts
+└── rails.xlsx                                               in
+
+figures
+├── airports.png                                                 out  <- plot_airports
+├── heigit_comparison.png                                        out  <- plot_heigit_bar_charts
+├── heigit_difference.png                                        out  <- plot_heigit_bar_charts
+├── IWW_and_ports.png                                            out  <- plot_ports_and_iww
+├── multi_modal_proximity.png                                    out  <- plot_multi_modal_proximity
+├── ports_with_edges_last.png                                    out  <- plot_ports_bubble
+├── rail_comparisons.png                                         out  <- plot_heigit_bar_charts
+├── rail_facility_proximity.png                                  out  <- plot_rail_facility_proximity
+├── rail_hist_cap_withgrid.png                                   out  <- plot_rail_histogram
+├── rail_test_facility.png                                       out  <- plot_rails_facilities
+├── rail_test_gauge.png                                          out  <- plot_rails_gauge
+├── roads_corridors_LAST.png                                     out  <- plot_roads_corridors
+├── roads_corridors_legend_LAST.png                              out  <- plot_roads_corridors
+├── roads_hist_cap2_grid.png                                     out  <- plot_roads_histogram
+├── roads_test.png                                               out  <- maps_graphs_transport
+└── roads_typology2_LAST.png                                     out  <- plot_roads_typology
+
+scripts
+├── maps and stats
+│   ├── graphs_transport.py                                  in
+│   └── validation.py                                        in
+├── plot
+│   ├── africa_hist_rails.py                                 in
+│   ├── africa_hist_roads.py                                 in
+│   ├── africa_maps_airports.py                              in
+│   ├── africa_maps_ports.py                                 in
+│   ├── africa_maps_ports_bubble.py                          in
+│   ├── africa_maps_rails.py                                 in
+│   ├── africa_maps_rails_facilities.py                      in
+│   ├── africa_maps_roads.py                                 in
+│   ├── africa_maps_roads_corridors.py                       in
+│   ├── heigit_bar_charts.py                                 in
+│   ├── multi_proximity_plot.py                              in
+│   └── rail_location_proximity_plot.py                      in
+└── preprocess
+    ├── Add ID.py                                            in
+    ├── africa_extent.py                                     in
+    ├── africa_inland_waterways.py                           in
+    ├── airports_data_cleaning.py                            in
+    ├── convert_vector_format.py                             in
+    ├── corridors_costs.py                                   in
+    ├── costs_columns.py                                     in
+    ├── data_checks.py                                       in
+    ├── economic.py                                          in
+    ├── extract_suez.py                                      in
+    ├── gadm_continents.py                                   in
+    ├── google_api_matches.py                                in
+    ├── heigit_check.py                                      in
+    ├── inland_waterways_cleaning.py                         in
+    ├── merge_heigit_data.py                                 in
+    ├── Merged points-v2.py                                  in
+    ├── multi_modal_edges_creation.py                        in
+    ├── osm_extract_v2.py                                    in
+    ├── ourairports_africa.py                                in
+    ├── ourairports_data_layer.py                            in
+    ├── port_cargo_attributes.py                             in
+    ├── ports_data_cleaning.py                               in
+    ├── ports_new_merge.py                                   in
+    ├── rail_data_cleaning.py                                in
+    ├── rails_costs.py                                       in
+    ├── road_connectivity.py                                 in
+    ├── road_corridors_NS_corridor.py                        in
+    ├── road_corridors_primary_roads.py                      in
+    ├── road_processing.py                                   in
+    ├── RoadAdjustments.py                                   in
+    ├── roads_validation_comparison.py                       in
+    ├── sample_code_from_ports_africa.py                     in
+    ├── source_column.py                                     in
+    └── stats_rail_roads.py                                  in
+
+218 paths across 68 rules: 91 only read, 78 only written, 49 both written and read
