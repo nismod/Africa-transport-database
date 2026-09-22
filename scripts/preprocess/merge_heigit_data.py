@@ -1,20 +1,30 @@
-import geopandas as gpd
 import glob
 import os
-from utils_new import *
+
+import geopandas as gpd
+import pandas as pd
+
+from aftdb.preprocess.utils_new import load_config
+
 
 def main(config):
-    input_folder = config['paths']['incoming_data']
-    output_folder = config['paths']['data']
+    input_folder = config["paths"]["incoming_data"]
+    output_folder = config["paths"]["data"]
     # Folder containing your GPKG files
-    
-    output_file = 'merged_roadsurface_lines.gpkg'
 
     # Match all GPKG files
-    gpkg_files = glob.glob(os.path.join(input_folder,"Randhawaetal_2025_Locations",'heigit_*_roadsurface_lines.gpkg'))
+    gpkg_files = glob.glob(
+        os.path.join(
+            input_folder,
+            "Randhawaetal_2025_Locations",
+            "heigit_*_roadsurface_lines.gpkg",
+        )
+    )
 
     if not gpkg_files:
-        raise FileNotFoundError(f"No files found in '{input_folder}' matching pattern 'heigit_*_roadsurface_lines.gpkg'.")
+        raise FileNotFoundError(
+            f"No files found in '{input_folder}' matching pattern 'heigit_*_roadsurface_lines.gpkg'."
+        )
 
     merged_gdf = []
     layer_name = None
@@ -23,10 +33,10 @@ def main(config):
         try:
             # Read GeoDataFrame
             gdf = gpd.read_file(gpkg_path, layer=layer_name)
-            country_code = os.path.basename(gpkg_path).split('_')[1]
-            gdf['country_iso_a3'] = str(country_code).upper()
+            country_code = os.path.basename(gpkg_path).split("_")[1]
+            gdf["country_iso_a3"] = str(country_code).upper()
             merged_gdf.append(gdf)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             print(f"Skipping {gpkg_path}: {e}")
 
     # Final merge
@@ -34,23 +44,21 @@ def main(config):
         raise ValueError("No valid GeoDataFrames were loaded. Nothing to merge.")
 
     final_gdf = gpd.GeoDataFrame(
-                        pd.concat(merged_gdf, axis=0, ignore_index=True),
-                        geometry="geometry",
-                        crs="EPSG:4326")
+        pd.concat(merged_gdf, axis=0, ignore_index=True),
+        geometry="geometry",
+        crs="EPSG:4326",
+    )
 
     # Save to GeoPackage
-    
-    
 
     # Write to a new GeoPackage
-    final_gdf.to_parquet(os.path.join(
-                            output_folder,
-                            "infrastructure",
-                            "validation_file_merge.geoparquet"))
-   
+    final_gdf.to_parquet(
+        os.path.join(
+            output_folder, "infrastructure", "validation_file_merge.geoparquet"
+        )
+    )
 
-    
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     CONFIG = load_config()
-    main(CONFIG)    
+    main(CONFIG)

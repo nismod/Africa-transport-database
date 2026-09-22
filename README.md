@@ -1,4 +1,4 @@
-# The African Transport Systems Database  - a geospatial database of multi-modal connected networks  
+# The African Transport Systems Database  - a geospatial database of multi-modal connected networks
 
 We present the first comprehensive geolocated multi-modal transport database for the whole continent of Africa, the **African Transport Systems Database (AfTS-Db)**, including road, rail, aviation, maritime and inland waterway networks. To do so, we created and standardized asset and network data across all transport modes, including inter-modal connections, attributes of road and rail corridors and estimated annual statistics for airports and ports. The African Transport Systems Database includes 234 airports including their airline routes, 179 maritime ports and their connections with each other, 132 inland ports and docking sites with river and lake connections, 4,412 railway stations connected across 99,373 kilometers of rail lines, and 1,004,512 kilometers of roads mainly comprised of all motorways, trunk roads, primary and secondary routes across Africa and some local roads that connect to other transport modes. The AfTS-Db provides key information for transport planning, resilience assessments, asset management and development of transport models and applications. Furthermore, we expect the data will also be of relevance for environmental, health, social and economic studies.
 
@@ -16,7 +16,7 @@ This repository is archived on Zenodo at [DOI:10.5281/zenodo.17609113](https://d
 
 This GitHub folder contains the scripts that have been used to create the database, of particular importance the road network creation and the multimodal edges creation ones.
 
-The codes for operationalization for downloading and creating network representations from OSM raw data, via the Open-Gira repository, are available here: https://github.com/nismod/open-gira. Further Open-Gira documentation is provided here: https://nismod.github.io/open-gira/user-guide/usage/network-creation/road.html and https://nismod.github.io/open-gira/user-guide/usage/network-creation/rail.html. 
+The codes for operationalization for downloading and creating network representations from OSM raw data, via the Open-Gira repository, are available here: https://github.com/nismod/open-gira. Further Open-Gira documentation is provided here: https://nismod.github.io/open-gira/user-guide/usage/network-creation/road.html and https://nismod.github.io/open-gira/user-guide/usage/network-creation/rail.html.
 
 The spatially explicit, harmonized AfTS-Db is publicly available and can be explored [here](https://zenodo.org/uploads/17593244). These files can be easily accessed, visualized, and manipulated using standard GIS applications such as QGIS or ArcGIS.
 
@@ -25,6 +25,44 @@ This research has been supported by the **Climate Compatible Growth (CCG)** prog
 ## About the scripts
 All the scripts used to create the datasets are available and free to use in the [**scripts folder**](https://github.com/nismod/Africa-transport-database/tree/main/scripts), ensuring replicability of the database. Most of them represent simple cleaning and validation (in the [**preprocess**](https://github.com/nismod/Africa-transport-database/tree/main/scripts/preprocess) folder) or plots and figures (in the [**maps and stats**](github.com/nismod/Africa-transport-database/tree/main/scripts/maps%20and%20stats) and [**plot**](https://github.com/nismod/Africa-transport-database/tree/main/scripts/plot) folders) reproduction codes. <br/>
 Of major importance and representing the novelty of how the dataset has been developed, are the [road network creation](https://github.com/nismod/Africa-transport-database/blob/main/scripts/preprocess/road_connectivity.py) and the [multimodal links creation](https://github.com/nismod/Africa-transport-database/blob/main/scripts/preprocess/multi_modal_edges_creation.py).
+
+### Development setup
+
+The scripts are in the process of being developed into an open-source
+[snakemake](https://snakemake.readthedocs.io/en/stable/) workflow. This aims to
+improve the ease of re-running the scripts to reproduce and update dataset.
+
+The repository comes with a `environment.yml` file describing the `conda` and
+`PyPI` packages required to run the workflow. We recommend using
+[micromamba](https://mamba.readthedocs.io/en/latest/user_guide/micromamba.html#micromamba)
+to install and manage these packages.
+
+Create the environment (once per machine):
+
+```bash
+micromamba env create -f environment.yml -y
+```
+
+Activate the environment (once per work session):
+
+```bash
+micromamba activate aftdb
+```
+
+Reinstall or update the environment (after adding or updating dependencies):
+
+```bash
+micromamba install -f environment.yml -y
+```
+
+#### Lint and format
+
+Use [ruff](https://docs.astral.sh/ruff/) to format and check scripts and source code:
+
+```bash
+ruff format
+ruff check
+```
 
 ### Road network creation
 The road topological network creation follows 5 main steps: <br/>
@@ -43,4 +81,3 @@ The multimodal network creation constists on:<br/>
 **Step 2:** Connect the different nodes to the ground transport network (road and rail nodes) <br/>
 **Step 3:** Differentiate the connection between freight transport (specific rail-road connection based on the facility specifics of the rail node) and general freight/passenger transport (the rest of the connections, if not specified) <br/>
 **Step 4:** The resulting dataset will include edges identified by unique IDs, along with references to the source and target nodes they connect, as well as details about the link and its usage (freigth or freight/transport)
- 
