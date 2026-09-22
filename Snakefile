@@ -21,7 +21,7 @@ MAPS_AND_STATS = "scripts/maps and stats"
 # plot_africa_basemap2(), plot_global_basemap() and plot_ccg_basemap().
 BASEMAP_COUNTRIES = f"{DATA}/admin_boundaries/ne_10m_admin_0_countries/ne_10m_admin_0_countries.shp"
 BASEMAP_LAKES = f"{DATA}/admin_boundaries/ne_10m_lakes/ne_10m_lakes.shp"
-CCG_COUNTRY_CODES = f"{DATA}/admin_boundaries/ccg_country_codes.csv"
+COUNTRY_CODES = f"{DATA}/admin_boundaries/country_codes.csv"
 
 # Frequently reused source datasets.
 AFRICA_ADM0 = (
@@ -60,8 +60,8 @@ rule all:
         f"{DATA}/infrastructure/africa_railways_network.gpkg",
         f"{DATA}/infrastructure/africa_maritime_network.gpkg",
         f"{DATA}/infrastructure/africa_iww_network.gpkg",
-        f"{DATA}/infrastructure/africa_airport_network_last.gpkg",
-        f"{DATA}/infrastructure/africa_multimodal_rev.gpkg",
+        f"{DATA}/infrastructure/africa_airport_network.gpkg",
+        f"{DATA}/infrastructure/africa_multimodal.gpkg",
 
 
 # ---------------------------------------------------------------------------
@@ -83,7 +83,11 @@ rule osm_extract_v2:
 
 
 rule extract_suez:
-    """Turn the Suez Canal OSM waterways into a topological network."""
+    """Turn the Suez Canal OSM waterways into a topological network.
+
+    Potential future case to expand this and handle similar crossings like
+    the Panama Canal, to refine Global port supply-chains network.
+    """
     input:
         script=f"{PREPROCESS}/extract_suez.py",
         waterways=f"{INCOMING}/egypt-latest-free.shp/gis_osm_waterways_free_1.shp",
@@ -236,13 +240,19 @@ rule port_cargo_attributes:
 rule rail_data_cleaning:
     """Build the Africa railway network from OSM and corridor project data.
 
+    NOTE: This script is an example case where we have an existing network and
+    we want to add new nodes and edges to it. It could be used in other
+    projects as well
+
     Step one converts each rail project into a per-project GeoPackage inside the
     ``africa_corridor_developments`` folder; step two merges those with the
     Africa rail network.
 
     Note that step two reads ``guinea_lines.gpkg`` while step one writes the
-    same project out as ``conakry-kankan_railway.gpkg``, so that input has to be
-    supplied, or perhaps renamed.
+    same project out as ``conakry-kankan_railway.gpkg``, so that input has to
+    be supplied, or perhaps renamed. It might be possible that
+    guinea_lines.gpkg is the original file, while was modified to create
+    conakry-kankan_railway.gpkg.
     """
     input:
         script=f"{PREPROCESS}/rail_data_cleaning.py",
@@ -317,7 +327,14 @@ rule google_api_matches:
 # ---------------------------------------------------------------------------
 
 rule road_connectivity:
-    """Connect points of interest to the OSM road network (README step 1-5)."""
+    """Connect points of interest to the OSM road network (README step 1-5).
+
+    NOTE: This is the rule that creates the filtered out road network from the
+    open-GIRA extract. Maybe we do not need this and it is better to just
+    retain the big network. Check inputs - are we creating multimodal edges
+    here or just ensuring the road network retains edges to route to other
+    points of interest. May be a general task to extract?
+    """
     input:
         script=f"{PREPROCESS}/road_connectivity.py",
         population=f"{DATA}/admin_boundaries/un_urban_population/un_pop_df.gpkg",
@@ -338,7 +355,11 @@ rule road_connectivity:
 
 
 rule road_corridors_primary_roads:
-    """Route the named road corridors over the primary road network."""
+    """Route the named road corridors over the primary road network.
+
+    NOTE: simplify this and following rules to add corridor names based
+    on shortest-paths over start and end points.
+    """
     input:
         script=f"{PREPROCESS}/road_corridors_primary_roads.py",
         road_edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
@@ -400,8 +421,8 @@ rule road_adjustments:
         road_edges=f"{DATA}/infrastructure/africa_roads_edges_withcorridors.geoparquet",
         road_nodes=f"{DATA}/infrastructure/africa_roads_nodes_withcorridors.geoparquet",
     output:
-        nodes=f"{DATA}/infrastructure/africa_roads_nodes_FINAL.geoparquet",
-        edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
+        nodes=f"{DATA}/infrastructure/africa_roads_nodes.geoparquet",
+        edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
     shell:
         """
         python {input.script}
@@ -414,16 +435,16 @@ rule costs_columns:
     As well as the GeoPackage declared below, this script rewrites its two
     inputs in place:
 
-        {DATA}/infrastructure/africa_roads_nodes_FINAL.geoparquet
-        {DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet
+        {DATA}/infrastructure/africa_roads_nodes.geoparquet
+        {DATA}/infrastructure/africa_roads_edges.geoparquet
 
     Those two files are deliberately left out of ``output``. Need to be named
     something different at each stage, order needs confirming.
     """
     input:
         script=f"{PREPROCESS}/costs_columns.py",
-        nodes=f"{DATA}/infrastructure/africa_roads_nodes_FINAL.geoparquet",
-        edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
+        nodes=f"{DATA}/infrastructure/africa_roads_nodes.geoparquet",
+        edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
     output:
         network=f"{DATA}/infrastructure/africa_roads_network.gpkg",
     shell:
@@ -436,9 +457,9 @@ rule road_processing:
     """Infer paved status, surface material and asset type for road edges."""
     input:
         script=f"{PREPROCESS}/road_processing.py",
-        edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
+        edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
     output:
-        edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL_last.geoparquet",
+        edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
         network=f"{DATA}/infrastructure/africa_roads_network.gpkg",
     shell:
         """
@@ -465,7 +486,7 @@ rule stats_rail_roads:
     """Summarise rail length by status and road length by corridor/surface."""
     input:
         script=f"{PREPROCESS}/stats_rail_roads.py",
-        road_edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
+        road_edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
         rail_network=f"{DATA}/infrastructure/africa_railways_network.gpkg",
     output:
         rail_stats=f"{DATA}/infrastructure/rail_stats.csv",
@@ -481,7 +502,10 @@ rule stats_rail_roads:
 # ---------------------------------------------------------------------------
 
 rule merge_heigit_data:
-    """Merge the per-country HeiGIT road surface GeoPackages into one file."""
+    """Merge the per-country HeiGIT road surface GeoPackages into one file.
+
+    NOTE: review this after PR #4 with work by ruojing227-tech
+    """
     input:
         script=f"{PREPROCESS}/merge_heigit_data.py",
         # The script reads all heigit_*_roadsurface_lines.gpkg in this folder.
@@ -495,7 +519,10 @@ rule merge_heigit_data:
 
 
 rule heigit_check:
-    """Compare database road surfaces against the merged HeiGIT dataset."""
+    """Compare database road surfaces against the merged HeiGIT dataset.
+
+    NOTE: review this after PR #4 with work by ruojing227-tech
+    """
     input:
         script=f"{PREPROCESS}/heigit_check.py",
         database_lines=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
@@ -515,7 +542,7 @@ rule roads_validation_comparison:
     """Clip database and HeiGIT roads by country and compare paved lengths."""
     input:
         script=f"{PREPROCESS}/roads_validation_comparison.py",
-        database_lines=f"{DATA}/infrastructure/africa_roads_edges_FINAL_last.geoparquet",
+        database_lines=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
         boundaries=f"{DATA}/admin_boundaries/gadm36_levels_gpkg/gadm36_levels_continents.gpkg",
         # One HeiGIT file per country is read, if present, from this folder.
         heigit_folder=f"{INCOMING}/Randhawaetal_2025_Locations",
@@ -553,8 +580,8 @@ rule ourairports_data_layer:
         ourairports=f"{INCOMING}/airports/africa_airports_ourairport.gpkg",
         airport_network=f"{DATA}/infrastructure/africa_airport_network.gpkg",
     output:
-        ourairports=f"{DATA}/infrastructure/africa_airport_ourairport_rev.gpkg",
-        network=f"{DATA}/infrastructure/africa_airport_network_rev.gpkg",
+        ourairports=f"{DATA}/infrastructure/africa_airport_ourairport.gpkg",
+        network=f"{DATA}/infrastructure/africa_airport_network.gpkg",
     shell:
         """
         python {input.script}
@@ -615,9 +642,9 @@ rule multi_modal_edges_creation:
         maritime=f"{DATA}/infrastructure/africa_maritime_network.gpkg",
         iww=f"{DATA}/infrastructure/africa_iww_network.gpkg",
         railways=f"{DATA}/infrastructure/africa_railways_network.gpkg",
-        road_nodes=f"{DATA}/infrastructure/africa_roads_nodes_FINAL.geoparquet",
+        road_nodes=f"{DATA}/infrastructure/africa_roads_nodes.geoparquet",
     output:
-        multimodal=f"{DATA}/infrastructure/africa_multimodal_rev.gpkg",
+        multimodal=f"{DATA}/infrastructure/africa_multimodal.gpkg",
     shell:
         """
         python {input.script}
@@ -649,8 +676,8 @@ rule source_column:
     input:
         script=f"{PREPROCESS}/source_column.py",
         maritime=f"{DATA}/infrastructure/africa_maritime_network.gpkg",
-        airports=f"{DATA}/infrastructure/africa_airport_network_rev.gpkg",
-        multimodal=f"{DATA}/infrastructure/africa_multimodal_rev.gpkg",
+        airports=f"{DATA}/infrastructure/africa_airport_network.gpkg",
+        multimodal=f"{DATA}/infrastructure/africa_multimodal.gpkg",
         roads=f"{DATA}/infrastructure/africa_roads_network.gpkg",
         railways=f"{DATA}/infrastructure/africa_railways_network.gpkg",
         iww=f"{DATA}/infrastructure/africa_iww_network.gpkg",
@@ -670,20 +697,6 @@ rule source_column:
 # ---------------------------------------------------------------------------
 # scripts/plot - maps
 # ---------------------------------------------------------------------------
-
-rule plot_africa_basemap:
-    """Plot the Africa basemap on its own."""
-    input:
-        script=f"{PLOT}/africa_maps.py",
-        countries=BASEMAP_COUNTRIES,
-        lakes=BASEMAP_LAKES,
-    output:
-        figure=f"{FIGURES}/africa_basemap.png",
-    shell:
-        """
-        python {input.script}
-        """
-
 
 rule plot_airports:
     """Map airports sized by total annual seats."""
@@ -766,7 +779,7 @@ rule plot_roads_typology:
     """Map the road network coloured by highway typology."""
     input:
         script=f"{PLOT}/africa_maps_roads.py",
-        road_edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
+        road_edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
         countries=BASEMAP_COUNTRIES,
         lakes=BASEMAP_LAKES,
     output:
@@ -781,7 +794,7 @@ rule plot_roads_corridors:
     """Map the road network coloured by development corridor."""
     input:
         script=f"{PLOT}/africa_maps_roads_corridors.py",
-        road_edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
+        road_edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
         countries=BASEMAP_COUNTRIES,
         lakes=BASEMAP_LAKES,
     output:
@@ -814,7 +827,7 @@ rule plot_roads_histogram:
     """Stacked bar chart of road length by corridor and typology."""
     input:
         script=f"{PLOT}/africa_hist_roads.py",
-        road_edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
+        road_edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
     output:
         figure=f"{FIGURES}/roads_hist_cap2_grid.png",
     shell:
@@ -866,62 +879,6 @@ rule plot_heigit_bar_charts:
         python {input.script}
         """
 
-
-rule plot_location_maps:
-    """Maps of optimised mine and processing locations.
-    """
-    input:
-        script=f"{PLOT}/location_maps.py",
-        ccg_countries=CCG_COUNTRY_CODES,
-        stage_mapping=f"{DATA}/mineral_usage_factors/stage_mapping.xlsx",
-        countries=BASEMAP_COUNTRIES,
-        lakes=BASEMAP_LAKES,
-        locations=expand(
-            f"{RESULTS}/optimised_processing_locations/"
-            "combined_node_locations_for_energy_conversion_{scenario}.gpkg",
-            scenario=[
-                "country_unconstrained",
-                "country_constrained",
-                "region_unconstrained",
-                "region_constrained",
-            ],
-        ),
-    output:
-        figures=expand(
-            f"{FIGURES}/regional_figures/mine_and_processing_locations/"
-            "combined_processing_locations_maps_{name}.png",
-            name=[
-                "2030_mid_country",
-                "2040_mid_country",
-                "2030_mid_region",
-                "2040_mid_region",
-            ],
-        ),
-    shell:
-        """
-        python {input.script}
-        """
-
-
-rule plot_mine_ownership_maps:
-    """Global maps of mine ownership shares by country.
-    """
-    input:
-        script=f"{PLOT}/mine_ownership_maps.py",
-        countries=BASEMAP_COUNTRIES,
-        lakes=BASEMAP_LAKES,
-        centroids=f"{DATA}/admin_boundaries/centroids/countries_iso3_code.csv",
-        ownership=f"{RESULTS}/mine_ownership/df_maps_2022.csv",
-    output:
-        basemap=f"{FIGURES}/mine_ownership/global_basemap.png",
-        totals=f"{FIGURES}/mine_ownership/mine_totals.svg",
-        by_ownership=f"{FIGURES}/mine_ownership/country_totals_by_ownership.svg",
-    shell:
-        """
-        python {input.script}
-        """
-
-
 # ---------------------------------------------------------------------------
 # scripts/maps and stats
 # ---------------------------------------------------------------------------
@@ -938,87 +895,16 @@ rule maps_validation:
         python {input.script}
         """
 
-
-rule maps_graphs:
-    """Plot the main road network over the Africa basemap.
-    """
-    input:
-        script=f"{MAPS_AND_STATS}/graphs.py",
-        ccg_countries=CCG_COUNTRY_CODES,
-        main_roads=f"{INCOMING}/africa_roads/africa_main_roads.gpkg",
-        countries=BASEMAP_COUNTRIES,
-        lakes=BASEMAP_LAKES,
-    output:
-        figure=f"{FIGURES}/roads_test.png",
-    shell:
-        """
-        python {input.script}
-        """
-
-
 rule maps_graphs_transport:
     """Plot the final road edges by corridor over the Africa basemap.
     """
     input:
         script=f"{MAPS_AND_STATS}/graphs_transport.py",
-        road_edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
+        road_edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
         countries=BASEMAP_COUNTRIES,
         lakes=BASEMAP_LAKES,
     output:
         figure=f"{FIGURES}/roads_test.png",
-    shell:
-        """
-        python {input.script}
-        """
-
-
-rule maps_global_maps:
-    """Map copper node and edge flows over the Africa basemap.
-
-    Only the last ``plot_flows`` block is enabled in the script; the disabled
-    blocks additionally read ``Minerals/copper_mines_tons_refined_unrefined.gpkg``,
-    ``minerals/ccg_mines_est_production.gpkg``, ``Minerals/s_and_p_mines.gpkg``
-    and ``flow_mapping/{mineral}_flows_{year}.gpkg``.
-    """
-    input:
-        script=f"{MAPS_AND_STATS}/global_maps.py",
-        ccg_countries=CCG_COUNTRY_CODES,
-        edge_flows=f"{RESULTS}/flow_mapping/edges_flows_2022.gpkg",
-        node_flows=f"{RESULTS}/flow_mapping/nodes_flows_2022.gpkg",
-        od_ports=f"{RESULTS}/flow_mapping/mining_city_node_level_ods_2022.csv",
-        port_commodities=f"{DATA}/port_statistics/port_known_commodities_traded.csv",
-        countries=BASEMAP_COUNTRIES,
-        lakes=BASEMAP_LAKES,
-    output:
-        figure=f"{FIGURES}/ccg_copper_total_africa_node_edge_flows_2022.png",
-    shell:
-        """
-        python {input.script}
-        """
-
-
-rule maps_global_maps_transport:
-    """Map railway status, then copper node and edge flows.
-
-    NOTE: as in ``global_maps.py``, the disabled blocks read further mineral
-    datasets.
-
-    It also writes {FIGURES}/ccg_copper_total_africa_node_edge_flows_2022.png,
-    which is declared as the output of ``maps_global_maps`` instead - need to
-    decide which script should produce this.
-    """
-    input:
-        script=f"{MAPS_AND_STATS}/global_maps_transport.py",
-        ccg_countries=CCG_COUNTRY_CODES,
-        railways=f"{DATA}/infrastructure/africa_railways_network.gpkg",
-        edge_flows=f"{RESULTS}/flow_mapping/edges_flows_2022.gpkg",
-        node_flows=f"{RESULTS}/flow_mapping/nodes_flows_2022.gpkg",
-        od_ports=f"{RESULTS}/flow_mapping/mining_city_node_level_ods_2022.csv",
-        port_commodities=f"{DATA}/port_statistics/port_known_commodities_traded.csv",
-        countries=BASEMAP_COUNTRIES,
-        lakes=BASEMAP_LAKES,
-    output:
-        railway_status=f"{FIGURES}/railway_status.png",
     shell:
         """
         python {input.script}
