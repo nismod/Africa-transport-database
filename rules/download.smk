@@ -170,10 +170,10 @@ transport-critical-minerals workflow outputs - no longer read
     ``plot_mine_ownership_maps``, ``maps_global_maps`` and
     ``maps_global_maps_transport`` - were dropped on main, along with
     ``maps_graphs`` and ``plot_africa_basemap``, which read only the basemap
-    and ``africa_main_roads.gpkg``. So nothing in the workflow needs these
-    now. All six scripts are still in ``scripts/plot`` and ``scripts/maps and
-    stats`` and still take their paths as arguments like the rest, so a rule
-    can be written again if any are wanted back.
+    and ``africa_main_roads.gpkg``. Their six scripts have been dropped too,
+    so nothing in the workflow reads any of these files. The scripts are in
+    the history if they are wanted back, at the point where they still took
+    their paths as command line arguments.
 
 EXTENSION POINTS
 ----------------
