@@ -96,7 +96,7 @@ paths, the datasets several rules read, and the default target.
 Each rule runs one script, and passes every file that script reads or writes
 as a command line argument. The scripts take those paths with
 [click](https://click.palletsprojects.com/), so any of them can also be run on
-its own - `python "scripts/plot/mine_ownership_maps.py" --help` lists what a
+its own - `python "scripts/plot/africa_maps_roads.py" --help` lists what a
 script needs. Nothing under `scripts/` reads `config.json`: the rule that
 calls a script is the only place its paths are written down.
 

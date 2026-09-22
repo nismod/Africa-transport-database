@@ -32,7 +32,11 @@ rule osm_extract_v2:
 
 
 rule extract_suez:
-    """Turn the Suez Canal OSM waterways into a topological network."""
+    """Turn the Suez Canal OSM waterways into a topological network.
+
+    Potential future case to expand this and handle similar crossings like
+    the Panama Canal, to refine Global port supply-chains network.
+    """
     input:
         script=f"{PREPROCESS}/extract_suez.py",
         waterways=f"{INCOMING}/egypt-latest-free.shp/gis_osm_waterways_free_1.shp",
@@ -237,13 +241,19 @@ rule port_cargo_attributes:
 rule rail_data_cleaning:
     """Build the Africa railway network from OSM and corridor project data.
 
+    NOTE: This script is an example case where we have an existing network and
+    we want to add new nodes and edges to it. It could be used in other
+    projects as well
+
     Step one converts each rail project into a per-project GeoPackage inside the
     ``africa_corridor_developments`` folder; step two merges those with the
     Africa rail network.
 
     Note that step two reads ``guinea_lines.gpkg`` while step one writes the
-    same project out as ``conakry-kankan_railway.gpkg``, so that input has to be
-    supplied, or perhaps renamed.
+    same project out as ``conakry-kankan_railway.gpkg``, so that input has to
+    be supplied, or perhaps renamed. It might be possible that
+    guinea_lines.gpkg is the original file, while was modified to create
+    conakry-kankan_railway.gpkg.
     """
     input:
         script=f"{PREPROCESS}/rail_data_cleaning.py",
@@ -306,7 +316,14 @@ rule rails_costs:
 
 
 rule road_connectivity:
-    """Connect points of interest to the OSM road network (README step 1-5)."""
+    """Connect points of interest to the OSM road network (README step 1-5).
+
+    NOTE: This is the rule that creates the filtered out road network from the
+    open-GIRA extract. Maybe we do not need this and it is better to just
+    retain the big network. Check inputs - are we creating multimodal edges
+    here or just ensuring the road network retains edges to route to other
+    points of interest. May be a general task to extract?
+    """
     input:
         script=f"{PREPROCESS}/road_connectivity.py",
         population=f"{DATA}/admin_boundaries/un_urban_population/un_pop_df.gpkg",
@@ -337,7 +354,11 @@ rule road_connectivity:
 
 
 rule road_corridors_primary_roads:
-    """Route the named road corridors over the primary road network."""
+    """Route the named road corridors over the primary road network.
+
+    NOTE: simplify this and following rules to add corridor names based
+    on shortest-paths over start and end points.
+    """
     input:
         script=f"{PREPROCESS}/road_corridors_primary_roads.py",
         road_edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
@@ -535,7 +556,7 @@ rule ourairports_data_layer:
         ourairports=f"{INCOMING}/airports/africa_airports_ourairport.gpkg",
         airport_network=f"{DATA}/infrastructure/africa_airport_network.gpkg",
     output:
-        ourairports=f"{DATA}/infrastructure/africa_airport_ourairport_rev.gpkg",
+        ourairports=f"{DATA}/infrastructure/africa_airport_ourairport.gpkg",
         network=f"{DATA}/infrastructure/africa_airport_network_rev.gpkg",
     shell:
         """

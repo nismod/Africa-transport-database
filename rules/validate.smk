@@ -67,7 +67,10 @@ rule plot_rail_facility_proximity:
 
 
 rule merge_heigit_data:
-    """Merge the per-country HeiGIT road surface GeoPackages into one file."""
+    """Merge the per-country HeiGIT road surface GeoPackages into one file.
+
+    NOTE: review this after PR #4 with work by ruojing227-tech
+    """
     input:
         script=f"{PREPROCESS}/merge_heigit_data.py",
         # The script reads all heigit_*_roadsurface_lines.gpkg in this folder.
@@ -83,7 +86,10 @@ rule merge_heigit_data:
 
 
 rule heigit_check:
-    """Compare database road surfaces against the merged HeiGIT dataset."""
+    """Compare database road surfaces against the merged HeiGIT dataset.
+
+    NOTE: review this after PR #4 with work by ruojing227-tech
+    """
     input:
         script=f"{PREPROCESS}/heigit_check.py",
         database_lines=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",

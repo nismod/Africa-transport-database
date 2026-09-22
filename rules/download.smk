@@ -131,7 +131,7 @@ GADM https://gadm.org/ - auto (drafted)
     columns added, so it takes a processing rule as well as a download.
 
 Other admin boundary lookups, compiled by the authors - manual
-    {DATA}/admin_boundaries/ccg_country_codes.csv
+    {DATA}/admin_boundaries/country_codes.csv
     {DATA}/admin_boundaries/centroids/countries_iso3_code.csv
     {DATA}/admin_boundaries/country_codes.xlsx
     {DATA}/admin_boundaries/un_urban_population/un_pop_df.gpkg
@@ -160,21 +160,20 @@ Inland waterways and cost assumptions, compiled by the authors - manual
     {DATA}/port_statistics/port_utilization.csv
     {RESULTS}/rails.xlsx
 
-transport-critical-minerals workflow outputs - manual
-    {RESULTS}/flow_mapping/edges_flows_2022.gpkg
-    {RESULTS}/flow_mapping/nodes_flows_2022.gpkg
-    {RESULTS}/flow_mapping/mining_city_node_level_ods_2022.csv
+transport-critical-minerals workflow outputs - no longer read
+    {RESULTS}/flow_mapping/*
     {RESULTS}/mine_ownership/df_maps_2022.csv
     {RESULTS}/optimised_processing_locations/
-    {DATA}/mineral_usage_factors/aggregated_stages.xlsx
-    {DATA}/mineral_usage_factors/metal_content.csv
-    {DATA}/mineral_usage_factors/mineral_usage_factors.xlsx
-    {DATA}/mineral_usage_factors/stage_mapping.xlsx
-    {DATA}/baci/baci_ccg_minerals_trade_2022_bgs_corrected.csv
-    {DATA}/baci/ccg_country_codes.csv
-    {DATA}/baci/mine_city_stages.csv
-    Read by the maps and stats rules, which were carried over from that
-    project - see EXTENSION POINTS.
+    {DATA}/mineral_usage_factors/*
+    {DATA}/baci/*
+    The four rules that read these - ``plot_location_maps``,
+    ``plot_mine_ownership_maps``, ``maps_global_maps`` and
+    ``maps_global_maps_transport`` - were dropped on main, along with
+    ``maps_graphs`` and ``plot_africa_basemap``, which read only the basemap
+    and ``africa_main_roads.gpkg``. So nothing in the workflow needs these
+    now. All six scripts are still in ``scripts/plot`` and ``scripts/maps and
+    stats`` and still take their paths as arguments like the rest, so a rule
+    can be written again if any are wanted back.
 
 EXTENSION POINTS
 ----------------
@@ -263,12 +262,36 @@ they bite:
    either is done, refreshing the network means bumping
    ``AFRICA_RAIL_COMMIT``.
 
-12. Minerals rules. ``maps_global_maps``, ``maps_global_maps_transport``,
-    ``plot_location_maps`` and ``plot_mine_ownership_maps`` read the outputs of
-    the transport-critical-minerals workflow, including the BACI trade and
-    mineral usage factor tables that ``location_maps.py`` reads through
-    ``modify_mineral_usage_factors()``. They belong either behind an opt-in
-    target or in that repository.
+12. Stage naming. main dropped the ``_FINAL``, ``_last`` and ``_rev``
+    suffixes so that each layer has one name. Only one of those renames can be
+    carried here - ``africa_airport_ourairport.gpkg``, which nothing else
+    writes or reads. Everywhere else the suffix marks a rule refining the
+    previous rule's output rather than a separate layer, so collapsing the
+    names makes the graph unbuildable:
+
+        africa_roads_edges.geoparquet    written by road_connectivity,
+                                         road_adjustments and road_processing,
+                                         the last of which also reads it
+        africa_roads_nodes.geoparquet    written by road_connectivity and
+                                         road_adjustments
+        africa_airport_network.gpkg      written by airports_data_cleaning and
+                                         ourairports_data_layer, both of which
+                                         also read it
+        africa_multimodal.gpkg           written by multi_modal_edges_creation
+                                         and data_checks
+
+    Snakemake rejects those as cyclic or ambiguous, and main's own Snakefile
+    does too: it currently fails to parse at all, because ``ruleorder:
+    maps_graphs_transport > maps_graphs`` survived the deletion of
+    ``maps_graphs``, and once that line is removed it reports cyclic
+    dependencies on ``road_processing`` and ``ourairports_data_layer``.
+
+    Three of these rules already say so in their own docstrings -
+    ``costs_columns`` ("need to be named something different at each stage,
+    order needs confirming"), ``data_checks`` and ``road_processing``. The fix
+    is to name each stage for what it contributes rather than for how late it
+    runs, which needs someone who knows what each step does; the suffixes stay
+    here until then.
 
 13. Country coverage of the HeiGIT download. ``AFRICA_ISO3`` below lists the
     54 African states, and ``download_heigit_road_surface`` fetches one file

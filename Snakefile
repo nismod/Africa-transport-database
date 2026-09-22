@@ -91,4 +91,3 @@ include: "rules/plot.smk"
 # ``road_processing``.
 ruleorder: road_processing > costs_columns
 ruleorder: africa_inland_waterways > inland_waterways_cleaning
-ruleorder: maps_graphs_transport > maps_graphs

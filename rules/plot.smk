@@ -15,24 +15,6 @@ declared as inputs even where the script itself does not name them.
 # ---------------------------------------------------------------------------
 
 
-rule plot_africa_basemap:
-    """Plot the Africa basemap on its own."""
-    input:
-        script=f"{PLOT}/africa_maps.py",
-        countries=BASEMAP_COUNTRIES,
-        lakes=BASEMAP_LAKES,
-        ccg_countries=CCG_COUNTRY_CODES,
-    output:
-        figure=f"{FIGURES}/africa_basemap.png",
-    shell:
-        """
-        python "{input.script}" \
-            --countries "{input.countries}" \
-            --lakes "{input.lakes}" \
-            --ccg-countries "{input.ccg_countries}" \
-            --output-figure "{output.figure}"
-        """
-
 
 rule plot_airports:
     """Map airports sized by total annual seats."""
@@ -61,7 +43,7 @@ rule plot_ports_and_iww:
         iww=f"{DATA}/infrastructure/africa_iww_network.gpkg",
         countries=BASEMAP_COUNTRIES,
         lakes=BASEMAP_LAKES,
-        ccg_countries=CCG_COUNTRY_CODES,
+        ccg_countries=COUNTRY_CODES,
     output:
         figure=f"{FIGURES}/IWW_and_ports.png",
     shell:
@@ -211,118 +193,9 @@ rule plot_roads_histogram:
 
 
 # ---------------------------------------------------------------------------
-# minerals maps, carried over from the transport-critical-minerals workflow
+# scripts/maps and stats
 # ---------------------------------------------------------------------------
 
-
-rule plot_location_maps:
-    """Maps of optimised mine and processing locations.
-
-    The mineral usage factor and BACI trade inputs are read by
-    ``modify_mineral_usage_factors()`` rather than by ``main()``, so they do not
-    appear alongside the other reads in the script.
-    """
-    input:
-        script=f"{PLOT}/location_maps.py",
-        ccg_countries=CCG_COUNTRY_CODES,
-        stage_mapping=f"{DATA}/mineral_usage_factors/stage_mapping.xlsx",
-        aggregated_stages=f"{DATA}/mineral_usage_factors/aggregated_stages.xlsx",
-        usage_factors=f"{DATA}/mineral_usage_factors/mineral_usage_factors.xlsx",
-        metal_content=f"{DATA}/mineral_usage_factors/metal_content.csv",
-        baci_countries=f"{DATA}/baci/ccg_country_codes.csv",
-        mine_city_stages=f"{DATA}/baci/mine_city_stages.csv",
-        baci_trade=f"{DATA}/baci/baci_ccg_minerals_trade_2022_bgs_corrected.csv",
-        countries=BASEMAP_COUNTRIES,
-        lakes=BASEMAP_LAKES,
-        locations=expand(
-            f"{RESULTS}/optimised_processing_locations/"
-            "combined_node_locations_for_energy_conversion_{scenario}.gpkg",
-            scenario=[
-                "country_unconstrained",
-                "country_constrained",
-                "region_unconstrained",
-                "region_constrained",
-            ],
-        ),
-    output:
-        figures=expand(
-            f"{FIGURES}/regional_figures/mine_and_processing_locations/"
-            "combined_processing_locations_maps_{name}.png",
-            name=[
-                "2030_mid_country",
-                "2040_mid_country",
-                "2030_mid_region",
-                "2040_mid_region",
-            ],
-        ),
-    params:
-        locations_dir=f"{RESULTS}/optimised_processing_locations",
-        output_dir=f"{FIGURES}/regional_figures/mine_and_processing_locations",
-    shell:
-        """
-        python "{input.script}" \
-            --ccg-countries "{input.ccg_countries}" \
-            --stage-mapping "{input.stage_mapping}" \
-            --aggregated-stages "{input.aggregated_stages}" \
-            --usage-factors "{input.usage_factors}" \
-            --metal-content "{input.metal_content}" \
-            --baci-countries "{input.baci_countries}" \
-            --mine-city-stages "{input.mine_city_stages}" \
-            --baci-trade "{input.baci_trade}" \
-            --countries "{input.countries}" \
-            --lakes "{input.lakes}" \
-            --locations-dir "{params.locations_dir}" \
-            --output-dir "{params.output_dir}"
-        """
-
-
-rule plot_mine_ownership_maps:
-    """Global maps of mine output and ownership shares by country.
-
-    The script names its own output files, so the directory is passed as a
-    parameter and the individual figures are declared as outputs.
-    """
-    input:
-        script=f"{PLOT}/mine_ownership_maps.py",
-        countries=BASEMAP_COUNTRIES,
-        centroids=f"{DATA}/admin_boundaries/centroids/countries_iso3_code.csv",
-        ownership=f"{RESULTS}/mine_ownership/df_maps_2022.csv",
-    output:
-        basemap=f"{FIGURES}/mine_ownership/global_basemap.png",
-        totals=f"{FIGURES}/mine_ownership/mine_totals.svg",
-        by_ownership=f"{FIGURES}/mine_ownership/country_totals_by_ownership.svg",
-    params:
-        output_dir=f"{FIGURES}/mine_ownership",
-    shell:
-        """
-        python "{input.script}" \
-            --countries "{input.countries}" \
-            --centroids "{input.centroids}" \
-            --ownership "{input.ownership}" \
-            --output-dir "{params.output_dir}"
-        """
-
-
-rule maps_graphs:
-    """Plot the main road network over the Africa basemap.
-    """
-    input:
-        script=f"{MAPS_AND_STATS}/graphs.py",
-        ccg_countries=CCG_COUNTRY_CODES,
-        main_roads=f"{INCOMING}/africa_roads/africa_main_roads.gpkg",
-        countries=BASEMAP_COUNTRIES,
-        lakes=BASEMAP_LAKES,
-    output:
-        figure=f"{FIGURES}/roads_test.png",
-    shell:
-        """
-        python "{input.script}" \
-            --ccg-countries "{input.ccg_countries}" \
-            --main-roads "{input.main_roads}" \
-            --countries "{input.countries}" \
-            --lakes "{input.lakes}" \
-            --output-figure "{output.figure}"
-        """
 
 
 rule maps_graphs_transport:
@@ -333,7 +206,7 @@ rule maps_graphs_transport:
         road_edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
         countries=BASEMAP_COUNTRIES,
         lakes=BASEMAP_LAKES,
-        ccg_countries=CCG_COUNTRY_CODES,
+        ccg_countries=COUNTRY_CODES,
     output:
         figure=f"{FIGURES}/roads_test.png",
     shell:
@@ -346,77 +219,3 @@ rule maps_graphs_transport:
             --output-figure "{output.figure}"
         """
 
-
-rule maps_global_maps:
-    """Map copper node and edge flows over the Africa basemap.
-
-    Only the last ``plot_flows`` block is enabled in the script; the disabled
-    blocks additionally read ``Minerals/copper_mines_tons_refined_unrefined.gpkg``,
-    ``minerals/ccg_mines_est_production.gpkg``, ``Minerals/s_and_p_mines.gpkg``
-    and ``flow_mapping/{mineral}_flows_{year}.gpkg``.
-    """
-    input:
-        script=f"{MAPS_AND_STATS}/global_maps.py",
-        ccg_countries=CCG_COUNTRY_CODES,
-        edge_flows=f"{RESULTS}/flow_mapping/edges_flows_2022.gpkg",
-        node_flows=f"{RESULTS}/flow_mapping/nodes_flows_2022.gpkg",
-        od_ports=f"{RESULTS}/flow_mapping/mining_city_node_level_ods_2022.csv",
-        port_commodities=f"{DATA}/port_statistics/port_known_commodities_traded.csv",
-        countries=BASEMAP_COUNTRIES,
-        lakes=BASEMAP_LAKES,
-    output:
-        figure=f"{FIGURES}/ccg_copper_total_africa_node_edge_flows_2022.png",
-    params:
-        output_dir=FIGURES,
-    shell:
-        """
-        python "{input.script}" \
-            --ccg-countries "{input.ccg_countries}" \
-            --edge-flows "{input.edge_flows}" \
-            --node-flows "{input.node_flows}" \
-            --od-ports "{input.od_ports}" \
-            --port-commodities "{input.port_commodities}" \
-            --countries "{input.countries}" \
-            --lakes "{input.lakes}" \
-            --output-dir "{params.output_dir}"
-        """
-
-
-rule maps_global_maps_transport:
-    """Map railway status, then copper node and edge flows.
-
-    NOTE: as in ``global_maps.py``, the disabled blocks read further mineral
-    datasets.
-
-    It also writes {FIGURES}/ccg_copper_total_africa_node_edge_flows_2022.png,
-    which is declared as the output of ``maps_global_maps`` instead - need to
-    decide which script should produce this.
-    """
-    input:
-        script=f"{MAPS_AND_STATS}/global_maps_transport.py",
-        ccg_countries=CCG_COUNTRY_CODES,
-        railways=f"{DATA}/infrastructure/africa_railways_network.gpkg",
-        edge_flows=f"{RESULTS}/flow_mapping/edges_flows_2022.gpkg",
-        node_flows=f"{RESULTS}/flow_mapping/nodes_flows_2022.gpkg",
-        od_ports=f"{RESULTS}/flow_mapping/mining_city_node_level_ods_2022.csv",
-        port_commodities=f"{DATA}/port_statistics/port_known_commodities_traded.csv",
-        countries=BASEMAP_COUNTRIES,
-        lakes=BASEMAP_LAKES,
-    output:
-        railway_status=f"{FIGURES}/railway_status.png",
-    params:
-        output_dir=FIGURES,
-    shell:
-        """
-        python "{input.script}" \
-            --ccg-countries "{input.ccg_countries}" \
-            --railways "{input.railways}" \
-            --edge-flows "{input.edge_flows}" \
-            --node-flows "{input.node_flows}" \
-            --od-ports "{input.od_ports}" \
-            --port-commodities "{input.port_commodities}" \
-            --countries "{input.countries}" \
-            --lakes "{input.lakes}" \
-            --output-railway-status "{output.railway_status}" \
-            --output-dir "{params.output_dir}"
-        """
