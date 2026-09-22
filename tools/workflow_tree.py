@@ -13,9 +13,12 @@ entries that look like a mismatch.
 
     python tools/workflow_tree.py --output docs/workflow_tree.txt
 
-Defaults to ``config.template.json`` so the tree reads with the generic
-``incoming_data``, ``processed_data``, ``results`` and ``figures`` names
-rather than whichever local directories a working ``config.json`` points at.
+It picks up ``config.template.json`` when that is there, so the tree reads
+with the generic ``incoming_data``, ``processed_data``, ``results`` and
+``figures`` names rather than whichever local directories a working
+``config.json`` points at. It works on other workflows too: point
+``--snakefile`` at one and pass ``--configfile``, or omit that for a workflow
+that names its own config.
 """
 
 import collections
@@ -30,13 +33,26 @@ from snakemake.api import ConfigSettings, ResourceSettings, SnakemakeApi
 # rules are also in `WorkflowApi._get_workflow()`.
 WORKFLOW_ATTRIBUTE = "_workflow"
 
+# Used when no --configfile is given and it is there, so that the tree reads
+# with the generic directory names rather than a working config's local ones.
+DEFAULT_CONFIGFILE = "config.template.json"
 
-def read_declarations(snakefile, configfile):
+
+def read_declarations(snakefile, configfile, cores):
     """Every (path, "in"/"out", rule) the workflow declares, and its config."""
     with SnakemakeApi() as api:
         workflow_api = api.workflow(
-            resource_settings=ResourceSettings(),
-            config_settings=ConfigSettings(configfiles=[configfile]),
+            # A rule may size its threads from the total, as in
+            # `threads: workflow.cores * 0.5`, and that is evaluated while the
+            # rule is being read. Leaving cores unset fails the parse with
+            # "Workflow requires a total number of cores to be defined".
+            # Nothing is executed here, so the number only has to exist.
+            resource_settings=ResourceSettings(cores=cores),
+            config_settings=(
+                ConfigSettings(configfiles=[configfile])
+                if configfile
+                else ConfigSettings()
+            ),
             snakefile=snakefile,
         )
         workflow = getattr(workflow_api, WORKFLOW_ATTRIBUTE)
@@ -157,7 +173,7 @@ def roots_in_order(config, paths):
 
 HEADER = """\
 Files named by the rules in {snakefile}, from snakemake's own parse of the
-workflow. Paths are as {configfile} sets them.
+workflow. Paths are as {config_source} sets them.
 
     in            read by a rule
     out <- rule   written by that rule
@@ -170,13 +186,22 @@ Regenerate with: python tools/workflow_tree.py
 @click.command()
 @click.option("--snakefile", default="Snakefile", type=click.Path(exists=True))
 @click.option(
-    "--configfile", default="config.template.json", type=click.Path(exists=True)
+    "--configfile",
+    default=None,
+    type=click.Path(exists=True),
+    help="Defaults to config.template.json here; omit it for a workflow that "
+    "names its own config.",
 )
 @click.option("--output", required=True, type=click.Path())
-def main(snakefile, configfile, output):
+@click.option(
+    "--cores", default=1, show_default=True, help="Only to satisfy the parse."
+)
+def main(snakefile, configfile, output, cores):
     """Write the workflow's input and output files out as a tree"""
+    if configfile is None and Path(DEFAULT_CONFIGFILE).exists():
+        configfile = DEFAULT_CONFIGFILE
     declarations, config, rule_count = read_declarations(
-        Path(snakefile), Path(configfile)
+        Path(snakefile), Path(configfile) if configfile else None, cores
     )
     files = fold_onto_wildcards(declarations)
 
@@ -201,7 +226,10 @@ def main(snakefile, configfile, output):
     ]
     Path(output).parent.mkdir(parents=True, exist_ok=True)
     Path(output).write_text(
-        HEADER.format(snakefile=snakefile, configfile=configfile)
+        HEADER.format(
+            snakefile=snakefile,
+            config_source=configfile or "the workflow's own config",
+        )
         + "\n"
         + "\n".join(body + [summary])
         + "\n"
