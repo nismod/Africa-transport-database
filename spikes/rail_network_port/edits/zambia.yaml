@@ -1,0 +1,230 @@
+# Zambia rail network edits.
+#
+# Derived from zambia.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 695 lines of SQL: 28 edits,
+# 15 statements skipped as unable to reach the published network
+# (1 exploratory, 1 recomputed length, 1 routing test, 11 schema, 1 template),
+# and 9 not transcribed - see the report.
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Zambia
+edits:
+- op: set_all_edges
+  set:
+    mode: mixed
+  note: assume mixed mode unless amended
+- op: set_node
+  node: 3330796
+  set:
+    name: Kataba
+    railway: station
+  note: set additional node for stations
+- op: set_node
+  node: 3331118
+  set:
+    name: Ndola Lime Company
+    railway: stop
+    facility: quarry
+- op: set_node
+  node: 3331417
+  set:
+    name: KCM Nkana Refinery
+    railway: stop
+    facility: refinery
+- op: set_node
+  node: 3331740
+  set:
+    name: KCM Nchanga Copper Mine
+    railway: stop
+    facility: mine
+- op: set_node
+  node: 3331730
+  set:
+    name: KCM Konkola Copper Mine
+    railway: stop
+    facility: mine
+- op: tag_route
+  from: 3331236
+  to: 3330084
+  set:
+    line: TAZARA (Zambia)
+    mode: mixed
+    gauge: '1067'
+    status: open
+  note: TAZARA (Zambia)
+- op: tag_route
+  from: 3330084
+  to: 3331256
+  set:
+    line: TAZARA - Kapiri Mposhi Junction
+    mode: freight
+    gauge: '1067'
+    status: open
+  note: North
+- op: tag_route
+  from: 3330084
+  to: 3331239
+  set:
+    line: TAZARA - Kapiri Mposhi Junction
+    mode: freight
+    gauge: '1067'
+    status: open
+  note: South
+- op: tag_route
+  from: 3331111
+  to: 3331829
+  set:
+    line: Livingstone - Ndola
+    mode: mixed
+    gauge: '1067'
+    status: open
+  note: from Victoria Falls Bridge (Zimbabwe Border) - Ndola
+- op: tag_route
+  from: 3330010
+  to: 3331227
+  set:
+    line: Ndola - DRC border
+    mode: mixed
+    gauge: '1067'
+    status: open
+  note: Ndola - DRC border
+- op: tag_route
+  from: 3331112
+  to: 3330486
+  set:
+    line: Mulobezi Railway
+    mode: mixed
+    gauge: '1067'
+    status: open
+  note: Mulobezi Railway
+- op: tag_route
+  from: 3332430
+  to: 3330796
+  set:
+    line: Mulobezi - Kataba
+    mode: mixed
+    gauge: '1067'
+    status: abandoned
+  note: Mulobezi - Kataba (abandoned)
+- op: insert_edge
+  source: 3330130
+  target: 3330418
+  oid: 3350000
+  note: simplify network - add line to link Choma with Maamba Colliery Railway (Choma - Masuku)
+- op: tag_route
+  from: 3330130
+  to: 3330214
+  set:
+    line: Choma - Masuka (Maamba Colliery Railway)
+    mode: mixed
+    gauge: '1067'
+    status: open
+  note: Choma - Masuka (Maamba Colliery Railway)
+- op: tag_route
+  from: 3340300
+  to: 3330168
+  set:
+    line: Chipata - Malawi (to Mchingi)
+    mode: mixed
+    gauge: '1067'
+    status: open
+  note: Chipata - Malawi Border (to Mchingi)
+- op: tag_route
+  from: 3331829
+  to: 3330365
+  set:
+    line: Ndola - Chingola
+    mode: mixed
+    gauge: '1067'
+    status: open
+  note: Ndola - Chingola
+- op: tag_route
+  from: 3331218
+  to: 3330506
+  set:
+    line: Mufulira branch line
+    mode: mixed
+    gauge: '1067'
+    status: open
+  note: Mufulira branch
+- op: tag_route
+  from: 3331429
+  to: 3330504
+  set:
+    line: Chililabombwe branch line
+    mode: mixed
+    gauge: '1067'
+    status: open
+  note: Chililabombwe branch
+- op: tag_route
+  from: 3331444
+  to: 3331118
+  set:
+    line: Ndola - Ndola Lime Quarry
+    mode: freight
+    gauge: '1067'
+    status: open
+  note: Nodola - Ndola Lime Company
+- op: tag_route
+  from: 3331375
+  to: 3331417
+  set:
+    line: Nkana Copper Refinery
+    mode: freight
+    gauge: '1067'
+    status: open
+  note: Nkana Copper Refinery
+- op: tag_route
+  from: 3330365
+  to: 3331740
+  set:
+    line: Nchanga Copper Mine
+    mode: freight
+    gauge: '1067'
+    status: open
+  note: Nchanga Copper Mine
+- op: tag_route
+  from: 3330504
+  to: 3331730
+  set:
+    line: Konkola Copper Mine
+    mode: freight
+    gauge: '1067'
+    status: open
+  note: Konkola Copper Mine
+- op: insert_edge
+  source: 3332437
+  target: 3331444
+  oid: 3350001
+  note: complete lines for routing purposes
+- op: insert_edge
+  source: 3332438
+  target: 3332439
+  oid: 3350002
+- op: insert_edge
+  source: 3332440
+  target: 3331436
+  oid: 3350003
+- op: tag_route
+  from: 3331444
+  to: 3330025
+  set:
+    line: Ndola - Luanshya
+    mode: mixed
+    gauge: '1067'
+    status: abandoned
+    comment: Complete reconstruction needed
+  note: Ndola to Luanshya (abandoned)
+- op: set_nodes_on_edges
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'

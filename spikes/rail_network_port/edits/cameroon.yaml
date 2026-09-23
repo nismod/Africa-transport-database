@@ -1,0 +1,186 @@
+# Cameroon rail network edits.
+#
+# Derived from cameroon.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 296 lines of SQL: 29 edits,
+# 15 statements skipped as unable to reach the published network
+# (2 backup, 7 exploratory, 1 routing test, 4 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Cameroon
+edits:
+- op: set_node
+  node: 555023199
+  set:
+    name: Ngaoundéré
+    railway: station
+  note: served by couchette (191/192) and omnibus (stopping train, 112/113)
+- op: tag_route
+  from: 555020119
+  to: 555023199
+  set:
+    line: Yaoundé - Ngaoundéré
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: served by couchette (191/192) and omnibus (stopping train, 112/113)
+- op: set_node
+  node: 555106821
+  set:
+    name: Douala
+    railway: station
+  note: Douala - Yaoundé
+- op: tag_route
+  from: 555106821
+  to: 555020119
+  set:
+    line: Douala - Yaoundé
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: served by omnibus (stopping train, 103/104), 181/184 (limited stop) and Train Express (185/186,
+      5 stops only)
+- op: split_edge
+  edge: 555051997
+  node: 555130504
+  note: routing out from Douala
+- op: tag_route
+  from: 555106821
+  to: 555026956
+  set:
+    line: Douala - Kumba
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: served by omnibus (stopping service, 172-177)
+- op: split_edge
+  edge: 555017179
+  node: 555093225
+  note: Port of Douala
+- op: set_node
+  node: 555021616
+  set:
+    name: Port of Douala (Container Terminal)
+    railway: stop
+    facility: container_port
+  note: containter terminal
+- op: set_node
+  node: 555093232
+  set:
+    name: Port of Douala (General Cargo)
+    railway: stop
+    facility: container_port
+- op: tag_route
+  from: 555130504
+  to: 555021616
+  set:
+    line: Port of Douala
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555093230
+  to: 555093232
+  set:
+    line: Port of Douala (General Cargo)
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555044993
+  node: 555093061
+  note: disused Ngoumou - Mbalmayo
+- op: tag_route
+  from: 555093061
+  to: 555057982
+  set:
+    line: Ngoumou - Mbalmayo
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: disused
+    comment: ''
+- op: copy_node
+  node: 555028436
+  edge: 555023755
+  note: Dibamba
+- op: copy_node
+  node: 555028439
+  edge: 555023760
+  note: Lungahé
+- op: copy_node
+  node: 555062873
+  edge: 555085505
+  note: Edéa Croisement
+- op: copy_node
+  node: 555040702
+  edge: 555066934
+  note: Gare voyageur de Messondo
+- op: copy_node
+  node: 555028426
+  edge: 555070238
+  note: Eséka
+- op: copy_node
+  node: 555028445
+  edge: 555045172
+  note: Minloh-Maloume
+- op: set_nodes
+  nodes:
+  - 555023207
+  - 555023195
+  set:
+    railway: station
+  note: Ngaoundal
+- op: copy_node
+  node: 555028461
+  edge: 555044995
+  note: Oweng
+- op: copy_node
+  node: 555024569
+  edge: 555071058
+  note: Makor
+- op: copy_node
+  node: 555033373
+  edge: 555063362
+  note: Mbargué
+- op: copy_node
+  node: 555033371
+  edge: 555050778
+  note: Gare de Mengue Bibey
+- op: copy_node
+  node: 555026391
+  edge: 555050018
+  note: Nanga Eboko
+- op: copy_node
+  node: 555027618
+  edge: 555083494
+  note: Mbandjock
+- op: copy_node
+  node: 555033378
+  edge: 555050007
+  note: Batchenga
+- op: copy_node
+  node: 555024568
+  edge: 555050009
+  note: Gare d'Obala
+- op: set_nodes_on_edges
+  countries:
+  - Cameroon
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1000'
+  set:
+    gauge: '1000'

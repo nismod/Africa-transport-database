@@ -1,0 +1,1320 @@
+# Algeria rail network edits.
+#
+# Derived from algeria.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 1,888 lines of SQL: 228 edits,
+# 13 statements skipped as unable to reach the published network
+# (2 backup, 8 exploratory, 1 routing test, 2 template),
+# and 1 not transcribed - see the report.
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Algeria
+edits:
+- op: set_edge
+  edge: 555052375
+  set:
+    structure: tunnel
+- op: set_nodes
+  nodes:
+  - 555029711
+  - 555029704
+  set:
+    name: null
+    railway: null
+  note: Institut des Sciences Medicales and Boulevard Amarna
+- op: set_node
+  node: 555070202
+  set:
+    name: Centrale d'Oran محطة القطار وهران
+    railway: station
+- op: set_node
+  node: 555070202
+  set:
+    name: Centrale d'Oran محطة القطار وهران
+    railway: station
+- op: set_node
+  node: 555037475
+  set:
+    name: Arzew أرزيو
+    railway: station
+- op: set_node
+  node: 555028940
+  set:
+    name: Oued Tlelat وادي تليلات
+    railway: station
+- op: set_node
+  node: 555026121
+  set:
+    name: Mohammedia المحمدية
+    railway: station
+- op: set_node
+  node: 555028467
+  set:
+    name: El Khroub الخروب
+    railway: station
+- op: set_node
+  node: 555028885
+  set:
+    name: Touggourt تقرت
+    railway: station
+- op: set_node
+  node: 555029101
+  set:
+    name: El Guerrah (El Gourzi) القراح
+    railway: station
+- op: set_node
+  node: 555020338
+  set:
+    name: Souk Ahras سوق أهراس
+    railway: station
+- op: set_node
+  node: 555020163
+  set:
+    name: Tebessa تبسة
+    railway: station
+- op: set_node
+  node: 555062267
+  set:
+    name: Bordj Bou Arreridj
+    railway: station
+- op: set_node
+  node: 555026797
+  set:
+    name: Ghazaouet الغزوات
+    railway: station
+- op: set_node
+  node: 555035026
+  set:
+    name: Mostaganem مستغانم
+    railway: station
+- op: set_node
+  node: 555016805
+  set:
+    name: Béjaïa بجاية
+    railway: station
+- op: set_node
+  node: 555021776
+  set:
+    name: Skikda سكيكدة
+    railway: station
+    facility: port
+- op: set_node
+  node: 555020341
+  set:
+    name: Sidi el Hemissi سيدي الهميسي
+    railway: station
+- op: set_node
+  node: 555129940
+  set:
+    name: Beni Saf
+    railway: station
+- op: set_node
+  node: 555062957
+  set:
+    name: Algiers International Airport محطة المطار هواري بومدين
+    railway: station
+    facility: airport
+- op: set_node
+  node: 555021213
+  set:
+    name: Mecheria المشرية
+    railway: station
+- op: set_node
+  node: 555019766
+  set:
+    name: Relizane غليزان
+    railway: station
+- op: set_node
+  node: 555003037
+  set:
+    name: Baba Ali بابا علي
+    railway: station
+- op: set_node
+  node: 555062469
+  set:
+    name: Hussein Dey حسين داي
+    railway: station
+- op: set_node
+  node: 555062365
+  set:
+    name: Bab Ezzouar
+    railway: station
+- op: set_node
+  node: 555033610
+  set:
+    name: Hamma Bouziane
+    railway: station
+- op: set_node
+  node: 555027612
+  set:
+    name: Constantine قسنطينة
+    railway: station
+- op: set_node
+  node: 555008156
+  set:
+    name: Sidi Mabrouk سيدي مبروك
+    railway: station
+- op: set_node
+  node: 555024272
+  set:
+    name: Béchar بشار
+    railway: station
+- op: set_node
+  node: 555026335
+  set:
+    name: Beni Ounif بني ونيف
+    railway: station
+- op: set_node
+  node: 555021207
+  set:
+    name: Aïn Séfra عين الصفراء
+    railway: station
+- op: set_node
+  node: 555026334
+  set:
+    name: Naâma النعامة
+    railway: station
+- op: set_node
+  node: 555033671
+  set:
+    name: Saïda سعيدة
+    railway: station
+- op: set_node
+  node: 555023299
+  set:
+    name: Youb يوب
+    railway: station
+- op: set_node
+  node: 555023298
+  set:
+    name: Telagh تلاغ
+    railway: station
+- op: set_node
+  node: 555025526
+  set:
+    name: Souani السواني
+    railway: station
+- op: set_node
+  node: 555029523
+  set:
+    name: Maghnia مغنية
+    railway: station
+- op: set_node
+  node: 555063022
+  set:
+    name: Tralimet محطة تراليمات
+    railway: station
+- op: set_node
+  node: 555021058
+  set:
+    name: Zalboun زلبون
+    railway: station
+- op: set_node
+  node: 555038982
+  set:
+    name: Ain Tallout عين تالوت
+    railway: station
+- op: set_node
+  node: 555014951
+  set:
+    name: El Amria العامرية
+    railway: station
+- op: set_node
+  node: 555028930
+  set:
+    name: Boutlelis بوتليليس
+    railway: station
+- op: set_node
+  node: 555011588
+  set:
+    name: Sidi Maârouf سيدي معروف
+    railway: station
+- op: set_node
+  node: 555011590
+  set:
+    name: Hassi Bounif حاسي بونيف
+    railway: station
+- op: set_node
+  node: 555003344
+  set:
+    name: Hassi Ameur حاسي عامر
+    railway: station
+- op: set_node
+  node: 555026147
+  set:
+    name: Djidiouia جديوية
+    railway: station
+- op: set_node
+  node: 555025225
+  set:
+    name: Oued Rhiou وادي ارهيو
+    railway: station
+- op: set_node
+  node: 555025223
+  set:
+    name: Bir Safsaf بئر صفصاف
+    railway: station
+- op: set_node
+  node: 555003120
+  set:
+    name: Boufarik بوفاريك
+    railway: station
+- op: set_node
+  node: 555018888
+  set:
+    name: Tizi Ouzou
+    railway: station
+- op: set_node
+  node: 555034539
+  set:
+    name: Oued Aïssi Universite وادي عيسي - الجامعة
+    railway: station
+- op: set_node
+  node: 555030545
+  set:
+    name: Ighzer Amokrane إغزار أمقران
+    railway: station
+- op: set_node
+  node: 555008160
+  set:
+    name: Sétif سطيف
+    railway: station
+- op: set_node
+  node: 555021769
+  set:
+    name: Aïn Kechra عين قشرة
+    railway: station
+- op: set_node
+  node: 555016572
+  set:
+    name: Oued Hamimine وادي حميم
+    railway: station
+- op: set_node
+  node: 555029102
+  set:
+    name: Ouled Rahmoune أولاد رحمون
+    railway: station
+- op: set_node
+  node: 555021395
+  set:
+    name: Aïn Beïda عين البيضاء
+    railway: station
+- op: set_node
+  node: 555021788
+  set:
+    name: Chebaita Mokhtar شبايطة مختار
+    railway: station
+- op: set_node
+  node: 555026254
+  set:
+    name: Dréan الذرعان
+    railway: station
+- op: set_node
+  node: 555021786
+  set:
+    name: Chihani شيحاني
+    railway: station
+- op: set_node
+  node: 555021782
+  set:
+    name: Boukhamouza بوخموزة
+    railway: station
+- op: set_node
+  node: 555021784
+  set:
+    name: Oued Fragha وادي فراغة
+    railway: station
+- op: set_node
+  node: 555021793
+  set:
+    name: Boucheghouf بوشغوف
+    railway: station
+- op: set_node
+  node: 555021792
+  set:
+    name: Ain Affra
+    railway: station
+- op: set_node
+  node: 555036766
+  set:
+    name: Seggana سقانة
+    railway: station
+- op: set_node
+  node: 555029190
+  set:
+    name: Magra مقرة
+    railway: station
+- op: set_node
+  node: 555028862
+  set:
+    name: Berhoum برهوم
+    railway: station
+- op: set_node
+  node: 555016097
+  set:
+    name: Medjez
+    railway: station
+- op: set_node
+  node: 555021418
+  set:
+    name: Biskra بسكرة
+    railway: station
+- op: set_node
+  node: 555021813
+  set:
+    name: El M'Ghair المغير
+    railway: station
+- op: set_node
+  node: 555021817
+  set:
+    name: Djamaa جمعة
+    railway: station
+- op: set_nodes
+  nodes:
+  - 555034048
+  - 555062891
+  - 555041734
+  - 555019270
+  - 555062409
+  - 555032309
+  - 555062440
+  - 555062661
+  set:
+    gauge: null
+    name: null
+    railway: null
+    facility: null
+  note: update where duplicate station nodes
+- op: set_node
+  node: 555117847
+  set:
+    name: Annaba Port
+    railway: stop
+    facility: port
+  note: facilities
+- op: set_node
+  node: 555108067
+  set:
+    name: Djendjen Port
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555021070
+  set:
+    name: Ghazaouet Port
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555028159
+  set:
+    name: Oran Maritime (port) وهران البحرية
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555107477
+  set:
+    name: Mostaganem Port
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555070773
+  set:
+    name: Alger Port
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555102264
+  set:
+    name: Béjaïa Port
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555090465
+  set:
+    name: Djebel Onk (Phosphate Mine)
+    railway: stop
+    facility: mine
+  note: mines / industrial etc
+- op: set_node
+  node: 555093712
+  set:
+    name: Boukhadra (iron mine)
+    railway: stop
+    facility: mine
+- op: set_node
+  node: 555029032
+  set:
+    name: El Ouenza (iron mine)
+    railway: stop
+    facility: mine
+- op: set_node
+  node: 555088535
+  set:
+    name: El Hadjar Complex (steel plant)
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555105784
+  set:
+    name: Bellara Steel Complex
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555091024
+  set:
+    name: Naftal El Khroub Oil Depot
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555083556
+  set:
+    name: Sidi Bel Abbès Industrial Zone
+    railway: stop
+    facility: Industrial zone
+  note: industrial zones
+- op: set_node
+  node: 555063874
+  set:
+    name: To Rouïba-Reghaïa Industrial Zone
+    railway: stop
+    facility: Industrial zone
+- op: insert_node_at
+  oid: 557000000
+  lon: 8.00607
+  lat: 35.66806
+  set:
+    railway: station
+    name: Morsott
+    country: Algeria
+  note: these then need to be located on the correct edge using the procedure below
+- op: copy_node
+  node: 555014903
+  edge: 555065285
+  note: 39 copy nodes from a DO block, whose array survives only as a comment
+- op: copy_node
+  node: 555037475
+  edge: 555068139
+- op: copy_node
+  node: 555028940
+  edge: 555096463
+- op: copy_node
+  node: 555024272
+  edge: 555059088
+- op: copy_node
+  node: 555021009
+  edge: 555050232
+- op: copy_node
+  node: 555026121
+  edge: 555063511
+- op: copy_node
+  node: 555035026
+  edge: 555041694
+- op: copy_node
+  node: 555003119
+  edge: 555088093
+- op: copy_node
+  node: 555003041
+  edge: 555003535
+- op: copy_node
+  node: 555002212
+  edge: 555001189
+- op: copy_node
+  node: 555028467
+  edge: 555102241
+- op: copy_node
+  node: 555021773
+  edge: 555019956
+- op: copy_node
+  node: 555021867
+  edge: 555091271
+- op: copy_node
+  node: 555016666
+  edge: 555084061
+- op: copy_node
+  node: 555088536
+  edge: 555014814
+- op: copy_node
+  node: 555098824
+  edge: 555064374
+- op: copy_node
+  node: 555108105
+  edge: 555053980
+- op: copy_node
+  node: 555026797
+  edge: 555046830
+- op: copy_node
+  node: 555099998
+  edge: 555056971
+- op: copy_node
+  node: 555021213
+  edge: 555050725
+- op: copy_node
+  node: 555032299
+  edge: 555050726
+- op: copy_node
+  node: 555019766
+  edge: 555084298
+- op: copy_node
+  node: 555024661
+  edge: 555061309
+- op: copy_node
+  node: 555006824
+  edge: 555090848
+- op: copy_node
+  node: 555026156
+  edge: 555090851
+- op: copy_node
+  node: 555024340
+  edge: 555090840
+- op: copy_node
+  node: 555003037
+  edge: 555088075
+- op: copy_node
+  node: 555003039
+  edge: 555084955
+- op: copy_node
+  node: 555003040
+  edge: 5550849552
+- op: copy_node
+  node: 555002474
+  edge: 555002346
+- op: copy_node
+  node: 555002234
+  edge: 555001332
+- op: copy_node
+  node: 555002233
+  edge: 555051628
+- op: copy_node
+  node: 555028900
+  edge: 555066899
+- op: copy_node
+  node: 555028861
+  edge: 5550668991
+- op: copy_node
+  node: 555033823
+  edge: 555070262
+- op: copy_node
+  node: 555033610
+  edge: 555039894
+- op: copy_node
+  node: 555027612
+  edge: 555039891
+- op: copy_node
+  node: 555021800
+  edge: 555076976
+- op: copy_node
+  node: 557000000
+  edge: 555036783
+- op: split_edge
+  node: 555064349
+  edge: 555002336
+  note: 34 split edges from a DO block, whose array survives only as a comment
+- op: split_edge
+  node: 555118638
+  edge: 5550569711
+- op: split_edge
+  node: 555108536
+  edge: 555091243
+- op: split_edge
+  node: 555092037
+  edge: 555067840
+- op: split_edge
+  node: 555085864
+  edge: 555041687
+- op: split_edge
+  node: 555120491
+  edge: 555041695
+- op: split_edge
+  node: 555107551
+  edge: 555045807
+- op: split_edge
+  node: 555100870
+  edge: 555044939
+- op: split_edge
+  node: 555091596
+  edge: 555049025
+- op: split_edge
+  node: 555117861
+  edge: 555084092
+- op: split_edge
+  node: 555126832
+  edge: 555084099
+- op: split_edge
+  node: 555072739
+  edge: 555084113
+- op: split_edge
+  node: 555117895
+  edge: 555084114
+- op: split_edge
+  node: 555107823
+  edge: 555045849
+- op: split_edge
+  node: 555107822
+  edge: 555084284
+- op: split_edge
+  node: 555107021
+  edge: 5550842841
+- op: split_edge
+  node: 555107766
+  edge: 555072335
+- op: split_edge
+  node: 555107765
+  edge: 555072341
+- op: split_edge
+  node: 555093708
+  edge: 555052524
+- op: split_edge
+  node: 555093713
+  edge: 555052528
+- op: split_edge
+  node: 555012683
+  edge: 555028288
+- op: split_edge
+  node: 555136396
+  edge: 555014823
+- op: split_edge
+  node: 555093513
+  edge: 555060184
+- op: split_edge
+  node: 555108141
+  edge: 555072716
+- op: split_edge
+  node: 555108140
+  edge: 555072757
+- op: split_edge
+  node: 555105788
+  edge: 555052896
+- op: split_edge
+  node: 555105787
+  edge: 555069897
+- op: split_edge
+  node: 555070774
+  edge: 555061782
+- op: split_edge
+  node: 555102265
+  edge: 555046249
+- op: split_edge
+  node: 555107048
+  edge: 555063184
+- op: split_edge
+  node: 555090643
+  edge: 555083966
+- op: split_edge
+  node: 555090334
+  edge: 555047865
+- op: split_edge
+  node: 555063873
+  edge: 555090862
+- op: split_edge
+  node: 555149190
+  edge: 555071283
+- op: tag_route
+  from: 555003515
+  to: 555064876
+  set:
+    line: Alger/Algiers to El Harrach
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Alger/Algiers to El Harrach
+- op: change_source
+  edge: 555061780
+  node: 556099998
+  note: routing to Alger Port
+- op: tag_route
+  from: 556099998
+  to: 555070773
+  set:
+    line: Alger/Algiers Port
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555064876
+  to: 555070202
+  set:
+    line: El Harrach to Oran
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: El Harrach to Oran
+- op: insert_edge
+  source: 555070203
+  target: 555078101
+  oid: 556000007
+  note: simplify routing to Oran port
+- op: tag_route
+  from: 555070203
+  to: 555028159
+  set:
+    line: Oran to Oran Maritime (port)
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Oran to Oran Maritime (port)
+- op: change_source
+  edge: 555071266
+  node: 556014903
+  note: Oran to Arzew branch
+- op: tag_route
+  from: 556014903
+  to: 556037475
+  set:
+    line: Oran to Arzew
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Oran to Arzew
+- op: tag_route
+  from: 555003255
+  to: 555129940
+  set:
+    line: Es Sénia (Oran) to Béni Saf
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: single track
+  note: Es Sénia (Oran) to Béni Saf
+- op: tag_route
+  from: 556028940
+  to: 556024272
+  set:
+    line: Oued Tlelat to Béchar
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Not electrified.
+  note: Oued Tlelat to Béchar
+- op: tag_route
+  from: 555080824
+  to: 555033671
+  set:
+    line: Moulay Slissen to Saïda
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Moulay Slissen to Saïda
+- op: insert_edge
+  source: 555092074
+  target: 556021009
+  oid: 556000008
+  note: simplify routing from Tabia to Akid Abbess line
+- op: tag_route
+  from: 556021009
+  to: 555025504
+  set:
+    line: Tabia to Akid Abbes (Zouj Beghal)
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Tabia to Akid Abbes (Zouj Beghal)
+- op: tag_route
+  from: 555025504
+  to: 556026797
+  set:
+    line: Akid Abbes (Zouj Beghal) to Ghazaouet
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Akid Abbes (Zouj Beghal) to Ghazaouet
+- op: tag_route
+  from: 556026797
+  to: 555021070
+  set:
+    line: Ghazaouet to Ghazaouet Port
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Ghazaouet to Ghazaouet Port
+- op: insert_edge
+  source: 555017876
+  target: 556026121
+  oid: 556000009
+  note: simplify routing from Marsat el Hadjadj into Mohammedia station
+- op: tag_route
+  from: 555062820
+  to: 556026121
+  set:
+    line: Marsat el Hadjadj to Mohammedia
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Marsat el Hadjadj to Mohammedia
+- op: tag_route
+  from: 555085864
+  to: 556035026
+  set:
+    line: Mostaganem branch
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Mostaganem line
+- op: tag_route
+  from: 555120491
+  to: 555107477
+  set:
+    line: Mostaganem port
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Mostaganem port
+- op: tag_route
+  from: 556003119
+  to: 555033399
+  set:
+    line: Birtouta to Zéralda
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Opened 2016. Electrified. Double-track.
+  note: Birtouta to Zéralda
+- op: insert_edge
+  source: 555064876
+  target: 555107551
+  oid: 556000010
+  note: simplify routing from El Harrach to Thénia line
+- op: tag_route
+  from: 555064876
+  to: 556002212
+  set:
+    line: El Harrach to Thénia
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Double track; electrified
+  note: El Harrach to Thénia
+- op: tag_route
+  from: 556002212
+  to: 555062267
+  set:
+    line: Thénia to Bordj Bou Arreridj
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Single track.
+  note: Thénia to Bordj Bou Arreridj
+- op: tag_route
+  from: 555062267
+  to: 555029101
+  set:
+    line: Bordj Bou Arreridj to El Guerrah (El Gourzi)
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Bordj Bou Arreridj to El Guerrah (El Gourzi)
+- op: tag_route
+  from: 555029101
+  to: 556028467
+  set:
+    line: El Guerrah (El Gourzi) to El Khroub
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: El Guerrah (El Gourzi) to El Khroub
+- op: insert_edge
+  source: 555084695
+  target: 555117869
+  oid: 556000011
+  note: add link to sort out data problems north of Bekira
+- op: change_target
+  edge: 555084087
+  node: 555090757
+- op: tag_route
+  from: 556028467
+  to: 555021773
+  set:
+    line: El Khroub to Ramdane Djamel
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: El Khroub to Ramdane Djamel
+- op: change_source
+  edge: 5550199562
+  node: 555021773
+  note: simplify routing out of Ramdane Djamel to Skikda
+- op: tag_route
+  from: 555021773
+  to: 555021776
+  set:
+    line: Ramdane Djamel to Skikda
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Ramdane Djamel to Skikda
+- op: tag_route
+  from: 555087512
+  to: 555016805
+  set:
+    line: Beni Mansour to Béjaia
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Single track
+  note: Beni Mansour to Béjaia
+- op: tag_route
+  from: 555102265
+  to: 555102264
+  set:
+    line: Béjaia Port
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Béjaia Port
+- op: insert_edge
+  source: 555088467
+  target: 555100865
+  oid: 556000012
+  note: simplify routing out of Bordj Bou Arreridj to M'Sila
+- op: tag_route
+  from: 555088467
+  to: 555016099
+  set:
+    line: Bordj Bou Arreridj to M'Sila
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Single track.
+  note: Bordj Bou Arreridj to M'Sila
+- op: tag_route
+  from: 555082724
+  to: 555029015
+  set:
+    line: M'Sila to Aïn Touta
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Single track.
+  note: M'Sila to Aïn Touta
+- op: tag_route
+  from: 555029015
+  to: 555028885
+  set:
+    line: Aïn Touta to Touggourt
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Single track.
+  note: Aïn Touta to Touggourt
+- op: insert_edge
+  source: 555029101
+  target: 555107720
+  oid: 556000013
+  note: link El Guerrah / Gourzi to Ain Touta line
+- op: tag_route
+  from: 555029101
+  to: 555029015
+  set:
+    line: El Guerrah / El Gourzi to Aïn Touta
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Single track.
+  note: El Guerrah / El Gourzi to Aïn Touta
+- op: tag_route
+  from: 555107766
+  to: 555082668
+  set:
+    line: Aïn M'lila to El Aouinet (joins Souk Ahras to Tebessa line)
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Single track. Opened 2009
+  note: Aïn M'lila to El Aouinet (Souk Ahras to Tebessa line)
+- op: tag_route
+  from: 555020338
+  to: 555020163
+  set:
+    line: Souk Ahras to Tebessa
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Single track. Electrified
+  note: Souk Ahras to Tebessa
+- op: tag_route
+  from: 555020163
+  to: 555090465
+  set:
+    line: Tebessa to Djebel Onk (Phosphate Mine)
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Tebessa to Djebel Onk (Phosphate Mine)
+- op: insert_edge
+  source: 555093708
+  target: 556021867
+  oid: 556000014
+  note: simplify routing Oued Kebrut to Iron mines
+- op: tag_route
+  from: 556021867
+  to: 555029032
+  set:
+    line: Oued Kebrit to El Ouenza and Boukhadra Iron mines
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Oued Kebrit to El Ouenza and Boukhadra Iron mines
+- op: tag_route
+  from: 555093713
+  to: 555093712
+  set:
+    line: Oued Kebrit to El Ouenza and Boukhadra Iron mines
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555027117
+  to: 555020338
+  set:
+    line: Annaba to Souk Ahras
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Electrified. Single track
+  note: Annaba to Souk Ahras
+- op: tag_route
+  from: 555027117
+  to: 555012683
+  set:
+    line: Annaba to Sidi Aammar (surburban)
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Annaba to Sidi Aammar (surburban)
+- op: insert_edge
+  source: 555088536
+  target: 556088536
+  oid: 556000015
+  note: link line up at Oued Ziad (seems ok from Google Earth)
+- op: insert_edge
+  source: 555088538
+  target: 555088535
+  oid: 556000016
+  note: simplify lines at steel complex
+- op: tag_route
+  from: 555077747
+  to: 556088536
+  set:
+    line: El Hadjar to Oued Ziad
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  where: oid != 5550840611
+  note: need to exclude edge 5550840611 to precent routing via El Hadjar north
+- op: tag_route
+  from: 555021773
+  to: 555070098
+  set:
+    line: Ramdane Djamel to Annaba
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Single track
+  note: Ramdane Djamel to Annaba
+- op: insert_edge
+  source: 555117801
+  target: 555136395
+  oid: 556000017
+  note: simplify link to Annaba port
+- op: tag_route
+  from: 555117801
+  to: 555117847
+  set:
+    line: Annaba Port
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Annaba Port
+- op: insert_edge
+  source: 555093513
+  target: 556098824
+  oid: 556000018
+  note: Ramdane Djamel to Jijel
+- op: tag_route
+  from: 556098824
+  to: 555028009
+  set:
+    line: Ramdane Djamel to Jijel
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Double-track
+  note: Ramdane Djamel to Jijel
+- op: change_target
+  edge: 555072748
+  node: 556108105
+  note: Djendjen Port
+- op: tag_route
+  from: 556108105
+  to: 555108067
+  set:
+    line: Djendjen Port
+    mode: Freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Djendjen Port
+- op: tag_route
+  from: 555105788
+  to: 555105784
+  set:
+    line: Bellara steel complex
+    mode: Freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Bellara steel complex
+- op: tag_route
+  from: 555107048
+  to: 555020341
+  set:
+    line: Souk Ahras to Sidi el Hemissi
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Souk Ahras to Sidi el Hemissi
+- op: tag_route
+  from: 555020341
+  to: 555078163
+  set:
+    line: Sidi el Hemissi to Ghardimaou (Tunisian border)
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Freight only, border not open to passenger traffic
+  note: Sidi el Hemissi to Ghardimaou (Tunisian border)
+- op: insert_edge
+  source: 555083557
+  target: 555016699
+  oid: 556000019
+  note: Sidi Lahssen to Sidi Bel Abbès Industrial Zone
+- op: tag_route
+  from: 555016699
+  to: 555083556
+  set:
+    line: Sidi Lahssen to Sidi Bel Abbès Industrial Zone
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Sidi Lahssen to Sidi Bel Abbès Industrial Zone
+- op: tag_route
+  from: 555092991
+  to: 555062957
+  set:
+    line: Bab Ezzouar to Algiers International Airport
+    mode: passenger
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Bab Ezzouar to Algiers International Airport
+- op: tag_route
+  from: 555063873
+  to: 555063874
+  set:
+    line: Rouïba-Reghaïa Industrial Zone (access)
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Access too Rouïba-Reghaïa Industrial Zone
+- op: tag_route
+  from: 555063786
+  to: 555021475
+  set:
+    line: Thénia to Oued Aïssi
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Electrified
+  where: oid != 555086658
+  note: need to prevent routing via old disused line - remove oid 555086658
+- op: set_nodes_on_edges
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1435'
+  set:
+    gauge: '1435'
+- op: split_name_script
+  countries:
+  - Algeria
+  column: name_arabic
+  keep: arabic
+  note: decided to split out arabic and english/latin names to separate fields
+- op: split_name_script
+  countries:
+  - Algeria
+  column: name
+  keep: latin

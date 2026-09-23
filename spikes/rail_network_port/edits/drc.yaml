@@ -1,0 +1,668 @@
+# Democratic Republic of the Congo rail network edits.
+#
+# Derived from drc.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 1,005 lines of SQL: 95 edits,
+# 16 statements skipped as unable to reach the published network
+# (2 backup, 7 exploratory, 1 routing test, 5 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Democratic Republic of the Congo
+edits:
+- op: copy_node
+  node: 555026527
+  edge: 555015576
+  note: copy Matadi station
+- op: set_node
+  node: 555063324
+  set:
+    name: Kinshasa Est
+    railway: station
+- op: split_edge
+  edge: 555000120
+  node: 555063325
+- op: split_edge
+  edge: 555000138
+  node: 555099088
+- op: split_edge
+  edge: 555000136
+  node: 555099089
+- op: tag_route
+  from: 556026527
+  to: 555063324
+  set:
+    line: Matadi - Kinshasa Railway
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: oid not in (5550001362, 555000137, 5550001381)
+  note: 5550001362, 555000137, 5550001381
+- op: set_node
+  node: 555090067
+  set:
+    comment: 'Container and general cargo port: https://www.mgt.cd/en'
+    name: Matadi Gateway Terminal
+    railway: stop
+    facility: River Port
+  note: Matadi - Matadi Gateway Terminal (River Port)
+- op: tag_route
+  from: 556026527
+  to: 555090067
+  set:
+    line: Matadi - Matadi Gateway Terminal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555074962
+  set:
+    name: ONATRA Railway Workshops
+    railway: stop
+    facility: railway
+  note: this is for access to railway workshops only
+- op: split_edge
+  edge: 555012575
+  node: 555108288
+- op: tag_route
+  from: 555108288
+  to: 555074962
+  set:
+    line: Mbanza-Ngungu Branch (Matadi-Kinshasa Railway)
+    mode: railway_use
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Services ONATRA railway workshops
+- op: set_node
+  node: 555051325
+  set:
+    name: Kinshasa Port
+    railway: stop
+    facility: River Port
+  note: Kinshasa river port
+- op: tag_route
+  from: 555000049
+  to: 555051325
+  set:
+    line: Kinshasa River Port
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555063361
+  to: 555008767
+  set:
+    line: Ndjili Airport Branch (Matadi-Kinshasa Railway)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'Believed to be disused. See: bit.ly/3OIx7X5'
+  note: disused
+- op: split_edge
+  edge: 555098913
+  node: 555089332
+  note: 1000mm gauge
+- op: split_edge
+  edge: 5550989131
+  node: 555089327
+- op: tag_route
+  from: 555012471
+  to: 555012469
+  set:
+    line: Great Lakes Line (Kisangani – Ubundu)
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555026660
+  set:
+    comment: The River Port is believed to be currently abandoned and out of use
+    name: Kisangani Port
+    railway: stop
+    facility: River Port
+  note: Kisangani Port
+- op: tag_route
+  from: 555071268
+  to: 555026660
+  set:
+    line: ''
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: disused
+    comment: Assume disused as port is abandoned
+- op: split_edge
+  edge: 555046291
+  node: 555089330
+- op: split_edge
+  edge: 555046292
+  node: 555089337
+- op: split_edge
+  edge: 555046296
+  node: 555089339
+- op: set_node
+  node: 555089340
+  set:
+    comment: River port on the Upper Congo river (Lualaba)
+    name: Ubundu River Port
+    railway: stop
+    facility: River Port
+- op: tag_route
+  from: 555012469
+  to: 555089340
+  set:
+    line: Ubundu River Port
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: set_nodes
+  nodes:
+  - 555062450
+  - 555062451
+  set:
+    gauge: null
+    railway: null
+  note: duplicate stations
+- op: split_edge
+  edge: 555054221
+  node: 555094591
+  note: 1067mm gauge
+- op: split_edge
+  edge: 555054206
+  node: 555094716
+- op: split_edge
+  edge: 555054101
+  node: 555094686
+- op: split_edge
+  edge: 555044403
+  node: 555094594
+- op: split_edge
+  edge: 555063903
+  node: 555094592
+- op: tag_route
+  from: 555062375
+  to: 555010681
+  set:
+    line: Great Lakes Line (Kindu - Kalémié Port)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Section between Niemba - Kalémié Port may be out of use
+- op: set_node
+  node: 555101321
+  set:
+    name: Kalémié Port (Berths)
+    railway: stop
+    facility: River Port
+  note: Kalémié Port Berths
+- op: tag_route
+  from: 555010681
+  to: 555101321
+  set:
+    line: Great Lakes Line (Kalémié Port Berths)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: May be out of use
+- op: insert_edge
+  source: 555012516
+  target: 555101399
+  oid: 556000063
+  note: simplify at Kabalo
+- op: copy_node
+  node: 555036699
+  edge: 555095783
+  note: copy kamina station
+- op: tag_route
+  from: 555012516
+  to: 556036699
+  set:
+    line: Katanga Line (Kabalo-Kamina)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: copy_node
+  node: 555063051
+  edge: 555104115
+  note: Kamina - Tenke
+- op: tag_route
+  from: 556036699
+  to: 556063051
+  set:
+    line: Katanga Line (Kamina-Tenke)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Apparently Electrified b/w Lubumbashi - Tenke - Kamina
+- op: tag_route
+  from: 556063051
+  to: 555077255
+  set:
+    line: Katanga Line (Tenke-Sakania)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Tenke-Sakania
+- op: set_node
+  node: 555110571
+  set:
+    comment: Copper and cobalt
+    name: Kambove Mine (Gécamines)
+    railway: stop
+    facility: mine
+  note: status unclear
+- op: split_edge
+  edge: 555015718
+  node: 555068922
+- op: split_edge
+  edge: 555012372
+  node: 555110570
+- op: tag_route
+  from: 555068922
+  to: 555030885
+  set:
+    line: Katanga Line (Kambove branch)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: unknown
+    comment: ''
+- op: tag_route
+  from: 555030885
+  to: 555110571
+  set:
+    line: Kambove Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: unknown
+    comment: ''
+- op: set_node
+  node: 555101606
+  set:
+    comment: Copper. Status unclear. https://www.mindat.org/loc-54653.html
+    name: Mushosi Mine (Sodimico.SA)
+    railway: stop
+    facility: mine
+  note: Mushosi Mine (Copper)
+- op: split_edge
+  edge: 555121593
+  node: 555101607
+- op: tag_route
+  from: 555101607
+  to: 555101606
+  set:
+    line: Mushosi Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: unknown
+    comment: ''
+- op: tag_route
+  from: 555069078
+  to: 555030894
+  set:
+    line: Katanga Line (Munama-Kipushi branch)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: rehabilitation
+    comment: 'Probably freight only. Plans to rebuild line announced in May 2020. See: bit.ly/3Fekvnm'
+  note: planned rehabilitation?
+- op: set_node
+  node: 555110651
+  set:
+    comment: Zinc/Copper Mine. https://www.mindat.org/loc-4312.html
+    name: Kipushi Mine
+    railway: stop
+    facility: mine
+  note: Kipushi Mine (Zinc/Copper)
+- op: tag_route
+  from: 555030894
+  to: 555110651
+  set:
+    line: Kipushi Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: rehabilitation
+    comment: 'Work ongoing to open the mine and rebuild the railway. See: https://en.wikipedia.org/wiki/Kipushi_Mine
+      and bit.ly/3Fekvnm'
+- op: set_node
+  node: 555069136
+  set:
+    comment: Cobalt Mine https://www.mindat.org/loc-4331.html
+    name: Etoile Mine
+    railway: stop
+    facility: mine
+  note: Ruashi Mine
+- op: set_node
+  node: 555023787
+  set:
+    comment: Cobalt Mine https://www.mindat.org/loc-4338.html
+    name: Ruashi Mine
+    railway: stop
+    facility: mine
+- op: split_edge
+  edge: 555015688
+  node: 555068945
+- op: split_edge
+  edge: 555012625
+  node: 555097394
+- op: tag_route
+  from: 555068945
+  to: 555069136
+  set:
+    line: Cobalt Mines (Etoile and Ruashi)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: unknown
+    comment: Probably disused.
+- op: tag_route
+  from: 555097394
+  to: 555023787
+  set:
+    line: Cobalt Mines (Etoile and Ruashi)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: unknown
+    comment: Probably disused.
+- op: set_node
+  node: 555008339
+  set:
+    name: Gecamines (slag treatment plant)
+    railway: stop
+    facility: mining
+  note: status unknown
+- op: split_edge
+  edge: 555057938
+  node: 555138664
+- op: tag_route
+  from: 555138664
+  to: 555008339
+  set:
+    line: Gecamines (slag treatment plant)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: unknown
+    comment: Probably disused.
+- op: set_node
+  node: 555110529
+  set:
+    comment: Copper mines (abandoned). https://www.mindat.org/loc-14765.html
+    name: Kakanda Mines (abandoned)
+    railway: stop
+    facility: mining
+  note: Kakanda Mines (abandoned Copper Mines)
+- op: insert_edge
+  source: 555030883
+  target: 555110522
+  oid: 556000064
+  note: pseudo line to simplify branch
+- op: tag_route
+  from: 555030883
+  to: 555110529
+  set:
+    line: Kakanda Copper Mines
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: Mines are abandoned
+- op: set_node
+  node: 555117318
+  set:
+    comment: Copper/Cobalt mines https://en.wikipedia.org/wiki/Tenke_Fungurume_Mine
+    name: Tenke Fungurume Mine
+    railway: stop
+    facility: mining
+  note: status of line unknown
+- op: copy_node
+  node: 555123098
+  edge: 555057244
+  note: simplify routing from Fungurume
+- op: insert_edge
+  source: 555030882
+  target: 556123098
+  oid: 556000065
+- op: tag_route
+  from: 555030882
+  to: 555117318
+  set:
+    line: Tenke Fungurume Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: unknown
+    comment: ''
+- op: set_node
+  node: 555063015
+  set:
+    name: Dilolo
+    railway: station
+  note: Dilol station
+- op: tag_route
+  from: 555069002
+  to: 555123809
+  set:
+    line: Benguela Line (Tenke-Dilolo)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Refurbished in 2018. Electrified Tenke – Mutshatsha
+- op: split_edge
+  edge: 555015655
+  node: 555110254
+  note: 'out of use, potential to be relaunched (see: bit.ly/3OU6tKV)'
+- op: set_node
+  node: 555117241
+  set:
+    comment: 'Managanese mine. Out of use, potential to be relaunched (see: bit.ly/3OU6tKV)'
+    name: Kisenge Mine
+    railway: stop
+    facility: mining
+- op: tag_route
+  from: 555110254
+  to: 555117241
+  set:
+    line: Kisenge Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: Mine out of use; branch assumed disused.
+- op: set_node
+  node: 555101331
+  set:
+    comment: Copper mine. https://www.mindat.org/loc-413059.html
+    name: Kamoto Mine
+    railway: stop
+    facility: mining
+  note: https://www.mindat.org/loc-413059.html
+- op: split_edge
+  edge: 555012397
+  node: 555110393
+- op: split_edge
+  edge: 555076123
+  node: 555110390
+- op: split_edge
+  edge: 555019949
+  node: 555110391
+- op: tag_route
+  from: 555110393
+  to: 555101331
+  set:
+    line: Kamoto Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Mine is open, assume branch line is.
+- op: set_node
+  node: 555069021
+  set:
+    comment: 'Copper/Cobalt mine. https://www.mindat.org/loc-270448.html. The mine is officially closed
+      but illegal artisanal mining is occurring: bit.ly/3UmURkW'
+    name: Tilwezembe Mine
+    railway: stop
+    facility: mining
+  note: https://www.mindat.org/loc-270448.html
+- op: tag_route
+  from: 555070490
+  to: 555069021
+  set:
+    line: Tilwezembe Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'Likely to be disused as the mine is officially closed but illegal artisanal mining is occurring:
+      bit.ly/3UmURkW'
+- op: set_nodes
+  nodes:
+  - 555062806
+  - 555062805
+  set:
+    railway: null
+  note: duplicate station at Ilebo
+- op: tag_route
+  from: 555070633
+  to: 555035023
+  set:
+    line: Kasai Line
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555034779
+  set:
+    name: Ilebo Port
+    railway: stop
+    facility: River Port
+  note: Ilebo Port
+- op: tag_route
+  from: 555035023
+  to: 555034779
+  set:
+    line: Ilebo Port
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555120126
+  set:
+    name: SEP CONGO oil storage depot
+    railway: stop
+    facility: Oil storage depot
+  note: SEP CONGO oil storage depot
+- op: split_edge
+  edge: 555020015
+  node: 555120125
+- op: tag_route
+  from: 555120125
+  to: 555120126
+  set:
+    line: SEP CONGO oil storage depot
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555069047
+  set:
+    name: Kamina Air Base
+    railway: stop
+    facility: military
+  note: Military
+- op: split_edge
+  edge: 555012541
+  node: 555069128
+- op: tag_route
+  from: 555069128
+  to: 555069047
+  set:
+    line: Kamina Air Base
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555087916
+  to: 555012517
+  set:
+    line: Great Lakes Line (Kongolo spur)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Spur to Kongolo
+- op: copy_node
+  node: 555012509
+  edge: 555020073
+  note: Tshimbulu
+- op: copy_node
+  node: 555025872
+  edge: 555015779
+  note: Katshilao
+- op: copy_node
+  node: 555006856
+  edge: 555044570
+  note: Likasi
+- op: copy_node
+  node: 555026423
+  edge: 555012536
+  note: Munama
+- op: set_nodes_on_edges
+  countries:
+  - Democratic Republic of the Congo
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'
+- op: set_nodes_on_edges
+  countries:
+  - Democratic Republic of the Congo
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1000'
+  set:
+    gauge: '1000'

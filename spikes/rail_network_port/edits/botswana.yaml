@@ -1,0 +1,346 @@
+# Botswana rail network edits.
+#
+# Derived from botswana.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 577 lines of SQL: 44 edits,
+# 16 statements skipped as unable to reach the published network
+# (2 backup, 7 exploratory, 1 routing test, 5 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Botswana
+edits:
+- op: insert_node_at
+  oid: 558000017
+  lon: 27.12725
+  lat: -22.55827
+  set:
+    railway: station
+    name: Palapye
+    country: Botswana
+    facility: station
+  note: add station for Palapye
+- op: copy_node
+  node: 558000017
+  edge: 555062959
+- op: set_node
+  node: 555063119
+  set:
+    name: Lobatse
+  note: set name for Lobatse station
+- op: tag_route
+  from: 555063119
+  to: 555009365
+  set:
+    line: Lobatse -- Francistown
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: All passenger services (BR Express) are currently suspended. Initially due to COVID19
+  note: BR Express
+- op: insert_node_at
+  oid: 558000018
+  lon: 27.7227
+  lat: -20.51306
+  set:
+    country: Botswana
+  note: insert node at border
+- op: copy_node
+  node: 558000018
+  edge: 555017932
+- op: set_edge
+  edge: 5550179322
+  set:
+    country: Zimbabwe
+- op: tag_route
+  from: 555009365
+  to: 559000018
+  set:
+    line: Francistown (Botswana) - Zimbabwe border
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: All passenger services are currently suspended. Service between Francistown and Bulawayo
+      in Zimbabwe started in 2017. Stopped due to COVID19 and not restarted
+- op: tag_route
+  from: 555063119
+  to: 555081222
+  set:
+    line: Lobatse - SA Border
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Freight only. Not thought to be any passenger services across SA border
+  note: Freight only
+- op: set_node
+  node: 555046348
+  set:
+    comment: 'Currently under construction, expected to be completed 2023. Railway spur is completed.
+      See: http://bit.ly/3HkWSJY'
+    name: Tshele Hills fuel storage facility
+    railway: stop
+    facility: fuel storage depot
+  note: Rail spur completed, facility expected to be completed in 2023
+- op: split_edge
+  edge: 555050238
+  node: 555133111
+- op: split_edge
+  edge: 555050237
+  node: 555133106
+- op: tag_route
+  from: 555133106
+  to: 555046348
+  set:
+    line: Tshele Hills fuel storage facility spur
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Spur completed. See: http://bit.ly/3HkWSJY'
+- op: tag_route
+  from: 555133111
+  to: 555133112
+  set:
+    line: Tshele Hills fuel storage facility spur
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Spur completed. See: http://bit.ly/3HkWSJY'
+- op: set_node
+  node: 555090711
+  set:
+    comment: https://www.steelservices.co.za/gearmining.html
+    name: Steel fabrication facility (Gear Mining)
+    railway: stop
+    facility: manufacturing
+  note: Steel fabrication facility (Gear Mining)
+- op: split_edge
+  edge: 555052925
+  node: 555090712
+- op: tag_route
+  from: 555090712
+  to: 555090711
+  set:
+    line: Gear Mining
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555010163
+  set:
+    comment: https://www.gabcon.co.bw/about-us/
+    name: Gaborone Container Terminal
+    railway: stop
+    facility: Dry Port
+  note: Gaborone Container Terminal (Dry Port)
+- op: insert_edge
+  source: 555093396
+  target: 555010166
+  oid: 556000069
+  note: simplify routing from Goborone station
+- op: split_edge
+  edge: 555092876
+  node: 555093396
+- op: tag_route
+  from: 555093396
+  to: 555010163
+  set:
+    line: Gaborone Container Terminal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555081317
+  set:
+    comment: Coal mine
+    name: Morupule Colliery
+    railway: stop
+    facility: Mine
+  note: Morupule Colliery
+- op: set_node
+  node: 555023551
+  set:
+    comment: ''
+    name: Morupule B Power Plant
+    railway: stop
+    facility: Power Station
+  note: Morupule B Power Plant
+- op: split_edge
+  edge: 555049744
+  node: 555096934
+- op: tag_route
+  from: 555009347
+  to: 555081317
+  set:
+    line: Morupule Colliery Branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555041210
+  to: 555015112
+  set:
+    line: Morupule Colliery Branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555096934
+  to: 555023551
+  set:
+    line: Morupule B Power Plant
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555081703
+  set:
+    comment: 'nickel copper-cobalt. See: http://bit.ly/3wFWWz1 and https://www.mindat.org/loc-21623.html'
+    name: Selebi Mine
+    railway: stop
+    facility: Mine
+  note: Selebi mine - nickel copper-cobalt
+- op: set_node
+  node: 555081701
+  set:
+    comment: Copper-nickel mine, believed to also be location of a quarry now, see http://bit.ly/3wFWWz1
+      and https://www.mindat.org/loc-21624.html and https://www.facebook.com/TlouCrusher
+    name: Selebi North Mine
+    railway: stop
+    facility: mine
+  note: https://www.mindat.org/loc-21624.html
+- op: set_nodes_on_edges
+  countries:
+  - Botswana
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'
+- op: set_node
+  node: 555081693
+  set:
+    comment: 'Copper-nickel mine (opencast) opencast and believed unused (see: https://en.wikipedia.org/wiki/Selebi-Phikwe)'
+    name: Phikwe Mine
+    railway: stop
+    facility: mine
+  note: 'believed unused (see: https://en.wikipedia.org/wiki/Selebi-Phikwe)'
+- op: tag_route
+  from: 555009375
+  to: 555015101
+  set:
+    line: Serole - Selebi-Phikwe branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555035590
+  node: 555081712
+  note: Selebi Mine branch
+- op: tag_route
+  from: 555015101
+  to: 555081703
+  set:
+    line: Selebi Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555035602
+  node: 555081702
+  note: Selebi North Mine
+- op: tag_route
+  from: 555081702
+  to: 555081701
+  set:
+    line: Selebi North Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555035610
+  node: 555081692
+  note: Phikwe Mine
+- op: tag_route
+  from: 555081692
+  to: 555081693
+  set:
+    line: Phikwe Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Mine is believed to be disused. Status of spar unclear
+- op: set_node
+  node: 555146813
+  set:
+    comment: 'salt mine producing soda ash and salt. See: https://botash.bw/about-botash/'
+    name: Botswana Ash Salt Mine
+    railway: stop
+    facility: mine
+  note: salt mine
+- op: tag_route
+  from: 555009380
+  to: 555146813
+  set:
+    line: Francistown – Sowa branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Mine is believed to be disused. Status of spar unclear
+- op: tag_route
+  from: 555009584
+  to: 555009583
+  set:
+    line: Francistown – Sowa branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Mine is believed to be disused. Status of spar unclear
+- op: set_node
+  node: 555073338
+  set:
+    name: Serule
+    railway: station
+  note: update stations
+- op: copy_node
+  node: 555009216
+  edge: 5550928762
+- op: set_nodes_on_edges
+  countries:
+  - Botswana
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'

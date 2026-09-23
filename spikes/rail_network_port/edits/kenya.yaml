@@ -1,0 +1,301 @@
+# Kenya rail network edits.
+#
+# Derived from kenya.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 816 lines of SQL: 41 edits,
+# 14 statements skipped as unable to reach the published network
+# (2 recomputed length, 1 routing test, 11 schema),
+# and 14 not transcribed - see the report.
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Kenya
+edits:
+- op: set_all_edges
+  set:
+    mode: mixed
+  note: assume mixed mode unless amended
+- op: set_node
+  node: 1111699
+  set:
+    name: Nairobi Central Station
+    railway: station
+  note: set additional node for stations
+- op: set_node
+  node: 1111354
+  set:
+    name: Makadara Railway Station
+    railway: station
+- op: set_node
+  node: 1110094
+  set:
+    name: Embakasi Village
+  note: different from the proposed airport rail link via Syokimau
+- op: set_node
+  node: 1110956
+  set:
+    name: Mombasa Terminus
+    railway: station
+  note: amend Mombasa station node
+- op: set_node
+  node: 1111512
+  set:
+    name: Old Mombasa Station
+    railway: station
+- op: delete_node
+  node: 1110730
+  note: remove bad station node in middle of nowhere
+- op: set_edges
+  edges:
+  - 1112056
+  - 1111598
+  set:
+    structure: tunnel
+  note: tunnels
+- op: set_node
+  node: 1113126
+  set:
+    name: Nairobi Inland Container Port
+    railway: stop
+    facility: dry_port
+  note: facilities
+- op: set_node
+  node: 1111835
+  set:
+    name: Kisumu Inland Container Depot
+    railway: stop
+    facility: dry_port
+- op: set_node
+  node: 1111259
+  set:
+    name: Naivasha Inland Container Depot (SGR)
+    railway: stop
+    facility: dry_port
+- op: set_node
+  node: 1113089
+  set:
+    gauge: '1000'
+    name: Naivasha Inland Container Depot (MGR)
+    railway: stop
+    facility: dry_port
+- op: set_node
+  node: 1113191
+  set:
+    name: Mombasa Port
+    railway: stop
+    facility: container_port
+- op: set_node
+  node: 1112489
+  set:
+    name: Mombasa Port
+    railway: stop
+    facility: container_port
+- op: tag_route
+  from: 1111354
+  to: 1110246
+  set:
+    line: Makadara-Nanyuki
+  note: Makadara to Nanyuki
+- op: tag_route
+  from: 1111512
+  to: 1111699
+  set:
+    line: Mombassa-Nairobi
+  note: Mombassa to Nairobi
+- op: tag_route
+  from: 1111512
+  to: 1110093
+  set:
+    status: disused
+- op: tag_route
+  from: 1111517
+  to: 1112489
+  set:
+    line: Changamwe-Kilindini
+    mode: freight
+    status: disused
+  note: Changamwe to Chaani Oil Refinery and Kilindini Harbour - freight
+- op: tag_route
+  from: 1111520
+  to: 1111632
+  set:
+    line: Nakuru-Malaba
+    gauge: '1000'
+    status: rehabilitation
+    comment: Currently out of use, rehabilitation due to be completed September 2021 (https://bit.ly/2TKPIcN)
+  note: Nakuru to Malaba (border with Uganda)
+- op: tag_route
+  from: 1111520
+  to: 1110663
+  set:
+    line: Nakuru-Kisumu
+  note: Nakuru to Kisumu
+- op: tag_route
+  from: 1112215
+  to: 1111792
+  set:
+    line: Kisumu-Butere
+    status: disused
+    comment: May be rehabilitated following recent rehabilitation of Nakuru to Kisumu
+  note: Kisumu to Butere
+- op: tag_route
+  from: 1111691
+  to: 1111690
+  set:
+    line: Rongai-Solai
+    gauge: '1000'
+  note: Rongai to Solai
+- op: tag_route
+  from: 1111826
+  to: 1111829
+  set:
+    line: Gilgil-Nyahururu
+    gauge: '1000'
+  note: Gilgil to Nyahururu
+- op: tag_route
+  from: 1112820
+  to: 1112095
+  set:
+    line: Eldoret-Kitale
+    gauge: '1000'
+  note: Eldoret to Kitale
+- op: tag_route
+  from: 1112159
+  to: 1112160
+  set:
+    line: Chemelil branch
+    gauge: '1000'
+  note: branch to Chemelil town
+- op: tag_route
+  from: 1111699
+  to: 1111520
+  set:
+    line: Nairobi-Nakuru
+  note: from Nairobi to Nakuru
+- op: tag_route
+  from: 1111244
+  to: 1112868
+  set:
+    line: Konza-Magadi
+    comment: 'Primarily used by Tata Chemicals, though a commuter route between Kajiado and Konza. See:
+      https://bit.ly/3cPblzg'
+  note: from Konza to Magadi
+- op: tag_route
+  from: 1111978
+  to: 1111979
+  set:
+    line: Voi-Taveta
+    gauge: '1000'
+  note: from Voi to Taveta
+- op: tag_route
+  from: 1110956
+  to: 1111228
+  set:
+    line: Mombasa-Nairobi SGR
+    gauge: '1435'
+    speed_passenger: '120'
+    speed_freight: '80'
+  note: from Mombasa-Nairobi SGR
+- op: tag_route
+  from: 1110956
+  to: 1113191
+  set:
+    line: Mombasa-Nairobi SGR
+    mode: freight
+    gauge: '1435'
+    speed_freight: '80'
+  note: Mombasa-Nairobi SGR freight only
+- op: tag_route
+  from: 1111228
+  to: 1111229
+  set:
+    line: Nairobi-Naivasha SGR
+    gauge: '1435'
+    speed_passenger: '120'
+    speed_freight: '80'
+  note: Nairobi-Naivasha (Suswa) SGR
+- op: tag_route
+  from: 1111229
+  to: 1110714
+  set:
+    line: Naivasha-Kisumu SGR
+    gauge: '1435'
+    speed_passenger: '120'
+    speed_freight: '80'
+  note: Naivasha (Suswa) - Kisumu SGR
+- op: tag_route
+  from: 1112845
+  to: 1113126
+  set:
+    line: Nairobi Terminus-Inland Container Port Nairobi SGR
+    mode: freight
+    gauge: '1435'
+    speed_freight: '80'
+  note: Nairobi Terminus to Inland Port - freight only
+- op: tag_route
+  from: 1111834
+  to: 1111835
+  set:
+    line: Kibos - Kisumu Inland Container Port
+    mode: freight
+    gauge: '1000'
+    status: open
+  note: Kibos - Kisumu Inland Container Port
+- op: tag_route
+  from: 1112887
+  to: 1111259
+  set:
+    line: Naivasha Inland Container Port
+    mode: freight
+    gauge: '1435'
+    status: open
+    speed_freight: '80'
+  note: Naivasha Inland Container Depot
+- op: insert_edge
+  source: 1113089
+  target: 1111259
+  oid: 1130000
+  note: add edge for NICD gauge interchange. Assume 24 hour cost.
+- op: set_edge
+  edge: 1130000
+  set:
+    line: NICD gauge interchange
+    mode: freight
+    gauge: 1000 <-> 1435
+    status: construction
+- op: tag_route
+  from: 1111480
+  to: 1112849
+  set:
+    line: Embakasi Village
+    gauge: '1000'
+    status: open
+  note: Embakasi Village - Nairobi
+- op: tag_route
+  from: 1111330
+  to: 1112757
+  set:
+    line: Syokimau
+    gauge: '1000'
+    status: open
+  note: Syokimau
+- op: set_nodes_on_edges
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1000'
+  set:
+    gauge: '1000'
+- op: set_nodes_on_edges
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1435'
+  set:
+    gauge: '1435'

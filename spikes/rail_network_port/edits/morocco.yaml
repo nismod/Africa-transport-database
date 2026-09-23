@@ -1,0 +1,644 @@
+# Morocco rail network edits.
+#
+# Derived from morocco.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 1,080 lines of SQL: 104 edits,
+# 7 statements skipped as unable to reach the published network
+# (2 backup, 5 exploratory),
+# and 1 not transcribed - see the report.
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Morocco
+edits:
+- op: set_node
+  node: 63041
+  set:
+    name: Tanger Ville
+    railway: station
+  note: set additional node for stations
+- op: set_node
+  node: 555134634
+  set:
+    name: Marrakech مراكش
+    railway: station
+- op: set_node
+  node: 555074025
+  set:
+    name: Gare d'El Jadida
+    railway: station
+- op: set_node
+  node: 555062472
+  set:
+    name: Gare de Sidi Bouknadel
+    railway: station
+- op: set_node
+  node: 555035422
+  set:
+    railway: station
+  note: Taourirt - current railway value platform
+- op: set_node
+  node: 555107745
+  set:
+    name: Bouarfa
+    railway: station
+- op: set_node
+  node: 555027384
+  set:
+    name: Nzalat Laadam نزالة العظم
+    railway: station
+  note: add latin name where just arabic (if available)
+- op: set_node
+  node: 555007958
+  set:
+    name: Sidi Bou Othmane بوناكة
+    railway: station
+- op: set_node
+  node: 555027383
+  set:
+    name: Skhour Rhamna
+    railway: station
+  note: set names where missing
+- op: set_node
+  node: 555007962
+  set:
+    name: Sidi Abdallah
+    railway: station
+- op: set_nodes
+  nodes:
+  - 555037821
+  - 555021325
+  - 555022954
+  - 555013399
+  - 555025695
+  set:
+    name: unnamed
+    railway: station
+- op: set_node
+  node: 555025149
+  set:
+    name: Souaken
+    railway: station
+- op: set_node
+  node: 555021322
+  set:
+    name: Bab Tissera
+    railway: station
+- op: set_node
+  node: 555033248
+  set:
+    name: Ain Karma
+    railway: station
+- op: set_node
+  node: 555035429
+  set:
+    name: Fes Ville
+    railway: station
+- op: set_node
+  node: 555025802
+  set:
+    name: Touabaa
+    railway: station
+- op: set_node
+  node: 555046416
+  set:
+    name: Oued Amlil
+- op: set_node
+  node: 556031481
+  set:
+    name: Nouaceur
+    railway: station
+- op: set_node
+  node: 555076761
+  set:
+    name: OCP Benguerir (Phosphate Mine)
+    railway: stop
+    facility: mine
+  note: OCP Phosphate mine, Benguerir
+- op: set_node
+  node: 555132339
+  set:
+    name: OCP Youssoufia (Phosphate Mine)
+    railway: stop
+    facility: mine
+- op: set_node
+  node: 555077215
+  set:
+    name: OCP Khouribga (Phosphate Mine)
+    railway: stop
+    facility: mine
+- op: set_node
+  node: 555071248
+  set:
+    name: OCP Safi (Phosphate processing plant)
+    railway: stop
+    facility: chemical_plant
+- op: set_node
+  node: 555063407
+  set:
+    name: Ben Guerir Air Base
+    railway: stop
+    facility: military
+- op: set_node
+  node: 555089774
+  set:
+    name: Renault-Nissan Group
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555079035
+  set:
+    name: LafargeHolcim Maroc cement works (Fes)
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555117768
+  set:
+    name: LafargeHolcim Maroc cement works (Meknes)
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555090096
+  set:
+    name: Sonasid steel works
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555100350
+  set:
+    name: Jerada Power Station
+    railway: stop
+    facility: utilities
+- op: set_node
+  node: 555083287
+  set:
+    name: Tangor Container Port
+    railway: stop
+    facility: container_port
+- op: set_node
+  node: 555118287
+  set:
+    name: Port of Jorf Lasfar
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555101363
+  set:
+    name: Port of Safi
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555121673
+  set:
+    name: Beni Nsar (Nadar) Port
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555118206
+  set:
+    name: Port of Casablanca
+    railway: stop
+    facility: port
+- op: copy_node
+  node: 555028771
+  edge: 555084158
+  note: 8 copy nodes from a DO block, whose array survives only as a comment
+- op: copy_node
+  node: 8283175981
+  edge: 555089696
+- op: copy_node
+  node: 555031481
+  edge: 555004426
+- op: copy_node
+  node: 555024932
+  edge: 555084551
+- op: copy_node
+  node: 555007318
+  edge: 555004329
+- op: copy_node
+  node: 555048489
+  edge: 555103683
+- op: copy_node
+  node: 555062408
+  edge: 555004392
+- op: copy_node
+  node: 555062153
+  edge: 555084807
+- op: split_edge
+  node: 555077371
+  edge: 555088425
+  note: 19 split edges from a DO block, whose array survives only as a comment
+- op: split_edge
+  node: 555074354
+  edge: 5550884251
+- op: split_edge
+  node: 555101620
+  edge: 555032587
+- op: split_edge
+  node: 555123363
+  edge: 555091026
+- op: split_edge
+  node: 555101619
+  edge: 5550910261
+- op: split_edge
+  node: 555117940
+  edge: 555084141
+- op: split_edge
+  node: 555120820
+  edge: 555034342
+- op: split_edge
+  node: 555128402
+  edge: 555030256
+- op: split_edge
+  node: 555118290
+  edge: 555029415
+- op: split_edge
+  node: 555078433
+  edge: 555013654
+- op: split_edge
+  node: 555076760
+  edge: 555023792
+- op: split_edge
+  node: 555077214
+  edge: 555084552
+- op: split_edge
+  node: 555118167
+  edge: 555084178
+- op: split_edge
+  node: 555089775
+  edge: 555032589
+- op: split_edge
+  node: 555117922
+  edge: 555084194
+- op: split_edge
+  node: 555079034
+  edge: 555084138
+- op: split_edge
+  node: 555115192
+  edge: 555029717
+- op: split_edge
+  node: 555100535
+  edge: 555030005
+- op: split_edge
+  node: 555078983
+  edge: 5550300052
+- op: tag_route
+  from: 555063041
+  to: 555078810
+  set:
+    line: 'Enter/exit Tanger Ville '
+    gauge: '1435'
+    comment: Shared enter/exit Tanger Ville
+    speed_passenger: null
+  note: Merged lines approach to Tanger Ville
+- op: insert_edge
+  source: 555103675
+  target: 555126426
+  oid: 556000004
+  note: additional edge approach to Kenitra join to non-hst line
+- op: tag_route
+  from: 555078810
+  to: 555126426
+  set:
+    line: Ligne à Grande Vitesse [LGV] Tanger - Kénitra
+    gauge: '1435'
+    comment: Dedicated high speed line. Operating speed 320 km/h. Electrified.
+    speed_passenger: '320'
+  note: LGV dedicated line from Tanger Ville to just outside Kenitra
+- op: insert_edge
+  source: 555076904
+  target: 555078810
+  oid: 556000000
+- op: tag_route
+  from: 555078810
+  to: 555062367
+  set:
+    line: Tanger - Tanger-Med
+    gauge: '1435'
+    comment: 'Open now to passengers, see: https://en.wikipedia.org/wiki/Tanger-Med'
+  note: Line from Tanger Ville to Tanger Med station
+- op: tag_route
+  from: 555062367
+  to: 555083287
+  set:
+    line: Tanger-Med - Tanger-Med Port
+    mode: freight
+    gauge: '1435'
+  note: Line from Tanger-Med to Tanger-Med Port
+- op: insert_edge
+  source: 555078810
+  target: 555134163
+  oid: 556000001
+- op: tag_route
+  from: 555101620
+  to: 555101619
+  set:
+    line: Tanger - Tanger-Med
+    gauge: '1435'
+  note: Line from Tanger-Med to join line South to Kenitra
+- op: tag_route
+  from: 555101619
+  to: 555078798
+  set:
+    line: Tanger to Mechraa Bel Ksiri
+    gauge: '1435'
+    comment: the old (not HST) Tanger to Kenitra line
+  note: Tanger to Mechraa Bel Ksiri (old slow line)
+- op: insert_edge
+  source: 555079666
+  target: 555123352
+  oid: 556000002
+  note: New edge for route into Kenitra
+- op: tag_route
+  from: 555078798
+  to: 555062822
+  set:
+    line: Mechraa Bel Ksiri to Kenitra
+    gauge: '1435'
+    comment: the old (not HST) Tanger to Kenitra line
+  note: Mechraa Bel Ksiri to Kenitra (old slow line)
+- op: tag_route
+  from: 555078796
+  to: 555078775
+  set:
+    line: Sidi Yahya to Sidi Kacem
+    gauge: '1435'
+    comment: ''
+  note: Sidi Yahya to Sidi Kacem
+- op: tag_route
+  from: 555078798
+  to: 555062419
+  set:
+    line: Mechraa Bel Ksiri to Oujda
+    gauge: '1435'
+    comment: ''
+  note: Mechraa Bel Ksiri to Oujda
+- op: tag_route
+  from: 555062419
+  to: 555025503
+  set:
+    line: Oujda to Zoudj Bghal (Algeria)
+    gauge: '1435'
+    status: disused
+    comment: ''
+  note: disused
+- op: tag_route
+  from: 555062419
+  to: 555107745
+  set:
+    line: Oujda to Bouarfa
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Freight only except for the occasional private tourist service - the Oriental Desert Express
+  note: Oujda to Bouarfa (freight only plus occassional tourist Oriental Destert Express)
+- op: tag_route
+  from: 555078945
+  to: 555021120
+  set:
+    line: Taourirt to Beni Nsar Port (Nador Port)
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Taourirt to Beni Nsar Port (Nador Port)
+- op: tag_route
+  from: 555068598
+  to: 555121673
+  set:
+    line: Beni Nsar Port (Nador Port) Freight Terminal
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Beni Nsar Port (Nador Port) Freight Terminal
+- op: tag_route
+  from: 555062822
+  to: 555021845
+  set:
+    line: Kenitra to Casa Port
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Route of Train Navette Rapide (TNR) service
+  note: Kenitra to Casa Port
+- op: insert_edge
+  source: 555028771
+  target: 555033618
+  oid: 556000003
+  note: simplify routing at Sidi el Aidi for line to Marrakech and branch to Wad Zam
+- op: tag_route
+  from: 555065206
+  to: 555134634
+  set:
+    line: Casablanca to Marrakech
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Casablanca to Marrakech
+- op: tag_route
+  from: 555065257
+  to: 555021757
+  set:
+    line: Bouskoura to Mohammed V International Airport
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Part fo TNR Al Bidaoui (Casablanca - Mohammed V International Airport
+  note: Bouskoura to Mohammed V International Airport
+- op: tag_route
+  from: 555081547
+  to: 555074025
+  set:
+    line: Bouskoura to El Jadida
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Part of TNR Casablanca - El Jadida route
+  note: Bouskoura to El Jadida
+- op: tag_route
+  from: 555074025
+  to: 555118287
+  set:
+    line: El Jadida to Port of Jorf Lasfar
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: El Jadida to Port of Jorf Lasfar
+- op: change_source
+  edge: 555032067
+  node: 556028771
+- op: tag_route
+  from: 556028771
+  to: 555028772
+  set:
+    line: Sidi el Aidi to Oued Zem
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Sidi el Aidi to Oued Zem
+- op: change_target
+  edge: 555023792
+  node: 555020393
+- op: tag_route
+  from: 555020393
+  to: 555028588
+  set:
+    line: Ben Guerir to Safi
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Ben Guerir to Safi
+- op: tag_route
+  from: 555028588
+  to: 555101363
+  set:
+    line: Safi to Port of Safi
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Safi to Port of Safi
+- op: tag_route
+  from: 555076761
+  to: 555076760
+  set:
+    line: OCP Mine (Benguerir) to Safi line
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: OCP Phosphate mines. Freight route to Safi Port
+  note: OCP Mine (Benguerir) to Safi line
+- op: tag_route
+  from: 555077822
+  to: 555071248
+  set:
+    line: OCP phosphate processing plant
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: OCP Phosphate Processing plant
+- op: tag_route
+  from: 555063406
+  to: 555063407
+  set:
+    line: Benguerir Air Base
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Benguerir Air Base
+- op: tag_route
+  from: 555101617
+  to: 555132339
+  set:
+    line: OCP Youssoufia Mine
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: OCP Phosphate mines
+  note: OCP Youssoufia Mine
+- op: tag_route
+  from: 555077214
+  to: 555077215
+  set:
+    line: OCP Khouribga Mine
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: OCP Phosphate mines
+  note: OCP Khouribga Mine
+- op: insert_edge
+  source: 555118161
+  target: 555118159
+  oid: 556000005
+  note: link to simplify routing
+- op: tag_route
+  from: 555118161
+  to: 555118206
+  set:
+    line: Port of Casablanca
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Port of Casablanca (Freight)
+- op: tag_route
+  from: 555089775
+  to: 555089774
+  set:
+    line: Renault-Nissan Group Factory
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Renault-Nissan Group (Freight)
+- op: tag_route
+  from: 555081212
+  to: 555079035
+  set:
+    line: LafargeHolcim Maroc cement works (Fes)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: LafargeHolcim Maroc cement works (Fes)
+- op: tag_route
+  from: 555115192
+  to: 555117768
+  set:
+    line: LafargeHolcim Maroc cement works (Meknes)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: LafargeHolcim Maroc cement works (Meknes)
+- op: insert_edge
+  source: 555090095
+  target: 555020067
+  oid: 556000006
+- op: tag_route
+  from: 555020067
+  to: 555090096
+  set:
+    line: Sonasid steel works (Nador)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Sonasid steel works (Nador)
+- op: tag_route
+  from: 555100535
+  to: 555100350
+  set:
+    line: Guenfouda to Jerada branch (Jerada Power Station)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Appears to serve Jerada coal-powered power station. Coal imported via Nador port
+  note: Guenfouda to Jerada branch
+- op: set_nodes_on_edges
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1435'
+  set:
+    gauge: '1435'
+- op: split_name_script
+  country_like: '%Morocco%'
+  column: name_arabic
+  keep: arabic
+  note: decided to split out arabic and english/latin names to separate fields
+- op: split_name_script
+  country_like: '%Morocco%'
+  column: name
+  keep: latin

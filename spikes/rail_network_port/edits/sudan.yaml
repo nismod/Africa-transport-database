@@ -1,0 +1,395 @@
+# Sudan and South Sudan rail network edits.
+#
+# Derived from sudan.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 614 lines of SQL: 56 edits,
+# 21 statements skipped as unable to reach the published network
+# (2 backup, 14 exploratory, 1 routing test, 3 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Sudan and South Sudan
+edits:
+- op: copy_node
+  node: 555082271
+  edge: 555096004
+  note: Atbara station
+- op: set_node
+  node: 556082271
+  set:
+    name: Atbara
+    railway: station
+- op: set_node
+  node: 555021191
+  set:
+    name: Abu Hamad
+    name_arabic: محطة أبو حمد
+- op: set_node
+  node: 555057333
+  set:
+    name: Khartoum
+- op: set_node
+  node: 555010559
+  set:
+    name: Khartoum North
+- op: set_node
+  node: 555012964
+  set:
+    name: Port Sudan
+    name_arabic: بورتسودان
+- op: set_node
+  node: 555078047
+  set:
+    name: Port of Sudan (Southern)
+    railway: stop
+    facility: container_port
+- op: set_node
+  node: 555123804
+  set:
+    name: Port of Sudan (Northern)
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555023134
+  set:
+    name: El Obeid
+    name_arabic: الأبيض
+- op: set_node
+  node: 555023101
+  set:
+    name: Babanusa
+    name_arabic: بابنوسة
+- op: set_node
+  node: 555028964
+  set:
+    name: Nyala
+    name_arabic: محطة نيالا القطارات
+- op: set_node
+  node: 555060276
+  set:
+    name: El Daein
+    name_arabic: الضعين
+- op: set_node
+  node: 555019061
+  set:
+    name: Selihea
+- op: set_node
+  node: 555062663
+  set:
+    name: Kassala
+    name_arabic: كسلا
+- op: set_node
+  node: 555062839
+  set:
+    name: Wadi Halfa
+    name_arabic: وادي حلفا
+- op: set_node
+  node: 555062963
+  set:
+    name: Wad Madani
+    name_arabic: ود مدني
+- op: set_node
+  node: 555009712
+  set:
+    name: Ar Rahad
+- op: set_node
+  node: 555092216
+  set:
+    name: Haiya
+    railway: station
+- op: set_nodes
+  nodes:
+  - 555062452
+  - 555010842
+  - 555062996
+  - 555019062
+  - 555042360
+  set:
+    name: null
+    railway: null
+- op: insert_node_at
+  oid: 558000011
+  lon: 33.56633
+  lat: 13.57366
+  set:
+    railway: station
+    name: Sennar
+    country: Sudan
+  note: add Sennar station
+- op: copy_node
+  node: 558000011
+  edge: 555063627
+- op: split_edge
+  edge: 555064449
+  node: 555147097
+  note: Khartoum - Atbara
+- op: tag_route
+  from: 555057333
+  to: 556082271
+  set:
+    line: Khartoum - Atbara
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555036216
+  node: 555082063
+  note: route out of Atbara
+- op: change_target
+  edge: 555036115
+  node: 555082086
+  note: split
+- op: change_target
+  edge: 555036121
+  node: 555082086
+- op: tag_route
+  from: 556082271
+  to: 555012964
+  set:
+    line: Atbara - Port Sudan
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555012964
+  to: 555123804
+  set:
+    line: Port of Sudan (Northern)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Port of Sudan (Northern)
+- op: split_edge
+  edge: 555093017
+  node: 555078046
+  note: Port of Sudan (Southern)
+- op: tag_route
+  from: 555012964
+  to: 555078047
+  set:
+    line: Port of Sudan (Southern)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: copy_node
+  node: 555021191
+  edge: 555040243
+  note: Atbara - Abu Hamad
+- op: tag_route
+  from: 556082271
+  to: 556021191
+  set:
+    line: Atbara - Abu Hamad
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: copy_node
+  node: 555062839
+  edge: 555027768
+  note: Abu Hamad - Wadi Halfa
+- op: tag_route
+  from: 556021191
+  to: 556062839
+  set:
+    line: Abu Hamad - Wadi Halfa
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555091714
+  to: 555021086
+  set:
+    line: Abu Hamad - Karima
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Abu Hamad - Karima
+- op: split_edge
+  edge: 555040269
+  node: 555091775
+  note: Kassinger - El Ban
+- op: tag_route
+  from: 555091775
+  to: 555021087
+  set:
+    line: Kassinger - El Ban
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Assumed to be open
+- op: tag_route
+  from: 555057333
+  to: 559000011
+  set:
+    line: Khartoum - Sennar
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'All lines South of Khartoum are believed to be disused with possibility of future rehabilitation
+      to be completed by 2024. See: https://bloom.bg/3Dat9CN'
+  note: Khartoum - Sennar
+- op: tag_route
+  from: 559000011
+  to: 555023134
+  set:
+    line: Sennar - El Obeid
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'All lines South of Khartoum are believed to be disused with possibility of future rehabilitation
+      to be completed by 2024. See: https://bloom.bg/3Dat9CN'
+  note: Sennar - El Obeid
+- op: split_edge
+  edge: 555044737
+  node: 555088340
+  note: Ar Rahad - Nyala
+- op: tag_route
+  from: 555088340
+  to: 555028964
+  set:
+    line: Ar Rahad - Nyala
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'All lines South of Khartoum are believed to be disused with possibility of future rehabilitation
+      to be completed by 2024. See: https://bloom.bg/3Dat9CN'
+- op: tag_route
+  from: 555064569
+  to: 555018692
+  set:
+    line: Babanusa - Wau (South Sudan)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'All lines South of Khartoum are believed to be disused with possibility of future rehabilitation
+      to be completed by 2024. See: https://bloom.bg/3Dat9CN'
+  note: Babanusa - Wau (South Sudan)
+- op: tag_route
+  from: 555092216
+  to: 555062663
+  set:
+    line: Haiya - Kassala
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  note: Haiya - Kassala
+- op: tag_route
+  from: 555117024
+  to: 555065002
+  set:
+    line: Kassala - Sennar (not complete)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: Gaps in this line. Therefore not routable.
+  note: Kassala - Sennar (not complete)
+- op: tag_route
+  from: 555003192
+  to: 555101144
+  set:
+    line: Kassala - Sennar (not complete)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: Gaps in this line. Therefore not routable.
+- op: set_node
+  node: 555096033
+  set:
+    name: CNPPC Oil Refinery
+    railway: stop
+    facility: manufacturing
+  note: CNPPC Oil Refinery, El Obeid
+- op: tag_route
+  from: 555023134
+  to: 555096033
+  set:
+    line: CNPPC Oil Refinery
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555088659
+  set:
+    name: Kenana Sugar Factory
+    railway: stop
+    facility: manufacturing
+  note: Kenana Sugar Factory
+- op: split_edge
+  edge: 555118525
+  node: 555088658
+- op: tag_route
+  from: 555088658
+  to: 555088659
+  set:
+    line: Kenana Sugar Factory
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+- op: set_node
+  node: 555093398
+  set:
+    name: Khartoum North Thermal Power Plant
+    railway: stop
+    facility: utilities
+  note: Khartoum North Thermal Power Plant
+- op: tag_route
+  from: 555025582
+  to: 555093398
+  set:
+    line: Khartoum North Thermal Power Plant
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Assumed to be open
+- op: copy_node
+  node: 555021083
+  edge: 555118703
+  note: Keheili Station
+- op: copy_node
+  node: 555021082
+  edge: 555118704
+  note: El Kab Station
+- op: copy_node
+  node: 555020951
+  edge: 555118706
+  note: Daghfeli Station
+- op: set_nodes_on_edges
+  country_like: '%Sudan%'
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'

@@ -1,0 +1,190 @@
+# Uganda rail network edits.
+#
+# Derived from uganda.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 611 lines of SQL: 24 edits,
+# 14 statements skipped as unable to reach the published network
+# (1 recomputed length, 2 routing test, 11 schema),
+# and 10 not transcribed - see the report.
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Uganda
+edits:
+- op: set_all_edges
+  set:
+    mode: mixed
+  note: assume mixed mode unless amended
+- op: set_node
+  node: 4441152
+  set:
+    name: Kampala
+    railway: station
+  note: set additional node for stations
+- op: set_node
+  node: 4440864
+  set:
+    name: Namanve
+    railway: station
+- op: set_node
+  node: 4440918
+  set:
+    name: Tororo Cement
+    railway: stop
+    facility: manufacturer
+  note: manufacturer
+- op: set_node
+  node: 4440870
+  set:
+    name: Port Bell
+    railway: stop
+    facility: port
+  note: port
+- op: set_node
+  node: 4441014
+  set:
+    name: Jinja Pier
+    railway: stop
+    facility: port
+- op: set_nodes
+  nodes:
+  - 4440609
+  set:
+    facility: dry_port
+  note: dry port (Gulu Station)
+- op: tag_route
+  from: 4441152
+  to: 4450051
+  set:
+    line: Kampala - Malaba
+    mode: freight
+    gauge: '1000'
+    status: open
+  note: Kamapala - Jinja
+- op: tag_route
+  from: 4450051
+  to: 4440911
+  set:
+    line: Kampala - Malaba
+    mode: freight
+    gauge: '1000'
+    status: open
+  note: Jinja - Malaba
+- op: tag_route
+  from: 4441152
+  to: 4440864
+  set:
+    line: Kampala - Malaba
+    mode: mixed
+    gauge: '1000'
+    status: open
+  note: commuter train Namanve - Kampala
+- op: tag_route
+  from: 4441214
+  to: 4440870
+  set:
+    line: Kampala - Port Bell
+    mode: freight
+    gauge: '1000'
+    status: open
+  note: Kampala to Port Bell
+- op: insert_edge
+  source: 4441013
+  target: 4450051
+  oid: 4460001
+  note: insert line for simplified routing from Jinja to Jinja Pier
+- op: tag_route
+  from: 4450051
+  to: 4441014
+  set:
+    line: Jinja - Jinja Pier
+    mode: freight
+    gauge: '1000'
+    status: open
+  note: Jinja Pier
+- op: insert_edge
+  source: 4440944
+  target: 4440946
+  oid: 4460002
+  note: insert line gap on Tororo - Gulu
+- op: tag_route
+  from: 4441221
+  to: 4440609
+  set:
+    line: Tororo - Gulu
+    mode: freight
+    gauge: '1000'
+    status: rehabilitation
+    comment: EU part funded rehabilitation project, completion expected 2023
+  note: Tororo - Gulu
+- op: tag_route
+  from: 4440609
+  to: 4440941
+  set:
+    line: Gulu - Pakwach
+    mode: freight
+    gauge: '1000'
+    status: disused
+  note: Gulu to Pakwach
+- op: insert_edge
+  source: 4440894
+  target: 4440896
+  oid: 4460003
+  note: join two nodes where no connecting line (for routing)
+- op: tag_route
+  from: 4440523
+  to: 4440341
+  set:
+    line: Kampala - Kasese
+    mode: mixed
+    gauge: '1000'
+    status: abandoned
+  note: Nalukolongo - Kasese
+- op: tag_route
+  from: 4441152
+  to: 4440523
+  set:
+    line: Kampala - Kasese
+    mode: freight
+    gauge: '1000'
+    status: open
+  note: Kampala - Nalukolongo section still in use (freight)
+- op: insert_edge
+  source: 4440193
+  target: 4450051
+  oid: 4460004
+  note: insert line to simplify routing onto Busoga Railway
+- op: tag_route
+  from: 4440968
+  to: 4440969
+  set:
+    line: Busoga Loop
+    mode: mixed
+    gauge: '1000'
+    status: disused
+    comment: Vandalised (substantial removal of tracks) and is out of use
+  note: Busoga Loop into Busembatia
+- op: insert_edge
+  source: 4440917
+  target: 4440069
+  oid: 4460005
+  note: simplify routing - add line to join 917 to 69
+- op: tag_route
+  from: 4440069
+  to: 4440918
+  set:
+    line: Tororo Cement
+    mode: freight
+    gauge: '1000'
+    status: open
+- op: set_nodes_on_edges
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1000'
+  set:
+    gauge: '1000'

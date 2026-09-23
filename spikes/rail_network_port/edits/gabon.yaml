@@ -124,7 +124,7 @@ edits:
 
   # Every station on a standard gauge line is standard gauge
   - op: set_nodes_on_edges
-    country: Gabon
+    countries: [Gabon]
     node_railway: [station, halt, stop]
     where_edge:
       gauge: "1435"

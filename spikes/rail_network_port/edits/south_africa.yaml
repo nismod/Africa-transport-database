@@ -1,0 +1,8633 @@
+# South Africa rail network edits.
+#
+# Derived from southafrica.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 11,085 lines of SQL: 1296 edits,
+# 25 statements skipped as unable to reach the published network
+# (1 backup, 9 exploratory, 3 routing test, 11 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: South Africa
+edits:
+- op: copy_node
+  node: 555088831
+  edge: 555109496
+- op: split_edge
+  edge: 555057610
+  node: 555088831
+- op: change_target
+  edge: 5550576101
+  node: 556088831
+- op: set_node
+  node: 555097172
+  set:
+    name: Port of Saldanha
+    railway: stop
+    facility: port
+  note: Saldanha port
+- op: tag_route
+  from: 555064147
+  to: 555097172
+  set:
+    line: Sishen - Saldanha Line
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Core Network. Primarily transport of iron ore - serves several mines near Sishen
+- op: set_node
+  node: 555137060
+  set:
+    name: Iron Ore Terminal
+    railway: stop
+    facility: terminal
+  note: Iron Ore Terminal
+- op: tag_route
+  from: 556088831
+  to: 555137060
+  set:
+    line: Sishen - Saldanha Line (Iron Ore Terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Primarily transport of iron ore - serves several mines near Sishen. Electrified.
+- op: set_node
+  node: 555028653
+  set:
+    comment: Iron ore mine
+    name: Kolomela Mine
+    railway: stop
+    facility: mine
+  note: Kolomela Mine
+- op: split_edge
+  edge: 555078445
+  node: 555111406
+- op: tag_route
+  from: 555111406
+  to: 555028653
+  set:
+    line: Sishen - Saldanha Line (Kolomela Mine)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_edges
+  edges:
+  - 555072295
+  - 555070255
+  set:
+    structure: tunnel
+- op: set_edges
+  edges:
+  - 555021187
+  set:
+    structure: bridge
+- op: set_node
+  node: 555084351
+  set:
+    comment: Iron ore mine
+    name: Khumani Mine
+    railway: stop
+    facility: mine
+  note: Khumani Mine
+- op: split_edge
+  edge: 555078438
+  node: 555106327
+- op: split_edge
+  edge: 555070538
+  node: 555113410
+- op: split_edge
+  edge: 555039493
+  node: 555084339
+- op: split_edge
+  edge: 5550394932
+  node: 555084351
+- op: split_edge
+  edge: 555078449
+  node: 555113415
+- op: tag_route
+  from: 555106327
+  to: 555084351
+  set:
+    line: Sishen - Saldanha Line (Khumani Mine)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 55503949322
+  node: 555106339
+- op: split_edge
+  edge: 555089133
+  node: 555106110
+- op: tag_route
+  from: 555106110
+  to: 555084351
+  set:
+    line: Hotazel - Postmasburg Line (Khumani Mine)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: oid != 555039493222
+- op: set_node
+  node: 555009459
+  set:
+    comment: Iron ore mine
+    name: Sishen Mine
+    railway: stop
+    facility: mine
+  note: Sishen Mine
+- op: tag_route
+  from: 555064147
+  to: 555009459
+  set:
+    line: Sishen - Saldanha Line (Sishen Mine)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555001939
+  node: 555106113
+  note: link to Hotazel - Postmasburg line
+- op: tag_route
+  from: 555106113
+  to: 555106110
+  set:
+    line: Hotazel - Postmasburg Line (Sishen Mine)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555007534
+  to: 555002086
+  set:
+    line: Kalbaskraal - Saldanha
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Core Network
+  note: Freight only
+- op: insert_edge
+  source: 555010478
+  target: 555088813
+  oid: 556000089
+  note: simplify
+- op: split_edge
+  edge: 555010553
+  node: 555075274
+- op: tag_route
+  from: 555075274
+  to: 555088813
+  set:
+    line: Kalbaskraal - Saldanha (Port of Saldanha)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Core Network
+- op: tag_route
+  from: 555114111
+  to: 555001944
+  set:
+    line: Malmesbury - Bitterfontein
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Core Network
+  note: Freight only
+- op: split_edge
+  edge: 555047274
+  node: 555075011
+  note: link to Sishen - Saldanha Line
+- op: insert_node_at
+  oid: 558000100
+  lon: 18.46917
+  lat: -31.59718
+  set:
+    country: South Africa
+- op: copy_node
+  node: 558000100
+  edge: 555024490
+- op: insert_edge
+  source: 559000100
+  target: 555088422
+  oid: 556000090
+- op: split_edge
+  edge: 555003885
+  node: 555088422
+- op: split_edge
+  edge: 555047274
+  node: 555075011
+- op: tag_route
+  from: 555075011
+  to: 555088422
+  set:
+    line: Malmesbury - Bitterfontein (Link to Sishen - Saldanha Line)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Core Network
+- op: tag_route
+  from: 555045169
+  to: 555008897
+  set:
+    line: Cape Town (all routes)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Cape Town access
+- op: tag_route
+  from: 555008897
+  to: 555000118
+  set:
+    line: Capetown - Ysterplaat
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Northern / Central / Malmesbury Lines
+  note: part Northern Line / Central Line / Malmesbury
+- op: tag_route
+  from: 555000118
+  to: 555062120
+  set:
+    line: Ysterplaat - Bellville via Monte Vista
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Nothern / Malmesbury Lines
+  where: oid not in (555030266, 555030268, 555030387, 555002567, 555030378)
+  note: Ysterplaat - Bellville via Monte Vista (Nothern Line)
+- op: split_edge
+  edge: 555112640
+  node: 555072049
+  note: Northern / Central / Southern / Cape Flats Lines
+- op: split_edge
+  edge: 555112458
+  node: 555072050
+- op: tag_route
+  from: 555008897
+  to: 555045341
+  set:
+    line: Cape Town - Salt River
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Northern / Central / Southern / Cape Flats Lines
+- op: set_node
+  node: 555062087
+  set:
+    railway: station
+  note: Northern / Central / Cape Flats Lines
+- op: tag_route
+  from: 555045341
+  to: 555062087
+  set:
+    line: Salt River - Maitland
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Northern / Central / Cape Flats Lines
+- op: tag_route
+  from: 555062087
+  to: 555062090
+  set:
+    line: Maitland - Pinelands
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Central / Cape Flats Lines
+  note: Central / Cape Flats Lines
+- op: insert_edge
+  source: 555013585
+  target: 555062120
+  oid: 556000091
+  note: simplify routing into Bellville
+- op: insert_edge
+  source: 555072294
+  target: 555062087
+  oid: 556000093
+  note: simplify routing from Maitland - Mutual
+- op: tag_route
+  from: 555062087
+  to: 555062120
+  set:
+    line: Maitland - Bellville
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Northern Line (Bellville via Mutual)
+- op: set_node
+  node: 555062651
+  set:
+    railway: station
+  note: Pinelands - Langa (Central Line via Maitland)
+- op: tag_route
+  from: 555062090
+  to: 555062651
+  set:
+    line: Pinelands - Langa
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Central Line via Maitland
+- op: tag_route
+  from: 555079179
+  to: 555062651
+  set:
+    line: Yesterplaat - Langa
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Central Line via Yesterplaat
+  note: Yesterplaat - Langa (Central Line via Yesterplaat)
+- op: tag_route
+  from: 555062651
+  to: 555013632
+  set:
+    line: Langa - Sarepta
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Central Line
+  where: oid not in (555112286, 555030764, 555030755, 555030763, 555033854, 555018713, 555017041)
+  note: Langa - Sarepta (Central Line)
+- op: tag_route
+  from: 555013632
+  to: 555013607
+  set:
+    line: Sarepta - Bellville
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Central Line / Northern Line
+  where: oid not in (555112286, 555030764, 555030755, 555030763, 555033854, 555018713, 555017041)
+  note: Sarepta - Bellville
+- op: insert_edge
+  source: 555013693
+  target: 555079527
+  oid: 556000094
+  note: simplify
+- op: split_edge
+  edge: 555112264
+  node: 555079527
+- op: tag_route
+  from: 555079527
+  to: 555063097
+  set:
+    line: Bonteheuwel - Chris Hani
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: suspended
+    comment: 'Central Line. Branches out of use due to vandalism and theft. See: http://bit.ly/3YAPe4o.'
+- op: split_edge
+  edge: 555081414
+  node: 555116288
+- op: tag_route
+  from: 555116288
+  to: 555046503
+  set:
+    line: Philippi - Kapteinship
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: suspended
+    comment: 'Central Line. Branches out of use due to vandalism and theft. See: http://bit.ly/3YAPe4o.'
+- op: tag_route
+  from: 555062120
+  to: 555000112
+  set:
+    line: Bellville - Kraaifontein
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Nothern / Wellington / Malmesbury Lines
+  note: Bellville - Kraaifontein (Northern Line and Wellington Line)
+- op: tag_route
+  from: 555000112
+  to: 555046563
+  set:
+    line: Wellington Line (Kraaifontein - Wellington)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Wellington Line (Kraaifontein - Wellington
+- op: insert_edge
+  source: 555013649
+  target: 555079351
+  oid: 556000092
+  note: simplify
+- op: set_node
+  node: 555031839
+  set:
+    name: Port of Cape Town (container terminal)
+    railway: stop
+    facility: container terminal
+  note: Port of Cape Town and Container Terminal
+- op: split_edge
+  edge: 555112197
+  node: 555115241
+- op: tag_route
+  from: 555115241
+  to: 555031856
+  set:
+    line: Port of Cape Town (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Core Network
+- op: tag_route
+  from: 555031856
+  to: 555031839
+  set:
+    line: Port of Cape Town (container terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Core Network
+- op: set_node
+  node: 555031611
+  set:
+    name: Port of Cape Town (Berths B-D)
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555031755
+  set:
+    name: Port of Cape Town (Berths E-L)
+    railway: stop
+    facility: port
+- op: tag_route
+  from: 555031856
+  to: 555031611
+  set:
+    line: Port of Cape Town
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555031650
+  to: 555031755
+  set:
+    line: Port of Cape Town (Berths E-L)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555045341
+  set:
+    railway: station
+  note: Salt River - Fish Hoek
+- op: copy_node
+  node: 555000031
+  edge: 555015300
+  note: copy fish hoek station
+- op: insert_edge
+  source: 555072159
+  target: 555045341
+  oid: 556000095
+  note: simplify
+- op: tag_route
+  from: 555045341
+  to: 556000031
+  set:
+    line: Salt River - Fish Hoek
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Southern Line
+  where: oid not in (555015548, 555019095)
+- op: tag_route
+  from: 556000031
+  to: 555000036
+  set:
+    line: Fish Hoek - Simon's Town
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Shuttle
+  note: Fish Hoek - Simon's Town (Shuttle)
+- op: split_edge
+  edge: 555033824
+  node: 555072315
+  note: Cape Flats Line
+- op: split_edge
+  edge: 555112628
+  node: 555072316
+- op: tag_route
+  from: 555072315
+  to: 555072681
+  set:
+    line: Pinelands- Heathfield
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Cape Flats Line
+- op: set_node
+  node: 555002609
+  set:
+    name: Bellville Marshalling Yard
+    railway: stop
+    facility: freight marshalling yard
+  note: Bellville Marshalling Yard - freight
+- op: tag_route
+  from: 555013566
+  to: 555002609
+  set:
+    line: Bellville Marshalling Yard
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: oid != 555058502
+- op: tag_route
+  from: 555013603
+  to: 555002609
+  set:
+    line: Bellville Marshalling Yard
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_edge
+  source: 555064443
+  target: 555079514
+  oid: 556000096
+  note: simplify routing
+- op: split_edge
+  edge: 555030763
+  node: 555064443
+- op: set_node
+  node: 555031979
+  set:
+    name: Epping Industria 1 and 2
+    railway: stop
+    facility: industrial area
+- op: tag_route
+  from: 555079514
+  to: 555031979
+  set:
+    line: Bellville Marshalling Yard
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555015282
+  set:
+    name: Atlantis Industrial
+    railway: stop
+    facility: industrial area
+  note: Freight Line to Atlantis Industrial area
+- op: split_edge
+  edge: 5551121972
+  node: 555115251
+- op: split_edge
+  edge: 555030412
+  node: 555115254
+- op: tag_route
+  from: 555115251
+  to: 555015282
+  set:
+    line: Atlantis line
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Branch Line
+- op: tag_route
+  from: 555032102
+  to: 555032107
+  set:
+    line: Montague Gardens Industrial Area
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Montague Gardens Industrial Area
+- op: set_node
+  node: 555032087
+  set:
+    name: Engen Cape Town Terminal
+    railway: stop
+    facility: fuel storage
+  note: http://bit.ly/3TdiDk8
+- op: tag_route
+  from: 555115225
+  to: 555032087
+  set:
+    line: Engen Cape Town Terminal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'see: http://bit.ly/3TdiDk8'
+- op: set_node
+  node: 555032110
+  set:
+    name: PPC Cement Works
+    railway: stop
+    facility: manfacturing
+  note: PPC Cement Works
+- op: tag_route
+  from: 555032104
+  to: 555032110
+  set:
+    line: PPC Cement Works
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555000105
+  set:
+    railway: station
+  note: Sarepta - Erste River
+- op: tag_route
+  from: 555013632
+  to: 555063472
+  set:
+    line: Sarepta - Erste River
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Northern Line (Full). Transnet Core Network.
+- op: copy_node
+  node: 555000100
+  edge: 555112779
+  note: Erste River - Muldersvlei
+- op: insert_edge
+  source: 555056542
+  target: 556000100
+  oid: 556000098
+  note: simplify routing
+- op: tag_route
+  from: 555063472
+  to: 556000100
+  set:
+    line: Erste River - Muldersvlei
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Northern Line (Full)
+  where: oid != 555112826
+- op: split_edge
+  edge: 555000475
+  node: 555051181
+  note: Erste River - Firgrove
+- op: tag_route
+  from: 555063472
+  to: 555017655
+  set:
+    line: Erste River - Firgrove
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Northern Line (Full). Transnet Core Network. Overberg Line
+- op: tag_route
+  from: 555017655
+  to: 555051183
+  set:
+    line: Firgrove - Van der Stel
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Northern Line (Full). Transnet Branch Network. Overberg Line.
+  note: Firgrove - Van der Stel
+- op: tag_route
+  from: 555051183
+  to: 555002396
+  set:
+    line: Van der Stel - Strand
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Northern Line (Full).
+  note: passenger only (?)
+- op: split_edge
+  edge: 555039578
+  node: 555067934
+  note: Freight only.
+- op: tag_route
+  from: 555051183
+  to: 555006095
+  set:
+    line: Van der Stel - Klipdale
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Branch Network. Overberg Line.
+- op: tag_route
+  from: 555006095
+  to: 555002071
+  set:
+    line: Klipdale - Protem
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Branch Network. Overberg Line.
+  note: Klipdale - Protem
+- op: tag_route
+  from: 555067934
+  to: 555008368
+  set:
+    line: Klipdale - Bredasdorp
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Branch Network. Overberg Line.
+  note: Klipdale - Bredasdorp
+- op: set_node
+  node: 555017418
+  set:
+    comment: 'Overberg Agri (Pty) Ltd; see: https://bit.ly/3ThmLzz'
+    name: Klipdale grain silos
+    railway: stop
+    facility: food storage
+  note: Klipdale grain silos (Overberg Agri (Pty) Ltd)
+- op: split_edge
+  edge: 5550395782
+  node: 555084844
+- op: tag_route
+  from: 555084844
+  to: 555017418
+  set:
+    line: Klipdale grain silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555084785
+  set:
+    comment: 'Overberg Agri (Pty) Ltd; see: https://bit.ly/3ThmLzz'
+    name: Bredasdorp grain silos
+    railway: stop
+    facility: food storage
+  note: Bredasdorp grain silos (Overberg Agri (Pty) Ltd)
+- op: split_edge
+  edge: 555110562
+  node: 555084784
+- op: tag_route
+  from: 555008368
+  to: 555084785
+  set:
+    line: Bredasdorp grain silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000101
+  lon: 19.42724
+  lat: -34.23739
+  set:
+    railway: stop
+    name: Caledon grain silos
+    country: South Africa
+    gauge: '1067'
+    facility: food storage
+    comment: 'Overberg Agri (Pty) Ltd; see: https://bit.ly/3ThmLzz'
+  note: Caledon grain silos (Overberg Agri (Pty) Ltd)
+- op: copy_node
+  node: 558000101
+  edge: 555025502
+- op: split_edge
+  edge: 555093565
+  node: 555075818
+  note: '559000101'
+- op: tag_route
+  from: 555075818
+  to: 559000101
+  set:
+    line: Caledon grain silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555067901
+  set:
+    comment: Production of malted barley - South African Breweries (SAB)
+    name: Maltings plant
+    railway: stop
+    facility: food production
+  note: production of malted barley.
+- op: split_edge
+  edge: 5550935652
+  node: 555067900
+- op: tag_route
+  from: 555067900
+  to: 555067901
+  set:
+    line: Maltings plant
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555032064
+  set:
+    comment: 'see: http://bit.ly/3ZMHBJM'
+    name: Munitions factory (Rheinmetall Denel Munition)
+    railway: stop
+    facility: manufacturing
+  note: Munitions factory (Rheinmetall Denel Munition (Pty) Ltd)
+- op: insert_edge
+  source: 555017658
+  target: 555017655
+  oid: 556000097
+  note: simplify routing
+- op: tag_route
+  from: 555017655
+  to: 555032064
+  set:
+    line: Munitions factory (Rheinmetall Denel Munition)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: copy_node
+  node: 555070934
+  edge: 555019300
+  note: simplfy
+- op: insert_edge
+  source: 555070934
+  target: 556070934
+  oid: 556000099
+- op: tag_route
+  from: 556070934
+  to: 555070931
+  set:
+    line: Paarl - Franschhoek
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+- op: set_node
+  node: 555022471
+  set:
+    name: Meadow Feeds Paarl (animal feed store)
+    railway: stop
+    facility: food storage
+  note: Meadow Feeds Paarl (animal feed store)
+- op: split_edge
+  edge: 555112794
+  node: 555094460
+- op: tag_route
+  from: 555055402
+  to: 555022471
+  set:
+    line: Meadow Feeds Paarl (animal feed store)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: copy_node
+  node: 555000268
+  edge: 555011668
+  note: Porterville - Hermon
+- op: tag_route
+  from: 555002068
+  to: 556000268
+  set:
+    line: Porterville - Hermon
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+- op: split_edge
+  edge: 555121333
+  node: 555145739
+  note: Hermon - Wellington
+- op: tag_route
+  from: 556000268
+  to: 555046563
+  set:
+    line: Hermon - Wellington
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+- op: set_node
+  node: 555055377
+  set:
+    name: Munitions factory (Rheinmetall Denel Munition)
+    railway: stop
+    facility: manufacturing
+  note: Rheinmetall Denel Munition
+- op: insert_edge
+  source: 555145663
+  target: 555098905
+  oid: 556000100
+  note: simplify
+- op: split_edge
+  edge: 555110888
+  node: 555091871
+- op: split_edge
+  edge: 555050096
+  node: 555145663
+- op: split_edge
+  edge: 555121285
+  node: 555091868
+- op: tag_route
+  from: 555091871
+  to: 555055377
+  set:
+    line: Munitions factory (Rheinmetall Denel Munition)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555068048
+  set:
+    name: PPC Cement Works
+    railway: stop
+    facility: manfacturing
+  note: update africa_osm_nodes
+- op: split_edge
+  edge: 555029162
+  node: 555068047
+- op: tag_route
+  from: 555068047
+  to: 555068048
+  set:
+    line: PPC Cement Works
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555091841
+  set:
+    name: Grain silos, Riebeek-Wes (Agrimark Grain)
+    railway: stop
+    facility: food storage
+  note: Grain silos, Riebeek-Wes (Agrimark Grain)
+- op: split_edge
+  edge: 555029158
+  node: 555091842
+- op: split_edge
+  edge: 555050038
+  node: 555091840
+- op: tag_route
+  from: 555091842
+  to: 555091841
+  set:
+    line: Grain silos, Riebeek-Wes (Agrimark Grain)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555011670
+  node: 555094475
+  note: Transnet core network
+- op: tag_route
+  from: 555094475
+  to: 555003205
+  set:
+    line: Hermon - Worcester
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+- op: split_edge
+  edge: 555111346
+  node: 555068036
+  note: reopened for freight on 2 June 2021
+- op: tag_route
+  from: 555068036
+  to: 555002072
+  set:
+    line: Wolseley - Prince Alfred Hamlet
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Owned by Ceres - private freight line (in conjunction with Transnet) and reopened for freight
+      on 2 June 2021. See: https://bit.ly/3FsggnU'
+- op: set_node
+  node: 555015570
+  set:
+    name: Worcester Industrial Area
+    railway: stop
+    facility: industrial area
+  note: Worcester Industrial Area
+- op: tag_route
+  from: 555022445
+  to: 555015570
+  set:
+    line: Worcester Industrial Area
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: copy_node
+  node: 555002121
+  edge: 555028402
+  note: Worcester - Voorbaai
+- op: tag_route
+  from: 555003205
+  to: 556002121
+  set:
+    line: Worcester - Voorbaai
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+- op: split_edge
+  edge: 555010480
+  node: 555076703
+  note: Transnet core network
+- op: set_node
+  node: 555076704
+  set:
+    name: Port of Mossel Bay
+    railway: stop
+    facility: port
+- op: tag_route
+  from: 555071570
+  to: 555076704
+  set:
+    line: Port of Mossel Bay
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+- op: set_node
+  node: 555037689
+  set:
+    name: Fuel storage depot
+    railway: stop
+    facility: fuel storage
+  note: Shell Downstream Fuel storage depot
+- op: split_edge
+  edge: 555028400
+  node: 555067951
+- op: split_edge
+  edge: 555010477
+  node: 555067970
+- op: tag_route
+  from: 555067931
+  to: 555037689
+  set:
+    line: Fuel storage depot
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555038643
+  node: 555083813
+  note: 'see: http://bit.ly/3mSOP0a'
+- op: split_edge
+  edge: 555128824
+  node: 555083789
+- op: split_edge
+  edge: 555038634
+  node: 555083798
+- op: set_node
+  node: 555083813
+  set:
+    comment: 'see: http://bit.ly/3mSOP0a'
+    name: Petro SA Gas to Liquids (GTL) Refinery
+    railway: stop
+    facility: fuel refinery
+- op: tag_route
+  from: 555083789
+  to: 555083813
+  set:
+    line: Petro SA Gas to Liquids (GTL) Refinery
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555075290
+  set:
+    comment: 'see: https://www.ssk.co.za/en/grain/'
+    name: Grain storage silos, Karringmelk (SSK Feeds)
+    railway: stop
+    facility: food storage
+  note: grain storage silos, Karringmelk
+- op: split_edge
+  edge: 555056884
+  node: 555075291
+- op: tag_route
+  from: 555075291
+  to: 555075290
+  set:
+    line: Grain storage silos, Karringmelk (SSK Feeds)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555016284
+  set:
+    comment: 'see: https://www.ssk.co.za/en/grain/'
+    name: Grain storage silos, Ashton (SSK Feeds)
+    railway: stop
+    facility: food storage
+  note: grain storage silos, Karringmelk
+- op: split_edge
+  edge: 555050012
+  node: 555082959
+- op: tag_route
+  from: 555082959
+  to: 555016284
+  set:
+    line: Grain storage silos, Ashton (SSK Feeds)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555003205
+  to: 555001114
+  set:
+    line: Worcester - De Aar
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  note: Worcester -  De Aar
+- op: tag_route
+  from: 556002121
+  to: 555073433
+  set:
+    line: Voorbaai -- Klipplaat
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line
+  note: Transnet branch line
+- op: set_node
+  node: 555083814
+  set:
+    name: Voorbaai
+    railway: station
+- op: set_edge
+  edge: 5550284021
+  set:
+    line: null
+    mode: mixed
+    gauge: null
+- op: split_edge
+  edge: 555090228
+  node: 555067912
+  note: Disused
+- op: split_edge
+  edge: 555053160
+  node: 555002024
+- op: tag_route
+  from: 555067912
+  to: 555002024
+  set:
+    line: George - Knysna
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+- op: tag_route
+  from: 555067906
+  to: 555001964
+  set:
+    line: Oudtshoom - Calitzdorp
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  note: disused
+- op: tag_route
+  from: 555048152
+  to: 555007705
+  set:
+    line: Gqeberha (Port Elizabeth) - Kariega (Uitenhage)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Metrorail Eastern Cape passenger line. Passenger services are currently suspended due to
+      vandelisim and theft. See: https://bit.ly/3lafchP. Also Transnet branch line'
+  note: Gqeberha (Port Elizabeth) - Kariega (Uitenhage)
+- op: insert_edge
+  source: 555121792
+  target: 555141342
+  oid: 556000101
+  note: simplify routing
+- op: split_edge
+  edge: 555003428
+  node: 555141342
+- op: tag_route
+  from: 555121792
+  to: 555036890
+  set:
+    line: Port Elizabeth (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line
+  where: oid != 555107721
+- op: set_node
+  node: 555002979
+  set:
+    name: Port Elizabeth (container terminal)
+    railway: stop
+    facility: container terminal
+  note: container terminal
+- op: tag_route
+  from: 555011984
+  to: 555002979
+  set:
+    line: Port Elizabeth (container terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line
+- op: set_node
+  node: 555116337
+  set:
+    name: Port Elizabeth (MPT quay - General Cargo)
+    railway: stop
+    facility: port
+  note: MPT Quay - General Cargo
+- op: tag_route
+  from: 555003520
+  to: 555116337
+  set:
+    line: Port Elizabeth (MPT quay - General Cargo)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line
+- op: set_node
+  node: 555141217
+  set:
+    comment: Terminal is used for managanese export and includes manganese storage area
+    name: Port Elizabeth (Bulk Terminal)
+    railway: stop
+    facility: port
+  note: Bulk Terminal
+- op: split_edge
+  edge: 555091550
+  node: 555141217
+- op: tag_route
+  from: 555003520
+  to: 555141217
+  set:
+    line: Port Elizabeth (Bulk Terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line
+- op: set_node
+  node: 555122592
+  set:
+    name: Port Elizabeth (fuel storage terminal)
+    railway: stop
+    facility: port
+  note: Fuel storage Terminal
+- op: split_edge
+  edge: 555003392
+  node: 555122590
+- op: tag_route
+  from: 555036890
+  to: 555122592
+  set:
+    line: Port Elizabeth (Fuel storage Terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line
+- op: set_node
+  node: 555011829
+  set:
+    name: PPC Cement Works
+    railway: stop
+    facility: manufacturing
+  note: PPC Cement Works
+- op: insert_edge
+  source: 555052009
+  target: 555121792
+  oid: 556000103
+  note: simplify
+- op: tag_route
+  from: 555121792
+  to: 555011829
+  set:
+    line: PPC Cement Works
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555059498
+  to: 555001941
+  set:
+    line: Avontuur Branch Line (Apple Express)
+    mode: mixed
+    type: conventional
+    gauge: '610'
+    status: disused
+    comment: 'Was used by the tourist train "Apple Express" and some freight services. Apple Express ceased
+      in 2010 and freight services in 2011. Apple Express understood to be undertaking rehabilitation
+      to Baywest Mall, see: https://www.appleexpresstrain.co.za and https://www.youtube.com/watch?v=9-DjjapeomU'
+  note: 'see: https://www.appleexpresstrain.co.za'
+- op: tag_route
+  from: 555063976
+  to: 555000207
+  set:
+    line: Avontuur Branch Line (Apple Express)
+    mode: mixed
+    type: conventional
+    gauge: '610'
+    status: disused
+    comment: 'Was used by the tourist train "Apple Express" and some freight services. Apple Express ceased
+      in 2010 and freight services in 2011. Apple Express understood to be undertaking rehabilitation
+      to Baywest Mall, see: https://www.appleexpresstrain.co.za and https://www.youtube.com/watch?v=9-DjjapeomU'
+  note: Patensie spur
+- op: tag_route
+  from: 555059498
+  to: 555063255
+  set:
+    line: Avontuur Branch Line (Apple Express)
+    mode: mixed
+    type: conventional
+    gauge: '610'
+    status: rehabilitation
+    comment: 'Was used by the tourist train "Apple Express" and some freight services. Apple Express ceased
+      in 2010 and freight services in 2011. Apple Express understood to be undertaking rehabilitation
+      to Baywest Mall, see: https://www.appleexpresstrain.co.za and https://www.youtube.com/watch?v=9-DjjapeomU'
+  note: section to Baywest mall
+- op: tag_route
+  from: 555000832
+  to: 555007705
+  set:
+    line: Klipplaat - Uitenhage (and Port Elizabeth)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line (and on to Port Elizabeth/Gqeberha)
+  note: Transnet branch line
+- op: split_edge
+  edge: 555027056
+  node: 555094762
+  note: Disused according to Transnet 2021 Annual Report map
+- op: tag_route
+  from: 555000832
+  to: 555094762
+  set:
+    line: Klipplaat - Rosmead
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: Disused according to Transnet 2021 Annual Report map
+- op: copy_node
+  node: 555063120
+  edge: 555101781
+  note: copy Kimberley station
+- op: set_node
+  node: 556063120
+  set:
+    name: Kimberley
+- op: tag_route
+  from: 555001114
+  to: 556063120
+  set:
+    line: De Aar - Kimberley
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+- op: tag_route
+  from: 559000016
+  to: 555000243
+  set:
+    line: Naroegas (Nambiba border) - De Aar
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  note: Naroegas (Nambiba border) - De Aar
+- op: split_edge
+  edge: 555034558
+  node: 555068625
+  note: Transnet branch line
+- op: tag_route
+  from: 555068625
+  to: 555006504
+  set:
+    line: Upington - Kakamas
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line
+- op: set_node
+  node: 555015569
+  set:
+    name: Port of Ngqura (container terminal)
+    railway: stop
+    facility: container terminal
+  note: De Aar - Port of Ngqura
+- op: split_edge
+  edge: 555015616
+  node: 555141657
+- op: split_edge
+  edge: 555115329
+  node: 555074156
+- op: tag_route
+  from: 555071366
+  to: 555015569
+  set:
+    line: De Aar - Port of Ngqura
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+- op: set_node
+  node: 555009118
+  set:
+    name: Department of Defense Ammunition Depot (De Aar)
+    railway: stop
+    facility: military
+  note: Department of Defense Ammunition Depot (De Aar)
+- op: split_edge
+  edge: 555000845
+  node: 555069498
+- op: split_edge
+  edge: 555021719
+  node: 555069499
+- op: tag_route
+  from: 555069498
+  to: 555009118
+  set:
+    line: Department of Defense Ammunition Depot (De Aar)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555048922
+  to: 555008595
+  set:
+    line: Belmont - Douglas
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Branch line
+  note: Transnet branch line
+- op: set_node
+  node: 555071632
+  set:
+    name: GWK grain storage silos, Douglas
+    railway: stop
+    facility: food storage
+  note: GWK grain storage silos, Douglas
+- op: split_edge
+  edge: 555119680
+  node: 555071631
+- op: tag_route
+  from: 555071631
+  to: 555071632
+  set:
+    line: GWK grain storage silos, Douglas
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555000918
+  set:
+    railway: station
+  note: Passenger only
+- op: tag_route
+  from: 555000918
+  to: 555061722
+  set:
+    line: East London - Chiselhurst (Metrorail)
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Metrorail Eastern Cape passenger line. Passenger services are currently suspended due to
+      vandelisim and theft. See: https://bit.ly/3lafchP.'
+- op: tag_route
+  from: 555061722
+  to: 555061736
+  set:
+    line: Chiselhurst - Berlin/Ntabozuko (Metrorail and Transnet)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Metrorail Eastern Cape passenger line. Passenger services are currently suspended due to
+      vandelisim and theft. See: https://bit.ly/3lafchP. Also Transnet core network'
+  note: Metrorail and Transnet
+- op: set_node
+  node: 555039836
+  set:
+    name: Port of East London (container terminal)
+    railway: stop
+    facility: container terminal
+  note: Container Terminal
+- op: set_node
+  node: 555006428
+  set:
+    name: Port of East London (vehicle terminal)
+    railway: stop
+    facility: port
+  note: Vehicle Terminal
+- op: set_node
+  node: 555126640
+  set:
+    comment: grain elevator and storage silos
+    name: Port of East London (grain terminal)
+    railway: stop
+    facility: port
+  note: Grain Terminal (Elevator/storage silos)
+- op: set_node
+  node: 555126737
+  set:
+    comment: ''
+    name: Port of East London (fuel storage terminal)
+    railway: stop
+    facility: port
+  note: Fuel storage
+- op: tag_route
+  from: 555002326
+  to: 555039651
+  set:
+    line: Port of East London (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  note: Port access
+- op: tag_route
+  from: 555039818
+  to: 555039836
+  set:
+    line: Port of East London (container terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  note: Container terminal
+- op: tag_route
+  from: 555039651
+  to: 555126737
+  set:
+    line: Port of East London (fuel storage terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  note: Fuel storage terminal
+- op: tag_route
+  from: 555039651
+  to: 555126640
+  set:
+    line: Port of East London (grain terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  where: oid != 555096494
+  note: grain elevator and storage silos
+- op: tag_route
+  from: 555061736
+  to: 555001002
+  set:
+    line: Berlin - Queenstown/Komani
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  note: Berlin - Queenstown/Komani
+- op: tag_route
+  from: 555001002
+  to: 555061540
+  set:
+    line: Queenstown - Springfontein
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Also shared by Shosholoza Meyl Johannesburg – Queenstown (Komani)
+      long distance passenger service.
+  note: Transnet core network
+- op: set_node
+  node: 555000425
+  set:
+    railway: station
+  note: Springfontein - Bloemfontein
+- op: split_edge
+  edge: 555036534
+  node: 555145904
+- op: tag_route
+  from: 555061540
+  to: 555000425
+  set:
+    line: Sringfontein - Bloemfontein
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Also shared by Shosholoza Meyl Johannesburg – Queenstown (Komani)
+      long distance passenger service.
+- op: split_edge
+  edge: 555121692
+  node: 555153626
+  note: Springfontein - Noupoort
+- op: tag_route
+  from: 555145903
+  to: 555069313
+  set:
+    line: Springfontein - Noupoort
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+- op: change_source
+  edge: 555011384
+  node: 555075086
+  note: adjust incorrect edge
+- op: insert_edge
+  source: 555000656
+  target: 555075086
+  oid: 556000104
+  note: simplify
+- op: tag_route
+  from: 555000656
+  to: 555010015
+  set:
+    line: Amabele - Mthatha
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line.
+- op: split_edge
+  edge: 555017328
+  node: 555065281
+  note: Transnet core network
+- op: tag_route
+  from: 555055740
+  to: 555065281
+  set:
+    line: Blaney - Cookhouse
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+- op: split_edge
+  edge: 555017431
+  node: 555063694
+  note: Transnet branch line
+- op: tag_route
+  from: 555000829
+  to: 555063694
+  set:
+    line: Addo - Kirkwood
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line.
+- op: set_node
+  node: 555003558
+  set:
+    comment: 'Largest grower, packer and exporter of South African citrus. see: https://www.srcc.co.za/about-srcc'
+    name: Sunday Rivers Citrus Company
+    railway: stop
+    facility: food
+  note: 'see: https://www.srcc.co.za/about-srcc'
+- op: tag_route
+  from: 555000829
+  to: 555003558
+  set:
+    line: Sunday Rivers Citrus Company
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_edge
+  source: 555081809
+  target: 555000476
+  oid: 556000105
+  note: simplify
+- op: split_edge
+  edge: 555012158
+  node: 555001164
+- op: tag_route
+  from: 555001164
+  to: 555000476
+  set:
+    line: Hotazel - Hamilton (Bloemfontein)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+- op: split_edge
+  edge: 555057632
+  node: 555084343
+  note: Hotazel area mines etc
+- op: split_edge
+  edge: 555039495
+  node: 555084341
+- op: split_edge
+  edge: 5550394952
+  node: 555106472
+- op: tag_route
+  from: 555001164
+  to: 555084341
+  set:
+    line: Hotazel Manganese Mines (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555084342
+  set:
+    comment: 'Manganese mine. See: https://www.mindat.org/loc-3065.html'
+    name: Black Rock Mine
+    railway: stop
+    facility: mine
+  note: Black Rock Mine (Manganese)
+- op: tag_route
+  from: 555084341
+  to: 555084342
+  set:
+    line: Black Rock Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555028636
+  set:
+    comment: 'Manganese mine. See: https://www.mindat.org/loc-3071.html'
+    name: Wessels Mine
+    railway: stop
+    facility: mine
+  note: Wessels Mine (Manganese)
+- op: tag_route
+  from: 555084341
+  to: 555028636
+  set:
+    line: Wessels Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555106473
+  set:
+    comment: 'Manganese mines. See: https://www.mindat.org/loc-55925.html'
+    name: Nchwaning Mines
+    railway: stop
+    facility: mine
+  note: Nchwaning Mines (Manganese)
+- op: tag_route
+  from: 555106472
+  to: 555106473
+  set:
+    line: Nchwaning Mines
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555106477
+  set:
+    comment: 'Manganese mine. See: https://www.mindat.org/loc-11382.html'
+    name: Gloria Mine
+    railway: stop
+    facility: mine
+  note: Gloria Mine
+- op: split_edge
+  edge: 55503949522
+  node: 555106476
+- op: tag_route
+  from: 555106476
+  to: 555106477
+  set:
+    line: Gloria Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555097200
+  set:
+    comment: 'Manganese mine. See: https://www.mindat.org/loc-2413.html'
+    name: Hotazel Mine
+    railway: stop
+    facility: mine
+  note: Hotazel Mine (Manganese)
+- op: tag_route
+  from: 555084343
+  to: 555097200
+  set:
+    line: Hotazel Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555070550
+  node: 555107706
+- op: split_edge
+  edge: 555070528
+  node: 555106475
+- op: split_edge
+  edge: 5550121581
+  node: 555106342
+- op: tag_route
+  from: 555106342
+  to: 555107706
+  set:
+    line: Hotazel Manganese mines (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555106474
+  set:
+    comment: 'Manganese mine. See: https://www.mindat.org/loc-252416.html'
+    name: Kalagadi Mine
+    railway: stop
+    facility: mine
+- op: split_edge
+  edge: 5550705282
+  node: 555106312
+- op: tag_route
+  from: 555107706
+  to: 555106474
+  set:
+    line: Kalagadi Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555106338
+  set:
+    comment: 'Manganese mine. See: https://www.mindat.org/loc-252417.html'
+    name: Kudumane Mine
+    railway: stop
+    facility: mine
+  note: Kudumane Mine (Manganese)
+- op: tag_route
+  from: 555107706
+  to: 555106338
+  set:
+    line: Kudumane Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555012167
+  node: 555106310
+- op: split_edge
+  edge: 555070525
+  node: 555106309
+- op: split_edge
+  edge: 555070527
+  node: 555106311
+- op: split_edge
+  edge: 5550705272
+  node: 555106311
+- op: split_edge
+  edge: 55507052721
+  node: 555106305
+- op: set_node
+  node: 555106305
+  set:
+    comment: 'Manganese mine. See: https://www.mindat.org/loc-252415.html'
+    name: Tshipi Borwa Mine
+    railway: stop
+    facility: mine
+  note: Tshipi Borwa Mine
+- op: tag_route
+  from: 555106310
+  to: 555106305
+  set:
+    line: Tshipi Borwa Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555023661
+  set:
+    comment: 'Manganese mine. See: https://www.mindat.org/loc-11063.html'
+    name: Mamatwan Mine
+    railway: stop
+    facility: mine
+  note: Mamatwan Mine
+- op: tag_route
+  from: 555106309
+  to: 555023661
+  set:
+    line: Mamatwan Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000102
+  lon: 26.2283
+  lat: -29.12395
+  set:
+    country: South Africa
+  note: Transnet core network
+- op: copy_node
+  node: 558000102
+  edge: 555024074
+- op: insert_edge
+  source: 555060297
+  target: 559000102
+  oid: 556000106
+- op: tag_route
+  from: 555006239
+  to: 555007933
+  set:
+    line: Bloemfontein - Maseru (Lesotho)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+- op: split_edge
+  edge: 555001013
+  node: 555065429
+  note: disused according to Transnet 2021 Report map
+- op: tag_route
+  from: 555070604
+  to: 555065429
+  set:
+    line: Marselilles/Ladybrand - Bethlehem
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: disused according to Transnet 2021 Report map
+- op: split_edge
+  edge: 555037459
+  node: 555106135
+- op: split_edge
+  edge: 555004742
+  node: 555000525
+- op: tag_route
+  from: 555106135
+  to: 555000525
+  set:
+    line: Marselilles/Ladybrand - Bethlehem
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: disused according to Transnet 2021 Report map
+- op: split_edge
+  edge: 555017290
+  node: 555153564
+  note: Ramatlabama (Botswana border) - Kamfersdam
+- op: split_edge
+  edge: 555004578
+  node: 555120647
+- op: tag_route
+  from: 555081222
+  to: 555006583
+  set:
+    line: Ramatlabama (Botswana border) - Kamfersdam
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  where: oid not in (555132862, 555025206) and country = 'South Africa'
+- op: tag_route
+  from: 555060701
+  to: 555001694
+  set:
+    line: Veertien Strome - Klerksdorp
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  where: country = 'South Africa'
+  note: Veertien Strome - Klerksdorp
+- op: tag_route
+  from: 555000425
+  to: 555048499
+  set:
+    line: Bloemfontein - Vereeniging
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Also Shosholoza Meyl long distance passenger service Johannesburg
+      – Queenstown/Komani
+  where: country = 'South Africa'
+  note: Shosholoza Meyl long distance passenger service Johannesburg – Queenstown/Komani
+- op: set_node
+  node: 555001694
+  set:
+    railway: station
+  note: Transnet core network
+- op: set_node
+  node: 555050291
+  set:
+    name: null
+    railway: null
+- op: tag_route
+  from: 555001694
+  to: 555000371
+  set:
+    line: Klerksdorp - Houtheuwel
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa' and oid != 555000786
+- op: tag_route
+  from: 555002320
+  to: 555001762
+  set:
+    line: Cachet - Oberholzer
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa'
+  note: Cachet - Oberholzer
+- op: split_edge
+  edge: 555027226
+  node: 555068321
+  note: Welverdiend - Lichtenburg
+- op: tag_route
+  from: 555068321
+  to: 555001705
+  set:
+    line: Welverdiend - Lichtenburg
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555082843
+  node: 555081255
+  note: Transnet branch line
+- op: tag_route
+  from: 555068328
+  to: 555081255
+  set:
+    line: Coligny - Pudimoe
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line.
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555052776
+  node: 555091598
+  note: Transnet branch line
+- op: tag_route
+  from: 555091598
+  to: 555068472
+  set:
+    line: Vermaas - Makwassie
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line.
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555014485
+  node: 555070036
+  note: Transnet branch line
+- op: split_edge
+  edge: 555000784
+  node: 555102363
+- op: tag_route
+  from: 555070036
+  to: 555102363
+  set:
+    line: Ottosdal - Klerksdorp
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line.
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555045051
+  node: 555080021
+  note: Transnet branch line
+- op: split_edge
+  edge: 5550450512
+  node: 555080223
+- op: copy_node
+  node: 555000646
+  edge: 555129701
+  note: copy Westleigh station
+- op: insert_edge
+  source: 555044855
+  target: 556000646
+  oid: 556000107
+- op: tag_route
+  from: 555080021
+  to: 556000646
+  set:
+    line: Orkney - Westleigh
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line.
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555071246
+  to: 555001551
+  set:
+    line: Vierfontein - Bultfontein
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line.
+  where: country = 'South Africa'
+  note: Transnet branch line
+- op: copy_node
+  node: 555000630
+  edge: 555130350
+  note: copy Whites
+- op: insert_edge
+  source: 556000630
+  target: 555059476
+  oid: 556000108
+  note: simplify
+- op: tag_route
+  from: 555065076
+  to: 556000630
+  set:
+    line: Ancona - Whites
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line.
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555120647
+  to: 555059033
+  set:
+    line: Mafikeng- Krugersdorp
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa'
+  note: Transnet Core Network
+- op: tag_route
+  from: 555001468
+  to: 555006317
+  set:
+    line: Randfontein - Bank
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line.
+  where: country = 'South Africa'
+  note: Transnet branch line
+- op: insert_edge
+  source: 555023458
+  target: 555061536
+  oid: 556000109
+  note: simplify
+- op: tag_route
+  from: 555061536
+  to: 555126906
+  set:
+    line: Kroonstad (Gunhill) - Danskraal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555006686
+  to: 555000541
+  set:
+    line: Arlington - Marquard
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line.
+  where: country = 'South Africa'
+  note: Transnet branch line
+- op: insert_edge
+  source: 555000407
+  target: 555059369
+  oid: 556000110
+  note: simplify
+- op: tag_route
+  from: 555000407
+  to: 555000499
+  set:
+    line: Arlington - Heilbron
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line.
+  where: country = 'South Africa'
+- op: set_node
+  node: 555000463
+  set:
+    railway: stop
+  note: Transnet branch line
+- op: tag_route
+  from: 555006734
+  to: 555000463
+  set:
+    line: Bethlehem - Frankfort
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line. This line is open according to Transnet 2021 report map. OSM has it
+      disused or abandoned between Frankfort and Grootvlei
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555000463
+  to: 555106605
+  set:
+    line: Frankfort - Grootvlei
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: unclear
+    comment: Transnet branch line. This line is open according to Transnet 2021 report map. OSM has it
+      disused or abandoned between Frankfort and Grootvlei
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555106605
+  to: 555065384
+  set:
+    line: Grootvlei - Balfour North
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line. This line is open according to Transnet 2021 report map. OSM has it
+      abandoned or disused between Grootvlei and Redan
+  where: country = 'South Africa'
+  note: Grootvlei - Balfour North
+- op: split_edge
+  edge: 555017406
+  node: 555063684
+  note: Grootvlei - Redan
+- op: tag_route
+  from: 555106605
+  to: 555063684
+  set:
+    line: Grootvlei - Redan
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: unclear
+    comment: Transnet branch line. This line is open according to Transnet 2021 report map. OSM has it
+      abandoned or disused.
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555051755
+  to: 555126906
+  set:
+    line: Union - Danskraal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  where: country = 'South Africa' and oid not in (555003066, 555003067, 555105353)
+  note: Transnet core network
+- op: copy_node
+  node: 555030022
+  edge: 555044147
+  note: Danskraal - Pietermaritzburg
+- op: tag_route
+  from: 555126906
+  to: 556030022
+  set:
+    line: Danskraal - Pietermaritzburg
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  where: country = 'South Africa'
+- op: set_node
+  node: 555002388
+  set:
+    railway: station
+  note: Pietermaritzburg - Cato Ridge
+- op: tag_route
+  from: 556030022
+  to: 555004004
+  set:
+    line: Pietermaritzburg - Cato Ridge
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  where: country = 'South Africa'
+- op: set_node
+  node: 555080439
+  set:
+    railway: station
+  note: Old main line
+- op: tag_route
+  from: 555004004
+  to: 555032667
+  set:
+    line: Cato Ridge - Pinetown (old main line)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Old main line in/out Durban
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555002388
+  to: 555032667
+  set:
+    line: Pinetown - Rossburgh (Old Main Line)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail (Old Main Line).
+  where: country = 'South Africa'
+  note: Pinetown - Rossburgh (Old Main Line)
+- op: tag_route
+  from: 555032667
+  to: 555005735
+  set:
+    line: Rossburgh (Old and New Main Lines)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail (Old and New Main Lines).
+  where: country = 'South Africa'
+  note: Rossborough access
+- op: insert_edge
+  source: 555005735
+  target: 555003755
+  oid: 556000111
+  note: simplify lines into Rossburgh
+- op: delete_edge
+  edge: 556000111
+- op: tag_route
+  from: 555067650
+  to: 555005735
+  set:
+    line: Merebank - Rossburgh
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail (Chatsworth/Southern Coast/kwaMashu/Bluff lines). Also Transnet core network.
+  where: country = 'South Africa'
+  note: Merebank - Rossburgh
+- op: tag_route
+  from: 555005735
+  to: 555061584
+  set:
+    line: Rossburgh (access)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail and Transnet core network.
+  where: country = 'South Africa'
+  note: Rossburgh access
+- op: split_edge
+  edge: 555081672
+  node: 555147693
+  note: Merebank - Crossmoor
+- op: tag_route
+  from: 555067650
+  to: 555061658
+  set:
+    line: Merebank - Crossmoor (Chatsworth Line)
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail.
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555067650
+  to: 555003890
+  set:
+    line: Merebank - Reunion
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail (Southern Coast/kwaMashu/Bluff lines). Also Transnet core network.
+  where: country = 'South Africa'
+  note: Merebank - Reunion
+- op: tag_route
+  from: 555003890
+  to: 555049891
+  set:
+    line: Reunion - Umlazi (kwaMashu / Bluff Lines)
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail
+  where: country = 'South Africa'
+  note: Reunion - Umlazi (kwaMashu - Umlazi Line)
+- op: set_node
+  node: 555007056
+  set:
+    railway: station
+  note: Southern Coast Line
+- op: tag_route
+  from: 555003890
+  to: 555007056
+  set:
+    line: Reunion - Kelso
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail (Southern Coast Line). Also Transnet core network.
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555007056
+  to: 555012004
+  set:
+    line: Kelso - Port Shepstone
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa'
+  note: Transnet core network
+- op: tag_route
+  from: 555012004
+  to: 555030852
+  set:
+    line: Port Shepstone - Paddock
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: unclear
+    comment: Transnet 2021 Report map shows entire branch to Harding as closed OSM has open to Paddock
+      then abandoned.
+  where: country = 'South Africa'
+  note: Port Shepstone - Paddock
+- op: tag_route
+  from: 555030852
+  to: 555141652
+  set:
+    line: Paddock - Harding
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: Transnet 2021 Report map shows entire branch to Harding as closed OSM has open to Paddock
+      then abandoned.
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555005700
+  node: 555080500
+  note: mixed - some sharing with port freight
+- op: tag_route
+  from: 555080500
+  to: 555004998
+  set:
+    line: Clairwood - Wests
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail (Bluff Line). Transnet core network (Port of Durban).
+  where: country = 'South Africa' and oid not in (555005065, 555005264, 555005274)
+- op: set_edges
+  edges:
+  - 555019459
+  - 555006257
+  - 555124903
+  - 555005556
+  - 555124898
+  - 555006253
+  - 555019448
+  - 555019449
+  - 555019530
+  - 555019491
+  - 555019460
+  - 555006265
+  set:
+    line: null
+    gauge: null
+  note: correct Rossburgh issue
+- op: tag_route
+  from: 555061584
+  to: 555003679
+  set:
+    line: Rossburgh - Durban
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail (New Main/Old Main/Chatsworth/Southern Coast/kwaMashu/Bluff lines). Also
+      Transnet core network.
+  where: country = 'South Africa'
+  note: Rossburgh - Durban
+- op: tag_route
+  from: 555003679
+  to: 555003618
+  set:
+    line: Durban - Umgeni
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail (kwaMashu/Northern Coast lines). Also Transnet core network.
+  where: country = 'South Africa'
+  note: Northern Coast / kwaMashu Lines
+- op: set_node
+  node: 555004614
+  set:
+    railway: station
+  note: Northern Coast Line
+- op: insert_edge
+  source: 555003601
+  target: 555004614
+  oid: 556000112
+  note: simplify into Duff's Road
+- op: tag_route
+  from: 555003618
+  to: 555004614
+  set:
+    line: Umgeni - Duff's Road (via Red Hill)
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail (Northern Coast line).
+  where: country = 'South Africa' and oid not in (555033232,555033274)
+- op: tag_route
+  from: 555003618
+  to: 555004614
+  set:
+    line: Umgeni - Duff's Road (via Effingham)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail (Northern Coast / kwaMashu Lines). Also Transnet core network
+  where: country = 'South Africa'
+  note: Northern Coast /  kwaMashu Lines
+- op: tag_route
+  from: 555004614
+  to: 555057703
+  set:
+    line: Umgeni - Duff's Road
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail (Northern Coast / kwaMashu Lines). Also Transnet core network
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555004608
+  to: 555061657
+  set:
+    line: Duff's Road - kwaMashu (kwaMashu Line)
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail.
+  where: country = 'South Africa'
+  note: passenger
+- op: tag_route
+  from: 555057703
+  to: 555009423
+  set:
+    line: Duff's Road - Bridge City (kwaMashu Line)
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail.
+  where: country = 'South Africa'
+  note: passenger
+- op: tag_route
+  from: 555057703
+  to: 555061665
+  set:
+    line: Duff's Road - Stanger
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Durban Metrorail (Northern Coast Line) and Transnet core network
+  where: country = 'South Africa'
+  note: Transnet core
+- op: tag_route
+  from: 555004705
+  to: 555004639
+  set:
+    line: Port of Durban
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and oid != 555126135
+  note: Port of Durban
+- op: set_node
+  node: 555066658
+  set:
+    name: Port of Durban (Point and Leisure Precinct)
+    railway: stop
+    facility: port
+  note: Point and Leisure Precinct
+- op: split_edge
+  edge: 555007592
+  node: 555066658
+- op: split_edge
+  edge: 555015487
+  node: 555066648
+- op: tag_route
+  from: 555057969
+  to: 555066658
+  set:
+    line: Port of Durban (Point and Leisure Precinct)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and oid != 555126135
+- op: set_node
+  node: 555066080
+  set:
+    name: Port of Durban (Maydon Wharf Precinct)
+    railway: stop
+    facility: port
+  note: Maydon Wharf Precinct
+- op: split_edge
+  edge: 555007433
+  node: 555066588
+- op: tag_route
+  from: 555057969
+  to: 555066080
+  set:
+    line: Port of Durban (Maydon Wharf Precinct)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and oid != 555126135
+- op: set_node
+  node: 555057555
+  set:
+    name: Port of Durban (Container Precinct)
+    railway: stop
+    facility: port
+  note: Container Precinct
+- op: tag_route
+  from: 555057969
+  to: 555057555
+  set:
+    line: Port of Durban (Container Precinct)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and oid != 555126135
+- op: set_node
+  node: 555067226
+  set:
+    name: Port of Durban (Island View Precinct)
+    railway: stop
+    facility: port
+  note: Island View Precinct
+- op: split_edge
+  edge: 555005339
+  node: 555067221
+- op: split_edge
+  edge: 555009039
+  node: 555067225
+- op: split_edge
+  edge: 555009041
+  node: 555067229
+- op: split_edge
+  edge: 555009043
+  node: 555067226
+- op: tag_route
+  from: 555057199
+  to: 555067226
+  set:
+    line: Port of Durban (Island View Precinct)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and oid != 555126135
+- op: insert_edge
+  source: 555123283
+  target: 556030022
+  oid: 556000113
+  note: simplify
+- op: set_edge
+  edge: 556000113
+  set:
+    status: open
+- op: split_edge
+  edge: 555117029
+  node: 555123282
+- op: tag_route
+  from: 556030022
+  to: 555103655
+  set:
+    line: Pietermaritzburg - Kranskop
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line. Disused from Potspruit (according to OSM)
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555103655
+  to: 555012009
+  set:
+    line: Pietermaritzburg - Kranskop
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: Disused from Potspruit (according to OSM)
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555071926
+  to: 555008162
+  set:
+    line: Mount Alida branch line
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line.
+  where: country = 'South Africa' and status = 'open'
+  note: Mount Alida branch line
+- op: tag_route
+  from: 555071922
+  to: 555103503
+  set:
+    line: Dalton - Glenside
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line. Disused from Fawn Leas - Glenside according to OSM
+  where: country = 'South Africa' and status = 'open'
+  note: disused from Fawn Leas - Glenside according to OSM
+- op: tag_route
+  from: 555103503
+  to: 555012012
+  set:
+    line: Dalton - Glenside
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: Disused from Fawn Leas - Glenside according to OSM
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555067397
+  node: 555144754
+  note: disused
+- op: tag_route
+  from: 555144754
+  to: 555012016
+  set:
+    line: Schroeders - Bruyns Hill
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: Disused according to OSM
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555134591
+  to: 555008196
+  set:
+    line: Pietermaritzburg - Franklin
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line
+  where: country = 'South Africa' and status = 'open'
+  note: Transnet branch line
+- op: tag_route
+  from: 555008196
+  to: 555120949
+  set:
+    line: Franklin - Kokstad
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  where: country = 'South Africa'
+- op: set_node
+  node: 555074692
+  set:
+    name: Matatiele
+    railway: stop
+  note: Franklin - Matatiele
+- op: tag_route
+  from: 555070896
+  to: 555074692
+  set:
+    line: Franklin - Kokstad
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: abandoned
+    comment: Transnet 2021 Report indicates closed, OSM indicates abandoned.
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555070918
+  to: 555008236
+  set:
+    line: Donnybrook - Underberg
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line. Open according to Transnet 2021 report
+  where: country = 'South Africa' and status = 'open'
+  note: open according to Transnet 2021 report
+- op: insert_edge
+  source: 555134584
+  target: 555069389
+  oid: 556000114
+  note: simplify
+- op: split_edge
+  edge: 555106760
+  node: 555134584
+- op: tag_route
+  from: 555134584
+  to: 555006833
+  set:
+    line: Pentrich - Richmond
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: unclear
+    comment: Transnet branch line. Open according to Transnet 2021 report. OSM says disused.
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555033471
+  node: 555070849
+  note: open according to Transnet 2021 Report
+- op: tag_route
+  from: 555070849
+  to: 555013111
+  set:
+    line: Ennersdale - Bergville
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line. Open according to Transnet 2021 report.
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555065375
+  to: 555000648
+  set:
+    line: Harrismith - Warden
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: Closed line according to Transnet 2021 report (though OSM says open)
+  where: country = 'South Africa'
+  note: Closed line according to Transnet 2021 report (though OSM says open)
+- op: tag_route
+  from: 555119690
+  to: 555000636
+  set:
+    line: Firham - Vrede
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: Closed line according to Transnet 2021 report.
+  where: country = 'South Africa'
+  note: closed according to Transnet 2021 report map
+- op: set_node
+  node: 555127984
+  set:
+    name: New Denmark Colliery (Tutuka Power Station)
+    railway: stop
+    facility: mine
+  note: Transnet 2021 Report map has this line closed. OSM says open.
+- op: split_edge
+  edge: 555047846
+  node: 555127984
+- op: split_edge
+  edge: 555111398
+  node: 555070779
+- op: tag_route
+  from: 555070779
+  to: 555127984
+  set:
+    line: Tutuka - New Denmark Colliery
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: Closed line according to Transnet 2021 report. Colliery probably dedicated to supplying Tutuka
+      power station
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555058320
+  to: 555011609
+  set:
+    line: Palmford - Majuba Power Station
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'Believed to now be disused. Replaced by road transport and now the new Eskom private railway
+      from near Ermelo. See: http://bit.ly/3LJAxta'
+  where: country = 'South Africa'
+  note: 'see: http://bit.ly/3LJAxta'
+- op: split_edge
+  edge: 555127774
+  node: 555150191
+  note: Springs - Hamelfontein
+- op: tag_route
+  from: 555001501
+  to: 555150191
+  set:
+    line: Springs - Hamelfontein
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555127800
+  set:
+    name: Broodsnyersplaas
+- op: split_edge
+  edge: 555127800
+  node: 555150190
+  note: Pullenshope - Ermelo
+- op: tag_route
+  from: 555008148
+  to: 555045676
+  set:
+    line: Pullenshope - Ermelo (Coal Line)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Electrified
+  where: country = 'South Africa' and status = 'open' and oid != 5551278001
+- op: split_edge
+  edge: 555024927
+  node: 555077861
+  note: Transnet Depot, Ermelo
+- op: split_edge
+  edge: 555028515
+  node: 555132615
+- op: set_node
+  node: 555075124
+  set:
+    name: Transnet Depot, Ermelo
+    railway: stop
+    facility: railway
+- op: tag_route
+  from: 555077861
+  to: 555075124
+  set:
+    line: Transnet Depot, Ermelo
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555011609
+  set:
+    name: Majuba Power Station (Eskom)
+  note: 'see: http://bit.ly/3LJAxta'
+- op: split_edge
+  edge: 555052652
+  node: 555149317
+- op: split_edge
+  edge: 555024106
+  node: 555093801
+- op: tag_route
+  from: 555036737
+  to: 555011609
+  set:
+    line: Majuba Power Station (Eskom private line)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'New Eskom private railway to transport coal to power station from near Ermelo. See: http://bit.ly/3LJAxta.'
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555108738
+  node: 555136201
+  note: Richards Bay Coal Line
+- op: insert_edge
+  source: 555136232
+  target: 555085235
+  oid: 556000115
+- op: set_edge
+  edge: 556000115
+  set:
+    status: open
+- op: copy_node
+  node: 555129764
+  edge: 555100363
+- op: set_node
+  node: 556129764
+  set:
+    name: Vryheid (Transnet Depot)
+    railway: stop
+    facility: railway
+- op: set_node
+  node: 555070788
+  set:
+    comment: Coal terminal
+    name: Port of Richards Bay (Coal Terminal)
+    railway: stop
+    facility: port
+- op: tag_route
+  from: 555045676
+  to: 555070788
+  set:
+    line: Ermelo - Richards Bay Coal Terminal (Coal Line)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Electrified
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555095261
+  node: 555124492
+- op: split_edge
+  edge: 555095127
+  node: 555125998
+- op: split_edge
+  edge: 555016330
+  node: 555125896
+- op: set_node
+  node: 555126081
+  set:
+    comment: ''
+    name: Port of Richards Bay (Fuel Terminal)
+    railway: stop
+    facility: port
+- op: tag_route
+  from: 555125896
+  to: 555126081
+  set:
+    line: Port of Richards Bay (Fuel Terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: insert_edge
+  source: 555124499
+  target: 555124492
+  oid: 556000116
+  note: simplify
+- op: split_edge
+  edge: 555093586
+  node: 555124182
+- op: set_node
+  node: 555038867
+  set:
+    comment: ''
+    name: Port of Richards Bay (General and Bulk berths)
+    railway: stop
+    facility: port
+- op: tag_route
+  from: 555124499
+  to: 555038867
+  set:
+    line: Port of Richards Bay (General and Bulk berths)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa'
+- op: insert_edge
+  source: 555076050
+  target: 555124499
+  oid: 556000117
+  note: simplify
+- op: set_edge
+  edge: 556000117
+  set:
+    status: open
+- op: split_edge
+  edge: 555025801
+  node: 555125597
+- op: tag_route
+  from: 555061665
+  to: 555124499
+  set:
+    line: Stanger - Richards Bay
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  where: country = 'South Africa' and status = 'open' and oid != 555019186
+- op: copy_node
+  node: 555130373
+  edge: 555101381
+  note: simplify
+- op: insert_edge
+  source: 555130373
+  target: 556130373
+  oid: 556000118
+- op: set_edge
+  edge: 556000118
+  set:
+    status: open
+- op: split_edge
+  edge: 555102569
+  node: 555131135
+  note: simplify
+- op: insert_edge
+  source: 555131073
+  target: 555131135
+  oid: 556000119
+- op: set_edge
+  edge: 556000119
+  set:
+    status: open
+- op: split_edge
+  edge: 555018517
+  node: 555130373
+- op: tag_route
+  from: 556130373
+  to: 555131135
+  set:
+    line: Vryheid - Glencoe
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line
+  where: country = 'South Africa' and status = 'open' and oid not in (5551013812, 5551013811, 5550185172,
+    555101429)
+- op: split_edge
+  edge: 555033482
+  node: 555131399
+  note: probably disused as mine has closed
+- op: set_node
+  node: 555131399
+  set:
+    comment: 'Believe to be closed, see: https://www.gem.wiki/Hlobane_View_Colliery'
+    name: Hlobane Mine
+    railway: stop
+    facility: mine
+- op: split_edge
+  edge: 555102818
+  node: 555130341
+- op: tag_route
+  from: 555130373
+  to: 555131399
+  set:
+    line: Hlobane Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'Mine believed to be closed, see: https://www.gem.wiki/Hlobane_View_Colliery, so this spur
+      probably disused'
+  where: country = 'South Africa'
+- op: copy_node
+  node: 555011490
+  edge: 555094699
+  note: Empangeni - Nkwalini
+- op: insert_edge
+  source: 555125458
+  target: 555038714
+  oid: 556000120
+  note: simplify
+- op: set_edge
+  edge: 556000120
+  set:
+    status: open
+- op: tag_route
+  from: 556011490
+  to: 555008854
+  set:
+    line: Empangeni - Nkwalini
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line
+  where: country = 'South Africa' and status = 'open'
+- op: copy_node
+  node: 555102188
+  edge: 555093730
+  note: simplify
+- op: insert_edge
+  source: 555102188
+  target: 556102188
+  oid: 556000121
+- op: set_edge
+  edge: 556000121
+  set:
+    status: open
+- op: tag_route
+  from: 555081227
+  to: 556102188
+  set:
+    line: Golela (Eswatini border) - Nseleni (Richards Bay Line)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network
+  where: country = 'South Africa' and status = 'open' and oid != 555098283
+- op: set_node
+  node: 555072204
+  set:
+    name: Transnet Pyramid South Depot
+    railway: stop
+    facility: railway
+  note: Musina (Zimbabwe border) - Pyramid South
+- op: tag_route
+  from: 555080103
+  to: 555070707
+  set:
+    line: Musina (Zimbabwe border) - Pyramid
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Shosholoza Meyl long distance passenger service Musina - Johannesburg
+  where: country = 'South Africa' and status = 'open' and oid != 555046942
+  note: Musina (Zimbabwe border) - Pyramid
+- op: tag_route
+  from: 555070707
+  to: 555072204
+  set:
+    line: Pyramid - Pyramid South
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa' and status = 'open' and oid != 555046942
+  note: Pyramid -- Pyramid South
+- op: set_node
+  node: 555014114
+  set:
+    name: Sentrarand Marshalling Yard
+    railway: stop
+    facility: railway
+  note: Pyramid South - Sentrarand Marshalling Yard
+- op: split_edge
+  edge: 555104309
+  node: 555143197
+- op: tag_route
+  from: 555072204
+  to: 555014114
+  set:
+    line: Pyramid South - Sentrarand Marshalling Yard
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Coal Line
+  where: country = 'South Africa' and status = 'open' and oid not in (555117410, 555018591, 555117390,
+    555034809, 555120894, 555106893, 555016147, 555016148)
+- op: set_node
+  node: 555139427
+  set:
+    name: Transnet Welgedag Depot
+    railway: stop
+    facility: railway
+  note: Sentrarand Marshalling Yard - Welgedag depot
+- op: tag_route
+  from: 555014300
+  to: 555139427
+  set:
+    line: Sentrarand Marshalling Yard - Welgedag depot
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Coal Line
+  where: country = 'South Africa' and status = 'open' and oid not in (555011862, 555011863, 555107795,
+    555107800, 555107534,555107809,555031449)
+- op: split_edge
+  edge: 555113172
+  node: 555139652
+- op: split_edge
+  edge: 555058904
+  node: 555139653
+- op: split_edge
+  edge: 555019225
+  node: 555065331
+- op: tag_route
+  from: 555139652
+  to: 555070801
+  set:
+    line: Welgedag Depot - Pullenshope
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Coal Line
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555058883
+  node: 555139762
+  note: Transnet core network
+- op: tag_route
+  from: 555139653
+  to: 555140074
+  set:
+    line: Welgedag Depot - Springs
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555044880
+  node: 555068686
+  note: Transnet core network
+- op: set_node
+  node: 555001447
+  set:
+    railway: station
+- op: tag_route
+  from: 555001501
+  to: 555001447
+  set:
+    line: Springs - Nigel
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Gauteng metrorail. OSM has the section from Nigel to Kaydale as disused,
+      however, this is shown as part of the Transnet core network in the 2021 annual report map so assume
+      open.
+  where: country = 'South Africa' and oid not in (555004493, 555113574,555004487,5550448802,5550448801)
+- op: tag_route
+  from: 555001447
+  to: 555068686
+  set:
+    line: Nigel - Kaydale
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. OSM has the section from Nigel to Kaydale as disused, however, ths
+      is shown as part of the Transnet core network in the 2021 annual report map so assume open.
+  where: country = 'South Africa' and oid not in (555004493, 555113574,555004487,5550448802,5550448801)
+- op: set_node
+  node: 555001488
+  set:
+    railway: station
+  note: Pyramid -- Pretoria Nord
+- op: tag_route
+  from: 555070707
+  to: 555001488
+  set:
+    line: Pyramid -- Pretoria Nord
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Shosholoza Meyl long distance passenger service Musina - Johannesburg
+  where: country = 'South Africa'
+- op: tag_route
+  from: 559000084
+  to: 555061880
+  set:
+    line: Komatipoort (Mozambique border) - Rayton
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa'
+  note: Core network
+- op: tag_route
+  from: 555070590
+  to: 555007204
+  set:
+    line: Groenbult - Kapnuiden
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa' and status = 'open'
+  note: Transnet core network
+- op: tag_route
+  from: 555007164
+  to: 555007168
+  set:
+    line: Hoedspruit - Phalaborwa
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa' and status = 'open'
+  note: Core network
+- op: set_node
+  node: 555069720
+  set:
+    comment: 'copper mine and smelter and refinery complex. See: https://www.palabora.com'
+    name: Palabora mine
+    railway: stop
+    facility: mine
+  note: Palabora mine
+- op: split_edge
+  edge: 555013839
+  node: 555069728
+- op: split_edge
+  edge: 5550138391
+  node: 555069721
+- op: tag_route
+  from: 555007168
+  to: 555069720
+  set:
+    line: Palabora mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555076336
+  set:
+    name: Komatipoort
+    railway: station
+  note: core network
+- op: tag_route
+  from: 555020285
+  to: 559000092
+  set:
+    line: Komaitpoort - Eswatini border
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555007168
+  to: 555069720
+  set:
+    line: Palabora mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555047211
+  to: 555015071
+  set:
+    line: Kaapmuiden - Barberton Noord
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line.
+  where: country = 'South Africa' and status = 'open'
+  note: Transnet branch line
+- op: tag_route
+  from: 555071900
+  to: 555071885
+  set:
+    line: Mbombela/Nelspruit - Rocky Drift
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line. Transnet 2021 annual report has this branch line open, OSM says it
+      is disused apart from the section between Mbombela and Rocky Drift
+  where: country = 'South Africa' and status = 'open'
+  note: Tansnet branch line
+- op: split_edge
+  edge: 555018229
+  node: 555081280
+  note: Shell Fuel Depot, Rocky Drift
+- op: split_edge
+  edge: 555034745
+  node: 555074359
+- op: set_node
+  node: 555010198
+  set:
+    name: Shell Fuel Depot, Rocky Drift
+    railway: stop
+    facility: fuel depot
+- op: tag_route
+  from: 555081280
+  to: 555010198
+  set:
+    line: Shell Fuel Depot, Rocky Drift
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: copy_node
+  node: 555008787
+  edge: 555126486
+  note: Graskop Branch
+- op: tag_route
+  from: 555071888
+  to: 556008787
+  set:
+    line: Graskop Branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: unclear
+    comment: Transnet branch line. Transnet 2021 annual report has this branch line open, OSM says it
+      is disused apart from the section between Mbombela and Rocky Drift
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555071885
+  to: 555073401
+  set:
+    line: Rocky Drift - White River/Plaston
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: unclear
+    comment: Transnet branch line. Transnet 2021 annual report has this branch line open, OSM says it
+      is disused apart from the section between Mbombela and Rocky Drift
+  where: country = 'South Africa'
+  note: Rocky Drift - White River/Plaston
+- op: copy_node
+  node: 555007247
+  edge: 555107940
+  note: Core network
+- op: tag_route
+  from: 555058699
+  to: 555001866
+  set:
+    line: Belfast - Steelpoort
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa' and status = 'open'
+- op: copy_node
+  node: 555034422
+  edge: 555030895
+  note: Core network
+- op: tag_route
+  from: 555065495
+  to: 555001830
+  set:
+    line: Derwent - Roossenekal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network.
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555014044
+  node: 555075319
+  note: Coal Line
+- op: split_edge
+  edge: 555028511
+  node: 555149558
+- op: split_edge
+  edge: 555026742
+  node: 555149557
+- op: tag_route
+  from: 555075319
+  to: 555149557
+  set:
+    line: Machadodorp - Ermelo
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Coal Line
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555070674
+  to: 555008036
+  set:
+    line: Buhrmanskop - Lothair
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line
+  where: country = 'South Africa' and status = 'open'
+  note: Transnet branch line
+- op: tag_route
+  from: 555008148
+  to: 555021903
+  set:
+    line: Pullenshope - Wonderfontein
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Coal line
+  where: country = 'South Africa' and status = 'open'
+  note: coal line
+- op: copy_node
+  node: 555034428
+  edge: 555004987
+  note: update comment to indicate Coal Line
+- op: split_edge
+  edge: 555004980
+  node: 555065492
+- op: tag_route
+  from: 555021903
+  to: 555065492
+  set:
+    comment: Transnet core network. Wonderfontein - Emalahleni section part of Coal Line
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555019222
+  node: 555139372
+  note: Coal Line
+- op: split_edge
+  edge: 555019223
+  node: 555150015
+- op: tag_route
+  from: 555065492
+  to: 555065331
+  set:
+    line: Emalahleni - Ogies
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Coal line
+  where: country = 'South Africa' and status = 'open' and oid not in (555134629, 5550049801, 555134631)
+- op: tag_route
+  from: 555003348
+  to: 555065330
+  set:
+    line: Emalahleni - Ogies
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Coal line
+  where: country = 'South Africa' and status = 'open' and oid not in (555134629, 5550049801, 555134631)
+- op: insert_edge
+  source: 555070644
+  target: 555001755
+  oid: 556000122
+  note: disused
+- op: tag_route
+  from: 555001755
+  to: 555001878
+  set:
+    line: Zebediela branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555070648
+  to: 555001867
+  set:
+    line: Spoedwel branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  where: country = 'South Africa'
+  note: disused
+- op: set_node
+  node: 555134526
+  set:
+    comment: coal mine
+    name: Grootegeluk Coal Mine
+    railway: stop
+    facility: mine
+  note: Serves coalfields near Lephalale - the Waterberg coalfields (Grootegeluk coal mine)
+- op: set_node
+  node: 555084567
+  set:
+    name: Matimba Power Station
+    railway: stop
+    facility: power station
+- op: set_node
+  node: 555106624
+  set:
+    name: Thabazimbi
+    railway: station
+- op: split_edge
+  edge: 555039799
+  node: 555084568
+  note: Waterberg Line
+- op: tag_route
+  from: 555084568
+  to: 555106624
+  set:
+    line: Lephalale - Thabazimbi (Waterberg Line)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Core Network. Coal Line. Diesel
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555106624
+  to: 555072204
+  set:
+    line: Thabazimbi - Pyramid South (Waterberg Line)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet Core Network. Coal Line. Electrified
+  where: country = 'South Africa' and status = 'open'
+  note: Thabazimbi - Pyramid South
+- op: tag_route
+  from: 555070356
+  to: 555010657
+  set:
+    line: Pendoring - Beestekraal - Atlanta
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line
+  where: country = 'South Africa' and status = 'open'
+  note: Branch line
+- op: set_node
+  node: 555074717
+  set:
+    comment: limestone mine and associated crushing plant facility
+    name: PPC Beestekraal
+    railway: stop
+    facility: mine
+  note: limestone mine and associated crushing plant facility
+- op: split_edge
+  edge: 555023855
+  node: 555074717
+- op: tag_route
+  from: 555010657
+  to: 555074717
+  set:
+    line: PPC Beestekraal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555084568
+  to: 555134526
+  set:
+    line: Grootegeluk Coal Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+  note: Grootegeluk Coal Mine
+- op: tag_route
+  from: 555084568
+  to: 555084567
+  set:
+    line: Matimba Power Station
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+  note: Matimba Power Station
+- op: split_edge
+  edge: 555067737
+  node: 555103690
+  note: http://bit.ly/3Kf7DzY
+- op: split_edge
+  edge: 555015372
+  node: 555103719
+- op: split_edge
+  edge: 555067732
+  node: 555103716
+- op: split_edge
+  edge: 555067728
+  node: 555103699
+- op: split_edge
+  edge: 5550677372
+  node: 555103700
+- op: set_node
+  node: 555103690
+  set:
+    comment: 'Mining of platinum group (PGM) metals plus concentrators and chrome plant. See: http://bit.ly/3Kf7DzY'
+    name: Armandelbult Complex (Dishaba and Tumela mines)
+    railway: stop
+    facility: mine
+- op: tag_route
+  from: 555103719
+  to: 555103690
+  set:
+    line: Armandelbult Complex
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555067754
+  node: 555103745
+  note: Armandelbult Complex (Tiumela Mine 1 Shaft)
+- op: split_edge
+  edge: 555067727
+  node: 555103746
+- op: set_node
+  node: 555027892
+  set:
+    comment: 'Mining of platinum group (PGM) metals plus concentrators and chrome plant. See: http://bit.ly/3Kf7DzY'
+    name: Armandelbult Complex (Tumela mine)
+    railway: stop
+    facility: mine
+- op: tag_route
+  from: 555103746
+  to: 555027892
+  set:
+    line: Armandelbult Complex (Tumela mine)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555023896
+  node: 555070353
+  note: PPC Dwaalboom cement factory
+- op: set_node
+  node: 555070353
+  set:
+    name: PPC Dwaalboom (Cement factory)
+    railway: stop
+    facility: manufacturing
+- op: tag_route
+  from: 555070351
+  to: 555070353
+  set:
+    line: PPC Dwaalboom (Cement Factory)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555050520
+  set:
+    comment: 'platinum group (PGM) metals, see: http://bit.ly/40BPj9q'
+    name: Union Mine
+    railway: stop
+    facility: mine
+  note: various metals
+- op: tag_route
+  from: 555103701
+  to: 555050520
+  set:
+    line: Union Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555039773
+  node: 555084534
+  note: 'see:  https://www.mindat.org/loc-11952.html'
+- op: split_edge
+  edge: 555032823
+  node: 555084532
+- op: split_edge
+  edge: 555039775
+  node: 555084536
+- op: split_edge
+  edge: 555039774
+  node: 555084540
+- op: split_edge
+  edge: 555039765
+  node: 555084542
+- op: set_node
+  node: 555084535
+  set:
+    comment: 'Platinum mines. See: https://www.mindat.org/loc-11952.html'
+    name: Impala Platinum Mines complex
+    railway: stop
+    facility: mine
+- op: tag_route
+  from: 555084532
+  to: 555084535
+  set:
+    line: Impala Platinum Mines complex
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555033719
+  set:
+    comment: 'platinum group (PGM) metals mining and preocessing. See: http://bit.ly/3M5Jjlg'
+    name: Sibanye-Stillwater PGM complex (West)
+    railway: stop
+    facility: mine
+  note: platinum group (PGM) metals
+- op: split_edge
+  edge: 555023669
+  node: 555084482
+- op: split_edge
+  edge: 555087120
+  node: 555118803
+- op: split_edge
+  edge: 555036605
+  node: 555084478
+- op: split_edge
+  edge: 555035393
+  node: 555084471
+- op: tag_route
+  from: 555084482
+  to: 555033719
+  set:
+    line: Sibanye-Stillwater PGM complex
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555034078
+  set:
+    comment: 'platinum group (PGM) metals mining and preocessing. See: http://bit.ly/3M5Jjlg'
+    name: Sibanye-Stillwater PGM complex (East)
+    railway: stop
+    facility: mine
+- op: tag_route
+  from: 555084498
+  to: 555034078
+  set:
+    line: Sibanye-Stillwater PGM complex
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555083680
+  set:
+    comment: 'platinum group (PGM) metals mining and preocessing. See: http://bit.ly/3M5Jjlg'
+    name: Sibanye-Stillwater PGM complex (Siphumelele Mine)
+    railway: stop
+    facility: mine
+- op: split_edge
+  edge: 555035391
+  node: 555083679
+- op: tag_route
+  from: 555081549
+  to: 555083680
+  set:
+    line: Sibanye-Stillwater PGM complex
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: insert_edge
+  source: 555070709
+  target: 555047526
+  oid: 556000123
+  note: simplify
+- op: set_node
+  node: 555030614
+  set:
+    comment: 'believed to be mothballed. See: https://www.gem.wiki/Rooiwal_power_station. Assume line
+      is disused.'
+    name: Rooiwal Power Station
+    railway: stop
+    facility: power station
+- op: tag_route
+  from: 555047526
+  to: 555030614
+  set:
+    line: Rooiwal Power Station
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  where: country = 'South Africa'
+- op: insert_node_at
+  oid: 558000103
+  lon: 28.72978
+  lat: -26.16598
+  set:
+    country: South Africa
+  note: Leeupan Colliery
+- op: copy_node
+  node: 558000103
+  edge: 555052650
+- op: set_node
+  node: 559000103
+  set:
+    comment: coal mine
+    name: Leeupan Colliery
+    railway: stop
+    facility: mine
+- op: tag_route
+  from: 555047846
+  to: 559000103
+  set:
+    line: Leeupan Colliery
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555015029
+  node: 555135165
+  note: Delmas Colliery
+- op: set_node
+  node: 555135165
+  set:
+    comment: coal mine
+    name: Delmas Colliery
+    railway: stop
+    facility: mine
+- op: tag_route
+  from: 555047851
+  to: 555135165
+  set:
+    line: Delmas Colliery
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555021912
+  set:
+    comment: silica mine
+    name: Silica mine (Thaba Chueu Mining)
+    railway: stop
+    facility: mine
+  note: Silica mine (Thaba Chueu Mining)
+- op: tag_route
+  from: 555058678
+  to: 555021912
+  set:
+    line: Silica mine (Thaba Chueu Mining)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555154284
+  set:
+    comment: grain silos
+    name: Kendal Afgri Silo
+    railway: stop
+    facility: food storage
+  note: Kendal Afgri Silo
+- op: split_edge
+  edge: 555019228
+  node: 555139994
+- op: tag_route
+  from: 555139994
+  to: 555154284
+  set:
+    line: Kendal Afgri Silo
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555117008
+  set:
+    comment: 'see: https://draglobal.com/projects/phola-coal-mine/ largest coal washing facility in South
+      Africa'
+    name: Phola coal washing facility
+    railway: stop
+    facility: mining
+  note: largest coal washing  facility in South Africa
+- op: split_edge
+  edge: 555019226
+  node: 555106301
+- op: tag_route
+  from: 555106301
+  to: 555117008
+  set:
+    line: Phola coal washing facility
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555016118
+  set:
+    comment: grain silos
+    name: Ogies grain silos
+    railway: stop
+    facility: food storage
+  note: Ogies grain silos
+- op: split_edge
+  edge: 555107152
+  node: 555134973
+- op: split_edge
+  edge: 555036855
+  node: 555134972
+- op: split_edge
+  edge: 555113507
+  node: 555134974
+- op: split_edge
+  edge: 5550192252
+  node: 555134975
+- op: tag_route
+  from: 555134975
+  to: 555016118
+  set:
+    line: Ogies grain silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555135005
+  set:
+    comment: 'see: https://miningdataonline.com/property/1166/Goedgevonden-Mine.aspx'
+    name: Goedgevonden Mine
+    railway: stop
+    facility: mine
+  note: https://miningdataonline.com/property/1166/Goedgevonden-Mine.aspx
+- op: split_edge
+  edge: 555034771
+  node: 555149997
+- op: split_edge
+  edge: 555107176
+  node: 555149996
+- op: split_edge
+  edge: 555128062
+  node: 555149958
+- op: tag_route
+  from: 555149997
+  to: 555135005
+  set:
+    line: Goedgevonden Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555058676
+  set:
+    comment: ''
+    name: Arthur Taylor/ ATCOM collieries
+    railway: stop
+    facility: mine
+  note: Arthur Taylor/ ATCOM collieries
+- op: split_edge
+  edge: 555034776
+  node: 555134925
+- op: copy_node
+  node: 555150279
+  edge: 5550347762
+- op: insert_edge
+  source: 555150279
+  target: 556150279
+  oid: 556000124
+- op: set_edge
+  edge: 556000124
+  set:
+    status: open
+- op: split_edge
+  edge: 555011022
+  node: 555150279
+- op: tag_route
+  from: 556150279
+  to: 555058676
+  set:
+    line: Arthur Taylor/ ATCOM collieries
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555072672
+  set:
+    comment: coal mine
+    name: Greenside Colliery
+    railway: stop
+    facility: mine
+  note: Greenside Colliery
+- op: set_node
+  node: 555061605
+  set:
+    railway: null
+- op: copy_node
+  node: 555061605
+  edge: 555107035
+- op: set_node
+  node: 556061605
+  set:
+    railway: station
+- op: split_edge
+  edge: 555107036
+  node: 555072666
+- op: tag_route
+  from: 555139377
+  to: 555072672
+  set:
+    line: Greenside Colliery
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555009022
+  set:
+    comment: coal mine
+    name: Landau Colliery (Kromdraai)
+    railway: stop
+    facility: mine
+  note: Landau Colliery (Kromdraai)
+- op: tag_route
+  from: 555072664
+  to: 555009022
+  set:
+    line: Landau Colliery (Kromdraai)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555050077
+  set:
+    comment: http://www.highveldindustrialpark.co.za/index.html
+    name: Highveld steel (and industrial park)
+    railway: stop
+    facility: manufacturing
+  note: Highveld steel (and industrial park)
+- op: split_edge
+  edge: 555111278
+  node: 555138514
+  note: split 555111288 at 555072669
+- op: tag_route
+  from: 555138535
+  to: 555050077
+  set:
+    line: Highveld steel (and industrial park)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555079137
+  set:
+    comment: coal mine
+    name: Landau Colliery (Navigation)
+    railway: stop
+    facility: mine
+- op: split_edge
+  edge: 555000858
+  node: 555136985
+- op: split_edge
+  edge: 555000859
+  node: 555079134
+- op: tag_route
+  from: 555079134
+  to: 555079137
+  set:
+    line: Landau Colliery (Navigation)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555107887
+  node: 555137603
+- op: split_edge
+  edge: 555110122
+  node: 555137606
+- op: split_edge
+  edge: 555110123
+  node: 555082743
+- op: split_edge
+  edge: 555134629
+  node: 555135521
+- op: set_node
+  node: 555048257
+  set:
+    comment: ''
+    name: Ferrobank industrial area, Emalahleni
+    railway: stop
+    facility: industrial area
+- op: tag_route
+  from: 555135521
+  to: 555048257
+  set:
+    line: Ferrobank industrial area, Emalahleni
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555135245
+  set:
+    comment: 'Ferrochrome production, see: https://samancorcr.com/business_unit/middelburg-ferrochrome-mfc/'
+    name: Middelburg Ferrochrome
+    railway: stop
+    facility: manufacturing
+  note: Middelburg Ferrochrome
+- op: split_edge
+  edge: 555034675
+  node: 555019700
+- op: split_edge
+  edge: 5550346751
+  node: 555135258
+- op: split_edge
+  edge: 555107544
+  node: 555135259
+- op: tag_route
+  from: 555065493
+  to: 555135245
+  set:
+    line: Middelburg Ferrochrome
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555081256
+  set:
+    comment: 'Stainless steel production, see: https://www.columbus.co.zahttps://samancorcr.com/business_unit/middelburg-ferrochrome-mfc/'
+    name: Columbus Stainless
+    railway: stop
+    facility: manufacturing
+  note: Columbus Stainless
+- op: tag_route
+  from: 555135258
+  to: 555081256
+  set:
+    line: Columbus Stainless
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555058571
+  set:
+    comment: coal mine
+    name: Pullenshope Colliery
+    railway: stop
+    facility: mine
+  note: Pullenshope Colliery
+- op: split_edge
+  edge: 555016354
+  node: 555096576
+- op: tag_route
+  from: 555096576
+  to: 555058571
+  set:
+    line: Pullenshope Colliery
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555048711
+  set:
+    comment: 'coal mine, see: see: https://www.gem.wiki/Goedehoop_coal_mine'
+    name: Bank Colliery (Goedehoop North)
+    railway: stop
+    facility: mine
+  note: 'see: https://www.gem.wiki/Goedehoop_coal_mine'
+- op: tag_route
+  from: 555058629
+  to: 555048711
+  set:
+    line: Bank Colliery (Goedehoop North)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555019047
+  set:
+    comment: 'coal mine, see: https://www.gem.wiki/Goedehoop_coal_mine'
+    name: Goedehoop Colliery (Goedehoop South)
+    railway: stop
+    facility: mine
+  note: Goedehoop Colliery (Goedehoop South)
+- op: insert_edge
+  source: 555058599
+  target: 555058595
+  oid: 556000125
+- op: set_edge
+  edge: 556000125
+  set:
+    status: open
+- op: tag_route
+  from: 555058595
+  to: 555019047
+  set:
+    line: Goedehoop Colliery (Goedehoop South)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555127995
+  set:
+    comment: ''
+    name: Arnot Power Station (Eskom)
+    railway: stop
+    facility: power station
+  note: Eskom Arnot Power Station
+- op: change_target
+  edge: 555127823
+  node: 555048696
+- op: split_edge
+  edge: 555127823
+  node: 555127994
+- op: tag_route
+  from: 555048696
+  to: 555127995
+  set:
+    line: Arnot Power Station (Eskom)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: insert_node_at
+  oid: 558000104
+  lon: 29.77093
+  lat: -25.91411
+  set:
+    railway: stop
+    name: Mafube Colliery (Rapid Coal Loading - Rail Transfer)
+    country: South Africa
+    gauge: '1067'
+    facility: mine
+    comment: Mafube colliery is about 13km North and link be conveyors
+  note: Mafube colliery is about 13km North and link be conveyors
+- op: copy_node
+  node: 558000104
+  edge: 555052620
+- op: split_edge
+  edge: 555030901
+  node: 555093768
+  note: '559000104'
+- op: tag_route
+  from: 555093768
+  to: 559000104
+  set:
+    line: Mafube Colliery (Rail Transfer)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555088611
+  set:
+    comment: ' transfer to rail from conveyors. Mine is about 11km south'
+    name: Dorstfontein colliery complex (Rapid Coal Loading - Rail Transfer)
+    railway: stop
+    facility: mine
+  note: Dorstfontein colliery complex
+- op: split_edge
+  edge: 555127894
+  node: 555149910
+- op: tag_route
+  from: 555149910
+  to: 555088611
+  set:
+    line: Dorstfontein colliery complex (Rapid Coal Loading - Rail Transfer)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555013514
+  set:
+    comment: grain silos
+    name: Afgri Bronkhorstspruit Silos
+    railway: stop
+    facility: food storage
+  note: Afgri Bronkhorstspruit Silos
+- op: split_edge
+  edge: 555030287
+  node: 555079124
+- op: insert_edge
+  source: 555079138
+  target: 555079136
+  oid: 556000126
+- op: set_edge
+  edge: 556000126
+  set:
+    status: open
+- op: tag_route
+  from: 555079136
+  to: 555013514
+  set:
+    line: Afgri Bronkhorstspruit Silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555058487
+  set:
+    comment: operates the world's only commercial coal-based synthetic fuels manufacturing facility, producing
+      synthesis gas (syngas) through coal gasification and natural gas reforming
+    name: Sasol Synfuels Complex, Secunda
+    railway: stop
+    facility: manufacturing
+  note: Sasol Synfuels complex, Secunda
+- op: insert_edge
+  source: 555099465
+  target: 555133450
+  oid: 556000127
+- op: set_edge
+  edge: 556000127
+  set:
+    status: open
+- op: split_edge
+  edge: 555030746
+  node: 555133484
+- op: split_edge
+  edge: 555034746
+  node: 555133450
+- op: split_edge
+  edge: 555105469
+  node: 555133486
+- op: tag_route
+  from: 555133450
+  to: 555058487
+  set:
+    line: Sasol Synfuels Complex, Secunda
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555047617
+  set:
+    comment: manufacture of mining explosives
+    name: Sasol Explosives, Ekandustria
+    railway: stop
+    facility: manufacturing
+  note: Sasol Explosives, Ekandustria
+- op: split_edge
+  edge: 555113084
+  node: 555139406
+- op: tag_route
+  from: 555008085
+  to: 555047617
+  set:
+    line: Sasol Explosives, Ekandustria
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: unclear
+    comment: OSM says disused in part.
+  where: country = 'South Africa'
+- op: copy_node
+  node: 555050277
+  edge: 555082426
+  note: created in parts to ensure route.
+- op: tag_route
+  from: 555048499
+  to: 555013459
+  set:
+    line: Vereeniging - Germiston
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail and Shosholoza Meyl long distance passenger service Johannesburg – Queenstown/Komani.
+      Transnet core network
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555013459
+  to: 556050277
+  set:
+    line: Vereeniging - Germiston
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail and Shosholoza Meyl long distance passenger service Johannesburg – Queenstown/Komani.
+      Transnet core network
+  where: country = 'South Africa'
+- op: tag_route
+  from: 556050277
+  to: 555024426
+  set:
+    line: Vereeniging - Germiston
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail and Shosholoza Meyl long distance passenger service Johannesburg – Queenstown/Komani.
+      Transnet core network
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555024426
+  to: 555003240
+  set:
+    line: Germiston - Johannesburg Park Station
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail and Shosholoza Meyl long distance passenger service Johannesburg – Queenstown/Komani.
+      Transnet core network
+  where: country = 'South Africa'
+  note: Germiston - Johannesburg Park Station
+- op: insert_edge
+  source: 555032897
+  target: 555013457
+  oid: 556000128
+  note: simplify
+- op: set_edge
+  edge: 556000128
+  set:
+    status: open
+- op: set_node
+  node: 555001416
+  set:
+    railway: station
+- op: tag_route
+  from: 555032897
+  to: 555001416
+  set:
+    line: Elsburg - Kwesine
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open' and oid not in (555082473, 555082474, 555058989)
+- op: tag_route
+  from: 555116727
+  to: 555032868
+  set:
+    line: Elsberg - President (via Webber)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open' and oid not in (555082473, 555096169, 555082436)
+  note: Elsberg - President (via Webber)
+- op: tag_route
+  from: 555024520
+  to: 555014395
+  set:
+    line: India - New Canada
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open' and oid not in (555059291, 555111189, 555114186)
+  note: India - New Canada
+- op: set_node
+  node: 555061786
+  set:
+    railway: station
+  note: George Goch - Kaserne West (via Benrose)
+- op: set_node
+  node: 555032838
+  set:
+    railway: null
+- op: insert_edge
+  source: 555062338
+  target: 555061786
+  oid: 556000129
+- op: set_edge
+  edge: 556000129
+  set:
+    status: open
+- op: tag_route
+  from: 555061786
+  to: 555032854
+  set:
+    line: George Goch - Kaserne West (via Benrose)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open' and oid not in (555095675, 555095674, 555013351,
+    555013499)
+- op: split_edge
+  edge: 555001871
+  node: 555152047
+- op: split_edge
+  edge: 555108325
+  node: 555152048
+- op: tag_route
+  from: 555152047
+  to: 555146405
+  set:
+    line: Vereeniging - Midway
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Gauteng metrorail
+  where: country = 'South Africa' and status = 'open' and oid not in (5550018712, 5550018711)
+- op: tag_route
+  from: 555001762
+  to: 555006317
+  set:
+    line: Oberholzer - Midway
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+  note: in sections to ensure correct route
+- op: tag_route
+  from: 555006317
+  to: 555146405
+  set:
+    line: Oberholzer - Midway
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555146405
+  to: 555061794
+  set:
+    line: Oberholzer - Midway
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555001457
+  set:
+    railway: null
+  note: Midway - New Canada
+- op: set_node
+  node: 555056153
+  set:
+    railway: null
+- op: tag_route
+  from: 555061794
+  to: 555000141
+  set:
+    line: Midway - New Canada
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555061817
+  set:
+    railway: null
+  note: metrorail, including Soweto Business Express
+- op: tag_route
+  from: 555001440
+  to: 555056154
+  set:
+    line: Naledi - New Canada
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail, including Soweto Business Express
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555049199
+  set:
+    railway: null
+  note: New Canada - Langlaagte
+- op: tag_route
+  from: 555000141
+  to: 555055957
+  set:
+    line: New Canada - Langlaagte
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Gauteng metrorail, including Soweto Business Express
+  where: country = 'South Africa' and status = 'open'
+- op: copy_node
+  node: 555001320
+  edge: 555082250
+- op: set_node
+  node: 555001468
+  set:
+    railway: station
+  note: Branch line
+- op: tag_route
+  from: 555001468
+  to: 555059033
+  set:
+    line: Randfontein - Krugersdorp
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet branch line. Gauteng metrorail.
+  where: country = 'South Africa' and status = 'open'
+- op: copy_node
+  node: 555001414
+  edge: 555082008
+  note: multiple sections to ensure correct route
+- op: tag_route
+  from: 555059033
+  to: 555055957
+  set:
+    line: Krugersdorp - Johannesburg Park Station
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Gauteng metrorail.
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555036511
+  set:
+    railway: station
+  note: "Top speed\t160 km/h (100 mph)"
+- op: tag_route
+  from: 555047516
+  to: 555036511
+  set:
+    line: GauTrain (North/South)
+    mode: passenger
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: GauTrain
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555036511
+  to: 555061838
+  set:
+    line: GauTrain (North/South and East/West)
+    mode: passenger
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: GauTrain
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555047519
+  set:
+    railway: station
+- op: set_node
+  node: 555061838
+  set:
+    railway: station
+- op: tag_route
+  from: 555061838
+  to: 555047519
+  set:
+    line: GauTrain (North/South)
+    mode: passenger
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: GauTrain
+  where: country = 'South Africa' and status = 'open'
+- op: insert_edge
+  source: 555061838
+  target: 555122219
+  oid: 556000130
+  note: simplify
+- op: set_edge
+  edge: 556000130
+  set:
+    status: open
+- op: set_node
+  node: 555047515
+  set:
+    name: Rhodesfield (GauTrain)
+    railway: station
+- op: tag_route
+  from: 555061838
+  to: 555047515
+  set:
+    line: GauTrain (East/West and Airport)
+    mode: passenger
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: GauTrain
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555036513
+  set:
+    railway: null
+- op: tag_route
+  from: 555047515
+  to: 555047513
+  set:
+    line: GauTrain (Airport)
+    mode: passenger
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: GauTrain
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555008774
+  set:
+    name: Hatfield (GauTrain)
+  note: section from Pretoria - Hatfield
+- op: change_source
+  edge: 555102515
+  node: 555047519
+  note: simplify
+- op: tag_route
+  from: 555036024
+  to: 555008774
+  set:
+    line: GauTrain (Pretoria - Hatfield)
+    mode: passenger
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: GauTrain
+  where: country = 'South Africa' and status = 'open'
+- op: insert_edge
+  source: 555116712
+  target: 555024444
+  oid: 556000131
+  note: simplify
+- op: set_edge
+  edge: 556000131
+  set:
+    status: open
+- op: tag_route
+  from: 555024444
+  to: 555008844
+  set:
+    line: Germiston - Pretoria
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network, GauTeng Metrorail, Shosholoza Meyl long distance passenger service
+      Musina - Johannesburg
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555063682
+  to: 555061840
+  set:
+    line: Kaalfontein - Leralla
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: GauTeng Metrorail
+  where: country = 'South Africa' and status = 'open'
+  note: Kaalfontein - Leralla
+- op: split_edge
+  edge: 555012029
+  node: 555064819
+  note: Freight
+- op: tag_route
+  from: 555064819
+  to: 555048208
+  set:
+    line: Olifantsfontein/Oakmoor - Sentrarand Marshalling Yard
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. electrified
+  where: country = 'South Africa' and status = 'open'
+- op: insert_edge
+  source: 555034523
+  target: 555001452
+  oid: 556000132
+  note: additional link
+- op: set_edge
+  edge: 556000132
+  set:
+    status: open
+- op: copy_node
+  node: 555039209
+  edge: 555003309
+  note: simplify
+- op: change_target
+  edge: 555012026
+  node: 556039209
+- op: tag_route
+  from: 555001452
+  to: 555002917
+  set:
+    line: Olifantsfontein/Oakmoor - Sentrarand Marshalling Yard
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. electrified
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555082423
+  node: 555116689
+  note: Germiston - Springs
+- op: tag_route
+  from: 555116689
+  to: 555014309
+  set:
+    line: Germiston - Springs
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network, GauTeng Metrorail
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555134481
+  node: 555140952
+- op: split_edge
+  edge: 555019581
+  node: 555140951
+- op: split_edge
+  edge: 5550588831
+  node: 555098041
+- op: tag_route
+  from: 555140951
+  to: 555098041
+  set:
+    line: Skansdam - Transnet Welgedag Depot
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Electrified.
+  where: country = 'South Africa' and status = 'open' and oid not in (555004492)
+- op: split_edge
+  edge: 555004646
+  node: 555065389
+  note: links
+- op: change_target
+  edge: 555017607
+  node: 555140251
+- op: tag_route
+  from: 555065389
+  to: 555140251
+  set:
+    line: Line junction
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Electrified.
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555004648
+  node: 555140254
+- op: split_edge
+  edge: 555017783
+  node: 555140257
+- op: insert_edge
+  source: 555140254
+  target: 555140257
+  oid: 556000133
+- op: set_edge
+  edge: 556000133
+  set:
+    status: open
+- op: copy_node
+  node: 555065392
+  edge: 555115674
+- op: change_target
+  edge: 555004649
+  node: 556065392
+- op: tag_route
+  from: 555140257
+  to: 556065392
+  set:
+    line: Line junction
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network. Electrified.
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 5550177832
+  node: 555068695
+- op: tag_route
+  from: 555140576
+  to: 555068695
+  set:
+    line: Line link
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Electrified.
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555119593
+  node: 555140449
+- op: split_edge
+  edge: 555119590
+  node: 555140448
+- op: set_node
+  node: 555061593
+  set:
+    railway: null
+- op: tag_route
+  from: 555140448
+  to: 555061594
+  set:
+    line: Dunswart - Daveyton
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555008844
+  to: 555001489
+  set:
+    line: Pretoria - Pretoria Wes
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network, Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+  note: Metrorail
+- op: tag_route
+  from: 555001489
+  to: 555001488
+  set:
+    line: Pretoria Wes - Pretoria Nord
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network, Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+  note: Metrorail
+- op: tag_route
+  from: 555001514
+  to: 555000063
+  set:
+    line: Saulsville - Pretoria Wes
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+  note: Saulsville - Pretoria Wes
+- op: set_node
+  node: 555036150
+  set:
+    railway: null
+  note: Rebecca - Schuttestraat
+- op: copy_node
+  node: 555001471
+  edge: 555089528
+- op: tag_route
+  from: 555036091
+  to: 555036086
+  set:
+    line: Rebecca - Schuttestraat
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555050696
+  set:
+    railway: null
+  note: Hercules - Belle Ombre
+- op: copy_node
+  node: 555001389
+  edge: 555089751
+- op: insert_edge
+  source: 555121681
+  target: 555036165
+  oid: 556000134
+  note: simplify
+- op: set_edge
+  edge: 556000134
+  set:
+    status: open
+- op: tag_route
+  from: 555036165
+  to: 555050698
+  set:
+    line: Hercules - Belle Ombre
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555036091
+  to: 555036086
+  set:
+    line: Rebecca - Schuttestraat
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 5550897512
+  node: 555121691
+  note: Hercules - Pienaarspoort
+- op: tag_route
+  from: 555121691
+  to: 555048236
+  set:
+    line: Hercules - Pienaarspoort
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555061880
+  to: 555048236
+  set:
+    line: Rayton - Pienaarspoort
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Transnet core network, Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+  note: Rayton - Pienaarspoort
+- op: set_nodes
+  nodes:
+  - 555063236
+  - 555048384
+  set:
+    railway: null
+  note: freight link
+- op: insert_edge
+  source: 555035791
+  target: 555001372
+  oid: 556000135
+  note: simplify
+- op: set_edge
+  edge: 556000135
+  set:
+    status: open
+- op: tag_route
+  from: 555135440
+  to: 555001372
+  set:
+    line: Greenview Junction (freight link)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555001333
+  set:
+    railway: station
+  note: Rayton - Cullinan
+- op: tag_route
+  from: 555008080
+  to: 555001333
+  set:
+    line: Rayton - Cullinan
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Believed to only be used for tourist tours by steam train to the diamond mine adjacent to
+      Cullinan station.
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555096535
+  to: 555035977
+  set:
+    line: Pretoria - Koedoespoort
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+  note: Pretoria - Koedoespoort
+- op: copy_node
+  node: 555050299
+  edge: 555090084
+  note: private tourist train
+- op: tag_route
+  from: 555068488
+  to: 556050299
+  set:
+    line: Rovos Railway station (private)
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Station used by tourist trains
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555049908
+  set:
+    railway: null
+  note: Pretoria Nord - De Wildt
+- op: tag_route
+  from: 555053387
+  to: 555049901
+  set:
+    line: Pretoria Nord - De Wildt
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555068342
+  to: 555001430
+  set:
+    line: Winternest - Mabopane
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+  note: Winternest - Mabopane
+- op: set_node
+  node: 555050653
+  set:
+    comment: limestone quarry
+    name: Lafarge Tswana Lime
+    railway: stop
+    facility: quarry
+  note: Lafarge Tswana Lime Quarry
+- op: tag_route
+  from: 555001705
+  to: 555050653
+  set:
+    line: Lafarge Tswana Lime Quarry
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555050654
+  set:
+    name: Springbokan grain silos
+    railway: stop
+    facility: food storage
+  note: Springbokan grain silos
+- op: split_edge
+  edge: 555014510
+  node: 555138726
+- op: tag_route
+  from: 555138726
+  to: 555050654
+  set:
+    line: Springbokan grain silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: copy_node
+  node: 555138715
+  edge: 555111605
+  note: Lafarge Lichtenburg limestone quarry and plant
+- op: set_node
+  node: 556138715
+  set:
+    comment: ''
+    name: Lafarge Lichtenburg (limestone quarry and plant)
+    railway: stop
+    facility: quarry
+- op: split_edge
+  edge: 555011842
+  node: 555138720
+- op: split_edge
+  edge: 555011245
+  node: 555068635
+- op: tag_route
+  from: 555068635
+  to: 556138715
+  set:
+    line: Lafarge Lichtenburg (limestone quarry and plant)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555076109
+  set:
+    name: NWK Lichtenburg grain silos
+    railway: stop
+    facility: food storage
+  note: NWK Lichtenburg grain silos
+- op: insert_edge
+  source: 555001705
+  target: 555076108
+  oid: 556000136
+- op: set_edge
+  edge: 556000136
+  set:
+    status: open
+- op: tag_route
+  from: 555001705
+  to: 555076109
+  set:
+    line: NWK Lichtenburg grain silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555007411
+  set:
+    name: Afrisam Dudfield Cement Factory
+    railway: stop
+    facility: manufacturing
+  note: Afrisam Dudfield Cement Factory
+- op: tag_route
+  from: 555070039
+  to: 555007411
+  set:
+    line: Afrisam Dudfield Cement Factory
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555105806
+  set:
+    name: NWK Hibernia Grain silos
+    railway: stop
+    facility: food storage
+  note: NWK Hibernia Grain silos
+- op: split_edge
+  edge: 555014502
+  node: 555105807
+- op: tag_route
+  from: 555105807
+  to: 555105806
+  set:
+    line: NWK Hibernia Grain silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555033116
+  set:
+    comment: Gold mine. Access point
+    name: Vaal Reefs gold mine complex
+    railway: stop
+    facility: mine
+  note: Vaal Reefs Goldmine complex
+- op: tag_route
+  from: 555080223
+  to: 555033116
+  set:
+    line: Vaal Reefs gold mine complex (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555011393
+  set:
+    comment: Gold mine
+    name: Tshepong Harmony Gold Mine
+    railway: stop
+    facility: mine
+  note: Tshepong Harmony Gold Mine
+- op: split_edge
+  edge: 555029578
+  node: 555075857
+- op: tag_route
+  from: 555075857
+  to: 555011393
+  set:
+    line: Tshepong Harmony Gold Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555025599
+  node: 555075879
+  note: Senwes Grainlink Odendaalsrus grain silos
+- op: set_node
+  node: 555151631
+  set:
+    name: Senwes Grainlink Odendaalsrus grain silos
+    railway: stop
+    facility: food storage
+- op: tag_route
+  from: 555075879
+  to: 555151631
+  set:
+    line: Senwes Grainlink Odendaalsrus grain silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555025587
+  node: 555075848
+  note: Welkom gold mines (access)
+- op: set_node
+  node: 555052656
+  set:
+    name: Welkom gold mines (access)
+    railway: stop
+    facility: mine
+- op: split_edge
+  edge: 555117030
+  node: 555117110
+- op: split_edge
+  edge: 5551170301
+  node: 555075847
+- op: tag_route
+  from: 555117110
+  to: 555052656
+  set:
+    line: Welkom gold mines (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555089268
+  set:
+    name: Senwes Grainlink Hennenman grain silos
+    railway: stop
+    facility: food storage
+  note: Senwes Grainlink Hennenman grain silos
+- op: set_node
+  node: 555019615
+  set:
+    comment: grain mill
+    name: Tiger Milling Hennenman
+    railway: stop
+    facility: food manufacture
+  note: Tiger Milling Hennenman - grain mill
+- op: split_edge
+  edge: 555131741
+  node: 555091626
+- op: split_edge
+  edge: 555049792
+  node: 555089266
+- op: tag_route
+  from: 555060187
+  to: 555019615
+  set:
+    line: Tiger Milling Hennenman
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555019614
+  to: 555089268
+  set:
+    line: Senwes Grainlink Hennenman grain silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555059175
+  set:
+    comment: ''
+    name: Shell Fuel storage depot, Kroonstad
+    railway: stop
+    facility: fuel storage depot
+  note: Shell Fuel storage depot
+- op: split_edge
+  edge: 555070191
+  node: 555136443
+- op: tag_route
+  from: 555138645
+  to: 555059175
+  set:
+    line: Shell Fuel storage depot, Kroonstad
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555019156
+  set:
+    name: Senwes Grainlink Viljoenskroon grain silos
+    railway: stop
+    facility: food storage
+- op: set_node
+  node: 555151795
+  set:
+    name: Senwes Grainlink Viljoenskroon grain silos
+    railway: stop
+    facility: food storage
+- op: insert_edge
+  source: 555059609
+  target: 555059608
+  oid: 556000137
+- op: set_edge
+  edge: 556000137
+  set:
+    status: open
+- op: tag_route
+  from: 555059609
+  to: 555019156
+  set:
+    line: Senwes Grainlink Viljoenskroon grain silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555045023
+  node: 555151795
+- op: tag_route
+  from: 555059609
+  to: 555151795
+  set:
+    line: Senwes Grainlink Viljoenskroon grain silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555152289
+  set:
+    name: ArcelorMittal South Africa Vanderbijlpark Steel works
+    railway: stop
+    facility: manufacturing
+  note: ArcelorMittal South Africa Vanderbijlpark Steel works
+- op: copy_node
+  node: 555063596
+  edge: 555035454
+  note: simplify
+- op: insert_edge
+  source: 555063596
+  target: 556063596
+  oid: 556000138
+- op: set_edge
+  edge: 556000138
+  set:
+    status: open
+- op: tag_route
+  from: 556063596
+  to: 555152289
+  set:
+    line: ArcelorMittal South Africa Vanderbijlpark Steel works
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555053252
+  set:
+    name: Lethano Power Station (Eskom)
+    railway: stop
+    facility: power station
+  note: Lethano Power Station (Eskom)
+- op: split_edge
+  edge: 555070853
+  node: 555152411
+- op: split_edge
+  edge: 555132686
+  node: 555152412
+- op: split_edge
+  edge: 555134463
+  node: 555065423
+- op: tag_route
+  from: 555152412
+  to: 555053252
+  set:
+    line: Lethano Power Station (Eskom)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555140735
+  set:
+    comment: wet-milling operation is the major producer of starch and glucose update africa_osm_nodes
+    name: Tongaat Hulett Starch Kliprivier Facility
+    railway: stop
+    facility: food production
+  note: wet-milling operation is the major producer of starch and glucose
+- op: copy_node
+  node: 555076832
+  edge: 555045437
+  note: simplify
+- op: change_target
+  edge: 555026770
+  node: 556076832
+- op: tag_route
+  from: 556076832
+  to: 555140735
+  set:
+    line: Tongaat Hulett Starch Kliprivier Facility
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555011915
+  set:
+    comment: grain silos
+    name: AFGRI Nigel Silo
+    railway: stop
+    facility: food storage
+  note: AFGRI Nigel Silo
+- op: split_edge
+  edge: 555011932
+  node: 555073117
+- op: tag_route
+  from: 555073117
+  to: 555011915
+  set:
+    line: AFGRI Nigel Silo
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555128101
+  set:
+    comment: ''
+    name: Gibela train manufacturing plant
+    railway: stop
+    facility: manufacturing
+  note: Gibela train manufacturing plant
+- op: split_edge
+  edge: 555100139
+  node: 555128100
+- op: tag_route
+  from: 555128100
+  to: 555128101
+  set:
+    line: Gibela train manufacturing plant
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555073115
+  set:
+    comment: rail rolling stock manufacture
+    name: Union Carriage and Wagon
+    railway: stop
+    facility: manufacturing
+  note: Union Carriage and Wagon
+- op: split_edge
+  edge: 555020161
+  node: 555129425
+- op: split_edge
+  edge: 5550201611
+  node: 555073114
+- op: tag_route
+  from: 555073114
+  to: 555073115
+  set:
+    line: Union Carriage and Wagon factory
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555139632
+  set:
+    comment: paper recycling
+    name: Enstra Paper
+    railway: stop
+    facility: manufacturing
+  note: Enstra Paper - paper recycling
+- op: split_edge
+  edge: 555058959
+  node: 555139632
+- op: tag_route
+  from: 555068654
+  to: 555139632
+  set:
+    line: Enstra Paper
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555051574
+  set:
+    comment: railway sleepers and other concrete products for rail infrastructure
+    name: Colossal Concrete Products
+    railway: stop
+    facility: manufacturing
+  note: railway sleepes etc
+- op: split_edge
+  edge: 555012989
+  node: 555140065
+- op: split_edge
+  edge: 555118973
+  node: 555154176
+- op: split_edge
+  edge: 555012983
+  node: 555072480
+- op: tag_route
+  from: 555054058
+  to: 555051574
+  set:
+    line: Colossal Concrete Products
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555098083
+  set:
+    comment: base and precious metals refining
+    name: Impala Refining Services
+    railway: stop
+    facility: manufacturing
+  note: Metals refining
+- op: split_edge
+  edge: 5550589591
+  node: 555098072
+- op: tag_route
+  from: 555098072
+  to: 555098083
+  set:
+    line: Impala Refining Services
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555072610
+  set:
+    comment: ''
+    name: Alrode fuel depot
+    railway: stop
+    facility: fuel depot
+  note: Alrode fuel depot
+- op: split_edge
+  edge: 555032297
+  node: 555080018
+- op: split_edge
+  edge: 555123448
+  node: 555140286
+- op: split_edge
+  edge: 555113744
+  node: 555080015
+- op: tag_route
+  from: 555140286
+  to: 555072610
+  set:
+    line: Alrode fuel depot
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555072538
+  set:
+    comment: ''
+    name: Kelvin Power Station
+    railway: stop
+    facility: power station
+  note: Kelvin Power Station
+- op: insert_edge
+  source: 555054005
+  target: 555001406
+  oid: 556000139
+  note: simplify
+- op: set_edge
+  edge: 556000139
+  set:
+    status: open
+- op: tag_route
+  from: 555001406
+  to: 555072538
+  set:
+    line: Kelvin Power Station
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555054233
+  set:
+    comment: ''
+    name: Modderfontein industrial area, Kempton Park
+    railway: stop
+    facility: industrial area
+  note: Modderfontein industrial area, Kempton Park
+- op: tag_route
+  from: 555014312
+  to: 555054233
+  set:
+    line: Modderfontein industrial area, Kempton Park
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: copy_node
+  node: 555054278
+  edge: 555090636
+  note: simplify
+- op: insert_edge
+  source: 555054278
+  target: 556054278
+  oid: 556000140
+- op: set_edge
+  edge: 556000140
+  set:
+    status: open
+- op: set_node
+  node: 555007492
+  set:
+    comment: ''
+    name: Isando Industrial Park
+    railway: stop
+    facility: industrial area
+- op: tag_route
+  from: 556054278
+  to: 555007492
+  set:
+    line: Isando Industrial Park
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555032721
+  to: 555001439
+  set:
+    line: Nasrec branch
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail. Not regularly used.
+  where: country = 'South Africa' and status = 'open'
+  note: Passenger  -not regularly used
+- op: set_node
+  node: 555070117
+  set:
+    comment: ''
+    name: Bidvest SACD freight terminal
+    railway: stop
+    facility: container terminal
+  note: Bidvest SACD freight terminal
+- op: tag_route
+  from: 555032954
+  to: 555070117
+  set:
+    line: Bidvest SACD freight terminal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555069654
+  set:
+    comment: ''
+    name: PPC Jupiter Cement Factory
+    railway: stop
+    facility: manufacturing
+  note: PPC Jupiter Cement Factory
+- op: tag_route
+  from: 555032934
+  to: 555069654
+  set:
+    line: PPC Jupiter Cement Factory
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555141003
+  set:
+    comment: ''
+    name: Engen fuel depot
+    railway: stop
+    facility: fuel depot
+  note: Engen fuel depot
+- op: tag_route
+  from: 555032739
+  to: 555141003
+  set:
+    line: Engen fuel depot
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555061831
+  set:
+    railway: null
+  note: Gauteng metrorail
+- op: tag_route
+  from: 555056234
+  to: 555001523
+  set:
+    line: Westgate branch
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555032860
+  set:
+    railway: null
+  note: Gauteng metrorail
+- op: split_edge
+  edge: 555000991
+  node: 555116626
+- op: tag_route
+  from: 555116626
+  to: 555032858
+  set:
+    line: Faraday branch
+    mode: passenger
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Gauteng metrorail.
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555056385
+  set:
+    comment: ''
+    name: Afrisam Cement Factory, Roodepoort
+    railway: stop
+    facility: manufacturing
+  note: Afrisam Cement Factory
+- op: split_edge
+  edge: 555003798
+  node: 555146918
+- op: copy_node
+  node: 555056408
+  edge: 555122236
+- op: insert_edge
+  source: 555000349
+  target: 556056408
+  oid: 556000141
+  note: simplify
+- op: set_edge
+  edge: 556000141
+  set:
+    status: open
+- op: split_edge
+  edge: 555000741
+  node: 555063575
+- op: tag_route
+  from: 556056408
+  to: 555056385
+  set:
+    line: Afrisam Cement Factory, Roodepoort
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555014333
+  set:
+    comment: ''
+    name: South Germiston Industrial Park
+    railway: stop
+    facility: industrial area
+  note: South Germiston Industrial Park
+- op: split_edge
+  edge: 555082427
+  node: 555116691
+- op: split_edge
+  edge: 5550824272
+  node: 555080007
+- op: tag_route
+  from: 555116692
+  to: 555014333
+  set:
+    line: South Germiston Industrial Park
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555093475
+  set:
+    comment: ''
+    name: Germiston marshalling yards
+    railway: stop
+    facility: railway
+  note: Germiston marshalling yards
+- op: tag_route
+  from: 555056342
+  to: 555093475
+  set:
+    line: Germiston marshalling yards
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555150769
+  set:
+    comment: Animal feed store
+    name: Meadow Feeds - Northern Region
+    railway: stop
+    facility: food storage
+  note: Animal feed store
+- op: copy_node
+  node: 555061749
+  edge: 555129344
+- op: copy_node
+  node: 555150772
+  edge: 5551293441
+- op: insert_edge
+  source: 555150772
+  target: 556150772
+  oid: 556000142
+- op: set_edge
+  edge: 556000142
+  set:
+    status: open
+- op: tag_route
+  from: 556150772
+  to: 555150769
+  set:
+    line: Meadow Feeds - Northern Region
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555125864
+  set:
+    comment: 'sand mining - mineral extraction. See: https://www.riotinto.com/en/operations/south-africa/richards-bay-minerals'
+    name: Richards Bay Minerals (RioTinto)
+    railway: stop
+    facility: mining
+  note: Richards Bay Minerals (RioTinto)
+- op: split_edge
+  edge: 555095109
+  node: 555096346
+- op: tag_route
+  from: 555096346
+  to: 555125864
+  set:
+    line: Richards Bay Minerals (RioTinto)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555038462
+  set:
+    comment: bleached hardwood pulp and white top kraft linerboard.
+    name: Mondi Richards Bay Mill
+    railway: stop
+    facility: manufacturing
+  note: Mondi Richards Bay Mill
+- op: split_edge
+  edge: 555044714
+  node: 555124542
+- op: copy_node
+  node: 555088324
+  edge: 555093729
+  note: simplify
+- op: change_source
+  edge: 555044712
+  node: 556088324
+- op: tag_route
+  from: 556088324
+  to: 555038462
+  set:
+    line: Mondi Richards Bay Mill
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: split_edge
+  edge: 555016345
+  node: 555124357
+  note: various Richards Bay Freight
+- op: split_edge
+  edge: 555093622
+  node: 555124310
+- op: tag_route
+  from: 555124357
+  to: 555124310
+  set:
+    line: Freight spur
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555038407
+  set:
+    comment: sulphuric acid (H2SO4), phosphoric acid (P2O5) and granular fertiliser (MAP/DAP)
+    name: Foskor Richards Bay
+    railway: stop
+    facility: manufacturing
+  note: sulphuric acid (H2SO4), phosphoric acid (P2O5) and granular fertiliser (MAP/DAP)
+- op: tag_route
+  from: 555124310
+  to: 555038407
+  set:
+    line: Foskor Richards Bay
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555038416
+  set:
+    comment: timber, woodchip mill
+    name: Central Timber Cooperative, Richards Bay
+    railway: stop
+    facility: manufacturing
+  note: Central Timber Cooperative, Richards Bay
+- op: tag_route
+  from: 555124310
+  to: 555038416
+  set:
+    line: Central Timber Cooperative, Richards Bay
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555124356
+  set:
+    comment: ''
+    name: Grindrod dry-bulk terminal, Richards Bay
+    railway: stop
+    facility: freight terminal
+  note: Grindrod dry-bulk terminal, Richards Bay
+- op: tag_route
+  from: 555078492
+  to: 555124356
+  set:
+    line: Grindrod dry-bulk terminal, Richards Bay
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555124324
+  set:
+    comment: Aluminium casthouse, semlter believed to be closed.
+    name: BHP Billiton Bayside
+    railway: stop
+    facility: manufacturing
+  note: Smelter closed
+- op: split_edge
+  edge: 555093437
+  node: 555124197
+- op: split_edge
+  edge: 555093505
+  node: 555124230
+- op: split_edge
+  edge: 555093453
+  node: 555124325
+- op: split_edge
+  edge: 555093484
+  node: 555124195
+- op: split_edge
+  edge: 555093482
+  node: 555124231
+- op: tag_route
+  from: 555124197
+  to: 555124324
+  set:
+    line: BHP Billiton Bayside
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555076405
+  set:
+    comment: Long steel products
+    name: ArcelorMittal Newcastle Works
+    railway: stop
+    facility: manufacturing
+  note: Long steel products
+- op: split_edge
+  edge: 555050612
+  node: 555076405
+- op: split_edge
+  edge: 555050609
+  node: 555076379
+- op: split_edge
+  edge: 555026150
+  node: 555130316
+- op: tag_route
+  from: 555076379
+  to: 555076384
+  set:
+    line: Freight spur
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555076379
+  to: 555076384
+  set:
+    line: ArcelorMittal Newcastle Works
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555042080
+  set:
+    comment: cement manufacturing
+    name: Natal Portland Cement Company, Newcastle
+    railway: stop
+    facility: manufacturing
+  note: Cement factory
+- op: split_edge
+  edge: 555026165
+  node: 555076383
+- op: tag_route
+  from: 555076384
+  to: 555042080
+  set:
+    line: Natal Portland Cement Company, Newcastle
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open' and oid != 555101311
+- op: set_node
+  node: 555003361
+  set:
+    railway: station
+- op: insert_edge
+  source: 555128219
+  target: 555003361
+  oid: 556000143
+  note: simplify
+- op: set_edge
+  edge: 556000143
+  set:
+    status: open
+- op: tag_route
+  from: 555042080
+  to: 555003361
+  set:
+    line: Natal Portland Cement Company, Newcastle
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open' and oid != 555101311
+- op: set_node
+  node: 555091649
+  set:
+    comment: chemicals manufacturing and associated power plant
+    name: Karbochem Industrial Complex, Newcastle
+    railway: stop
+    facility: manufacturing
+  note: Chemicals company
+- op: split_edge
+  edge: 555049832
+  node: 555091648
+- op: split_edge
+  edge: 555098641
+  node: 555091650
+- op: tag_route
+  from: 555091650
+  to: 555091649
+  set:
+    line: Karbochem Industrial Complex, Newcastle
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555044091
+  set:
+    comment: grain silos
+    name: Vryheid Afgri Silo
+    railway: stop
+    facility: food storage
+  note: Vryheid Afgri Silo
+- op: split_edge
+  edge: 555051684
+  node: 555131332
+- op: split_edge
+  edge: 555023274
+  node: 555131318
+- op: split_edge
+  edge: 555102779
+  node: 555131303
+- op: tag_route
+  from: 555131318
+  to: 555044091
+  set:
+    line: Vryheid Afgri Silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555045433
+  set:
+    comment: grain silos
+    name: Paulpietersburg Afgri Silo
+    railway: stop
+    facility: food storage
+  note: Paulpietersburg Afgri Silo
+- op: split_edge
+  edge: 555104166
+  node: 555132403
+- op: split_edge
+  edge: 555104168
+  node: 555132399
+- op: split_edge
+  edge: 555104162
+  node: 555132413
+- op: insert_edge
+  source: 555132413
+  target: 555132433
+  oid: 556000144
+- op: set_edge
+  edge: 556000144
+  set:
+    status: open
+- op: split_edge
+  edge: 555104182
+  node: 555132433
+- op: tag_route
+  from: 555132403
+  to: 555045433
+  set:
+    line: Paulpietersburg Afgri Silos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555058838
+  set:
+    comment: sugar mill
+    name: Komati Sugar Mill (RCL Foods)
+    railway: stop
+    facility: food production
+  note: Komati Sugar Mill (RCL Foods)
+- op: tag_route
+  from: 555006303
+  to: 555058838
+  set:
+    line: Komati Sugar Mill (RCL Foods)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555068227
+  set:
+    comment: sugar mill
+    name: Malelane Sugar Mill (RCL Foods)
+    railway: stop
+    facility: food production
+  note: Malelane Sugar Mill (RCL Foods)
+- op: split_edge
+  edge: 555128576
+  node: 555150340
+- op: tag_route
+  from: 555089125
+  to: 555068227
+  set:
+    line: Malelane Sugar Mill (RCL Foods)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555047109
+  set:
+    comment: manganese refinery
+    name: Mangenese Metal Company, Mbombela/Nelspruit
+    railway: stop
+    facility: manufacturing
+  note: Mangenese Metal Company, Mbombela/Nelspruit
+- op: split_edge
+  edge: 555106275
+  node: 555134318
+- op: split_edge
+  edge: 555022903
+  node: 555134319
+- op: split_edge
+  edge: 5550229031
+  node: 555069414
+- op: split_edge
+  edge: 555046877
+  node: 555074372
+- op: split_edge
+  edge: 555022913
+  node: 555146230
+- op: split_edge
+  edge: 555046884
+  node: 555134196
+- op: tag_route
+  from: 555134318
+  to: 555146230
+  set:
+    line: Freight spur
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555146230
+  to: 555047109
+  set:
+    line: Mangenese Metal Company, Mbombela/Nelspruit
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555047170
+  set:
+    comment: ''
+    name: Fuel depot, Mbombela/Nelspruit
+    railway: stop
+    facility: fuel depot
+  note: Fuel depot, Mbombela/Nelspruit
+- op: tag_route
+  from: 555146230
+  to: 555047170
+  set:
+    line: Fuel depot, Mbombela/Nelspruit
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555027968
+  set:
+    comment: grain silos
+    name: Lydenburg Afgri Silo
+    railway: stop
+    facility: food storage
+  note: Lydenburg Afgri Silo
+- op: tag_route
+  from: 555027974
+  to: 555027968
+  set:
+    line: Lydenburg Afgri Silo
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555048733
+  set:
+    comment: ferrochrome smelter
+    name: Glencore Lydenburg Smelter
+    railway: stop
+    facility: manufacturing
+  note: ferrochrome smelter
+- op: tag_route
+  from: 555011173
+  to: 555048733
+  set:
+    line: Glencore Lydenburg Smelter
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555048749
+  set:
+    comment: ferrochrome smelter
+    name: Tubatse Ferrochrome, Steelpoort
+    railway: stop
+    facility: manufacturing
+  note: Tubatse Ferrochrome
+- op: split_edge
+  edge: 555022772
+  node: 555074275
+- op: tag_route
+  from: 555071837
+  to: 555048749
+  set:
+    line: Tubatse Ferrochrome, Steelpoort
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555068860
+  set:
+    comment: limestone quarry
+    name: Idwala Lime Quarry
+    railway: stop
+    facility: quarry
+  note: Idwala Lime Quarry
+- op: split_edge
+  edge: 555012175
+  node: 555068860
+- op: split_edge
+  edge: 555012226
+  node: 555068791
+- op: tag_route
+  from: 555068791
+  to: 555068860
+  set:
+    line: Idwala Lime Quarry
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555012283
+  set:
+    name: Department of Defence Ammunition Depot, Vaalharts Nedersetting
+    railway: stop
+    facility: military
+  note: Department of Defence Ammunition Depot, Vaalharts Nedersetting
+- op: split_edge
+  edge: 555132866
+  node: 555077408
+- op: tag_route
+  from: 555077408
+  to: 555012283
+  set:
+    line: Department of Defence Ammunition Depot, Vaalharts Nedersetting
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555075844
+  set:
+    name: Natal Portland Cement Factory, Simuma
+    railway: stop
+    facility: manufacturing
+  note: Natal Portland Cement, Simuma
+- op: split_edge
+  edge: 555122742
+  node: 555075843
+- op: split_edge
+  edge: 555013463
+  node: 555071272
+- op: tag_route
+  from: 555071272
+  to: 555075844
+  set:
+    line: Natal Portland Cement Factory, Simuma
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555067762
+  set:
+    comment: 'see: https://www.sappi.com/saiccor-mill'
+    name: Sappi Saiccor Paper Mill, Umkomaas
+    railway: stop
+    facility: manufacturing
+  note: 'See: https://www.sappi.com/saiccor-mill'
+- op: split_edge
+  edge: 555005912
+  node: 555067780
+- op: split_edge
+  edge: 555010128
+  node: 555146617
+- op: set_node
+  node: 555003934
+  set:
+    railway: null
+- op: insert_edge
+  source: 555067776
+  target: 555061632
+  oid: 556000145
+  note: simplify
+- op: set_edge
+  edge: 556000145
+  set:
+    status: open
+- op: tag_route
+  from: 555061632
+  to: 555067762
+  set:
+    line: Sappi Saiccor Paper Mill, Umkomaas
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555057263
+  set:
+    comment: see:https://www.anchor.co.za/who-we-are/our-production-facility/
+    name: Anchor Yeast, Umbogintwini Industrial Complex
+    railway: stop
+    facility: manufacturing
+  note: Anchor Yeast, Umbogintwini Industrial Complex
+- op: tag_route
+  from: 555003899
+  to: 555057263
+  set:
+    line: Anchor Yeast, Umbogintwini Industrial Complex
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555067613
+  set:
+    comment: 'see: https://www.engen.co.za/about/manufacturing. Reported to be converted to fuel storage
+      facility in 2023, see: http://bit.ly/3MKwNbc'
+    name: Engen Oil Refinery, Wentworth, Durban
+    railway: stop
+    facility: oil refinery
+  note: 'see: http://bit.ly/3MKwNbc'
+- op: split_edge
+  edge: 555005727
+  node: 555147676
+- op: split_edge
+  edge: 555009763
+  node: 555147677
+- op: tag_route
+  from: 555147677
+  to: 555067613
+  set:
+    line: Engen Oil Refinery, Merebank, Durban
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555147630
+  set:
+    comment: 'see: https://www.sapref.com/who-we-are'
+    name: SAPREF oil refinery, Prospecton, Durban
+    railway: stop
+    facility: oil refinery
+  note: https://www.sapref.com/who-we-are
+- op: insert_edge
+  source: 555065848
+  target: 555065849
+  oid: 556000146
+  note: simplify
+- op: set_edge
+  edge: 556000146
+  set:
+    status: open
+- op: split_edge
+  edge: 555005793
+  node: 555147631
+- op: tag_route
+  from: 555065849
+  to: 555147630
+  set:
+    line: SAPREF oil refinery, Prospecton, Durban
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555066259
+  set:
+    comment: ''
+    name: Access World, Rossburgh, Durban (container rail transfer)
+    railway: stop
+    facility: container terminal
+  note: Access World container rail transfer
+- op: tag_route
+  from: 555056914
+  to: 555066259
+  set:
+    line: Access World, Rossburgh, Durban (container rail transfer)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open' and oid not in (555009540,555009539)
+- op: set_node
+  node: 555004580
+  set:
+    comment: ''
+    name: Tongaat Hulett Sugar Maidstone Mill
+    railway: stop
+    facility: food production
+  note: Tongaat Hulett Sugar Maidstone Mill
+- op: tag_route
+  from: 555004577
+  to: 555004580
+  set:
+    line: Tongaat Hulett Sugar Maidstone Mill
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555106024
+  set:
+    comment: ''
+    name: Gledhow Sugar Company - Gledhow Mill
+    railway: stop
+    facility: food production
+  note: Gledhow Sugar Mill
+- op: split_edge
+  edge: 555029606
+  node: 555078670
+- op: split_edge
+  edge: 555046628
+  node: 555078674
+- op: split_edge
+  edge: 555070134
+  node: 555078676
+- op: tag_route
+  from: 555078674
+  to: 555106024
+  set:
+    line: Gledhow Sugar Company - Gledhow Mill
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555106016
+  set:
+    comment: ''
+    name: Sappi Stanger Paper Mill
+    railway: stop
+    facility: manufacturing
+  note: Sappi Stanger Paper Mill
+- op: tag_route
+  from: 555078670
+  to: 555106016
+  set:
+    line: Sappi Stanger Paper Mill
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555120918
+  set:
+    comment: ''
+    name: Tongaat Hulett Sugar Amatikulu Mill
+    railway: stop
+    facility: food production
+  note: Tongaat Hulett Sugar Amatikulu Mill
+- op: split_edge
+  edge: 555094945
+  node: 555125737
+- op: split_edge
+  edge: 555094957
+  node: 555089770
+- op: tag_route
+  from: 555125737
+  to: 555120918
+  set:
+    line: Tongaat Hulett Sugar Amatikulu Mill
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555125564
+  set:
+    comment: ''
+    name: Tongaat Hulett Sugar Felixton Mill
+    railway: stop
+    facility: food production
+  note: Tongaat Hulett Sugar Felixton Mill
+- op: split_edge
+  edge: 555094808
+  node: 555125588
+- op: split_edge
+  edge: 555094795
+  node: 555125569
+- op: split_edge
+  edge: 555094781
+  node: 555125554
+- op: tag_route
+  from: 555125588
+  to: 555125564
+  set:
+    line: Tongaat Hulett Sugar Felixton Mill
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: set_node
+  node: 555125583
+  set:
+    comment: ''
+    name: Mpact Felixton Paper Mill
+    railway: stop
+    facility: manufacturing
+  note: Mpact Felixton Paper Mill
+- op: insert_edge
+  source: 555125582
+  target: 555038741
+  oid: 556000147
+  note: simplify
+- op: set_edge
+  edge: 556000147
+  set:
+    status: open
+- op: tag_route
+  from: 555038741
+  to: 555125583
+  set:
+    line: Mpact Felixton Paper Mill
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+- op: tag_route
+  from: 555006426
+  to: 555006428
+  set:
+    line: Port of East London (vehicle Terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  where: country = 'South Africa' and status = 'open'
+  note: Port of East London (vehicle Terminal)
+- op: split_edge
+  edge: 555017399
+  node: 555097426
+  note: Alicedale - Port Alfred
+- op: split_edge
+  edge: 555036329
+  node: 555063700
+- op: split_edge
+  edge: 5550363291
+  node: 555097427
+- op: split_edge
+  edge: 555017448
+  node: 555106933
+  note: mix of abandoned and disused
+- op: tag_route
+  from: 555106933
+  to: 555000660
+  set:
+    line: Barkly Bridge - Alexandria
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    comment: ''
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555054133
+  node: 555065503
+  note: Cookhouse - Somerset East
+- op: tag_route
+  from: 555065503
+  to: 555001032
+  set:
+    line: Cookhouse - Somerset East
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555001606
+  node: 555067837
+  note: Lifted according to Transnet map - mark as abandoned
+- op: tag_route
+  from: 555067837
+  to: 555000984
+  set:
+    line: Fort Beaufort - Seymour
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: razed
+    comment: Lifted according to Transnet 2021 report network map
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555025492
+  node: 555138863
+  note: Sterkstroom - Maclear
+- op: tag_route
+  from: 555138863
+  to: 555000901
+  set:
+    line: Sterkstroom - Maclear
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  where: country = 'South Africa'
+- op: set_node
+  node: 555000844
+  set:
+    railway: station
+  note: Molteno - Jamestown
+- op: split_edge
+  edge: 555047051
+  node: 555138865
+- op: tag_route
+  from: 555138865
+  to: 555000844
+  set:
+    line: Molteno - Jamestown
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: razed
+    comment: Lifted according to Transnet 2021 report network map
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555054332
+  node: 555064771
+- op: split_edge
+  edge: 5550270562
+  node: 555094765
+- op: split_edge
+  edge: 555047058
+  node: 555097216
+- op: tag_route
+  from: 555094765
+  to: 555097216
+  set:
+    line: Rosmead - Stormberg
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555091847
+  node: 555063652
+  note: Schoombee - Hofmeyr
+- op: set_node
+  node: 555000795
+  set:
+    railway: station
+- op: tag_route
+  from: 555063652
+  to: 555000795
+  set:
+    line: Schoombee - Hofmeyr
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555017711
+  node: 555063609
+  note: mix of disused and abandoned (OSM)
+- op: split_edge
+  edge: 555116986
+  node: 555127941
+- op: split_edge
+  edge: 555116990
+  node: 555142978
+- op: split_edge
+  edge: 5551169902
+  node: 555142981
+- op: split_edge
+  edge: 555024823
+  node: 555142982
+- op: tag_route
+  from: 555063609
+  to: 555000596
+  set:
+    line: Dreunberg - Sannaspos
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    comment: ''
+  where: country = 'South Africa' and oid not in (5550177112, 5550177111)
+- op: set_node
+  node: 555000688
+  set:
+    railway: station
+  note: Aliwal North - Barkly East
+- op: split_edge
+  edge: 555021518
+  node: 555131009
+- op: tag_route
+  from: 555131009
+  to: 555000688
+  set:
+    line: Aliwal North - Barkly East
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  where: country = 'South Africa' and status = 'disused'
+- op: change_source
+  edge: 555121688
+  node: 555153626
+  note: simplify
+- op: tag_route
+  from: 555153626
+  to: 555000502
+  set:
+    line: Springfontein - Koffiefonteint
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: abandoned
+    comment: ''
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555110482
+  node: 555069490
+  note: Grovèput - Copperton
+- op: tag_route
+  from: 555069490
+  to: 555001112
+  set:
+    line: Grovèput - Copperton
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: razed
+    comment: Lifted according to Transnet 2021 report network map
+  where: country = 'South Africa'
+- op: copy_node
+  node: 555063046
+  edge: 555107783
+  note: Hutchinson - Calvinia
+- op: tag_route
+  from: 555063533
+  to: 556063046
+  set:
+    line: Hutchinson - Calvinia
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: abandoned
+    comment: ''
+  where: country = 'South Africa'
+- op: tag_route
+  from: 555063639
+  to: 555001254
+  set:
+    line: Sakrivier branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: abandoned
+    comment: ''
+  where: country = 'South Africa'
+  note: Sakrivier branch
+- op: set_node
+  node: 555006510
+  set:
+    railway: station
+  note: Touws River - Ladismith
+- op: split_edge
+  edge: 555000676
+  node: 555067908
+- op: tag_route
+  from: 555067908
+  to: 555006510
+  set:
+    line: Touws River - Ladismith
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: razed
+    comment: Lifted according to Transnet 2021 report network map
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555086255
+  node: 555119403
+- op: split_edge
+  edge: 555086259
+  node: 555119402
+- op: split_edge
+  edge: 555019474
+  node: 555119407
+- op: tag_route
+  from: 555070794
+  to: 555119407
+  set:
+    line: Carthill - Kelso
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: razed
+    comment: Lifted according to Transnet 2021 report network map
+  where: country = 'South Africa' and oid not in (555085526, 555016347)
+- op: tag_route
+  from: 555070939
+  to: 555008262
+  set:
+    line: Ixopo - Madonela
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: razed
+    comment: Lifted according to Transnet 2021 report network map
+  where: country = 'South Africa'
+  note: Ixopo - Madonela
+- op: change_source
+  edge: 555016116
+  node: 555149697
+  note: disused and abandoned
+- op: split_edge
+  edge: 555034648
+  node: 555071067
+- op: tag_route
+  from: 555058325
+  to: 555149697
+  set:
+    line: Charlestown - Bethal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    comment: ''
+  where: country = 'South Africa' and oid not in (555127089, 555127088, 555034781, 555127156, 555040826,
+    5550346482, 555127699, 555127710, 555127707)
+- op: split_edge
+  edge: 555032351
+  node: 555068478
+  note: abandoned
+- op: split_edge
+  edge: 555089746
+  node: 555121696
+- op: split_edge
+  edge: 55508975122
+  node: 555121695
+- op: tag_route
+  from: 555064133
+  to: 555121695
+  set:
+    line: Magaliesburg - Hercules
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    comment: ''
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555105747
+  node: 555071886
+  note: Nylstroom - Vaalwater
+- op: tag_route
+  from: 555071886
+  to: 555001850
+  set:
+    line: Nylstroom - Vaalwater
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: razed
+    comment: Lifted according to Transnet 2021 report network map
+  where: country = 'South Africa'
+- op: change_source
+  edge: 555131930
+  node: 555060036
+  note: closed/abandoned
+- op: tag_route
+  from: 555000499
+  to: 555060036
+  set:
+    line: Heilbron - Wolwehoek
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    comment: ''
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 5550986412
+  node: 555076803
+  note: Utrecht branch
+- op: tag_route
+  from: 555076803
+  to: 555011886
+  set:
+    line: Utrecht branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    comment: ''
+  where: country = 'South Africa'
+- op: set_node
+  node: 555011567
+  set:
+    name: Vredefort
+    railway: station
+  note: Dover - Vredefort
+- op: split_edge
+  edge: 5551316812
+  node: 555152540
+- op: change_source
+  edge: 555121818
+  node: 555152540
+- op: tag_route
+  from: 555152540
+  to: 555011567
+  set:
+    line: Dover - Vredefort
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    comment: ''
+  where: country = 'South Africa'
+- op: copy_node
+  node: 555152607
+  edge: 555021640
+  note: simplify
+- op: change_target
+  edge: 555131777
+  node: 556152607
+- op: tag_route
+  from: 556152607
+  to: 555000632
+  set:
+    line: Theunissen - Winburg
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  where: country = 'South Africa'
+- op: split_edge
+  edge: 555094931
+  node: 555125762
+  note: abandoned/razed
+- op: tag_route
+  from: 555125698
+  to: 555050770
+  set:
+    line: Gingindlovu - Eshowe
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: abandoned
+    comment: appears razed
+  where: country = 'South Africa'
+- op: copy_node
+  node: 555003293
+  edge: 555117744
+  note: Kamfersdam
+- op: set_node
+  node: 555071362
+  set:
+    name: Veertien Strome
+    railway: station
+  note: Veertien Strome
+- op: copy_node
+  node: 555001365
+  edge: 555095487
+  note: Ferguson
+- op: set_node
+  node: 555003593
+  set:
+    name: Mount Edgecombe
+    railway: station
+  note: Mount Edgecombe
+- op: set_node
+  node: 555065757
+  set:
+    name: Kloof
+    railway: station
+  note: Kloof
+- op: copy_node
+  node: 555004067
+  edge: 555005681
+  note: Hillcrest
+- op: copy_node
+  node: 555014538
+  edge: 555005954
+  note: Cliffdale
+- op: copy_node
+  node: 555004127
+  edge: 555006254
+  note: Umbilo
+- op: set_node
+  node: 555066424
+  set:
+    name: Canelands
+    railway: station
+  note: Canelands
+- op: set_node
+  node: 555066463
+  set:
+    name: Verulam
+    railway: station
+  note: Verulam
+- op: set_node
+  node: 555062575
+  set:
+    name: Montclair
+    railway: station
+  note: Montclair
+- op: copy_node
+  node: 555061644
+  edge: 555009972
+  note: Pelgrim
+- op: set_node
+  node: 555067797
+  set:
+    name: Chatsglen
+    railway: station
+  note: Chatsglen
+- op: set_node
+  node: 555067799
+  set:
+    name: Westcliff
+    railway: station
+  note: Westcliff
+- op: set_node
+  node: 555067800
+  set:
+    name: Bayview
+    railway: station
+  note: Bayview
+- op: copy_node
+  node: 555007776
+  edge: 555010423
+  note: Power Van Station
+- op: copy_node
+  node: 555002066
+  edge: 555010424
+  note: Power
+- op: copy_node
+  node: 555001109
+  edge: 555013076
+  note: Colesberg
+- op: copy_node
+  node: 555047188
+  edge: 555013186
+  note: West Taffin
+- op: copy_node
+  node: 555034430
+  edge: 555013995
+  note: Bergendal
+- op: copy_node
+  node: 555047155
+  edge: 555014003
+  note: Alkmaar
+- op: copy_node
+  node: 555044113
+  edge: 555017204
+  note: Penicuik
+- op: copy_node
+  node: 555032961
+  edge: 555019313
+  note: Hillview
+- op: copy_node
+  node: 555061674
+  edge: 555020188
+  note: Ottawa
+- op: copy_node
+  node: 555043869
+  edge: 555029525
+  note: Uithoek
+- op: copy_node
+  node: 555007731
+  edge: 555029534
+  note: Tayside
+- op: copy_node
+  node: 555008141
+  edge: 555029631
+  note: Ngweni
+- op: copy_node
+  node: 555008143
+  edge: 555029634
+  note: Mhlosinga
+- op: copy_node
+  node: 555000140
+  edge: 555032440
+  note: Mlamlankunzi
+- op: copy_node
+  node: 555004552
+  edge: 555032866
+  note: Shallcross
+- op: copy_node
+  node: 555004064
+  edge: 555045839
+  note: Inchanga
+- op: copy_node
+  node: 555001176
+  edge: 555050801
+  note: Keimoes
+- op: copy_node
+  node: 555002006
+  edge: 555051831
+  note: Klawer
+- op: copy_node
+  node: 555001329
+  edge: 555053572
+  note: Croesus
+- op: set_node
+  node: 555062624
+  set:
+    name: Longdale
+    railway: station
+  note: Longdale
+- op: copy_node
+  node: 555061696
+  edge: 555053864
+  note: Worcester
+- op: copy_node
+  node: 555062040
+  edge: 555055280
+  note: Matjiesfontein
+- op: copy_node
+  node: 555061856
+  edge: 555056829
+  note: Fonteine
+- op: copy_node
+  node: 555000496
+  edge: 555057802
+  note: Hoogte
+- op: copy_node
+  node: 555061846
+  edge: 555058743
+  note: Kempton Park
+- op: copy_node
+  node: 555061845
+  edge: 555058793
+  note: Van Riebeeckpark
+- op: copy_node
+  node: 555061526
+  edge: 555059057
+  note: Boksburg
+- op: set_node
+  node: 555062324
+  set:
+    name: President
+    railway: station
+  note: President
+- op: set_node
+  node: 555063245
+  set:
+    name: Boksburg East
+    railway: station
+  note: Boksburg East
+- op: copy_node
+  node: 555008289
+  edge: 555067141
+  note: Ncwadi
+- op: set_node
+  node: 555103414
+  set:
+    name: New Hanover
+    railway: station
+  note: New Hanover
+- op: copy_node
+  node: 555048736
+  edge: 555067956
+  note: Lydenburg
+- op: copy_node
+  node: 555029465
+  edge: 555072866
+  note: Scheepersnek
+- op: copy_node
+  node: 555029554
+  edge: 555073115
+  note: Hugoslaagte
+- op: copy_node
+  node: 555001482
+  edge: 555081842
+  note: Phomolong
+- op: copy_node
+  node: 555001331
+  edge: 555081907
+  note: Crown
+- op: set_node
+  node: 555062628
+  set:
+    name: Grosvenor
+    railway: station
+  note: Grosvenor
+- op: set_node
+  node: 555062723
+  set:
+    name: Germiston West
+    railway: station
+  note: Germiston West
+- op: copy_node
+  node: 555001376
+  edge: 555082462
+  note: Germiston South
+- op: copy_node
+  node: 555001403
+  edge: 555082624
+  note: Jupiter
+- op: set_node
+  node: 555062322
+  set:
+    name: Ravensklip
+    railway: station
+  note: Ravensklip
+- op: copy_node
+  node: 555003357
+  edge: 555085787
+  note: Lowlands
+- op: copy_node
+  node: 555058387
+  edge: 555086590
+  note: Harvard
+- op: set_node
+  node: 555059485
+  set:
+    name: Villieria
+    railway: station
+  note: Villieria
+- op: set_node
+  node: 555059645
+  set:
+    name: Loftus Versveldpark
+    railway: station
+  note: Loftus Versveldpark
+- op: copy_node
+  node: 555001463
+  edge: 555089525
+  note: Mitchel Street
+- op: copy_node
+  node: 555061859
+  edge: 555089753
+  note: Daspoort
+- op: copy_node
+  node: 555048566
+  edge: 555090294
+  note: Cor Delfos
+- op: copy_node
+  node: 555013320
+  edge: 555093724
+  note: eLubana
+- op: copy_node
+  node: 555061844
+  edge: 555094834
+  note: Birchleigh
+- op: set_node
+  node: 555126437
+  set:
+    name: Paarl
+    railway: station
+  note: Paarl
+- op: copy_node
+  node: 555009082
+  edge: 555096123
+  note: Schuttestraat
+- op: set_node
+  node: 555062320
+  set:
+    name: Orlando
+    railway: station
+  note: Orlando
+- op: set_node
+  node: 555041422
+  set:
+    name: Beaconsfield
+    railway: station
+  note: Beaconsfield
+- op: copy_node
+  node: 555028349
+  edge: 555101383
+  note: Tendeka
+- op: copy_node
+  node: 555003353
+  edge: 555101932
+  note: Wesselsnek
+- op: copy_node
+  node: 555003352
+  edge: 555101970
+  note: Pepworth
+- op: copy_node
+  node: 555013329
+  edge: 555102426
+  note: Wasbank
+- op: copy_node
+  node: 555007729
+  edge: 555102653
+  note: Dundee
+- op: copy_node
+  node: 555007730
+  edge: 555102707
+  note: Malonjeni
+- op: copy_node
+  node: 555008139
+  edge: 555102881
+  note: Bushlands
+- op: copy_node
+  node: 555008142
+  edge: 555102917
+  note: Bayala
+- op: copy_node
+  node: 555008128
+  edge: 555103078
+  note: iSangeyana
+- op: copy_node
+  node: 555008127
+  edge: 555103173
+  note: eNgolothi
+- op: copy_node
+  node: 555011883
+  edge: 555103198
+  note: iNtshamanzi
+- op: copy_node
+  node: 555006744
+  edge: 555103259
+  note: Ulundi
+- op: copy_node
+  node: 555013323
+  edge: 555103360
+  note: uLoliwe
+- op: copy_node
+  node: 555006743
+  edge: 555103455
+  note: Ngogweni
+- op: copy_node
+  node: 555013304
+  edge: 555103476
+  note: Bloubank
+- op: copy_node
+  node: 555044846
+  edge: 555103555
+  note: Mahalumbe
+- op: copy_node
+  node: 555007940
+  edge: 555104167
+  note: Paulpietersburg
+- op: copy_node
+  node: 555001718
+  edge: 555104513
+  note: Kromkloof
+- op: copy_node
+  node: 555061803
+  edge: 555104551
+  note: Kwaggastroom
+- op: copy_node
+  node: 555034436
+  edge: 555105977
+  note: Waterval-Onder
+- op: copy_node
+  node: 555047216
+  edge: 555106437
+  note: Boulders
+- op: copy_node
+  node: 555002310
+  edge: 555107079
+  note: Balmoral
+- op: copy_node
+  node: 555000062
+  edge: 555108320
+  note: Bosmanstraat
+- op: copy_node
+  node: 555001362
+  edge: 555109322
+  note: Forfar
+- op: copy_node
+  node: 555000580
+  edge: 555109579
+  note: Slabberts
+- op: copy_node
+  node: 555058388
+  edge: 555109750
+  note: Firham
+- op: set_node
+  node: 555049256
+  set:
+    name: Tutuka
+    railway: station
+  note: Tutuka
+- op: copy_node
+  node: 555061843
+  edge: 555110540
+  note: Kaalfontein
+- op: set_node
+  node: 555054602
+  set:
+    name: Medunsa
+    railway: station
+  note: Medunsa
+- op: copy_node
+  node: 555058369
+  edge: 555111339
+  note: Koppie Alleen
+- op: copy_node
+  node: 555003359
+  edge: 555111743
+  note: Hattingsspruit
+- op: copy_node
+  node: 555028049
+  edge: 555112342
+  note: Matshaye
+- op: copy_node
+  node: 555028048
+  edge: 555112344
+  note: Ireagh
+- op: copy_node
+  node: 555061606
+  edge: 555113330
+  note: Delmas
+- op: copy_node
+  node: 555051081
+  edge: 555113826
+  note: Natalspruit
+- op: copy_node
+  node: 555001478
+  edge: 555114024
+  note: Rooikop
+- op: copy_node
+  node: 555061795
+  edge: 555114447
+  note: Lenasia
+- op: set_node
+  node: 555052717
+  set:
+    name: Centlivres
+    railway: station
+  note: Centlivres
+- op: copy_node
+  node: 555003448
+  edge: 555116233
+  note: Sprucewell
+- op: copy_node
+  node: 555001420
+  edge: 555116270
+  note: Kraal
+- op: copy_node
+  node: 555061538
+  edge: 555117544
+  note: Viljoensdrif
+- op: copy_node
+  node: 555061841
+  edge: 555119465
+  note: Limindlela
+- op: copy_node
+  node: 555001530
+  edge: 555119631
+  note: Zonkizizwe
+- op: copy_node
+  node: 555001517
+  edge: 555119760
+  note: Sportpark
+- op: copy_node
+  node: 555061852
+  edge: 555119865
+  note: Olifantsfontein
+- op: copy_node
+  node: 555014604
+  edge: 555121027
+  note: Georgedale
+- op: copy_node
+  node: 555000456
+  edge: 555121668
+  note: Fouriesburg
+- op: copy_node
+  node: 555061731
+  edge: 555122016
+  note: Mdantsane
+- op: copy_node
+  node: 555061760
+  edge: 555122230
+  note: Florida
+- op: copy_node
+  node: 555061761
+  edge: 555122231
+  note: Unified
+- op: copy_node
+  node: 555061759
+  edge: 555122237
+  note: Hamberg
+- op: copy_node
+  node: 555061791
+  edge: 555122251
+  note: Nancefield
+- op: set_node
+  node: 555090026
+  set:
+    name: Beaufort West
+    railway: station
+  note: Beaufort West
+- op: copy_node
+  node: 555061792
+  edge: 555122485
+  note: Kliptown
+- op: copy_node
+  node: 555013288
+  edge: 555127143
+  note: Beechwick
+- op: copy_node
+  node: 555028674
+  edge: 555127706
+  note: Bethal
+- op: copy_node
+  node: 555023771
+  edge: 555127775
+  note: Hamelfontein
+- op: copy_node
+  node: 555058683
+  edge: 555128056
+  note: Arbor
+- op: copy_node
+  node: 555007988
+  edge: 555128486
+  note: Breyten (BTN)
+- op: copy_node
+  node: 555007200
+  edge: 555128550
+  note: Magnesite
+- op: copy_node
+  node: 555001315
+  edge: 555129080
+  note: Central
+- op: copy_node
+  node: 555061750
+  edge: 555129081
+  note: Millsite
+- op: copy_node
+  node: 555000488
+  edge: 555129645
+  note: Jordaan
+- op: copy_node
+  node: 555061535
+  edge: 555129655
+  note: Kroonstad
+- op: copy_node
+  node: 555000589
+  edge: 555129714
+  note: Rooiwal
+- op: set_node
+  node: 555062775
+  set:
+    name: Koppies
+    railway: station
+  note: Koppies
+- op: copy_node
+  node: 555000500
+  edge: 555129788
+  note: Heuningspruit
+- op: copy_node
+  node: 555001665
+  edge: 555130100
+  note: Grasslands
+- op: copy_node
+  node: 555000400
+  edge: 555130239
+  note: Allanridge
+- op: copy_node
+  node: 555000516
+  edge: 555130345
+  note: Kalkvlakte
+- op: copy_node
+  node: 555000494
+  edge: 555130371
+  note: Holfontein
+- op: copy_node
+  node: 555000482
+  edge: 555130411
+  note: Geneva
+- op: copy_node
+  node: 555007603
+  edge: 555131502
+  note: Wolwehoek
+- op: copy_node
+  node: 555000522
+  edge: 555131678
+  note: Leeustroom
+- op: copy_node
+  node: 555000484
+  edge: 555131679
+  note: Greenlands
+- op: copy_node
+  node: 555000442
+  edge: 555131681
+  note: Dover
+- op: copy_node
+  node: 555000573
+  edge: 555131706
+  note: Serfontein
+- op: copy_node
+  node: 555000640
+  edge: 555131711
+  note: Virginia
+- op: copy_node
+  node: 555000498
+  edge: 555131757
+  note: Hennenman
+- op: copy_node
+  node: 555000608
+  edge: 555131827
+  note: Vetrivier
+- op: copy_node
+  node: 555000467
+  edge: 555131831
+  note: Eensgevonden
+- op: copy_node
+  node: 555000612
+  edge: 555131892
+  note: Theunissen
+- op: copy_node
+  node: 555001131
+  edge: 555134103
+  note: Diamantoord
+- op: copy_node
+  node: 555013306
+  edge: 5550948082
+  note: Felixton
+- op: copy_node
+  node: 555003358
+  edge: 5551025691
+  note: Glencoe
+- op: copy_node
+  node: 555008900
+  edge: 5551028182
+  note: Hlobane
+- op: copy_node
+  node: 555008100
+  edge: 5551087381
+  note: Piet Retief
+- op: copy_node
+  node: 555001375
+  edge: 5551156741
+  note: Glenroy
+- op: copy_node
+  node: 555000411
+  edge: 5551297012
+  note: Amerika
+- op: copy_node
+  node: 555048424
+  edge: 555007206
+  note: Tongaat
+- op: copy_node
+  node: 555061647
+  edge: 555007923
+  note: Moses Mabhida
+- op: copy_node
+  node: 555034432
+  edge: 555014047
+  note: Fairview
+- op: copy_node
+  node: 555034303
+  edge: 555085811
+  note: Estcourt
+- op: set_node
+  node: 555062787
+  set:
+    name: Quail
+    railway: station
+  note: Quail
+- op: copy_node
+  node: 555013328
+  edge: 555103478
+  note: Komvoorhoogte
+- op: copy_node
+  node: 555061801
+  edge: 555104550
+  note: Residensia
+- op: copy_node
+  node: 555001679
+  edge: 555108034
+  note: Hoedspruit
+- op: set_node
+  node: 555045343
+  set:
+    name: Woodstock
+    railway: station
+  note: Woodstock
+- op: copy_node
+  node: 555001901
+  edge: 555032318
+  note: Mountain View
+- op: copy_node
+  node: 555001481
+  edge: 5550818421
+  note: Phefeni
+- op: copy_node
+  node: 555013321
+  edge: 555102995
+  note: eMakwazini
+- op: set_node
+  node: 555047519
+  set:
+    name: Pretoria Gautrain
+    railway: station
+  note: Pretoria Gautrain
+- op: set_node
+  node: 555065882
+  set:
+    name: Winklespruit
+    railway: station
+  note: Winklespruit
+- op: set_node
+  node: 555067672
+  set:
+    name: Isipingo
+    railway: station
+  note: Isipingo
+- op: set_node
+  node: 555065887
+  set:
+    name: Ilfracombe
+    railway: station
+  note: Ilfracombe
+- op: set_node
+  node: 555032887
+  set:
+    name: Cleveland
+  note: Clevenland
+- op: set_node
+  node: 555062584
+  set:
+    name: Havenside
+    railway: station
+  note: Havenside
+- op: copy_node
+  node: 555013289
+  edge: 5551271431
+  note: Palmford
+- op: copy_node
+  node: 555061758
+  edge: 5551222371
+  note: Georgina
+- op: copy_node
+  node: 555061730
+  edge: 5551220162
+  note: Mtsotso
+- op: copy_node
+  node: 555061802
+  edge: 5551045511
+  note: Eatonside
+- op: copy_node
+  node: 555000144
+  edge: 5550818422
+  note: Mzimhlope
+- op: copy_node
+  node: 555011883
+  edge: 555103198
+  note: iNtshamanzi
+- op: copy_node
+  node: 555061848
+  edge: 555090672
+  note: Elandsfontein
+- op: copy_node
+  node: 555000143
+  edge: 555082012
+  note: Mayfair
+- op: copy_node
+  node: 555058373
+  edge: 555127301
+  note: Platrand
+- op: copy_node
+  node: 555001349
+  edge: 555081840
+  note: Dube
+- op: set_node
+  node: 555041612
+  set:
+    railway: null
+- op: set_nodes_on_edges
+  countries:
+  - South Africa
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '610'
+  set:
+    gauge: '610'
+- op: set_nodes_on_edges
+  countries:
+  - South Africa
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'
+- op: set_nodes_on_edges
+  countries:
+  - South Africa
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1435'
+  set:
+    gauge: '1435'

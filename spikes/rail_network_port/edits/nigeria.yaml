@@ -1,0 +1,459 @@
+# Nigeria rail network edits.
+#
+# Derived from nigeria.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 675 lines of SQL: 67 edits,
+# 17 statements skipped as unable to reach the published network
+# (2 backup, 7 exploratory, 1 routing test, 6 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Nigeria
+edits:
+- op: set_node
+  node: 555059579
+  set:
+    name: Lagos (Mobolaji Johnson)
+    railway: station
+  note: Lagos (Mobolaji Johnson Station) - Ibadan SGR
+- op: tag_route
+  from: 555059579
+  to: 555063158
+  set:
+    line: Lagos - Ibadan (LITS)
+    gauge: '1435'
+    status: open
+    comment: Opened 10 June 2021. Double track
+- op: change_source
+  edge: 556000060
+  node: 555151722
+- op: copy_node
+  node: 555148289
+  edge: 556000060
+- op: change_target
+  edge: 556000060
+  node: 556148289
+- op: change_source
+  edge: 555125507
+  node: 556148289
+- op: split_edge
+  edge: 555093367
+  node: 555148289
+- op: split_edge
+  edge: 5550933672
+  node: 555148290
+- op: delete_edge
+  edge: 55509336721
+- op: change_source
+  edge: 556000061
+  node: 555148289
+- op: copy_node
+  node: 555124093
+  edge: 556000061
+- op: set_node
+  node: 555124093
+  set:
+    gauge: '1435'
+    name: Apapa Port
+    railway: stop
+    facility: port
+- op: set_node
+  node: 556124093
+  set:
+    gauge: '1067'
+    name: Apapa Port
+    railway: stop
+    facility: port
+- op: tag_route
+  from: 555059579
+  to: 555124093
+  set:
+    line: Apapa Port (LITS)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: There may in future be passenger services as it appears that a station is under construction.
+  note: standard gauge to Apapa Port
+- op: split_edge
+  edge: 555130489
+  node: 555078714
+  note: cape gauge to Apapa Port
+- op: tag_route
+  from: 555078714
+  to: 556124093
+  set:
+    line: Apapa Port (Cape gauge)
+    mode: freight
+    gauge: '1067'
+    status: open
+    comment: 'This older cape gauge link to Apapa Port Would appear to be open for freight services. E.g.,
+      see: https://www.apmterminals.com/en/apapa/about/rail'
+- op: set_node
+  node: 555009645
+  set:
+    gauge: '1067'
+    name: Lagos Terminus
+    railway: station
+  note: Lagos to Nguru
+- op: tag_route
+  from: 555009645
+  to: 555017251
+  set:
+    line: Western Line (Lagos - Nguru)
+    mode: mixed
+    gauge: '1067'
+    status: open
+    comment: Line is thought to be open and serviceable with some freight activity from Apapa port (but
+      only to terminals for transfer to lorries at Ebute Metta and Ijoko). Currently (11/08/2022) passenger
+      services are suspended due to terrorist activity.
+- op: split_edge
+  edge: 555063377
+  node: 555116975
+  note: enable routing onto branch
+- op: insert_node_at
+  oid: 558000010
+  lon: 6.41851
+  lat: 8.61206
+  set:
+    railway: stop
+    name: Baro Port
+    country: Nigeria
+  note: add stop at Baro Port
+- op: copy_node
+  node: 558000010
+  edge: 555097769
+- op: set_node
+  node: 559000010
+  set:
+    gauge: '1067'
+    facility: port
+- op: tag_route
+  from: 555116975
+  to: 555039481
+  set:
+    line: Minna - Baro
+    mode: mixed
+    gauge: '1067'
+    status: rehabilitation
+    comment: 'Rehabilitation contract said to have been awarded with extension to Baro Port. See: https://constructionreviewonline.com/news/minna-baro-railway-in-nigeria-to-undergo-us-192m-rehabilitation-project/'
+  note: Lagos to Nguru
+- op: tag_route
+  from: 555041951
+  to: 555041946
+  set:
+    line: Lagos Rail Mass Transit (LRMT) Blue Line
+    mode: passenger
+    gauge: '1435'
+    status: construction
+    comment: Phase 1 - Marina <-> Mile 2 largely complete and expected to start operating in Q1 2023.
+  note: Phase 1 to Mile 2
+- op: tag_route
+  from: 555041946
+  to: 555129002
+  set:
+    line: Lagos Rail Mass Transit (LRMT) Blue Line
+    mode: passenger
+    gauge: '1435'
+    status: construction
+    comment: Later phase, 2022 satellite imagery suggests little progress yet beyond Mile 2. Eventually
+      planned to terminate at Okokomaiko
+- op: tag_route
+  from: 555040980
+  to: 555040990
+  set:
+    line: Abuja Rail Mass Transit (ARMT) Yellow Line
+    mode: passenger
+    gauge: '1435'
+    status: open
+    comment: Abuja CBD <-> Nnamdi Azikiwe International Airport
+  note: Yellow Line - Abuja <-> Nnamdi Azikiwe International Airport  via Idu
+- op: set_node
+  node: 555040990
+  set:
+    facility: airport
+- op: insert_edge
+  source: 555040988
+  target: 555062874
+  oid: 556000060
+  note: add link to simplify interchange at Idu
+- op: set_node
+  node: 555062874
+  set:
+    name: null
+    railway: null
+- op: tag_route
+  from: 555040988
+  to: 555041001
+  set:
+    line: Abuja Rail Mass Transit (ARMT) Blue Line
+    mode: passenger
+    gauge: '1435'
+    status: open
+    comment: Idu <-> Gbazango
+- op: insert_edge
+  source: 555040988
+  target: 555039069
+  oid: 556000061
+  note: add link to simplify interchange at Idu
+- op: set_node
+  node: 555039069
+  set:
+    name: null
+    railway: null
+  note: remove station from 555062874
+- op: tag_route
+  from: 555040988
+  to: 555062804
+  set:
+    line: Abuja (Idu) – Kaduna Rigasa (AKTS)
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Services currently suspended due to attack with explosives in March 2022. (https://nrc.gov.ng/2022/05/19/press-release-19th-may-2022/).
+      Max speed 100km/h according to https://en.wikipedia.org/wiki/Rail_transport_in_Nigeria.
+- op: tag_route
+  from: 555041593
+  to: 555041588
+  set:
+    line: Warri – Itakpe (WITS)
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: One service daily each way. Originally planned to supply the Ajaokuta Steel Mill with iron
+      ore from Itakpe and coal imported via Warri.
+- op: set_node
+  node: 555041591
+  set:
+    name: null
+    railway: null
+  note: remove duplicate station
+- op: set_node
+  node: 555082787
+  set:
+    name: Ajaokuta Steel Mill
+    railway: stop
+    facility: manufacturing
+  note: Ajaokuta Steel Mill
+- op: tag_route
+  from: 555082784
+  to: 555082787
+  set:
+    line: Ajaokuta Steel Mill
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: 'The steel plant is out of use (and may never have produced steel). See: https://www.premiumtimesng.com/news/more-news/526405-fg-approves-n853-million-for-ajaokuta-steel-concession-consultants.html'
+- op: set_node
+  node: 555129384
+  set:
+    name: Itakpe Mine (Iron ore)
+    railway: stop
+    facility: mine
+  note: Itakpe Iron Ore mine
+- op: tag_route
+  from: 555041588
+  to: 555129384
+  set:
+    line: Itakpe Iron Ore mine
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555069981
+  set:
+    name: Premium Steel and Mines Limited
+    railway: stop
+    facility: manufacturing
+  note: Warri steel plant - Premium Steel and Mines Limited
+- op: tag_route
+  from: 555041593
+  to: 555069981
+  set:
+    line: Steel manufacturing plant
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Premium Steel and Mines Limited
+- op: split_edge
+  edge: 555065348
+  node: 555085088
+  note: Cape Gauge (1067) Eastern Line – Port Harcourt to Maiduguri
+- op: split_edge
+  edge: 555036713
+  node: 555082898
+  note: route North from Kuru
+- op: tag_route
+  from: 555016568
+  to: 555016479
+  set:
+    line: 'Eastern Line – Port Harcourt <-> Maiduguri '
+    mode: mixed
+    gauge: '1067'
+    status: rehabilitation
+    comment: 'see: https://bit.ly/3wGag6V and https://bit.ly/3Q1STnV. Section from Port Harcourt to Enugu
+      to be completed first, potentially by September 2022. Throughout there may be changes to the original
+      route and new branches. Line to remain 1067mm gauge.'
+- op: split_edge
+  edge: 555035110
+  node: 555081401
+- op: split_edge
+  edge: 555014199
+  node: 555081416
+- op: tag_route
+  from: 555090725
+  to: 555081416
+  set:
+    line: Linking Line – Kafanchan <-> Kaduna
+    mode: mixed
+    gauge: '1067'
+    status: rehabilitation
+    comment: Thought to be part of the Port Harcourt to Maiduguri rehabilitation project, eventually with
+      potential interchange with standard guage at Rigachikun
+- op: set_node
+  node: 555095378
+  set:
+    name: Jos
+    railway: station
+  note: assumed to be rehabilitation as part of Port Harcourt to Maiduguri  project
+- op: tag_route
+  from: 555082898
+  to: 555095378
+  set:
+    line: Kuru <-> Jos
+    mode: mixed
+    gauge: '1067'
+    status: rehabilitation
+    comment: Thought to be part of the Port Harcourt to Maiduguri rehabilitation project
+- op: set_node
+  node: 555113186
+  set:
+    name: Ashaka cement plant
+    railway: stop
+    facility: manufacturing
+  note: Ashaka cement plant
+- op: tag_route
+  from: 555085092
+  to: 555113186
+  set:
+    line: Ashaka cement plant
+    mode: freight
+    gauge: '1067'
+    status: rehabilitation
+    comment: Status unclear. May come back into use once the Port Harcourt to Maiduguri line is rehabilitated
+- op: split_edge
+  edge: 555070822
+  node: 555107360
+  note: route out of Zaria
+- op: tag_route
+  from: 555107360
+  to: 555031374
+  set:
+    line: 'Zaria <-> Kaura Namoda '
+    mode: mixed
+    gauge: '1067'
+    status: unknown
+    comment: Status unclear. Was apparenty rehabilitated 2014/15 but is probably out of use currently
+- op: set_node
+  node: 555061238
+  set:
+    gauge: '1435'
+    railway: station
+  note: Kajola
+- op: set_node
+  node: 555020031
+  set:
+    name: Abeokuta
+  note: Abeokuta
+- op: set_node
+  node: 555020036
+  set:
+    name: Adio
+  note: Adio
+- op: set_node
+  node: 555019552
+  set:
+    name: Ilorin
+  note: Ilorin
+- op: set_node
+  node: 555020028
+  set:
+    name: Minna
+  note: Minna
+- op: set_node
+  node: 555020005
+  set:
+    name: Kuchi
+  note: Kuchi
+- op: set_node
+  node: 555042717
+  set:
+    name: Jaji
+  note: Jaji
+- op: set_node
+  node: 555055453
+  set:
+    gauge: '1067'
+    railway: station
+  note: Omi-Adio
+- op: set_node
+  node: 555027348
+  set:
+    gauge: '1435'
+    railway: station
+  note: Wupa
+- op: set_node
+  node: 555113665
+  set:
+    gauge: '1435'
+    name: Kaduna North
+    railway: station
+  note: Kaduna North
+- op: copy_node
+  node: 555063049
+  edge: 555066583
+  note: Aba
+- op: set_nodes
+  nodes:
+  - 555020030
+  - 555020359
+  - 555020358
+  - 555020008
+  - 555020006
+  - 555020410
+  - 555024274
+  - 555031376
+  - 555016478
+  - 555016476
+  - 555016475
+  - 555031406
+  - 555031412
+  - 555019857
+  - 555019681
+  set:
+    name: unknown
+  note: unknown
+- op: set_nodes_on_edges
+  countries:
+  - Nigeria
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1435'
+  set:
+    gauge: '1435'
+- op: set_nodes_on_edges
+  countries:
+  - Nigeria
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'

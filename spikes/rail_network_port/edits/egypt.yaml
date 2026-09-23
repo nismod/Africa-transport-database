@@ -1,0 +1,1412 @@
+# Egypt rail network edits.
+#
+# Derived from egypt.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 1,970 lines of SQL: 234 edits,
+# 23 statements skipped as unable to reach the published network
+# (2 backup, 8 exploratory, 4 routing test, 8 template, 1 trap),
+# and 1 not transcribed - see the report.
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Egypt
+edits:
+- op: tag_route
+  from: 555002397
+  to: 555003179
+  set:
+    line: Cairo (Ramses) to Aswan
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: double-track section
+  note: Cairo (Ramses) to Aswan
+- op: tag_route
+  from: 555003179
+  to: 555062097
+  set:
+    line: Aswan to Aswan High Dam
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: double-track section
+  note: is this freight only?
+- op: set_node
+  node: 555062097
+  set:
+    name: Aswan High Dam
+    railway: station
+- op: split_edge
+  edge: 555003500
+  node: 555064865
+  note: not clear if this is still used for passenger services
+- op: tag_route
+  from: 555064865
+  to: 555010370
+  set:
+    line: Aswan to Shallal
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: status unclear, no scheduled services.
+- op: set_node
+  node: 555064417
+  set:
+    name: Abou Tartour Phosphate Mine (proposed)
+    railway: stop
+  note: plans for rehabilitation.
+- op: split_edge
+  edge: 555004671
+  node: 555065400
+- op: split_edge
+  edge: 555004669
+  node: 555124051
+- op: split_edge
+  edge: 555004670
+  node: 555124052
+- op: tag_route
+  from: 555064417
+  to: 555065400
+  set:
+    line: Abou Tartour
+    mode: freight
+    gauge: '1435'
+    status: disused
+    comment: Rehabilitation planned. Access to proposed phosphate mine/works
+- op: tag_route
+  from: 555010933
+  to: 555099186
+  set:
+    line: Kharga to Safaga (part)
+    mode: mixed
+    gauge: '1435'
+    status: disused
+    comment: Probably disused. Rehabilitation planned.
+- op: split_edge
+  edge: 555135470
+  node: 555097073
+- op: split_edge
+  edge: 555057437
+  node: 555097074
+- op: split_edge
+  edge: 555022046
+  node: 555073888
+- op: split_edge
+  edge: 555095112
+  node: 555073879
+- op: split_edge
+  edge: 5550951122
+  node: 555073889
+- op: insert_edge
+  source: 555097073
+  target: 555044792
+  oid: 556000039
+- op: set_edge
+  edge: 556000039
+  set:
+    type: conventional
+    status: disused
+- op: tag_route
+  from: 555097073
+  to: 555073879
+  set:
+    line: Kharga to Safaga <-> Cairo (Ramses) to Aswan
+    mode: mixed
+    gauge: '1435'
+    status: disused
+    comment: Probably disused. Rehabilitation planned.
+- op: tag_route
+  from: 555097073
+  to: 555073889
+  set:
+    line: Kharga to Safaga <-> Cairo (Ramses) to Aswan
+    mode: mixed
+    gauge: '1435'
+    status: disused
+    comment: Probably disused. Rehabilitation planned.
+- op: split_edge
+  edge: 555034145
+  node: 555080972
+  note: routing from Cairo to Aswan line
+- op: tag_route
+  from: 555080972
+  to: 555009692
+  set:
+    line: Al-Wasitah to El Fayoum
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Passenger services to Cairo according to ENR timetable
+- op: set_node
+  node: 555003079
+  set:
+    name: Al Maraziq (Mazghuna)
+  note: appears to be freight only?
+- op: split_edge
+  edge: 555011073
+  node: 555064785
+  note: route from Cairo - Aswan line
+- op: split_edge
+  edge: 555024161
+  node: 555064784
+- op: set_node
+  node: 555065407
+  set:
+    name: El Gedida Iron Mine (El Bahariya)
+    railway: stop
+    facility: mine
+- op: tag_route
+  from: 555064785
+  to: 555065407
+  set:
+    line: Al Maraziq - Gedida Iron Mine (El Bahariya)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Assumed freight only
+- op: set_node
+  node: 555093762
+  set:
+    name: El Tebbeen Industrial area
+    railway: stop
+    facility: manufacturing
+- op: split_edge
+  edge: 555011071
+  node: 555095091
+  note: routing from Cairo - Aswan line
+- op: split_edge
+  edge: 555054698
+  node: 555095086
+- op: split_edge
+  edge: 555054837
+  node: 555065008
+- op: tag_route
+  from: 555095091
+  to: 555093762
+  set:
+    line: El Tebbeen Industrial area
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Assumed freight only. Appears to serve El Nasr coke plant and perhaps Emeco Steel. Line provides
+      access to Gedida Iron Mine
+  note: Industrial area (El Nasr coke plant, Emeco Steel) El Tebbeen,
+- op: set_node
+  node: 555094809
+  set:
+    name: Military barracks (Badrshein)
+    railway: stop
+    facility: military
+  note: Military base, Badrshein
+- op: split_edge
+  edge: 555024172
+  node: 555094810
+- op: tag_route
+  from: 555094810
+  to: 555094809
+  set:
+    line: Military base, Badrshein
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Assumed freight only.
+- op: copy_node
+  node: 555003221
+  edge: 555038709
+  note: copy Qalyub station
+- op: tag_route
+  from: 555002397
+  to: 556003221
+  set:
+    line: Cairo (Ramses) to Qalyub
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: 4-track section
+- op: copy_node
+  node: 555009754
+  edge: 555066737
+  note: Qalyub to Banha
+- op: tag_route
+  from: 556003221
+  to: 556009754
+  set:
+    line: Qalyub to Banha
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: double track section?
+- op: tag_route
+  from: 556009754
+  to: 555034269
+  set:
+    line: Banha to Tanta
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: double track section?
+  note: Banha to Tanta
+- op: set_node
+  node: 555105359
+  set:
+    name: Masr (Alexandria)
+    railway: station
+    facility: ''
+  note: Tanta to Alexandria (Masr)
+- op: tag_route
+  from: 555034269
+  to: 555105359
+  set:
+    line: Tanta to Alexandria (Masr)
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: double track section. 4-track from Sidi Gaber to Alexandria
+- op: insert_node_at
+  oid: 557000004
+  lon: 29.9953
+  lat: 31.20868
+  set:
+    railway: station
+    name: Abis
+    country: Egypt
+    gauge: '1435'
+  note: insert at 29.99530,31.20868
+- op: copy_node
+  node: 557000004
+  edge: 555001984
+  note: copy to line
+- op: split_edge
+  edge: 555001983
+  node: 555074678
+- op: split_edge
+  edge: 555003582
+  node: 555074677
+- op: tag_route
+  from: 555074678
+  to: 555016846
+  set:
+    line: Abis to Marsa Matruh
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: change_target
+  edge: 555050699
+  node: 555105294
+  note: for routing
+- op: tag_route
+  from: 555105294
+  to: 555010560
+  set:
+    line: Marsa Matruh to Al Sallum
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: unclear if this is open to passenger traffic - no scheduled services
+- op: set_node
+  node: 555074490
+  set:
+    gauge: '1435'
+    name: Port of Dekheila
+    railway: stop
+    facility: port
+  note: Port of Dekheila
+- op: split_edge
+  edge: 555003740
+  node: 555074488
+  note: route into port
+- op: set_node
+  node: 555128460
+  set:
+    gauge: '1435'
+    name: Alexandria Port (Container Terminal)
+    railway: stop
+    facility: port
+  note: Alexandria Port
+- op: insert_edge
+  source: 555128459
+  target: 555056176
+  oid: 556000040
+- op: set_edge
+  edge: 556000040
+  set:
+    type: conventional
+    gauge: '1435'
+    status: open
+- op: insert_edge
+  source: 555128510
+  target: 555041033
+  oid: 556000041
+  note: simplify
+- op: set_edge
+  edge: 556000041
+  set:
+    type: conventional
+    gauge: '1435'
+    status: open
+- op: tag_route
+  from: 555056176
+  to: 555128460
+  set:
+    line: Alexandria Port (Container Terminal)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Alexandria Port (Container Terminal)
+- op: set_node
+  node: 555126482
+  set:
+    gauge: '1435'
+    name: Alexandria Port
+    railway: stop
+    facility: port
+  note: Alexandria port
+- op: tag_route
+  from: 555064893
+  to: 555126482
+  set:
+    line: Alexandria Port
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Berths, oil terminal, additional container terminal
+- op: copy_node
+  node: 555008683
+  edge: 555003596
+  note: 'note that this is disussed (e.g. see: https://www.youtube.com/watch?v=s8ys_ks8PNk)'
+- op: split_edge
+  edge: 5550035961
+  node: 556008683
+- op: set_node
+  node: 556008683
+  set:
+    status: disused
+- op: insert_edge
+  source: 555009964
+  target: 555040831
+  oid: 556000042
+  note: add link between Maamoura station and line to Rashid
+- op: insert_edge
+  source: 555070219
+  target: 555028171
+  oid: 556000043
+  note: add link to simplify routing from Sidi Gaber
+- op: set_edges
+  edges:
+  - 556000042
+  - 556000043
+  set:
+    type: conventional
+    status: open
+- op: tag_route
+  from: 555070219
+  to: 555062410
+  set:
+    line: Sidi Gaber to Rashid (Rosetta)
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555028168
+  set:
+    name: Abu Quir
+    railway: station
+    name_arabic: أبو قير
+  note: additional station node for Abu Quir
+- op: tag_route
+  from: 555009964
+  to: 555028168
+  set:
+    line: Maamoura to Abu Quir
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+- op: split_edge
+  edge: 555094625
+  node: 555150511
+  note: Al Busayit (Al Busayli) to Al-Qasabi
+- op: tag_route
+  from: 555150511
+  to: 555009916
+  set:
+    line: Al Busayit (Al Busayli) to Al-Qasabi
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: status unclear as no scheduled services in ENR timetable
+- op: copy_node
+  node: 555090553
+  edge: 555052569
+  note: copy a node and add link
+- op: insert_edge
+  source: 555009720
+  target: 556090553
+  oid: 556000044
+- op: set_edge
+  edge: 556000044
+  set:
+    type: conventional
+    status: open
+- op: tag_route
+  from: 555093852
+  to: 555009720
+  set:
+    line: Mutubis to Desouk
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: status unclear as no scheduled services in ENR timetable
+- op: set_nodes
+  nodes:
+  - 555073861
+  set:
+    name: Mahalet Rouh
+    railway: station
+    name_arabic: محلة روح
+  note: reorganise Mahalet Rouh station nodes
+- op: set_nodes
+  nodes:
+  - 555009791
+  - 555008650
+  set:
+    name: null
+    railway: null
+    name_arabic: null
+- op: split_edge
+  edge: 555024014
+  node: 555073963
+  note: routing from Danhour
+- op: split_edge
+  edge: 555069693
+  node: 555121187
+- op: tag_route
+  from: 555073963
+  to: 555009720
+  set:
+    line: Damnhour to Desouk
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+- op: tag_route
+  from: 555009720
+  to: 555073861
+  set:
+    line: Desouk to Mahalet Rouh
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Status unclear, no scheduled services
+- op: split_edge
+  edge: 555089033
+  node: 555121171
+  note: routing from Qallin
+- op: change_target
+  edge: 555045483
+  node: 555048969
+  note: routing into Shirbeen
+- op: delete_edge
+  edge: 555045484
+- op: tag_route
+  from: 555121171
+  to: 555048969
+  set:
+    line: Qallin to Shirbeen
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+- op: split_edge
+  edge: 555069052
+  node: 555123796
+  note: Al Zaqaziq to Damietta
+- op: split_edge
+  edge: 555069309
+  node: 555105449
+- op: split_edge
+  edge: 555092932
+  node: 555105450
+- op: set_node
+  node: 555105453
+  set:
+    name: Damietta
+    railway: station
+    name_arabic: دمياط
+- op: set_node
+  node: 555009641
+  set:
+    name: null
+    railway: null
+    name_arabic: null
+- op: set_node
+  node: 555074507
+  set:
+    name: Damietta Port (container terminal)
+    railway: stop
+    facility: port
+    name_arabic: null
+  note: Node for container terminal
+- op: set_node
+  node: 555074509
+  set:
+    name: Damietta Port (grain terminal)
+    railway: stop
+    facility: port
+    name_arabic: null
+- op: tag_route
+  from: 555074508
+  to: 555074507
+  set:
+    line: Damietta Port (Container Terminal)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555074508
+  to: 555074509
+  set:
+    line: Damietta Port (Grain Terminal)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555010002
+  set:
+    name: Kafra Saad
+  note: Kafr Saad to Kafr Suleiman
+- op: split_edge
+  edge: 555069200
+  node: 555074014
+- op: tag_route
+  from: 555074014
+  to: 555010003
+  set:
+    line: Kafr Saad to Kafr Suleiman
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Status unclear, no scheduled services in ENR timetable
+- op: split_edge
+  edge: 555069190
+  node: 555074965
+- op: split_edge
+  edge: 555069188
+  node: 555074966
+- op: tag_route
+  from: 555074965
+  to: 555074966
+  set:
+    line: Ras al Khalij loop
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+  where: oid != 5550691882
+- op: split_edge
+  edge: 555109425
+  node: 555105563
+  note: Mansoura to Matariya
+- op: set_node
+  node: 555010962
+  set:
+    name: Matariya
+- op: tag_route
+  from: 555105563
+  to: 555010962
+  set:
+    line: Mansoura to Matariya
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+- op: set_node
+  node: 555105476
+  set:
+    name: El Salheya
+    railway: station
+  note: Abu Kabir to El Salheya
+- op: split_edge
+  edge: 555067854
+  node: 555105476
+- op: tag_route
+  from: 555069219
+  to: 555105476
+  set:
+    line: Abu Kabir to El Salheya
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+- op: insert_edge
+  source: 555028259
+  target: 555009955
+  oid: 556000045
+  note: simplify routing
+- op: set_edges
+  edges:
+  - 556000045
+  set:
+    type: conventional
+    status: open
+- op: tag_route
+  from: 555009955
+  to: 555009943
+  set:
+    line: Fakous to Al Samaanah
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+- op: split_edge
+  edge: 555089097
+  node: 555073861
+  note: Tanta to El Mansura
+- op: tag_route
+  from: 555073629
+  to: 555105449
+  set:
+    line: Tanta to El Mansura
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Double track
+- op: insert_edge
+  source: 556009754
+  target: 555062490
+  oid: 556000046
+  note: simplify routing out of Banha
+- op: set_edges
+  edges:
+  - 556000046
+  set:
+    type: conventional
+    status: open
+- op: split_edge
+  edge: 354929456
+  node: 556009754
+- op: copy_node
+  node: 555105326
+  edge: 555033081
+- op: insert_edge
+  source: 555080491
+  target: 556105326
+  oid: 556000047
+- op: set_edges
+  edges:
+  - 556000047
+  set:
+    type: conventional
+    status: open
+- op: split_edge
+  edge: 555069055
+  node: 555105317
+- op: tag_route
+  from: 556009754
+  to: 555009693
+  set:
+    line: Banha to Al-Zaqaziq
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Double track
+- op: tag_route
+  from: 555069218
+  to: 555009614
+  set:
+    line: Al-Zaqaziq to El Ismailiyah
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Double track
+  note: Al-Zaqaziq to El Esmailiyah
+- op: set_node
+  node: 555003420
+  set:
+    name: Port Said
+    railway: station
+    name_arabic: بورسعيد
+  note: new node fr Port Said station
+- op: tag_route
+  from: 555009614
+  to: 555003420
+  set:
+    line: El Esmailiyah to Port Said
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 557000005
+  lon: 32.29832
+  lat: 31.24367
+  set:
+    railway: stop
+    name: Port Said (Container Terminal)
+    country: Egypt
+    facility: port
+  note: insert node
+- op: insert_edge
+  source: 555003421
+  target: 557000005
+  oid: 556000048
+  note: insert edge
+- op: set_edges
+  edges:
+  - 556000048
+  set:
+    type: conventional
+    status: open
+- op: tag_route
+  from: 555003421
+  to: 557000005
+  set:
+    line: Port Said (Container Terminal)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Not confirmed
+- op: insert_node_at
+  oid: 557000006
+  lon: 32.34661
+  lat: 30.65476
+  set:
+    country: Egypt
+  note: new node
+- op: insert_edge
+  source: 555120644
+  target: 557000006
+  oid: 556000049
+- op: set_edges
+  edges:
+  - 556000049
+  set:
+    line: Ber El Abd branch line
+    mode: mixed
+    type: conventional
+    status: construction
+    structure: movable bridge
+- op: insert_edge
+  source: 557000006
+  target: 555097353
+  oid: 556000050
+- op: set_edges
+  edges:
+  - 556000050
+  set:
+    mode: mixed
+    type: conventional
+    status: disused
+- op: tag_route
+  from: 557000006
+  to: 555009998
+  set:
+    line: Ber El Abd branch line
+    mode: mixed
+    gauge: '1435'
+    status: disused
+    comment: Out of use since opening of additional Suez Canal shipping lane. New swing bridge is under
+      construction which will enable the line to reopen
+  note: east of new shipping lane
+- op: split_edge
+  edge: 555038363
+  node: 555105309
+  note: west of new shipping lane
+- op: tag_route
+  from: 555105309
+  to: 555120644
+  set:
+    line: Ber El Abd branch line
+    mode: mixed
+    gauge: '1435'
+    status: disused
+    comment: 'Out of use since opening of additional Suez Canal shipping lane. New swing bridge is under
+      construction which will enable the line to reopen. See: https://en.wikipedia.org/wiki/El_Ferdan_Railway_Bridge'
+- op: split_edge
+  edge: 555022096
+  node: 555073909
+  note: route to suez
+- op: split_edge
+  edge: 555004593
+  node: 555073910
+- op: tag_route
+  from: 555073909
+  to: 555022882
+  set:
+    line: El Wasfiya to Suez
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: copy_node
+  node: 555153933
+  edge: 555103907
+  note: create station for Adly Manosur
+- op: set_node
+  node: 556153933
+  set:
+    status: construction
+    name: Adly Mansour
+    railway: station
+    name_arabic: عدلى منصور
+- op: tag_route
+  from: 556153933
+  to: 555022882
+  set:
+    line: Adly Mansour (Cairo) to Suez
+    mode: mixed
+    gauge: '1435'
+    status: rehabilitation
+    comment: 'Not thought to be services currently. see: https://egyptindependent.com/transport-minister-inspects-pilot-operation-of-lrt-to-the-new-administrative-capital'
+- op: insert_edge
+  source: 555010004
+  target: 555074016
+  oid: 556000051
+  note: insert new edge
+- op: set_edges
+  edges:
+  - 556000051
+  set:
+    type: conventional
+    gauge: null
+    status: open
+- op: split_edge
+  edge: 555022421
+  node: 555074016
+  note: split edge
+- op: set_node
+  node: 555024218
+  set:
+    name: Sokhna Port
+    railway: stop
+    facility: port
+- op: tag_route
+  from: 555074018
+  to: 555024218
+  set:
+    line: Suez to Sokhna Port
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: 'Assumed freight only. Apparently not disused, see: https://www.sis.gov.eg/Story/160371/1st-container-freight-train-operated-from-Sokhna-to-West-Port-Said-port?lang=en-us'
+- op: split_edge
+  edge: 555022226
+  node: 555119035
+  note: Kafr El-Zayat to Menuf
+- op: tag_route
+  from: 555119035
+  to: 555039038
+  set:
+    line: Kafr El-Zayat to Menuf
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+- op: insert_edge
+  source: 555120864
+  target: 555034269
+  oid: 556000052
+  note: Tanta to Menuf
+- op: set_edges
+  edges:
+  - 556000052
+  set:
+    type: conventional
+    gauge: null
+    status: open
+- op: insert_edge
+  source: 555073998
+  target: 555039038
+  oid: 556000053
+- op: set_edges
+  edges:
+  - 556000053
+  set:
+    type: conventional
+    gauge: null
+    status: open
+- op: tag_route
+  from: 555034269
+  to: 555039038
+  set:
+    line: Tanta to Menuf
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+- op: split_edge
+  edge: 555012295
+  node: 555105456
+  note: Banha to Menuf
+- op: tag_route
+  from: 555105456
+  to: 555073998
+  set:
+    line: Banha to Menuf
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+- op: split_edge
+  edge: 555086228
+  node: 555073977
+  note: Qalyub to Menuf
+- op: copy_node
+  node: 555105622
+  edge: 5550387091
+- op: change_source
+  edge: 555069496
+  node: 556105622
+- op: tag_route
+  from: 556105622
+  to: 555039038
+  set:
+    line: Qalyub to Menuf
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+- op: split_edge
+  edge: 555103862
+  node: 555065055
+  note: Cairo to Ityai Al-Barud
+- op: split_edge
+  edge: 555013652
+  node: 555065054
+- op: split_edge
+  edge: 555024023
+  node: 555099317
+- op: tag_route
+  from: 555065054
+  to: 555099317
+  set:
+    line: Cairo to Ityai Al-Barud
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Scheduled services (from Bashteel)
+- op: split_edge
+  edge: 555003736
+  node: 555105448
+- op: split_edge
+  edge: 555069166
+  node: 555099319
+- op: split_edge
+  edge: 555070082
+  node: 555099304
+- op: tag_route
+  from: 555099304
+  to: 555105448
+  set:
+    line: Mahattat al Tayriyah to Sidi Marghab
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Status unclear, no scheduled services
+- op: split_edge
+  edge: 555069689
+  node: 555105701
+  note: Al Zaqaziq to Tanta
+- op: tag_route
+  from: 555080491
+  to: 555074519
+  set:
+    line: Al Zaqaziq to Tanta
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+  where: oid not in (555033078, 5550690551)
+- op: insert_edge
+  source: 555105454
+  target: 555009766
+  oid: 556000054
+  note: Zifta to Banha
+- op: set_edges
+  edges:
+  - 556000054
+  set:
+    type: conventional
+    gauge: null
+    status: open
+- op: split_edge
+  edge: 5550122951
+  node: 555065393
+- op: tag_route
+  from: 555105454
+  to: 555065393
+  set:
+    line: Zifta to Banha
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+- op: insert_edge
+  source: 555073829
+  target: 555105724
+  oid: 556000055
+  note: simplify routing
+- op: set_edges
+  edges:
+  - 556000055
+  set:
+    type: conventional
+    gauge: null
+    status: open
+- op: split_edge
+  edge: 555022008
+  node: 555105724
+- op: split_edge
+  edge: 555089096
+  node: 555130128
+- op: tag_route
+  from: 555073829
+  to: 555130128
+  set:
+    line: Santa to Mahalet Rouh
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Scheduled services
+- op: insert_edge
+  source: 555105620
+  target: 555083851
+  oid: 556000056
+  note: Al Zaqaziq to Qalyub
+- op: set_edges
+  edges:
+  - 556000056
+  set:
+    type: conventional
+    gauge: null
+    status: open
+- op: tag_route
+  from: 555105318
+  to: 555083851
+  set:
+    line: Al Zaqaziq to Qalyub
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Status unclear, no scheduled services
+- op: split_edge
+  edge: 555069565
+  node: 555074493
+  note: Shebin Al-Qanater to El Marg
+- op: tag_route
+  from: 555074493
+  to: 555065057
+  set:
+    line: Shebin Al-Qanater to Al Marj
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Scheduled services on part of this route
+- op: tag_route
+  from: 555040793
+  to: 555028149
+  set:
+    line: Branch for New Borg El Arab
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Station serving new city (no currently scheduled services)
+  note: station in timetable but no current services
+- op: change_source
+  edge: 555069971
+  node: 555105876
+  note: Branch to El Zawya El Hamra (Al Farz?)
+- op: set_node
+  node: 555003100
+  set:
+    name: El Zawya El Hamra
+- op: tag_route
+  from: 555105876
+  to: 555003100
+  set:
+    line: Branch to El Zawya El Hamra
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Branch to El Zawya El Hamra station (no currently scheduled services)
+  note: not clear current status - in ENR timetable but no scheduled services
+- op: set_node
+  node: 555030745
+  set:
+    name: Mohamed Naguib Military Base
+    railway: stop
+    facility: military
+  note: Mohamed Naguib Military Base
+- op: tag_route
+  from: 555112878
+  to: 555030745
+  set:
+    line: Mohamed Naguib Military Base
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555065398
+  to: 555062264
+  set:
+    line: Baris (Paris) branch
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: disused
+    comment: Presumed disused. May be reopened as part of planned Abou Tartour to Safaga rehabilitation?
+  note: Baris (Paris) branch
+- op: set_node
+  node: 555021205
+  set:
+    name: Arad
+  note: update stations
+- op: set_node
+  node: 555003139
+  set:
+    name: Samla
+- op: set_node
+  node: 555024927
+  set:
+    name: El Hamam
+- op: set_node
+  node: 555003131
+  set:
+    name: EL Gharbaniat
+- op: set_node
+  node: 555003130
+  set:
+    name: Borg El Arab
+- op: set_node
+  node: 555040791
+  set:
+    name: Bahig
+- op: set_node
+  node: 555044264
+  set:
+    name: King Marriot
+    name_arabic: null
+- op: set_node
+  node: 555044265
+  set:
+    name: El Amreya
+    name_arabic: null
+- op: set_node
+  node: 555040895
+  set:
+    name: M-El Max
+    name_arabic: null
+- op: set_node
+  node: 555028890
+  set:
+    name: El Raml
+- op: set_node
+  node: 555040823
+  set:
+    name: El Eslah
+    railway: station
+- op: set_node
+  node: 555024980
+  set:
+    name: El Baharia Academy
+- op: set_node
+  node: 555062866
+  set:
+    name: El Rahmanyh
+- op: set_node
+  node: 555009842
+  set:
+    name: El Shohadaa
+- op: set_node
+  node: 555019318
+  set:
+    name: Magdy Ghazy
+- op: set_node
+  node: 555008654
+  set:
+    name: El Kom El Taweel
+- op: set_node
+  node: 555010001
+  set:
+    name: Kafr Saad El Balad
+- op: copy_node
+  node: 555028254
+  edge: 555089010
+  note: node for Qutur station
+- op: set_node
+  node: 556028254
+  set:
+    name: Qutur
+    railway: station
+- op: set_node
+  node: 555010347
+  set:
+    name: Gelbana
+- op: set_node
+  node: 555003228
+  set:
+    name: El Gabal El Asfar
+- op: set_node
+  node: 555062410
+  set:
+    name: Rosetta
+    name_arabic: رشيد
+- op: set_node
+  node: 555028248
+  set:
+    name: Nahtay
+- op: set_node
+  node: 555006692
+  set:
+    name: El Manshyet El Kobra
+- op: set_node
+  node: 555028249
+  set:
+    name: El Santa
+- op: set_node
+  node: 555015718
+  set:
+    name: Nat El Kom
+- op: set_node
+  node: 555008643
+  set:
+    name: El Galatma
+- op: set_node
+  node: 555015257
+  set:
+    name: El Manashy
+    name_arabic: null
+- op: set_node
+  node: 555023707
+  set:
+    name: El Fant
+- op: set_node
+  node: 555010991
+  set:
+    name: Damarees
+    name_arabic: null
+- op: set_node
+  node: 555023730
+  set:
+    name: Dishna
+- op: set_node
+  node: 555023733
+  set:
+    name: Qift
+- op: set_node
+  node: 555009566
+  set:
+    name: Armnt
+- op: set_node
+  node: 555010024
+  set:
+    name: El Kalh
+- op: set_node
+  node: 555010021
+  set:
+    name: El Atwani
+- op: set_node
+  node: 555033909
+  set:
+    name: Idfu
+- op: copy_node
+  node: 555033429
+  edge: 555028348
+- op: set_node
+  node: 556033429
+  set:
+    name: Radiseya
+- op: copy_node
+  node: 555033428
+  edge: 555028352
+- op: copy_node
+  node: 555009999
+  edge: 555069551
+  note: node for Shebin Al-Qanater station
+- op: set_node
+  node: 555033426
+  set:
+    name: Gaafr El Sadiq
+- op: set_node
+  node: 555023736
+  set:
+    name: Shatb
+- op: set_node
+  node: 555003457
+  set:
+    name: Baris (Paris)
+- op: set_nodes
+  nodes:
+  - 555003137
+  - 555011315
+  - 555009963
+  - 555009980
+  - 555010350
+  - 555016713
+  - 555016711
+  - 555014810
+  - 555026310
+  - 555028262
+  - 555062373
+  - 555003461
+  - 555010022
+  - 556033428
+  - 555037071
+  - 555028344
+  - 555033439
+  - 555038427
+  - 555028163
+  - 555012741
+  - 555022849
+  - 555022850
+  set:
+    name: unknown
+- op: set_nodes
+  nodes:
+  - 555062867
+  - 555063166
+  - 555009841
+  - 555062898
+  - 555009846
+  - 555028252
+  - 555009906
+  - 555062392
+  set:
+    gauge: null
+    name: null
+    railway: null
+  note: remove duplicate stations or incorrect station nodes
+- op: set_nodes_on_edges
+  countries:
+  - Egypt
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1435'
+  set:
+    gauge: '1435'

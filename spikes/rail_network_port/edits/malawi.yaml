@@ -1,0 +1,656 @@
+# Malawi rail network edits.
+#
+# Derived from malawi.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 1,016 lines of SQL: 98 edits,
+# 17 statements skipped as unable to reach the published network
+# (3 backup, 7 exploratory, 1 routing test, 5 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Malawi
+edits:
+- op: set_node
+  node: 555031146
+  set:
+    name: Nkaya
+  note: Sena line Mchinji (Zambian border) – Nkaya Junction
+- op: tag_route
+  from: 555012146
+  to: 555031146
+  set:
+    line: Sena Line (Mchinji – Nkaya)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555064646
+  node: 555064182
+  note: Nkaya Junction - Nayuchi
+- op: split_edge
+  edge: 555002048
+  node: 555126141
+- op: set_edge
+  edge: 5550151401
+  set:
+    country: Malawi
+- op: tag_route
+  from: 555064182
+  to: 559000040
+  set:
+    line: Nkaya Junction - Nayuchi
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Part of Nacala Logistics Corridor. Main freight the transport of coal from Moatize coal mines
+      in Mozambique to the port of Nacala. Also passenger services
+- op: tag_route
+  from: 555101888
+  to: 555126141
+  set:
+    line: Nkaya Junction - Nayuchi
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Part of Nacala Logistics Corridor. Main freight the transport of coal from Moatize coal mines
+      in Mozambique to the port of Nacala
+- op: tag_route
+  from: 555031146
+  to: 555007781
+  set:
+    line: Senna Line (Nkaya - Limbe)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: this is open for freight and passenger services
+- op: tag_route
+  from: 555007803
+  to: 555031146
+  set:
+    mode: mixed
+  note: Balaka - Nkaya
+- op: tag_route
+  from: 555007781
+  to: 555007634
+  set:
+    line: Sena Line (Limbe - Nansadi)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'No passenger services. This section has been rehablitated (May 2021), see: https://bit.ly/3EPoc2a'
+  note: Limbe - Nansadi
+- op: tag_route
+  from: 555007634
+  to: 555007801
+  set:
+    line: Sena Line (Nansandi - Luchenza)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'No passenger services. It was reported in May 2021 that the rehabilitation of this section
+      was at an advanced stage. See: https://bit.ly/3EPoc2a. Completion expected in December 2021 (see:
+      https://bit.ly/3KXBMo2)'
+  note: Nansadi - Luchenza
+- op: tag_route
+  from: 555007801
+  to: 555007804
+  set:
+    line: Sena Line (Luchenza - Sandama)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: rehabilitation
+    comment: 'It was reported in July 2021 that the rehabilitation of this section would be completed
+      by May 2022 (see: https://bit.ly/3KXBMo2). Delays were reported in June 2022 (see: http://bit.ly/3EOzns2).
+      Assume may not be complete.'
+  note: Luchenza - Sandama
+- op: insert_edge
+  source: 555099470
+  target: 555090222
+  oid: 556000084
+  note: 'rehabilitation planned. See: https://times.mw/long-wait-for-rail-line-rehabilitation/'
+- op: insert_edge
+  source: 555090221
+  target: 555129531
+  oid: 556000085
+- op: tag_route
+  from: 555007804
+  to: 555031302
+  set:
+    line: Sandama - Bangula
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'Rehabilitation is expected. See: https://times.mw/long-wait-for-rail-line-rehabilitation/.
+      Note that two bridges are missing across the Shire River. They have been added to the network for
+      routing purposes.'
+  where: oid != 555100306
+  note: prevent routing back via Mozambique
+- op: set_edges
+  edges:
+  - 556000084
+  - 556000085
+  set:
+    status: abandoned
+  note: mark missing bridge sections over the Shire River as abandoned
+- op: set_node
+  node: 555031294
+  set:
+    railway: station
+- op: insert_edge
+  source: 555144923
+  target: 555144924
+  oid: 556000086
+  note: insert missing edges
+- op: insert_edge
+  source: 555143160
+  target: 555144925
+  oid: 556000087
+- op: tag_route
+  from: 555031302
+  to: 559000041
+  set:
+    line: Sena Line (Bangula - Marka)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: rehabilitation
+    comment: 'Rehabilitation project taking place. See: https://bit.ly/3ZtYgBT. Expected completion by
+      end of 2024.'
+- op: split_edge
+  edge: 555049052
+  node: 555112808
+  note: 'See: https://openjicareport.jica.go.jp/pdf/12124558_01.pdf (page 59)'
+- op: split_edge
+  edge: 555077899
+  node: 555112806
+- op: tag_route
+  from: 555112808
+  to: 555031179
+  set:
+    line: Changalume branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'Originally served Changalume limestone quarry and cement works. Most recent owner was Portland
+      Cement, but they ceased operations in 2002. See: https://openjicareport.jica.go.jp/pdf/12124558_01.pdf
+      (page 59). Assume this line is disused (though it may possibly be used in connection with an army
+      barracks near the old quarry - no indication on satellite imagery)'
+- op: set_node
+  node: 555143152
+  set:
+    name: National Oil Company of Malawi (NOCMA) Lilongwe Depot
+    railway: stop
+    facility: fuel storage
+  note: National Oil Company of Malawi (NOCMA) Lilongwe Depot (fuel storage)
+- op: split_edge
+  edge: 555086060
+  node: 555143151
+- op: tag_route
+  from: 555143151
+  to: 555143152
+  set:
+    line: NOCMA Lilongwe Depot
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555003780
+  node: 555112530
+  note: Kanengo Industrial Area
+- op: set_node
+  node: 555055240
+  set:
+    name: Kanengo Industrial Area
+    railway: stop
+    facility: industrial area
+- op: split_edge
+  edge: 555086074
+  node: 555138790
+- op: tag_route
+  from: 555138790
+  to: 555055240
+  set:
+    line: Kanengo Industrial Area (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555077701
+  node: 555112514
+- op: split_edge
+  edge: 555077700
+  node: 555112504
+- op: split_edge
+  edge: 555077699
+  node: 555112503
+- op: split_edge
+  edge: 5550037802
+  node: 555112500
+- op: split_edge
+  edge: 555077702
+  node: 555112506
+- op: split_edge
+  edge: 555077708
+  node: 555138792
+- op: tag_route
+  from: 555112500
+  to: 555112514
+  set:
+    line: Kanengo Industrial Area (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555112514
+  to: 555138792
+  set:
+    line: Kanengo Industrial Area (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555112507
+  set:
+    name: Manica Malawi Lilongwe Container Depot
+    railway: stop
+    facility: container terminal
+  note: Manica Malawi Lilongwe Container Depot
+- op: tag_route
+  from: 555112514
+  to: 555112507
+  set:
+    line: Manica Malawi Lilongwe Container Depot
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000097
+  lon: 33.8074
+  lat: -13.89337
+  set:
+    country: Malawi
+  note: National Food Reserve Agency (Kanengo grain silos)
+- op: copy_node
+  node: 558000097
+  edge: 5550777082
+- op: set_node
+  node: 559000097
+  set:
+    comment: Unclear whether there is a rail connection into the facility
+    name: National Food Reserve Agency (grain silos)
+    railway: stop
+    facility: food storage
+- op: tag_route
+  from: 555138792
+  to: 559000097
+  set:
+    line: National Food Reserve Agency (grain silos)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Unclear whether there is a rail connection into the facility
+- op: set_node
+  node: 555138793
+  set:
+    comment: ''
+    name: Total Kanengo Fuel Depot
+    railway: stop
+    facility: fuel depot
+  note: Total Kanengo Fuel Depot
+- op: tag_route
+  from: 555138792
+  to: 555138793
+  set:
+    line: Total Kanengo Fuel Depot
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555112521
+  set:
+    name: Kanengo
+    railway: station
+  note: Kanengo station
+- op: split_edge
+  edge: 555086722
+  node: 555112545
+- op: split_edge
+  edge: 555077725
+  node: 555112548
+- op: split_edge
+  edge: 555077726
+  node: 555112549
+- op: split_edge
+  edge: 555077728
+  node: 555112553
+- op: set_node
+  node: 555112554
+  set:
+    name: Chipoka Port (Lake Malawi)
+    railway: stop
+    facility: port (inland)
+- op: tag_route
+  from: 555112545
+  to: 555112554
+  set:
+    line: Chipoka Port (Lake Malawi)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555020970
+  node: 555112580
+- op: split_edge
+  edge: 555049071
+  node: 555112589
+- op: split_edge
+  edge: 555077751
+  node: 555112586
+- op: split_edge
+  edge: 555077749
+  node: 555112585
+- op: split_edge
+  edge: 555077746
+  node: 555112583
+- op: split_edge
+  edge: 5550490711
+  node: 555112588
+- op: split_edge
+  edge: 5550209701
+  node: 555073372
+- op: tag_route
+  from: 555112588
+  to: 555073372
+  set:
+    line: Liwonde business area (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Liwonde business area (access)
+- op: set_node
+  node: 555073371
+  set:
+    name: Malawi Fertilizer Company
+    railway: stop
+    facility: manufacturing
+  note: Malawi Fertilizer Company
+- op: tag_route
+  from: 555073372
+  to: 555073371
+  set:
+    line: Malawi Fertilizer Company
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555073373
+  set:
+    comment: Agricultural Development and Marketing Corporation
+    name: ADMARC Rice Mill and Ground Nut Factory
+    railway: stop
+    facility: manufacturing
+- op: tag_route
+  from: 555073372
+  to: 555073373
+  set:
+    line: ADMARC Rice Mill and Ground Nut Factory
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555101852
+  set:
+    comment: ''
+    name: Mota-Engil Malawi, Campus
+    railway: stop
+    facility: engineering
+  note: Mota-Engil, Malawi. Campus
+- op: split_edge
+  edge: 555062132
+  node: 555101851
+- op: tag_route
+  from: 555101851
+  to: 555101852
+  set:
+    line: Mota-Engil Malawi, Campus
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555112822
+  set:
+    comment: ''
+    name: Chirimba industrial area
+    railway: stop
+    facility: industrial area
+  note: Chirimba industrial area
+- op: split_edge
+  edge: 555077906
+  node: 555112821
+- op: split_edge
+  edge: 555098066
+  node: 555112818
+- op: tag_route
+  from: 555112818
+  to: 555112822
+  set:
+    line: Chirimba industrial area (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555112817
+  set:
+    comment: ''
+    name: Chirimba Container Terminal CCTL
+    railway: stop
+    facility: container terminal
+  note: Chirimba Container Terminal CCTL
+- op: tag_route
+  from: 555112821
+  to: 555112817
+  set:
+    line: Chirimba Container Terminal CCTL
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555112835
+  set:
+    comment: ''
+    name: Fuel storage depot (Blantyre)
+    railway: stop
+    facility: fuel depot
+  note: Container terminal
+- op: split_edge
+  edge: 555003948
+  node: 555112836
+- op: split_edge
+  edge: 555077916
+  node: 555112837
+- op: tag_route
+  from: 555112836
+  to: 555112837
+  set:
+    line: Blantyre Industrial Area (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555112837
+  to: 555112835
+  set:
+    line: Fuel storage depot (Blantyre)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555112840
+  set:
+    comment: ''
+    name: Container terminal (Blantyre)
+    railway: stop
+    facility: container terminal
+- op: split_edge
+  edge: 555077917
+  node: 555112839
+- op: tag_route
+  from: 555112837
+  to: 555112840
+  set:
+    line: Container terminal (Blantyre)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000098
+  lon: 35.06511
+  lat: -15.8218
+  set:
+    country: Malawi
+  note: Total Energies Limbe Depot - https://times.mw/pil-resumes-rail-fuel-haulage/
+- op: copy_node
+  node: 558000098
+  edge: 555085095
+- op: insert_node_at
+  oid: 558000099
+  lon: 35.06393
+  lat: -15.82077
+  set:
+    railway: stop
+    name: Limbe Dry Port
+    country: Malawi
+    facility: dry port
+  note: '559000098'
+- op: insert_edge
+  source: 559000098
+  target: 558000099
+  oid: 556000088
+- op: tag_route
+  from: 559000098
+  to: 558000099
+  set:
+    line: Limbe Dry Port
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 558000099
+  set:
+    comment: https://times.mw/limbe-dry-port-to-cost-5-5-million/?amp=1
+- op: split_edge
+  edge: 555077928
+  node: 555112853
+- op: split_edge
+  edge: 555077926
+  node: 555112871
+- op: change_target
+  edge: 5550779282
+  node: 559000098
+- op: tag_route
+  from: 559000098
+  to: 555112871
+  set:
+    line: Limbe Sidings (industrial area)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555112854
+  set:
+    name: Limbe Auction Floors (Tobacco)
+    railway: stop
+    facility: Commodity auctions
+  note: Total Energies Limbe Depot - https://times.mw/pil-resumes-rail-fuel-haulage/
+- op: set_node
+  node: 555112872
+  set:
+    comment: https://times.mw/pil-resumes-rail-fuel-haulage/
+    name: Total Energies Limbe Depot
+    railway: stop
+    facility: fuel depot
+- op: tag_route
+  from: 555112871
+  to: 555112854
+  set:
+    line: Limbe Auction Floors (Tobacco)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555112871
+  to: 555112872
+  set:
+    line: Total Energies Limbe Depot
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: copy_node
+  node: 555031294
+  edge: 5551202582
+  note: fix stations
+- op: set_nodes_on_edges
+  countries:
+  - Malawi
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'

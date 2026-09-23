@@ -1,0 +1,376 @@
+# Eritrea, Djibouti and Ethiopia rail network edits.
+#
+# Derived from eritrea_djibouti_ethiopia.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 577 lines of SQL: 51 edits,
+# 16 statements skipped as unable to reach the published network
+# (2 backup, 7 exploratory, 1 routing test, 5 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Eritrea, Djibouti and Ethiopia
+edits:
+- op: split_edge
+  edge: 555105000
+  node: 555114126
+  note: Massawa Port to Asmara
+- op: tag_route
+  from: 555032419
+  to: 555010387
+  set:
+    line: Massawa Port - Asmara
+    mode: mixed
+    type: conventional
+    gauge: '950'
+    status: open
+    comment: 'Believed to be some freight and limited passenger services on this line which was reconstructed
+      between 1995-2003. See: https://www.sinfin.net/railways/world/eritrea.html'
+- op: tag_route
+  from: 555031479
+  to: 555114126
+  set:
+    line: Massawa-Taulud station access
+    mode: mixed
+    type: conventional
+    gauge: '950'
+    status: open
+    comment: Station may be disused
+  note: Massawa-Taulud station access
+- op: set_node
+  node: 555050096
+  set:
+    name: Djibouti Port (Container)
+    railway: stop
+    facility: port
+  note: Create Djibouti port stops
+- op: set_node
+  node: 555046103
+  set:
+    name: Doraleh Port (Terminals)
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555127657
+  set:
+    name: Sebeta Freight Terminal
+    railway: stop
+    facility: Freight Terminal
+  note: Sebeta Freight Terminal
+- op: copy_node
+  node: 555031598
+  edge: 555070336
+  note: copy Sebeta station
+- op: set_node
+  node: 555127657
+  set:
+    name: Nagad
+    railway: station
+    name_arabic: نقاذ
+- op: tag_route
+  from: 555028277
+  to: 556031598
+  set:
+    line: Ethio-Djibouti Railway
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: 'Electrified. Completed 2016. '
+- op: split_edge
+  edge: 5550703361
+  node: 555127656
+  note: Sebeta - Sebeta Freight Terminal
+- op: tag_route
+  from: 556031598
+  to: 555127657
+  set:
+    line: Ethio-Djibouti Railway (Sebeta Freight Terminal)
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Electrified. Completed 2016.
+- op: tag_route
+  from: 555028277
+  to: 555046103
+  set:
+    line: Ethio-Djibouti Railway (Nagad - Doraleh Port)
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Nagad - Doraleh Port
+- op: split_edge
+  edge: 555097421
+  node: 555137091
+  note: Djibouti Port
+- op: tag_route
+  from: 555137091
+  to: 555138906
+  set:
+    line: Ethio-Djibouti Railway (Djibouti Port)
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555097426
+  node: 555132294
+  note: but damage during Tigray War. Assume not open.
+- op: copy_node
+  node: 555028984
+  edge: 555104012
+  note: copy Awash station
+- op: copy_node
+  node: 555063192
+  edge: 555115923
+  note: copy Kombolcha station
+- op: set_node
+  node: 556063192
+  set:
+    name: Kombolcha
+    railway: station
+  note: update
+- op: tag_route
+  from: 555132294
+  to: 556063192
+  set:
+    line: Awash to Kombolcha
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: construction
+    comment: Part of proposed Awash - Weldiya new line. This section was thought to be complete and trials
+      were taking place 2018. Howver, now thought to have been damaged during Tigray War. Expected 120km/h
+      passenger and 80-90km/h freight. Electrified.
+- op: tag_route
+  from: 555096137
+  to: 555096142
+  set:
+    line: Addis Ababa Light Rail (Common Section)
+    mode: passenger
+    type: light rail
+    gauge: '1435'
+    status: open
+    comment: Up to 70km/h. Electrified
+  note: Common Section
+- op: set_node
+  node: 555038980
+  set:
+    railway: station
+  note: Green Line Ayat - Tor Hailoch
+- op: tag_route
+  from: 555038980
+  to: 555096137
+  set:
+    line: Addis Ababa Light Rail (Green Line)
+    mode: passenger
+    type: light rail
+    gauge: '1435'
+    status: open
+    comment: Up to 70km/h. Electrified
+- op: tag_route
+  from: 555096142
+  to: 555028307
+  set:
+    line: Addis Ababa Light Rail (Green Line)
+    mode: passenger
+    type: light rail
+    gauge: '1435'
+    status: open
+    comment: Up to 70km/h. Electrified
+- op: tag_route
+  from: 555034951
+  to: 555096142
+  set:
+    line: Addis Ababa Light Rail (Blue Line)
+    mode: passenger
+    type: light rail
+    gauge: '1435'
+    status: open
+    comment: Up to 70km/h. Electrified
+  note: Blue Line (Menelik Square to Kaliti)
+- op: tag_route
+  from: 555096137
+  to: 555028316
+  set:
+    line: Addis Ababa Light Rail (Blue Line)
+    mode: passenger
+    type: light rail
+    gauge: '1435'
+    status: open
+    comment: Up to 70km/h. Electrified
+- op: set_nodes
+  nodes:
+  - 555035519
+  - 555038995
+  - 555028305
+  - 555028301
+  - 555039047
+  - 555023210
+  - 555039045
+  - 555039044
+  - 555028448
+  - 555028451
+  - 555028297
+  - 555038997
+  - 555028292
+  set:
+    railway: null
+  note: fix duplicate stations/stop on Addis Ababa Light Rail
+- op: copy_node
+  node: 555014908
+  edge: 555034216
+- op: copy_node
+  node: 555014913
+  edge: 555034264
+  note: Ghinda
+- op: copy_node
+  node: 555029296
+  edge: 555072127
+  note: Addis Ababa-Kality
+- op: set_node
+  node: 555028983
+  set:
+    name: Addis Ababa-Furi-Labu
+  note: Furi-Labu
+- op: set_node
+  node: 555028527
+  set:
+    railway: station
+  note: Mofo station
+- op: insert_node_at
+  oid: 558000012
+  lon: 39.92062
+  lat: 8.91348
+  set:
+    railway: station
+    name: Metehara
+    country: Ethiopia
+    gauge: '1435'
+  note: add station
+- op: copy_node
+  node: 558000012
+  edge: 555097431
+- op: set_node
+  node: 555046459
+  set:
+    name: Sirba Kunkur
+    railway: station
+  note: Sirba Kunkur
+- op: set_node
+  node: 555046460
+  set:
+    name: Mieso
+    railway: station
+  note: Mieso
+- op: insert_node_at
+  oid: 558000013
+  lon: 42.14951
+  lat: 10.42262
+  set:
+    railway: station
+    name: Adigala
+    country: Ethiopia
+  note: add station
+- op: copy_node
+  node: 558000013
+  edge: 555116093
+- op: insert_node_at
+  oid: 558000014
+  lon: 41.94252
+  lat: 9.97815
+  set:
+    railway: station
+    name: Arawa
+    country: Ethiopia
+  note: add station
+- op: copy_node
+  node: 558000014
+  edge: 555069878
+- op: copy_node
+  node: 555062844
+  edge: 555097463
+  note: Dirē Dawa
+- op: copy_node
+  node: 555028278
+  edge: 555116069
+  note: Dewele
+- op: copy_node
+  node: 555062838
+  edge: 555116846
+  note: Gare d'Ali-sabieh
+- op: copy_node
+  node: 555063027
+  edge: 555083313
+  note: Holl-Holl
+- op: set_node
+  node: 556063027
+  set:
+    name: Holl-Holl
+- op: set_node
+  node: 555127594
+  set:
+    name: Mojo Dry Port
+    railway: stop
+    facility: dry port
+  note: Mojo Dry Port
+- op: insert_edge
+  source: 555056594
+  target: 555056586
+  oid: 556000062
+  note: simply join to main line
+- op: tag_route
+  from: 555056586
+  to: 555127594
+  set:
+    line: Mojo Dry Port
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555050970
+  set:
+    name: Dire Dawa Dry Port
+    railway: stop
+    facility: dry port
+  note: Dire Dawa Dry Port
+- op: tag_route
+  from: 555038623
+  to: 555050970
+  set:
+    line: Dire Dawa Dry Port
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: set_nodes_on_edges
+  countries:
+  - Eritrea
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '950'
+  set:
+    gauge: '950'
+- op: set_nodes_on_edges
+  countries:
+  - Ethiopia
+  - Djibouti
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1435'
+  set:
+    gauge: '1435'

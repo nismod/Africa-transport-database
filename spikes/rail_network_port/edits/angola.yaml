@@ -1,0 +1,541 @@
+# Angola rail network edits.
+#
+# Derived from angola.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 660 lines of SQL: 101 edits,
+# 16 statements skipped as unable to reach the published network
+# (2 backup, 7 exploratory, 1 routing test, 5 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Angola
+edits:
+- op: tag_route
+  from: 555006943
+  to: 555030865
+  set:
+    line: Luanda Railway
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: appears to be double track to Baia
+- op: split_edge
+  edge: 555017047
+  node: 555082619
+  note: Malange Industrial site
+- op: set_node
+  node: 555082620
+  set:
+    comment: Purpose of site unknown
+    name: Malange industrial site
+    railway: stop
+    facility: unknown
+- op: tag_route
+  from: 555030865
+  to: 555082620
+  set:
+    line: Malange industrial site
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000015
+  lon: 14.42486
+  lat: -9.68774
+  set:
+    railway: station
+    name: Dondo
+    country: Angola
+  note: Create Dondo station node
+- op: copy_node
+  node: 558000015
+  edge: 555047629
+- op: split_edge
+  edge: 555047639
+  node: 555090153
+- op: tag_route
+  from: 555090153
+  to: 559000015
+  set:
+    line: Luanda Railway (Dondo Branch)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_edge
+  source: 555019356
+  target: 555132174
+  oid: 556000066
+  note: potential opening in 2023
+- op: insert_edge
+  source: 555132175
+  target: 555132176
+  oid: 556000067
+- op: set_node
+  node: 555132178
+  set:
+    comment: 'Airport still under construction. It may open in 2023 - see: https://www.a1v2.pt/en/portfolio/railway/'
+    name: International Airport of Luanda (New)
+    railway: station
+    facility: airport
+- op: tag_route
+  from: 555019356
+  to: 555132178
+  set:
+    line: International Airport of Luanda
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: construction
+    comment: ''
+- op: copy_node
+  node: 555059146
+  edge: 555095775
+  note: copy Luau station
+- op: tag_route
+  from: 555046802
+  to: 555123809
+  set:
+    line: Benguela Railway
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555099360
+  node: 555099758
+  note: freight services for Lobito Port
+- op: split_edge
+  edge: 555061456
+  node: 555099760
+- op: split_edge
+  edge: 555061458
+  node: 555133790
+- op: set_node
+  node: 555133789
+  set:
+    name: Lobito Port
+    railway: stop
+    facility: Port
+- op: tag_route
+  from: 555099758
+  to: 555133789
+  set:
+    line: Benguela Railway (Lobito Port)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555124731
+  node: 555151001
+- op: split_edge
+  edge: 555061597
+  node: 555151000
+- op: copy_node
+  node: 555021471
+  edge: 555037931
+  note: copy Bimbas station
+- op: tag_route
+  from: 555151001
+  to: 556021471
+  set:
+    line: Benguela Railway (Benguela spur)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555021538
+  set:
+    name: Catumbela Airport
+    facility: airport
+- op: set_node
+  node: 555110078
+  set:
+    comment: Petroleum or gas storage facility
+    name: Sonangol facility
+    railway: stop
+    facility: Oil storage depot
+  note: Petroleum storage (Sonangol)
+- op: split_edge
+  edge: 555124709
+  node: 555110077
+- op: tag_route
+  from: 555110077
+  to: 555110078
+  set:
+    line: Sonangol Petroleum facility
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555063029
+  set:
+    name: null
+    railway: null
+- op: tag_route
+  from: 555030790
+  to: 555019194
+  set:
+    line: Moçâmedes Railway
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Moçâmedes (called Namibe 1985-2016) - Menongue
+- op: set_node
+  node: 555057978
+  set:
+    name: Sacomar Mineral Port
+    railway: stop
+    facility: port
+  note: Sacomar Mineral Port
+- op: split_edge
+  edge: 555036052
+  node: 555096036
+- op: split_edge
+  edge: 555075650
+  node: 555109794
+- op: tag_route
+  from: 555096036
+  to: 555057978
+  set:
+    line: Sacomar Mineral Port
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555049149
+  set:
+    name: Port of Moçâmedes (Namibe)
+    railway: stop
+    facility: port
+  note: Port of Moçâmedes (Namibe)
+- op: tag_route
+  from: 555030790
+  to: 555049149
+  set:
+    line: Port of Moçâmedes (Namibe)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555126357
+  set:
+    comment: 'Facility now open, see: bit.ly/3Pa6476'
+    name: Menongue Fuel Terminal
+    railway: stop
+    facility: Oil storage depot
+  note: Menongue Fuel Terminal
+- op: split_edge
+  edge: 555045134
+  node: 555126353
+- op: tag_route
+  from: 555126353
+  to: 555126357
+  set:
+    line: Menongue Fuel Terminal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: copy_node
+  node: 555019541
+  edge: 555046080
+  note: copy Chamutete Cidade station
+- op: split_edge
+  edge: 555045185
+  node: 555151199
+- op: tag_route
+  from: 555026067
+  to: 555019548
+  set:
+    line: Chamutete Branch
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 5550451851
+  node: 555101051
+  note: Jamba Branch
+- op: split_edge
+  edge: 555046079
+  node: 555101052
+- op: tag_route
+  from: 555101052
+  to: 555019213
+  set:
+    line: Jamba Branch
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555099392
+  set:
+    comment: Jamba mine loading station appears abandoned
+    name: Jamba Mine loading station
+    railway: stop
+    facility: mining
+  note: Jamba Mine
+- op: split_edge
+  edge: 555129758
+  node: 555099392
+- op: tag_route
+  from: 555019213
+  to: 555099392
+  set:
+    line: Jamba Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555090125
+  set:
+    name: Quarry
+    railway: stop
+    facility: Quarry
+  note: Quarry (nr Dois Irmãos)
+- op: split_edge
+  edge: 555036571
+  node: 555090126
+- op: tag_route
+  from: 555090126
+  to: 555090125
+  set:
+    line: Quarry (nr Dois Irmãos)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555109759
+  set:
+    name: Rail Freight Terminal
+    railway: stop
+    facility: Rail Freight Terminal
+  note: Rail Freight Terminal (Estação da Arimba)
+- op: tag_route
+  from: 555030705
+  to: 555109759
+  set:
+    line: Rail Freight Terminal (Estação da Arimba)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: copy_node
+  node: 555014853
+  edge: 555098128
+  note: Filda
+- op: copy_node
+  node: 555030839
+  edge: 555036677
+  note: Baia
+- op: copy_node
+  node: 555015636
+  edge: 555036660
+  note: Catete
+- op: copy_node
+  node: 555021538
+  edge: 555091806
+  note: Catumbela Airport
+- op: copy_node
+  node: 555030798
+  edge: 555027563
+  note: Cavaco
+- op: copy_node
+  node: 555045533
+  edge: 555051803
+  note: Caponte
+- op: copy_node
+  node: 555063039
+  edge: 555036514
+  note: Ciambambo
+- op: copy_node
+  node: 555030827
+  edge: 555099390
+  note: Catabola
+- op: copy_node
+  node: 555026517
+  edge: 555060581
+  note: Camacupa
+- op: copy_node
+  node: 555030829
+  edge: 555027497
+  note: Cavimbe
+- op: copy_node
+  node: 555028053
+  edge: 555047674
+  note: Leua
+- op: copy_node
+  node: 555028052
+  edge: 555047672
+  note: Sandando
+- op: copy_node
+  node: 555026515
+  edge: 555019952
+  note: Lumeje
+- op: copy_node
+  node: 555059145
+  edge: 555019951
+  note: Cassai
+- op: copy_node
+  node: 555062994
+  edge: 555119977
+  note: Estação da Arimba
+- op: copy_node
+  node: 555030738
+  edge: 555036051
+- op: copy_node
+  node: 555020097
+  edge: 555036567
+- op: copy_node
+  node: 555022473
+  edge: 555047587
+- op: copy_node
+  node: 555030753
+  edge: 555103625
+- op: copy_node
+  node: 555015601
+  edge: 555036559
+- op: copy_node
+  node: 555015613
+  edge: 555109819
+- op: copy_node
+  node: 555030767
+  edge: 555109822
+- op: copy_node
+  node: 555054031
+  edge: 555119782
+- op: copy_node
+  node: 555023326
+  edge: 555119787
+- op: copy_node
+  node: 555030722
+  edge: 555119967
+- op: copy_node
+  node: 555017129
+  edge: 555119985
+- op: copy_node
+  node: 555030703
+  edge: 555039300
+- op: copy_node
+  node: 555017143
+  edge: 555039312
+- op: copy_node
+  node: 555017145
+  edge: 555039320
+- op: copy_node
+  node: 555030691
+  edge: 555039324
+- op: copy_node
+  node: 555030688
+  edge: 555039305
+- op: copy_node
+  node: 555030641
+  edge: 555075431
+- op: copy_node
+  node: 555030686
+  edge: 555016831
+- op: copy_node
+  node: 555030685
+  edge: 555016836
+- op: copy_node
+  node: 555017139
+  edge: 555119882
+- op: copy_node
+  node: 555026050
+  edge: 555119910
+- op: copy_node
+  node: 555026097
+  edge: 555063405
+- op: copy_node
+  node: 555026095
+  edge: 555063409
+- op: copy_node
+  node: 555026091
+  edge: 555063413
+- op: copy_node
+  node: 555026090
+  edge: 555063441
+- op: copy_node
+  node: 555026048
+  edge: 555063445
+- op: copy_node
+  node: 555060538
+  edge: 555063448
+- op: copy_node
+  node: 555026047
+  edge: 555063470
+- op: copy_node
+  node: 555026057
+  edge: 555039294
+- op: copy_node
+  node: 555030770
+  edge: 555050346
+- op: set_node
+  node: 555054575
+  set:
+    name: Lubango (Km 246)
+    railway: station
+- op: set_nodes
+  nodes:
+  - 555035574
+  - 555019349
+  - 555062289
+  - 555062994
+  - 555030706
+  set:
+    gauge: null
+    name: null
+    railway: null
+  note: duplicate stations
+- op: set_nodes_on_edges
+  countries:
+  - Angola
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'
+- op: set_nodes_on_edges
+  countries:
+  - Angola
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1000'
+  set:
+    gauge: '1000'

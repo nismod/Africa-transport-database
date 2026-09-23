@@ -1,0 +1,1167 @@
+# West Africa except Nigeria rail network edits.
+#
+# Derived from west_africa.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 1,800 lines of SQL: 174 edits,
+# 37 statements skipped as unable to reach the published network
+# (2 backup, 7 exploratory, 1 recomputed length, 10 routing test, 16 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: West Africa except Nigeria
+edits:
+- op: copy_node_column
+  countries:
+  - Mauritania
+  from: name
+  to: name_arabic
+- op: set_node
+  node: 555062007
+  set:
+    name: Nouadhibou
+- op: set_node
+  node: 555062006
+  set:
+    name: null
+    name_arabic: null
+- op: set_node
+  node: 555148925
+  set:
+    name: Port of Cansado
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555029748
+  set:
+    name: M'Haoudat mine
+    railway: stop
+    facility: mine
+- op: set_node
+  node: 555019101
+  set:
+    name: Guelb El Rhein mine
+    railway: stop
+    facility: mine
+- op: set_node
+  node: 555023077
+  set:
+    name: Tuadschil (Touajil)
+- op: set_node
+  node: 555023067
+  set:
+    name: Choum
+- op: set_node
+  node: 555023066
+  set:
+    name: Ben Amira
+- op: set_node
+  node: 555023059
+  set:
+    name: Inal
+- op: set_node
+  node: 555023058
+  set:
+    name: Agueijit
+- op: set_node
+  node: 555023057
+  set:
+    railway: null
+- op: set_node
+  node: 555154932
+  set:
+    name: Boulenoir
+    railway: station
+- op: tag_route
+  from: 555062007
+  to: 555054550
+  set:
+    line: Mauritania Railway
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Primarily a freight line. A passenger carriage may be provided. Many travel on the iron ore
+      wagons. No tickets or fares
+  note: Mauritania Railway
+- op: tag_route
+  from: 555062007
+  to: 555148925
+  set:
+    line: Nouadhibou to Port of Cansado
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Nouadhibou to Port of Cansado
+- op: tag_route
+  from: 555068318
+  to: 555029748
+  set:
+    line: Zoueratte iron ore mines
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Zoueratte iron ore mines
+- op: set_node
+  node: 555056530
+  set:
+    railway: station
+  note: Senegal
+- op: set_node
+  node: 555063114
+  set:
+    name: Diamniadio
+    railway: station
+- op: copy_node
+  node: 555020014
+  edge: 555116014
+- op: set_node
+  node: 556020014
+  set:
+    name: null
+    railway: null
+  note: wrong location
+- op: copy_node
+  node: 555027054
+  edge: 5551160141
+- op: set_node
+  node: 556027054
+  set:
+    name: Colobane
+  note: wrong location
+- op: copy_node
+  node: 555034091
+  edge: 55511601411
+- op: set_node
+  node: 556034091
+  set:
+    name: Hann
+  note: wrong location
+- op: set_node
+  node: 555063068
+  set:
+    name: Dalifort
+    railway: halt
+  note: Dalifort halt
+- op: set_node
+  node: 555063070
+  set:
+    name: Baux Maraîchers
+    railway: halt
+  note: Baux Maraîchers halt
+- op: copy_node
+  node: 555138103
+  edge: 555116012
+  note: node for Pikine halt
+- op: set_node
+  node: 556138103
+  set:
+    name: Pikine
+    railway: halt
+- op: set_node
+  node: 555063062
+  set:
+    name: Yeumbeul
+    railway: halt
+  note: Yeumbeul
+- op: insert_node_at
+  oid: 558000005
+  lon: -17.31373
+  lat: 14.74387
+  set:
+    railway: halt
+    name: Keur Mbaye Fall (KMF)
+    country: Senegal
+  note: create node for Keur Mbaye Fall (KMF) halt
+- op: copy_node
+  node: 558000005
+  edge: 555116010
+- op: set_node
+  node: 555063065
+  set:
+    name: Rufisque
+    railway: halt
+  note: Rufisque
+- op: insert_node_at
+  oid: 558000006
+  lon: -17.28402
+  lat: 14.7232
+  set:
+    railway: halt
+    name: PNR
+    country: Senegal
+  note: create node for PNR halt
+- op: copy_node
+  node: 558000006
+  edge: 5551160101
+- op: copy_node
+  node: 555034704
+  edge: 555116037
+  note: Bargny
+- op: set_node
+  node: 555118935
+  set:
+    name: 'Dakar Port '
+    railway: stop
+    facility: port
+  note: Dakar Port
+- op: split_edge
+  edge: 555085392
+  node: 555068222
+- op: tag_route
+  from: 555118935
+  to: 555068224
+  set:
+    line: Dakar-Bamako (Dakar - Thiès)
+    mode: freight
+    gauge: '1000'
+    status: open
+    comment: Section between Dakar and Diamniadio rebuilt with completion in 2020. Diamniado - Thiès presumed
+      open and in use for access to the GC sand mine near Mékhé and ICS Phosphate mine near Mboro. Beleived
+      to be freight only.
+- op: set_node
+  node: 555105274
+  set:
+    name: ICS fertilizer plant
+    railway: stop
+    facility: chemical_plant
+  note: ICS fertilizer plant, Dakar
+- op: split_edge
+  edge: 555085397
+  node: 555068259
+- op: tag_route
+  from: 555068224
+  to: 555027089
+  set:
+    line: Thiès to Mékhé
+    mode: freight
+    gauge: '1000'
+    status: open
+    comment: Serves ICS Phosphate mine and GC sand mine
+  note: Freight only
+- op: set_node
+  node: 555138544
+  set:
+    name: CS Mboro (Sand mine)
+    railway: stop
+    facility: mining
+  note: ICS Mboro (Sand mine)
+- op: tag_route
+  from: 555083768
+  to: 555138544
+  set:
+    line: CS Mboro (Sand mine)
+    mode: freight
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555123119
+  set:
+    name: ICS Mboro (Phosphate mine)
+    railway: stop
+    facility: mining
+  note: ICS Mboro (Phosphate mine)
+- op: tag_route
+  from: 555027089
+  to: 555123119
+  set:
+    line: ICS Mboro (Phosphate mine)
+    mode: freight
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555068224
+  to: 555024837
+  set:
+    line: Dakar-Niger (Thiès-Tambacounda)
+    mode: freight
+    gauge: '1000'
+    status: rehabilitation
+    comment: Appears to have ongoing rehabilitation work. A longer term upgrade project is possible with
+      completion in 2027 which may open line to passenger traffic also.
+  note: appears to be subject to rehabilitation
+- op: tag_route
+  from: 555024837
+  to: 555027181
+  set:
+    line: Dakar-Niger (Tambacounda-Bamako)
+    mode: mixed
+    gauge: '1000'
+    status: disused
+    comment: Understood to have been no freight or passenger services since 2018 on this stretch of the
+      Dakar-Niger line across Senegal and Mali.
+  note: disused
+- op: tag_route
+  from: 555064668
+  to: 555028874
+  set:
+    line: Dakar-Niger (Mbacké branch)
+    mode: mixed
+    gauge: '1000'
+    status: disused
+    comment: Understood to have been no freight or passenger services since at least 2018.
+  note: disused
+- op: copy_node
+  node: 555055219
+  edge: 555022530
+  note: copy stations to lines
+- op: copy_node
+  node: 555007340
+  edge: 555014410
+- op: copy_node
+  node: 555042318
+  edge: 555042634
+- op: copy_node
+  node: 555029120
+  edge: 555010987
+- op: change_target
+  edge: 555014126
+  node: 557000007
+  note: change nodes to link to new edge
+- op: change_source
+  edge: 555013783
+  node: 557000008
+- op: split_edge
+  edge: 555058012
+  node: 555102295
+- op: split_edge
+  edge: 555013689
+  node: 555069679
+- op: split_edge
+  edge: 555013691
+  node: 555097513
+- op: tag_route
+  from: 555026987
+  to: 555026982
+  set:
+    line: Conakry-Kindia (CBK) Portovoya-Km36
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: This section used by Conakry Express passenger service as well as CBK freight (Bauxite)
+- op: set_node
+  node: 555102316
+  set:
+    gauge: '1435'
+    name: Conakry Port (Kindia Bauxite)
+    railway: stop
+    facility: port
+  note: Conakry port nodes
+- op: set_node
+  node: 555069670
+  set:
+    gauge: '1000'
+    name: Conakry Port (to/from Fria)
+    railway: stop
+    facility: port
+- op: set_nodes
+  nodes:
+  - 555081475
+  - 555083825
+  set:
+    name: Rusal Bauxite mine
+    railway: stop
+    facility: mine
+  note: to Rusal Bauxite mines
+- op: split_edge
+  edge: 555064932
+  node: 555083824
+- op: tag_route
+  from: 555083824
+  to: 555083825
+  set:
+    line: Conakry-Kindia (CBK) Km36-Kindia
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: This section used by CBK (Bauxite)
+- op: set_node
+  node: 555123459
+  set:
+    gauge: '1000'
+    name: Fria alumina refinery
+    railway: stop
+    facility: manufacturing
+  note: 1000mm line Conakry to Fria alumina refinery
+- op: set_node
+  node: 555042696
+  set:
+    gauge: '1435'
+    name: Daplion Barge Terminal
+    railway: stop
+    facility: port
+  note: ports/berths western Guinea
+- op: set_node
+  node: 555126198
+  set:
+    gauge: '1435'
+    name: Dougoula Barge Terminal
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555096377
+  set:
+    gauge: '1435'
+    name: Kamsar Bauxite Processing Plant and Port
+    railway: stop
+    facility: port
+- op: set_nodes
+  nodes:
+  - 555096397
+  - 555096389
+  - 555092223
+  set:
+    name: Bauxite mines
+    railway: stop
+    facility: mine
+- op: copy_node
+  node: 555121291
+  edge: 555050597
+  note: Kamsar station
+- op: set_node
+  node: 556121291
+  set:
+    gauge: '1435'
+    name: Kamsar
+    railway: station
+- op: set_node
+  node: 555023280
+  set:
+    gauge: '1435'
+    name: Sangarédi
+    railway: station
+- op: split_edge
+  edge: 555130032
+  node: 555092220
+- op: tag_route
+  from: 556121291
+  to: 555023280
+  set:
+    line: Boké Railway (Kamsar-Sangarédi)
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Primarily carries Bauxite from mines to Kamsar processing plant and port or Dougoula Barge
+      Terminal. Some passenger services also on this part.
+- op: set_edges
+  edges:
+  - 5551300322
+  - 555051769
+  - 555103548
+  - 555050594
+  - 5550505951
+  set:
+    line: null
+- op: split_edge
+  edge: 555101431
+  node: 555096388
+- op: tag_route
+  from: 555096388
+  to: 555096389
+  set:
+    line: Boké Railway (Kamsar-Sangarédi)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Bauxite from mines to Kamsar processing plant and port or Dougoula Barge Terminal
+- op: split_edge
+  edge: 555085668
+  node: 555096398
+- op: tag_route
+  from: 555096398
+  to: 555096397
+  set:
+    line: Boké Railway (Kamsar-Sangarédi)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Bauxite from mines to Kamsar processing plant and port or Dougoula Barge Terminal
+- op: split_edge
+  edge: 555056620
+  node: 555126199
+  note: Dougoula Barge Terminal line
+- op: tag_route
+  from: 555126199
+  to: 555126198
+  set:
+    line: Boké Railway (Dougoula Barge Terminal)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Bauxite from mines to Kamsar processing plant and port or Dougoula Barge Terminal
+- op: split_edge
+  edge: 555050595
+  node: 555151448
+  note: Kamsar Bauxite Processing Plant and Port
+- op: tag_route
+  from: 556121291
+  to: 555096377
+  set:
+    line: Boké Railway (Kamsar Bauxite Processing Plant and Port)
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Bauxite from mines to Kamsar processing plant and port or Dougoula Barge Terminal
+- op: set_node
+  node: 555151321
+  set:
+    name: Houda and Santou II mines
+    railway: stop
+    facility: mine
+  note: Santou-Dapilon standard gauge railway opened in 2021
+- op: set_node
+  node: 555023269
+  set:
+    name: Boké
+  note: station names
+- op: set_node
+  node: 555023261
+  set:
+    name: Kolaboui
+- op: split_edge
+  edge: 555056608
+  node: 555096414
+- op: split_edge
+  edge: 5550566081
+  node: 555096413
+- op: copy_node
+  node: 555023261
+  edge: 55505660812
+- op: copy_node
+  node: 555023269
+  edge: 555100827
+- op: copy_node
+  node: 555026978
+  edge: 5550136891
+- op: split_edge
+  edge: 555029173
+  node: 555100165
+  note: Pepel Port - Tonkolili iron ore mines
+- op: set_node
+  node: 555100165
+  set:
+    name: Pepel Port
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555090073
+  set:
+    name: Tonkolili iron ore mines
+    railway: stop
+    facility: mine
+- op: tag_route
+  from: 555090073
+  to: 555100165
+  set:
+    line: Tonkolili-Pepel
+    mode: freight
+    gauge: '1067'
+    status: open
+    comment: Connects iron ore mines in Tonkolili with Pepel Port
+- op: split_edge
+  edge: 555061548
+  node: 555099447
+  note: Buchanan Port
+- op: set_node
+  node: 555099446
+  set:
+    name: Buchanan Port
+    railway: stop
+    facility: port
+- op: split_edge
+  edge: 555087426
+  node: 555100003
+  note: Tokadeh mine
+- op: split_edge
+  edge: 555087425
+  node: 555100006
+- op: split_edge
+  edge: 555061790
+  node: 555100005
+- op: set_edges
+  edges:
+  - 5550874252
+  - 5550874261
+  - 555061790
+  set:
+    line: null
+    gauge: null
+- op: set_node
+  node: 555100004
+  set:
+    name: Tokadeh mine
+    railway: stop
+    facility: mine
+- op: tag_route
+  from: 555100004
+  to: 555099446
+  set:
+    line: Buchanan-Tokadeh
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Connects iron ore mine at Tokadeh with Buchanan Port. Rebuilt by Arcelor Mittal in 2011
+- op: set_node
+  node: 555074602
+  set:
+    name: Monrovia Port
+    railway: stop
+    facility: port
+  note: Monrovia Port
+- op: split_edge
+  edge: 555060005
+  node: 555096371
+- op: set_node
+  node: 555096370
+  set:
+    name: Bong Mine
+    railway: stop
+    facility: mine
+- op: tag_route
+  from: 555029854
+  to: 555030523
+  set:
+    line: Abidjan-Ouagadougou railway
+    mode: mixed
+    gauge: '1000'
+    status: open
+    comment: 'Note: Most of the rural stations on this route are closed to passenger services.'
+  note: note that most of the rural stations are closed.
+- op: set_node
+  node: 555026892
+  set:
+    name: Port of Abidjan
+    railway: stop
+    facility: port
+  note: Port of Abidjan
+- op: tag_route
+  from: 555029854
+  to: 555026892
+  set:
+    line: Port of Abidjan
+    mode: freight
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: insert_edge
+  source: 555101167
+  target: 555127725
+  oid: 556000058
+  note: add link
+- op: set_edge
+  edge: 556000058
+  set:
+    mode: mixed
+    type: conventional
+    status: disused
+- op: tag_route
+  from: 555002241
+  to: 555030631
+  set:
+    line: Abidjan-Ouagadougou railway (Kaya branch)
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: disused
+    comment: Believed to be disused
+- op: set_nodes
+  nodes:
+  - 555008518
+  - 555008519
+  - 555008520
+  - 555008522
+  - 555030070
+  - 555010330
+  - 555030201
+  - 555027189
+  - 555008477
+  - 555026164
+  - 555021831
+  - 555027253
+  - 555021740
+  - 555017264
+  - 555017259
+  set:
+    railway: station
+- op: copy_node
+  node: 555029881
+  edge: 555073728
+- op: set_nodes
+  nodes:
+  - 555030599
+  - 555055952
+  set:
+    name: null
+    railway: null
+  note: duplicated station
+- op: set_node
+  node: 555125208
+  set:
+    name: Sekondi
+    railway: station
+- op: tag_route
+  from: 555125208
+  to: 555037055
+  set:
+    line: Sekondi-Tarkwa
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: in use for freight and passenger services
+- op: set_node
+  node: 555015670
+  set:
+    railway: station
+  note: Takoradi-Kojokrom
+- op: tag_route
+  from: 555015670
+  to: 555019626
+  set:
+    line: Takoradi - Kojokrom
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555125142
+  set:
+    name: Takoradi Port
+    railway: stop
+    facility: port
+  note: Takoradi Port
+- op: split_edge
+  edge: 555122573
+  node: 555125143
+- op: tag_route
+  from: 555125143
+  to: 555125142
+  set:
+    line: Takoradi Port
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555037055
+  to: 555102690
+  set:
+    line: Tarkwa-Kumasi
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  note: Tarkwa-Kumasi
+- op: split_edge
+  edge: 555036743
+  node: 555092206
+  note: Dunkwa-Awaso
+- op: set_node
+  node: 555092207
+  set:
+    name: Awaso (Bauxite Mine)
+    railway: stop
+    facility: mine
+- op: tag_route
+  from: 555082645
+  to: 555092207
+  set:
+    line: Dunkwa-Awaso (Bauxite Mine)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: ''
+  note: disused
+- op: set_node
+  node: 555138852
+  set:
+    name: Nsawam
+    railway: station
+  note: Achimota-Nsawam
+- op: copy_node
+  node: 555062400
+  edge: 555027729
+- op: copy_node
+  node: 555077465
+  edge: 555027697
+  note: fix missing link
+- op: change_target
+  edge: 5550277292
+  node: 556077465
+- op: tag_route
+  from: 556062400
+  to: 555138852
+  set:
+    line: Achimota-Nsawam
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: split
+- op: split_edge
+  edge: 555027696
+  node: 555128096
+- op: split_edge
+  edge: 555098373
+  node: 555128098
+- op: split_edge
+  edge: 5550277291
+  node: 555128099
+- op: tag_route
+  from: 555012845
+  to: 556062400
+  set:
+    line: Accra-Achimota
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Accra-Achimota
+- op: set_node
+  node: 555015640
+  set:
+    name: null
+    railway: null
+  note: duplicate stop
+- op: tag_route
+  from: 555128099
+  to: 555062951
+  set:
+    line: Achimota-Tema
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Achimota-Tema
+- op: set_node
+  node: 555122889
+  set:
+    name: Diamond Cement Aflao
+    railway: stop
+    facility: manufacturing
+  note: run by Togo Rail
+- op: tag_route
+  from: 555122889
+  to: 555060546
+  set:
+    line: Diamond Cement Alfao
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: metre gauge line to serve cement works at Aflao to the port of Lomé in Togo. Run by Togo
+      Rail.
+- op: copy_node
+  node: 555062946
+  edge: 555122404
+  note: copy stations
+- op: insert_node_at
+  oid: 557000009
+  lon: 1.2866
+  lat: 6.34853
+  set:
+    railway: stop
+    name: Diamond Cement Dalavé
+    country: Togo
+    gauge: '1000'
+    facility: manufacturing
+  note: node for Diamond Cement Dalavé
+- op: copy_node
+  node: 557000009
+  edge: 555048154
+- op: set_node
+  node: 555040738
+  set:
+    gauge: '1000'
+    name: Tabligbo Cement Quarry
+    railway: stop
+    facility: quarry
+  note: Tabligbo Cement Quarry
+- op: set_node
+  node: 555084978
+  set:
+    name: Lomé Port
+    railway: stop
+    facility: port
+  note: Lomé to Lomé Port
+- op: split_edge
+  edge: 555062737
+  node: 555070541
+- op: split_edge
+  edge: 555015628
+  node: 555070542
+- op: split_edge
+  edge: 5550156282
+  node: 555084977
+- op: tag_route
+  from: 555033214
+  to: 555084978
+  set:
+    line: Lomé to Lomé Port
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: Togo Rail - Diamond Cement Alfao to Lomé Port
+- op: set_node
+  node: 555007974
+  set:
+    name: Hahotoé Phosphate Mine (SNPT)
+    railway: stop
+    facility: mine
+  note: Phosphate mines
+- op: set_node
+  node: 555082648
+  set:
+    name: Kpogamé Phosphate Mine (SNPT)
+    railway: stop
+    facility: mine
+- op: set_node
+  node: 555090564
+  set:
+    name: Kpémé phosphate processing plant and wharf (SNPT)
+    railway: stop
+    facility: port
+  note: Kpémé phosphate processing plant and wharf
+- op: tag_route
+  from: 555007974
+  to: 555090564
+  set:
+    line: Hahotoé–Kpémé
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: Phosphate transport
+  note: Hahotoé–Kpémé
+- op: split_edge
+  edge: 555048233
+  node: 555098781
+  note: Kpogamé branch
+- op: tag_route
+  from: 555098781
+  to: 555082648
+  set:
+    line: Kpogamé branch (Phosphate mine)
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: Phosphate transport
+- op: set_node
+  node: 555055663
+  set:
+    name: Blitta
+    railway: stop
+    facility: manufacturing
+  note: disused
+- op: insert_edge
+  source: 555098911
+  target: 555099396
+  oid: 556000059
+- op: set_edge
+  edge: 556000059
+  set:
+    mode: freight
+    type: conventional
+    status: disused
+    country: Togo
+- op: tag_route
+  from: 555070547
+  to: 555055663
+  set:
+    line: Lomé to Blitta
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: disused
+    comment: Believed to be out of use. Former freight line.
+- op: tag_route
+  from: 558000009
+  to: 555090555
+  set:
+    line: Dalavé-Adétikopé
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: disused
+    comment: Believed to be out of use. Former freight line.
+  note: believed disused
+- op: split_edge
+  edge: 555040177
+  node: 555084961
+  note: believed disused
+- op: set_node
+  node: 555025501
+  set:
+    name: Lomé
+- op: tag_route
+  from: 555033214
+  to: 555025501
+  set:
+    line: Route into Lomé station
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: disused
+    comment: Believed disused
+- op: set_node
+  node: 555053738
+  set:
+    name: Cotonou
+    railway: station
+  note: Cotonou
+- op: set_node
+  node: 555053747
+  set:
+    name: Cotonou Port
+    railway: stop
+    facility: port
+  note: Cotonou Port
+- op: tag_route
+  from: 555053738
+  to: 555031456
+  set:
+    line: Cotonou-Parakou
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: line to the port appears to be disused (google maps)
+- op: set_node
+  node: 555030146
+  set:
+    name: Lalo
+    railway: stop
+    facility: mine
+  note: status unknown - assume freight
+- op: tag_route
+  from: 555030142
+  to: 555030146
+  set:
+    line: Lalo branch
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: unknown
+    comment: status unknown. Appears to access a mine (although OSM indicates that the branch has a military
+      purpose).
+- op: split_edge
+  edge: 555083191
+  node: 555143779
+  note: disused
+- op: tag_route
+  from: 555053738
+  to: 555053747
+  set:
+    line: Cotonou-Cotonou Port
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: disused
+    comment: ''
+- op: split_edge
+  edge: 555063705
+  node: 555142763
+  note: assume abandoned
+- op: tag_route
+  from: 555023593
+  to: 555145317
+  set:
+    line: Pahou-Ségbohoué
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: abandoned
+    comment: Assumed abandoned.
+- op: tag_route
+  from: 555033159
+  to: 555117179
+  set:
+    line: Niamey-Dosso
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: disused
+    comment: This section built 2014-2016. The objective was to connect Niamey to the rail network in
+      Benin - project is stalled.
+  note: never used
+- op: set_nodes_on_edges
+  countries:
+  - Mauritania
+  - Senegal
+  - Mali
+  - Guinea
+  - Sierra Leone
+  - Liberia
+  - Burkina Faso
+  - Côte d'Ivoire
+  - Ghana
+  - Togo
+  - Benin
+  - Niger
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1435'
+  set:
+    gauge: '1435'
+- op: set_nodes_on_edges
+  countries:
+  - Mauritania
+  - Senegal
+  - Mali
+  - Guinea
+  - Sierra Leone
+  - Liberia
+  - Burkina Faso
+  - Côte d'Ivoire
+  - Ghana
+  - Togo
+  - Benin
+  - Niger
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1000'
+  set:
+    gauge: '1000'
+- op: set_nodes_on_edges
+  countries:
+  - Mauritania
+  - Senegal
+  - Mali
+  - Guinea
+  - Sierra Leone
+  - Liberia
+  - Burkina Faso
+  - Côte d'Ivoire
+  - Ghana
+  - Togo
+  - Benin
+  - Niger
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'

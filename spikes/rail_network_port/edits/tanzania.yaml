@@ -1,0 +1,358 @@
+# Tanzania rail network edits.
+#
+# Derived from tanzania.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 905 lines of SQL: 47 edits,
+# 18 statements skipped as unable to reach the published network
+# (2 exploratory, 2 recomputed length, 1 routing test, 11 schema, 2 template),
+# and 13 not transcribed - see the report.
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Tanzania
+edits:
+- op: set_all_edges
+  set:
+    mode: mixed
+  note: assume mixed mode unless amended
+- op: set_node
+  node: 2221971
+  set:
+    name: Dar es Salaam
+    railway: station
+  note: set additional node for stations
+- op: set_node
+  node: 2221959
+  set:
+    name: Morogoro SGR
+- op: set_node
+  node: 2221960
+  set:
+    name: Pugu SGR
+    railway: station
+- op: set_node
+  node: 2221958
+  set:
+    name: Dar es Salaam SGR
+    railway: station
+- op: set_node
+  node: 2222785
+  set:
+    name: Dar es Salaam
+    railway: station
+  note: other stations
+- op: set_node
+  node: 2220485
+  set:
+    gauge: '1067'
+    name: Kidete
+    railway: station
+- op: set_node
+  node: 2220241
+  set:
+    gauge: '1067'
+    name: Mzaganza
+    railway: station
+- op: set_nodes
+  nodes:
+  - 2221945
+  set:
+    name: null
+    railway: null
+  note: Duplicate station with no name is Shinyanga (1945)
+- op: set_node
+  node: 2222188
+  set:
+    gauge: '1000'
+    name: International Container Terminal
+    railway: stop
+    facility: container_port
+  note: facilities
+- op: set_node
+  node: 2221591
+  set:
+    gauge: '1067'
+    name: International Container Terminal
+    railway: stop
+    facility: container_port
+- op: set_nodes
+  nodes:
+  - 2220496
+  set:
+    facility: dry_port
+  note: dry port
+- op: set_node
+  node: 2223261
+  set:
+    name: Malawi Cargo Centre
+    railway: stop
+    facility: dry_port
+  note: Malawi Cargo Centre
+- op: set_nodes
+  nodes:
+  - 2223212
+  - 2220740
+  set:
+    facility: gauge_interchange
+  note: gauge interchange
+- op: set_nodes
+  nodes:
+  - 2220165
+  set:
+    facility: cargo_terminal
+  note: cargo terminus
+- op: tag_route
+  from: 2222785
+  to: 2222315
+  set:
+    line: Central Line
+    gauge: '1000'
+    status: open
+    comment: 'Rehabilitation project underway to increase average speed from 30kmph to 70kmph. Due to
+      complete 30 September 2022. See: https://bit.ly/3vI0hdW and https://bit.ly/3vOxR1D'
+    speed_freight: '30'
+  note: Central Line to Kigoma passenger station
+- op: tag_route
+  from: 2222041
+  to: 2223413
+  set:
+    line: Central Line
+    mode: freight
+    gauge: '1000'
+    status: open
+    comment: Rehabilitation project underway. Due to complete 30 September 2022
+    speed_freight: '30'
+  note: Central Line Kigoma port
+- op: tag_route
+  from: 2220048
+  to: 2220462
+  set:
+    line: Mpanda Line
+    gauge: '1000'
+    status: open
+  note: Mpanda Line - Kaliua-Mpanda
+- op: tag_route
+  from: 2230326
+  to: 2220205
+  set:
+    line: Mwanza Line
+    gauge: '1000'
+    status: open
+  note: Mwanza Line Tabora-Mwanza
+- op: tag_route
+  from: 2220205
+  to: 2221069
+  set:
+    line: Mwanza-Lake Ferries Terminal
+    gauge: '1000'
+    status: disused
+  note: Mwanza to Lake Ferries Terminal (disused)
+- op: tag_route
+  from: 2222901
+  to: 2220317
+  set:
+    line: Singida Line
+    gauge: '1000'
+    status: open
+  note: Singida Line Manyoni-Singida
+- op: set_node
+  node: 2223212
+  set:
+    gauge: '1000'
+    name: Msolwa Station
+  note: make an existing node Kilosa station for metre gauge
+- op: tag_route
+  from: 2223212
+  to: 2223287
+  set:
+    line: Kidatu Line
+    gauge: '1000'
+    status: disused
+  note: Kidatu Line Kilosa-Msolwa (disused)
+- op: tag_route
+  from: 2222585
+  to: 2221915
+  set:
+    line: Link Line
+    gauge: '1000'
+    status: open
+  note: Link Line Ruvu to Tanga line
+- op: tag_route
+  from: 2221954
+  to: 2220116
+  set:
+    line: Tanga Line (to Moshi)
+    gauge: '1000'
+    status: open
+  note: Tanga Line to Moshi
+- op: tag_route
+  from: 2222709
+  to: 2220112
+  set:
+    line: Tanga Line (Moshi-Arusha)
+    gauge: '1000'
+    status: open
+    comment: 'freight is currently cement from Tanga Cement; see: https://bit.ly/2SHijzh'
+  note: Tanga Line Moshi to Arusha
+- op: tag_route
+  from: 2222225
+  to: 2222226
+  set:
+    line: Tanga Line (Tanga Cement)
+    mode: freight
+    gauge: '1000'
+    status: open
+  note: Tanga Line branch frieght - Tanga Cement PLC
+- op: tag_route
+  from: 2222018
+  to: 2222705
+  set:
+    line: Kahe - Taveta
+    mode: mixed
+    gauge: '1000'
+    status: disused
+  note: Kahe - Taveta
+- op: tag_route
+  from: 2221982
+  to: 2223660
+  set:
+    line: TRL Commuter Rail (Ubungu Branch)
+    gauge: '1000'
+    status: disused
+  note: disused commuter rail branch to Ubungo Maziwa
+- op: tag_route
+  from: 2223596
+  to: 2222188
+  set:
+    line: International Container Terminal (metre gauge)
+    mode: freight
+    gauge: '1000'
+    status: open
+  note: 1000mm gauge to Dar es Salaam International Container port
+- op: insert_edge
+  source: 2220425
+  target: 2222124
+  oid: 2240000
+- op: tag_route
+  from: 2220425
+  to: 2221591
+  set:
+    line: Yombo - Kurasini / Container Terminal (Tazara)
+    mode: mixed
+    gauge: '1067'
+    status: open
+  note: 1067 mm gauge (Tazara) to Kurasini / Container Terminal
+- op: insert_edge
+  source: 2223262
+  target: 2220831
+  oid: 2240001
+  note: Add link to simplify routing
+- op: tag_route
+  from: 2223261
+  to: 2220831
+  set:
+    line: Malawi Cargo Centre
+    mode: freight
+    gauge: '1067'
+    status: open
+- op: tag_route
+  from: 2221971
+  to: 2222271
+  set:
+    line: TAZARA (Tanzania)
+    mode: mixed
+    gauge: '1067'
+    status: open
+  note: TAZARA Line (to Tazmanian border with Zambia)
+- op: tag_route
+  from: 2231958
+  to: 2221959
+  set:
+    line: Dar es Salaam - Morogoro SGR
+    mode: mixed
+    gauge: '1435'
+    status: construction
+    comment: Phase 1 - testing to start in 2021
+    speed_freight: '120'
+    speed_passenger: '160'
+  note: Dar es Salaam - Morogoro SGR
+- op: tag_route
+  from: 2221959
+  to: 2223857
+  set:
+    line: Morogoro - Makutupora SGR
+    mode: mixed
+    gauge: '1435'
+    status: construction
+    comment: Phase 2 - due for completion February 2022
+    speed_freight: '120'
+    speed_passenger: '160'
+  note: Morogoro - Makutupora SGR
+- op: set_node
+  node: 2240006
+  set:
+    name: Mtwara
+    railway: station
+  note: station nodes
+- op: set_node
+  node: 2240002
+  set:
+    name: Mbamba Bay
+    railway: station
+- op: set_node
+  node: 2240007
+  set:
+    name: Liganga mine
+    railway: station
+- op: set_node
+  node: 2240005
+  set:
+    name: Mchuchuma mine
+    railway: station
+- op: insert_edge
+  source: 2223212
+  target: 2220740
+  oid: 2240010
+  note: add edge for gauge interchange at Kidatu.
+- op: set_edge
+  edge: 2240010
+  set:
+    line: Kidatu gauge interchange
+    mode: freight
+    gauge: 1000 <-> 1067
+    status: disused
+- op: set_node
+  node: 2240009
+  set:
+    name: Mwanza (SGR)
+    railway: station
+  note: station nodes
+- op: set_nodes_on_edges
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1000'
+  set:
+    gauge: '1000'
+- op: set_nodes_on_edges
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1435'
+  set:
+    gauge: '1435'
+- op: set_nodes_on_edges
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'

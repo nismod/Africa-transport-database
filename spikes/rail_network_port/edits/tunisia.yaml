@@ -1,0 +1,2181 @@
+# Tunisia rail network edits.
+#
+# Derived from tunisia.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 2,825 lines of SQL: 410 edits,
+# 20 statements skipped as unable to reach the published network
+# (2 backup, 8 exploratory, 4 routing test, 6 template).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Tunisia
+edits:
+- op: set_node
+  node: 555002402
+  set:
+    gauge: '1000'
+    name: Tunis محطة تونس
+    railway: station
+- op: set_node
+  node: 555011661
+  set:
+    gauge: '1435'
+    name: Tunis محطة تونس
+    railway: station
+- op: set_node
+  node: 555078199
+  set:
+    name: Ghardimaou غار الدماء
+    railway: station
+- op: set_node
+  node: 555018220
+  set:
+    name: Mateur ماطر
+    railway: station
+- op: set_node
+  node: 555018182
+  set:
+    name: Sidi M'Himech
+    railway: station
+- op: set_node
+  node: 555012948
+  set:
+    name: Bizerte بَنْزَرْت‎
+    railway: station
+- op: set_node
+  node: 555054515
+  set:
+    name: Gabes قابس
+    railway: station
+- op: set_node
+  node: 555018121
+  set:
+    name: Jebal Jelloud
+    railway: station
+- op: set_node
+  node: 556042215
+  set:
+    gauge: dual
+    name: La Goulette
+    railway: station
+    facility: null
+- op: set_node
+  node: 555055078
+  set:
+    name: Kasserine القصرين
+    railway: station
+- op: set_node
+  node: 556062252
+  set:
+    name: Le Kef محطة الكاف
+    railway: station
+- op: set_node
+  node: 555018482
+  set:
+    name: Tajerouine تاجروين
+    railway: station
+- op: set_node
+  node: 556054493
+  set:
+    name: Bir Bourekba بئر بورقبة
+    railway: station
+- op: set_node
+  node: 555010618
+  set:
+    name: Nabeul Voyageurs
+    railway: station
+- op: set_node
+  node: 556060776
+  set:
+    name: Jilma
+    railway: station
+- op: set_node
+  node: 556054474
+  set:
+    name: Kalâa Seghira القلعة الصغرى
+    railway: station
+- op: set_node
+  node: 555023109
+  set:
+    name: Ghraiba الغريبة
+    railway: station
+- op: set_node
+  node: 555071107
+  set:
+    name: Tozeur توزر
+    railway: station
+- op: set_node
+  node: 556062228
+  set:
+    name: Tabeddit محطة تابديت
+    railway: station
+- op: set_node
+  node: 555062230
+  set:
+    name: Redeyef الرديف
+    railway: station
+- op: set_node
+  node: 555089794
+  set:
+    name: Metlaoui المتلوي
+    railway: station
+- op: set_node
+  node: 555064505
+  set:
+    name: Mokine Marchandises
+    railway: station
+- op: set_node
+  node: 556054466
+  set:
+    name: Sousse Sud سوسة الجنوبية
+    railway: station
+- op: set_node
+  node: 555022961
+  set:
+    name: Monastir المنستير
+    railway: station
+- op: set_node
+  node: 555010695
+  set:
+    name: Mahdia
+    railway: station
+- op: set_node
+  node: 555055347
+  set:
+    name: Ben Bachir بن بشير
+    railway: station
+- op: set_node
+  node: 555063122
+  set:
+    name: La Pecherie المصيدة
+    railway: station
+- op: set_node
+  node: 555058940
+  set:
+    name: Menzel Bourguiba محطة منزل بورقيبة
+    railway: station
+- op: set_node
+  node: 555055337
+  set:
+    name: Sajanan سجنان
+    railway: station
+- op: set_node
+  node: 555036585
+  set:
+    name: Tamera تمرة
+    railway: station
+- op: set_node
+  node: 555055346
+  set:
+    name: Bou Salem بوسالم
+    railway: station
+- op: set_node
+  node: 555018246
+  set:
+    name: Sidi Othman
+    railway: station
+- op: set_node
+  node: 555063121
+  set:
+    name: Chaouat شواط
+    railway: station
+- op: set_node
+  node: 555013249
+  set:
+    name: Jedeida الجديدة
+    railway: station
+- op: set_node
+  node: 555062244
+  set:
+    name: Oued Meliz محطة وادي مليز
+    railway: station
+- op: set_node
+  node: 555062243
+  set:
+    name: Jendouba V محطة جندوبة
+    railway: station
+- op: set_node
+  node: 555055345
+  set:
+    name: Sidi Smail سيدي إسماعيل
+    railway: station
+- op: set_node
+  node: 555055343
+  set:
+    name: Beja Voy باجة
+    railway: station
+- op: set_node
+  node: 555036583
+  set:
+    name: Jalta جالطة
+    railway: station
+- op: set_node
+  node: 555060726
+  set:
+    name: Tinja تينجة
+    railway: station
+- op: set_node
+  node: 555062159
+  set:
+    name: Tebourba طبربة
+    railway: station
+- op: set_node
+  node: 555018160
+  set:
+    name: 'Le Bardo '
+    railway: station
+- op: set_node
+  node: 555002547
+  set:
+    name: Cité Erraoudha
+    railway: station
+- op: set_node
+  node: 555018118
+  set:
+    name: Megrine Ryad مقرين الرياض
+    railway: station
+- op: set_node
+  node: 555018114
+  set:
+    name: Megrine مقرين
+    railway: station
+- op: set_node
+  node: 555018117
+  set:
+    name: Megrine مقرين
+    railway: station
+- op: set_node
+  node: 555018113
+  set:
+    name: Sidi Rezig
+    railway: station
+- op: set_node
+  node: 555018110
+  set:
+    name: Sidi Rezig
+    railway: station
+- op: set_node
+  node: 555018103
+  set:
+    name: Lycee Technique Rades معهد رادس
+    railway: station
+- op: set_node
+  node: 555018106
+  set:
+    name: Radès رادس
+    railway: station
+- op: set_node
+  node: 555012694
+  set:
+    name: Radés Méliane رادس مليان
+    railway: station
+- op: set_node
+  node: 555036549
+  set:
+    name: Ez-Zahra الزهراء
+    railway: station
+- op: set_node
+  node: 555011694
+  set:
+    name: Ezzahra Lycée معهد الزهراء
+    railway: station
+- op: set_node
+  node: 555011699
+  set:
+    name: Bou Kornine بوقرنين
+    railway: station
+- op: set_node
+  node: 555011701
+  set:
+    name: Hammam Lif حمام الأنف
+    railway: station
+- op: set_node
+  node: 555018101
+  set:
+    name: Arret Du Stade الملعب
+    railway: station
+- op: set_node
+  node: 555011698
+  set:
+    name: Tahar Sfar الطاهر صفر
+    railway: station
+- op: set_node
+  node: 555011714
+  set:
+    name: Hammam Chat حمام الشط
+    railway: station
+- op: set_node
+  node: 555012695
+  set:
+    name: Bir El Bey بئر الباي
+    railway: station
+- op: set_node
+  node: 555012692
+  set:
+    name: Borj Cedria برج السدرية
+    railway: station
+- op: set_node
+  node: 555036545
+  set:
+    name: Erriadh الرياض
+    railway: station
+- op: set_node
+  node: 555016514
+  set:
+    name: Fondouk Jedid فندق الجديد
+    railway: station
+- op: set_node
+  node: 555016512
+  set:
+    name: Khanguet
+    railway: station
+- op: set_node
+  node: 555054490
+  set:
+    name: Grombalia قرمبالية
+    railway: station
+- op: set_node
+  node: 555036543
+  set:
+    name: Turki تركي
+    railway: station
+- op: set_node
+  node: 555016585
+  set:
+    name: Belli بلي
+    railway: station
+- op: set_node
+  node: 555054492
+  set:
+    name: Bou Arkoub بوعرقوب
+    railway: station
+- op: set_node
+  node: 555056571
+  set:
+    name: Hammamet الحمامات
+    railway: station
+- op: set_node
+  node: 555013443
+  set:
+    name: Omar Khayem عمر الخيام
+    railway: station
+- op: set_node
+  node: 555028106
+  set:
+    name: M'Razka المرازقة
+    railway: station
+- op: set_node
+  node: 555036619
+  set:
+    name: Sidi Mtir سيدي مطير
+    railway: station
+- op: set_node
+  node: 555054494
+  set:
+    name: Bouficha بوفيشة
+    railway: station
+- op: set_node
+  node: 555036618
+  set:
+    name: Ain Rahma عين الرحمة
+    railway: station
+- op: set_node
+  node: 555036620
+  set:
+    name: Parc Friguia منتزه فريقيا
+    railway: station
+- op: set_node
+  node: 555054495
+  set:
+    name: Enfida النفيضة
+    railway: station
+- op: set_node
+  node: 555054496
+  set:
+    name: Menzel Gare منزل المحطة
+    railway: station
+- op: set_node
+  node: 555054477
+  set:
+    name: Sidi Bou Ali سيدي بوعلي
+    railway: station
+- op: set_node
+  node: 555054476
+  set:
+    name: Kalaa Kebira القلعة الكبرى
+    railway: station
+- op: set_node
+  node: 555036557
+  set:
+    name: Sousse Marchandise سوسة بضائع
+    railway: station
+- op: set_node
+  node: 555036559
+  set:
+    name: M'seken Messadine المسعدين
+    railway: station
+- op: set_node
+  node: 555054467
+  set:
+    name: Sousse Voyageurs سوسة
+    railway: station
+- op: set_node
+  node: 555007562
+  set:
+    name: Sousse Bab Jdid سوسة باب الجديد
+    railway: station
+- op: set_node
+  node: 555017958
+  set:
+    name: Sousse Mohamed V سوسة محمد الخامس
+    railway: station
+- op: set_node
+  node: 555017961
+  set:
+    name: Sousse Zone Industrielle
+    railway: station
+- op: set_node
+  node: 555017960
+  set:
+    name: Sahline Ville الساحلين
+    railway: station
+- op: set_node
+  node: 555017959
+  set:
+    name: Sahline Sebkha الساحلين سبخة
+    railway: station
+- op: set_node
+  node: 555017957
+  set:
+    name: Les Hotels Monastirنزل المنستير
+    railway: station
+- op: set_node
+  node: 555017956
+  set:
+    name: Aeroport Skanes Monastir مطار المنستير
+    railway: station
+- op: set_node
+  node: 555022965
+  set:
+    name: La Faculte المنستير الكلية
+    railway: station
+- op: set_node
+  node: 555036578
+  set:
+    name: La Faculte 2 المنستير الكلية 2
+    railway: station
+- op: set_node
+  node: 555036622
+  set:
+    name: Monastir Zone Industrielle
+    railway: station
+- op: set_node
+  node: 555036575
+  set:
+    name: Frina الفرينة
+    railway: station
+- op: set_node
+  node: 555036574
+  set:
+    name: Khnis/Bembla خنيس - بنبلة
+    railway: station
+- op: set_node
+  node: 555017980
+  set:
+    name: Ksiba Bennane قصيبة المديوني - بنان
+    railway: station
+- op: set_node
+  node: 555036573
+  set:
+    name: Bouhjar بوحجر
+    railway: station
+- op: set_node
+  node: 555012784
+  set:
+    name: Lamta لمطة
+    railway: station
+- op: set_node
+  node: 555012781
+  set:
+    name: Sayeda صيادة
+    railway: station
+- op: set_node
+  node: 555012779
+  set:
+    name: Ksar Helal Zone Industrielle
+    railway: station
+- op: set_node
+  node: 555012783
+  set:
+    name: Ksar Helal قصر هلال
+    railway: station
+- op: set_node
+  node: 555012782
+  set:
+    name: Moknine Griba مكنين قريبع
+    railway: station
+- op: set_node
+  node: 555017972
+  set:
+    name: Moknine Voyageurs المكنين
+    railway: station
+- op: set_node
+  node: 555012780
+  set:
+    name: Teboulba Zone Industrielle
+    railway: station
+- op: set_node
+  node: 555036621
+  set:
+    name: Teboulba طبلبة
+    railway: station
+- op: set_node
+  node: 555036569
+  set:
+    name: Bekalta البقالطة
+    railway: station
+- op: set_node
+  node: 555036568
+  set:
+    name: Charaf الشرف
+    railway: station
+- op: set_node
+  node: 555036567
+  set:
+    name: Baghdedi بغدادي
+    railway: station
+- op: set_node
+  node: 555036565
+  set:
+    name: Sidi Masaoud سيدي مسعود
+    railway: station
+- op: set_node
+  node: 555036564
+  set:
+    name: Borj Arif برج عريف
+    railway: station
+- op: set_node
+  node: 555036563
+  set:
+    name: Mahdia Ezzahra الزهراء المهدية
+    railway: station
+- op: set_node
+  node: 555054498
+  set:
+    name: Sidi Bou Goubrine بوقبرين
+    railway: station
+- op: set_node
+  node: 555054468
+  set:
+    name: M'Saken
+    railway: station
+- op: set_node
+  node: 555054501
+  set:
+    name: Kerker كركر
+    railway: station
+- op: set_node
+  node: 555054505
+  set:
+    name: El Jem الجم
+    railway: station
+- op: set_node
+  node: 555054506
+  set:
+    name: La Hencha الحنشة
+    railway: station
+- op: set_node
+  node: 555036538
+  set:
+    name: Dokhane دخان
+    railway: station
+- op: set_node
+  node: 555036616
+  set:
+    name: Sidi Salah سيدي صالح
+    railway: station
+- op: set_node
+  node: 555054507
+  set:
+    name: Sakiet Ezzit ساقية الزيت
+    railway: station
+- op: set_node
+  node: 555054508
+  set:
+    name: Sfax صفاقس
+    railway: station
+- op: set_node
+  node: 555036542
+  set:
+    name: Sidi Abid سيدي عبيد
+    railway: station
+- op: set_node
+  node: 555036541
+  set:
+    name: Gargour قرقور
+    railway: station
+- op: set_node
+  node: 555054509
+  set:
+    name: Mahares المحرس
+    railway: station
+- op: set_node
+  node: 555036540
+  set:
+    name: Chaal الشعال
+    railway: station
+- op: set_node
+  node: 555054512
+  set:
+    name: Hamada الحمادة
+    railway: station
+- op: set_node
+  node: 555054513
+  set:
+    name: Skhira الصخيرة
+    railway: station
+- op: set_node
+  node: 555036617
+  set:
+    name: Aouinet العوينات
+    railway: station
+- op: set_node
+  node: 555054514
+  set:
+    name: Ghannouch غنوش
+    railway: station
+- op: set_node
+  node: 555054521
+  set:
+    name: El Guetar القطار
+    railway: station
+- op: set_node
+  node: 555054520
+  set:
+    name: Gafsa قفصة
+    railway: station
+- op: set_node
+  node: 555020020
+  set:
+    name: Degueche محطة دقاش
+    railway: station
+- op: set_node
+  node: 555036591
+  set:
+    name: Magroun مقرون
+    railway: station
+- op: set_node
+  node: 555036572
+  set:
+    name: Oued El Ksab (23/24) وادي القصب
+    railway: station
+- op: set_node
+  node: 555028107
+  set:
+    name: Zannouch زانوش
+    railway: station
+- op: set_node
+  node: 555054519
+  set:
+    name: Sened السند
+    railway: station
+- op: set_node
+  node: 555018638
+  set:
+    name: Menzel Bouzaiane منزل بوزيان
+    railway: station
+- op: set_node
+  node: 555054517
+  set:
+    name: Maknassy المكناسي
+    railway: station
+- op: set_node
+  node: 555036570
+  set:
+    name: El Kerma الكرمة
+    railway: station
+- op: set_node
+  node: 555018722
+  set:
+    name: Mezzouna المزونة
+    railway: station
+- op: set_node
+  node: 555054511
+  set:
+    name: Founi الفوني
+    railway: station
+- op: set_node
+  node: 555062284
+  set:
+    name: Om El Arais محطة أم العرائس
+    railway: station
+- op: set_node
+  node: 555062229
+  set:
+    name: Thelepte
+    railway: station
+- op: set_node
+  node: 555062206
+  set:
+    name: Sbeitla
+    railway: station
+- op: set_node
+  node: 555018502
+  set:
+    name: Foussana فوسانة
+    railway: station
+- op: set_node
+  node: 555018498
+  set:
+    name: Haidra حيدرة
+    railway: station
+- op: set_node
+  node: 555018488
+  set:
+    name: Kalaat Khasba القلعة الخصبة
+    railway: station
+- op: set_node
+  node: 555033638
+  set:
+    name: Gouraia قوراية
+    railway: station
+- op: set_node
+  node: 555062253
+  set:
+    name: Dahmani الدهماني
+    railway: station
+- op: set_node
+  node: 555062254
+  set:
+    name: Les Zouarines الزوارين
+    railway: station
+- op: set_node
+  node: 555077685
+  set:
+    name: Les Salines الملاحة
+    railway: station
+- op: set_node
+  node: 555062250
+  set:
+    name: Le Sers السرس
+    railway: station
+- op: set_node
+  node: 555062249
+  set:
+    name: Sidi Bou Rouis سيدي بورويس
+    railway: station
+- op: set_node
+  node: 555054841
+  set:
+    name: Le Krib الكريب
+    railway: station
+- op: set_node
+  node: 555018405
+  set:
+    name: El Akhouat الخوات
+    railway: station
+- op: set_node
+  node: 555018341
+  set:
+    name: Gaafour قعفور
+    railway: station
+- op: set_node
+  node: 555018398
+  set:
+    name: Sidi Ayed سيدي عياد
+    railway: station
+- op: set_node
+  node: 555018337
+  set:
+    name: El Aroussa العروسة
+    railway: station
+- op: set_node
+  node: 555056487
+  set:
+    name: Djelida الجليدة
+    railway: station
+- op: set_node
+  node: 555062247
+  set:
+    name: Bou Arada بوعرادة
+    railway: station
+- op: set_node
+  node: 555036588
+  set:
+    name: Tarf Echena طرف الشانة
+    railway: station
+- op: set_node
+  node: 555036625
+  set:
+    name: Thibica ثبيقة
+    railway: station
+- op: set_node
+  node: 555056500
+  set:
+    name: Pont Du Fahs الفحص
+    railway: station
+- op: set_node
+  node: 555058932
+  set:
+    name: Bir M'Cherga بئر مشارقة
+    railway: station
+- op: set_node
+  node: 555018250
+  set:
+    name: Cheylus
+    railway: station
+- op: set_node
+  node: 555056450
+  set:
+    name: Oudna أوذنة
+    railway: station
+- op: set_node
+  node: 555062246
+  set:
+    name: Khledia الخليدية
+    railway: station
+- op: set_node
+  node: 555062245
+  set:
+    name: Nassen محطة نعسان
+    railway: station
+- op: set_node
+  node: 555018256
+  set:
+    name: Bir Kassa بئر القصعة
+    railway: station
+- op: set_node
+  node: 555018177
+  set:
+    name: Oued Zarga وادي الزرقاء
+    railway: station
+- op: set_node
+  node: 555018163
+  set:
+    name: Mejez El Bab مجاز الباب
+    railway: station
+- op: set_node
+  node: 555018167
+  set:
+    name: Borj Toumi برج التومي
+    railway: station
+- op: set_node
+  node: 555020004
+  set:
+    name: Maagen Bel Abbes ماجل بلعباس
+    railway: station
+- op: set_node
+  node: 555012789
+  set:
+    name: Jemmal جمّال
+    railway: station
+- op: set_nodes
+  nodes:
+  - 555062158
+  - 555018214
+  - 555036589
+  - 555062124
+  - 558000003
+  - 555022967
+  - 555036566
+  - 555036571
+  - 555018510
+  - 555036553
+  - 555018473
+  - 555018335
+  - 555018252
+  - 555018253
+  - 555053717
+  set:
+    gauge: null
+    name: null
+    railway: null
+    facility: null
+  note: update where duplicate or unwanted station nodes
+- op: set_nodes
+  nodes:
+  - 555018215
+  - 555055341
+  - 555018213
+  - 555002558
+  - 555062233
+  - 555054522
+  set:
+    name: unnamed halt
+    railway: halt
+- op: set_node
+  node: 555012953
+  set:
+    name: Bizerte Port
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555126662
+  set:
+    name: Sousse Port
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555017910
+  set:
+    name: Sfax-Sidi Youssef Port
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555085435
+  set:
+    name: Port of Gabès
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555064404
+  set:
+    name: Port of Radès (container)
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555017565
+  set:
+    name: Port of Radès (specialized berths)
+    railway: stop
+    facility: port
+- op: set_node
+  node: 555018241
+  set:
+    name: El Fouladh steel works (Menzel Bourguiba)
+    railway: stop
+    facility: manufacturing
+  note: mines / industrial etc
+- op: set_node
+  node: 555017802
+  set:
+    name: Sehib Mine (Phosphate)
+    railway: stop
+    facility: mine
+- op: set_node
+  node: 555017817
+  set:
+    name: M'dhilla Mine (Phosphate)
+    railway: stop
+    facility: mine
+- op: set_node
+  node: 555017810
+  set:
+    name: M'dhilla Phosphate Works
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555085780
+  set:
+    name: Redeyef Mine (Phosphate)
+    railway: stop
+    facility: mine
+- op: set_node
+  node: 555085679
+  set:
+    name: Metlaoui Phosphate Washing Plant
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555078177
+  set:
+    name: Tunisian Sugar and Yeast Companies
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555012925
+  set:
+    name: Bizerte Cement
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555086349
+  set:
+    name: Enfidha Cement
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555017902
+  set:
+    name: Thyna Salt Works
+    railway: stop
+    facility: mining
+- op: set_node
+  node: 555017888
+  set:
+    name: Tunisian Indian Fertilizers (TIFERT)
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555015049
+  set:
+    name: Tunisian Chemical Group
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555017763
+  set:
+    name: Gabès Cement Company
+    railway: stop
+    facility: manufacturing
+- op: set_node
+  node: 555082944
+  set:
+    name: Umm al-Arais Phosphate Mine
+    railway: stop
+    facility: mine
+- op: set_node
+  node: 555118034
+  set:
+    name: Jérissa Iron Ore Mine
+    railway: stop
+    facility: mine
+- op: set_node
+  node: 555017951
+  set:
+    name: Sfax Zone Industrielle Poudrière 1
+    railway: stop
+    facility: Industrial zone
+  note: industrial zones
+- op: insert_node_at
+  oid: 557000001
+  lon: 8.67944
+  lat: 35.84812
+  set:
+    country: Tunisia
+  note: routing to Tajerouine
+- op: insert_node_at
+  oid: 557000002
+  lon: 8.76839
+  lat: 34.37969
+  set:
+    railway: station
+    name: Aguila
+    country: Tunisia
+  note: node for Aguila station
+- op: copy_node
+  node: 557000001
+  edge: 555084267
+  note: 67 copy nodes from a DO block, whose array survives only as a comment (68 nodes and 67 edges declared;
+    the loop stops at the shorter)
+- op: copy_node
+  node: 555042215
+  edge: 555025933
+- op: copy_node
+  node: 555062252
+  edge: 555043283
+- op: copy_node
+  node: 555054493
+  edge: 555042264
+- op: copy_node
+  node: 555060776
+  edge: 555084260
+- op: copy_node
+  node: 555054474
+  edge: 555045726
+- op: copy_node
+  node: 555064498
+  edge: 555041978
+- op: copy_node
+  node: 555060747
+  edge: 555041413
+- op: copy_node
+  node: 557000002
+  edge: 555041428
+- op: copy_node
+  node: 557000003
+  edge: 555063054
+- op: copy_node
+  node: 555054466
+  edge: 555054792
+- op: copy_node
+  node: 555055347
+  edge: 555029019
+- op: copy_node
+  node: 555085460
+  edge: 555034358
+- op: copy_node
+  node: 555062244
+  edge: 555029005
+- op: copy_node
+  node: 555062243
+  edge: 555042741
+- op: copy_node
+  node: 555055345
+  edge: 555028994
+- op: copy_node
+  node: 555055344
+  edge: 555029000
+- op: copy_node
+  node: 555055343
+  edge: 555028951
+- op: copy_node
+  node: 555036582
+  edge: 5550289512
+- op: copy_node
+  node: 555036583
+  edge: 555028132
+- op: copy_node
+  node: 555060726
+  edge: 555028057
+- op: copy_node
+  node: 555062159
+  edge: 555066801
+- op: copy_node
+  node: 555036549
+  edge: 555026405
+- op: copy_node
+  node: 555054490
+  edge: 555053037
+- op: copy_node
+  node: 555036543
+  edge: 555053034
+- op: copy_node
+  node: 555054492
+  edge: 555092059
+- op: copy_node
+  node: 555054494
+  edge: 555042227
+- op: copy_node
+  node: 555054495
+  edge: 555042187
+- op: copy_node
+  node: 555054496
+  edge: 555042204
+- op: copy_node
+  node: 555054477
+  edge: 555042138
+- op: copy_node
+  node: 555036559
+  edge: 555042094
+- op: copy_node
+  node: 555054467
+  edge: 555091840
+- op: copy_node
+  node: 555017961
+  edge: 555042064
+- op: copy_node
+  node: 555017957
+  edge: 555042052
+- op: copy_node
+  node: 555017956
+  edge: 555042054
+- op: copy_node
+  node: 555036622
+  edge: 555042070
+- op: copy_node
+  node: 555036574
+  edge: 555041972
+- op: copy_node
+  node: 555012781
+  edge: 555119544
+- op: copy_node
+  node: 555012779
+  edge: 555119549
+- op: copy_node
+  node: 555012782
+  edge: 555119554
+- op: copy_node
+  node: 555017972
+  edge: 555119556
+- op: copy_node
+  node: 555036569
+  edge: 555023969
+- op: copy_node
+  node: 555054501
+  edge: 555034464
+- op: copy_node
+  node: 555054505
+  edge: 555072139
+- op: copy_node
+  node: 555036616
+  edge: 555034365
+- op: copy_node
+  node: 555054508
+  edge: 555038868
+- op: copy_node
+  node: 555036541
+  edge: 555034396
+- op: copy_node
+  node: 555036540
+  edge: 555034395
+- op: copy_node
+  node: 555054512
+  edge: 555034392
+- op: copy_node
+  node: 555054513
+  edge: 555034358
+- op: copy_node
+  node: 555054514
+  edge: 555060297
+- op: copy_node
+  node: 555028105
+  edge: 555037264
+- op: copy_node
+  node: 555054521
+  edge: 555084251
+- op: copy_node
+  node: 555054520
+  edge: 555016891
+- op: copy_node
+  node: 555020020
+  edge: 555041646
+- op: copy_node
+  node: 555058893
+  edge: 555047468
+- op: copy_node
+  node: 555054517
+  edge: 555037272
+- op: copy_node
+  node: 555062284
+  edge: 555041595
+- op: copy_node
+  node: 555062229
+  edge: 555043366
+- op: copy_node
+  node: 555033588
+  edge: 555043302
+- op: copy_node
+  node: 555062253
+  edge: 555028221
+- op: copy_node
+  node: 555062250
+  edge: 555043152
+- op: copy_node
+  node: 555062249
+  edge: 555028262
+- op: copy_node
+  node: 555054841
+  edge: 555042964
+- op: copy_node
+  node: 555062247
+  edge: 555028202
+- op: copy_node
+  node: 555062216
+  edge: 555028233
+- op: copy_node
+  node: 555058932
+  edge: 555002439
+- op: split_edge
+  node: 555077658
+  edge: 555028119
+  note: 56 split edges from a DO block, whose array survives only as a comment
+- op: split_edge
+  node: 555086819
+  edge: 555028096
+- op: split_edge
+  node: 555086818
+  edge: 555028115
+- op: split_edge
+  node: 555083372
+  edge: 555029315
+- op: split_edge
+  node: 555086848
+  edge: 5550280571
+- op: split_edge
+  node: 555086854
+  edge: 555042812
+- op: split_edge
+  node: 555076508
+  edge: 555026320
+- op: split_edge
+  node: 555117781
+  edge: 5550263201
+- op: split_edge
+  node: 555085113
+  edge: 555029421
+- op: split_edge
+  node: 555076466
+  edge: 555026313
+- op: split_edge
+  node: 555076507
+  edge: 555026240
+- op: split_edge
+  node: 555076439
+  edge: 555026286
+- op: split_edge
+  node: 555074617
+  edge: 555027102
+- op: split_edge
+  node: 555074616
+  edge: 555023279
+- op: split_edge
+  node: 555076525
+  edge: 555066827
+- op: split_edge
+  node: 555002536
+  edge: 555026878
+- op: split_edge
+  node: 555064390
+  edge: 5550268781
+- op: split_edge
+  node: 555087464
+  edge: 555041533
+- op: split_edge
+  node: 555081180
+  edge: 555034496
+- op: split_edge
+  node: 555085552
+  edge: 555037260
+- op: split_edge
+  node: 555085551
+  edge: 5550414281
+- op: split_edge
+  node: 555085509
+  edge: 555041412
+- op: split_edge
+  node: 555085743
+  edge: 555049721
+- op: split_edge
+  node: 555085744
+  edge: 5550415801
+- op: split_edge
+  node: 555091579
+  edge: 555041591
+- op: split_edge
+  node: 555085805
+  edge: 555047399
+- op: split_edge
+  node: 555085792
+  edge: 5550473991
+- op: split_edge
+  node: 555085697
+  edge: 555041459
+- op: split_edge
+  node: 555086382
+  edge: 555026353
+- op: split_edge
+  node: 555095691
+  edge: 555055468
+- op: split_edge
+  node: 555085641
+  edge: 555084239
+- op: split_edge
+  node: 555085505
+  edge: 555041422
+- op: split_edge
+  node: 555085496
+  edge: 555041312
+- op: split_edge
+  node: 555085497
+  edge: 555037254
+- op: split_edge
+  node: 555118020
+  edge: 555034474
+- op: split_edge
+  node: 555077998
+  edge: 555028737
+- op: split_edge
+  node: 555126661
+  edge: 555096415
+- op: split_edge
+  node: 555086060
+  edge: 555041828
+- op: split_edge
+  node: 555085974
+  edge: 555034365
+- op: split_edge
+  node: 555085427
+  edge: 555041266
+- op: split_edge
+  node: 555085487
+  edge: 555041263
+- op: split_edge
+  node: 555064403
+  edge: 555042391
+- op: split_edge
+  node: 555078178
+  edge: 555029008
+- op: split_edge
+  node: 555078198
+  edge: 555028951
+- op: split_edge
+  node: 555078008
+  edge: 555028768
+- op: split_edge
+  node: 555086266
+  edge: 555042142
+- op: split_edge
+  node: 555085986
+  edge: 555041833
+- op: split_edge
+  node: 555085990
+  edge: 555041821
+- op: split_edge
+  node: 555085940
+  edge: 555084238
+- op: split_edge
+  node: 555085939
+  edge: 555054930
+- op: split_edge
+  node: 555085960
+  edge: 5550842382
+- op: split_edge
+  node: 555085891
+  edge: 555041757
+- op: split_edge
+  node: 555085425
+  edge: 555041293
+- op: split_edge
+  node: 555085510
+  edge: 5550414131
+- op: split_edge
+  node: 555082943
+  edge: 555037273
+- op: split_edge
+  node: 555087300
+  edge: 555044843
+- op: tag_route
+  from: 555011661
+  to: 555078199
+  set:
+    line: 'Line TA: Tunis - Algerian border (Ghardimaou)'
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: Passenger services only to Ghardimaou
+  note: TA Tunis to Algerian border (Ghardimaou)
+- op: tag_route
+  from: 555078199
+  to: 555078163
+  set:
+    line: Ghardimaou - Algerian Border
+    mode: freight
+    gauge: '1435'
+    status: open
+    comment: Freight only, border not open to passenger traffic
+  note: Ghardimaou to Algerian Border (freight only)
+- op: tag_route
+  from: 555086819
+  to: 555078144
+  set:
+    line: 'Line 3: Mateur - Sidi M''Himech'
+    mode: mixed
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Mateur to Sidi M'Himech
+- op: tag_route
+  from: 555077658
+  to: 555036585
+  set:
+    line: 'Line 2: Mateur (Mateur Sud) - Tamera'
+    mode: mixed
+    gauge: '1435'
+    status: disused
+    comment: Line abandoned from Tamera to Tabarka
+  note: disused - no timetabled services
+- op: insert_edge
+  source: 555013250
+  target: 555013249
+  oid: 556000020
+  note: simplify routing
+- op: insert_edge
+  source: 555062154
+  target: 555078012
+  oid: 556000021
+  note: missing edge
+- op: tag_route
+  from: 555013249
+  to: 555012948
+  set:
+    line: 'Line 1: Jedeida - Bizerte'
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555077997
+  to: 555012953
+  set:
+    line: Bizerte Port
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Bizerte Port
+- op: tag_route
+  from: 555086848
+  to: 555018241
+  set:
+    line: 'Line 4: Tinja - Menzel Nourguiba (El Fouladh steel works)'
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: unknown
+    comment: 'Might be freight only or disused. No passengers services listed and see: https://egtre.info/wiki/Tunisia_-_General_Information.
+      Not clear if El Fouladh steel works is still served by the railway.'
+  note: freight only now
+- op: tag_route
+  from: 555002402
+  to: 555054515
+  set:
+    line: 'Line 5: Tunis - Gabes'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: metre gauge
+- op: insert_edge
+  source: 555014969
+  target: 555085427
+  oid: 556000035
+  note: Port of Gabès
+- op: set_edge
+  edge: 556000035
+  set:
+    type: conventional
+    gauge: '1000'
+    status: open
+- op: tag_route
+  from: 555014969
+  to: 555085435
+  set:
+    line: Port of Gabès
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555076567
+  to: 555036545
+  set:
+    line: Borj Cedria - Erriadh
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: Borj Cedria - Erriadh
+- op: tag_route
+  from: 555085974
+  to: 555017910
+  set:
+    line: Sfax-Sidi Youssef Port
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: Sfax-Sidi Youssef Port
+- op: insert_edge
+  source: 555085113
+  target: 556042215
+  oid: 556000024
+  note: insert link for dual gauge to La Goulette
+- op: set_edge
+  edge: 556000024
+  set:
+    type: conventional
+    gauge: dual
+- op: tag_route
+  from: 555076508
+  to: 556042215
+  set:
+    line: 'Line 20: Jebal Jelloud - La Goulette'
+    mode: mixed
+    type: conventional
+    gauge: dual
+    status: open
+    comment: ''
+- op: tag_route
+  from: 556042215
+  to: 555085116
+  set:
+    line: Port of Radès (specialized berths)
+    mode: freight
+    type: conventional
+    gauge: dual
+    status: open
+    comment: ''
+  note: Port of Rodes (specialized berths)
+- op: insert_edge
+  source: 555076508
+  target: 555076525
+  oid: 556000022
+  note: link dual track to access Jebal Jelloud station (1000 gauge)
+- op: set_edge
+  edge: 556000022
+  set:
+    type: conventional
+    gauge: '1000'
+- op: tag_route
+  from: 555076508
+  to: 555074616
+  set:
+    line: dual gauge - standard gauge link (Jebal Jelloud <-> Line TA)
+    mode: mixed
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: Probably for freight only?
+- op: tag_route
+  from: 555085113
+  to: 556042215
+  set:
+    line: Port of Radès
+    mode: freight
+    type: conventional
+    gauge: dual
+    status: open
+    comment: ''
+  note: Port of Rades (speciliazed berths)
+- op: tag_route
+  from: 555064403
+  to: 555064404
+  set:
+    line: Port of Radès (container terminal)
+    mode: freight
+    type: conventional
+    gauge: dual
+    status: open
+    comment: ''
+  note: Port of Rades (container terminal)
+- op: insert_edge
+  source: 555076914
+  target: 555018121
+  oid: 556000025
+  note: simplify routing from Jebal Jelloud to Kasserine line
+- op: set_edge
+  edge: 556000025
+  set:
+    type: conventional
+    gauge: '1000'
+    status: open
+- op: tag_route
+  from: 555018488
+  to: 555055078
+  set:
+    line: 'Line 6: Tunis (Jebal Jelloud) - Kalaa Khasba'
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: 'Open for freight only - see map at: https://en.wikipedia.org/wiki/Soci%C3%A9t%C3%A9_Nationale_des_Chemins_de_Fer_Tunisiens'
+  note: freight only from Kalaa Khasba to Kasserine
+- op: tag_route
+  from: 555064390
+  to: 556042215
+  set:
+    line: 'Line 7: Bir Kassa - La Goulette'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: Line 7 Bir Kassa - La Goulette
+- op: tag_route
+  from: 555087223
+  to: 556062252
+  set:
+    line: 'Line 8: Les Salines - Le Kef'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: Line 8 Les Salines - Le Kef
+- op: insert_edge
+  source: 558000001
+  target: 555033640
+  oid: 556000026
+  note: Line 9 Fej Ettameur to Tajerouine
+- op: set_edge
+  edge: 556000026
+  set:
+    type: conventional
+    gauge: '1000'
+    status: open
+- op: tag_route
+  from: 555033640
+  to: 555018482
+  set:
+    line: 'Line 9: Fej Ettameur to Tajerouine'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: insert_edge
+  source: 556054493
+  target: 555077843
+  oid: 556000027
+  note: link to simplify routing
+- op: set_edge
+  edge: 556000027
+  set:
+    type: conventional
+    gauge: '1000'
+    status: open
+- op: tag_route
+  from: 556054493
+  to: 555010618
+  set:
+    line: 'Line 10: Bir Bourekba - Nabeul'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555055078
+  to: 556060776
+  set:
+    line: 'Line 11: Kasserine - Jilma'
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: no timetabled services on this line.
+- op: insert_edge
+  source: 556054474
+  target: 555056531
+  oid: 556000028
+  note: link to simplfy routing
+- op: set_edge
+  edge: 556000028
+  set:
+    type: conventional
+    gauge: '1000'
+    status: open
+- op: change_source
+  edge: 555054793
+  node: 556064498
+  note: simplify routing into M'Saken from Sousse (Line 12)
+- op: tag_route
+  from: 556054474
+  to: 556064498
+  set:
+    line: 'Line 12: Kalâa Seghira - M''Saken (via Sousse)'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  where: oid not in (5550457262, 555002756, 555084215)
+  note: need to remove links to ensure route via Sousse
+- op: tag_route
+  from: 555126661
+  to: 555126662
+  set:
+    line: Sousse Port
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: Sousse Port
+- op: insert_edge
+  source: 555023109
+  target: 555081180
+  oid: 556000029
+  note: Line 13 Ghraiba - Tozeur
+- op: set_edge
+  edge: 556000029
+  set:
+    type: conventional
+    gauge: '1000'
+    status: open
+- op: change_source
+  edge: 555054793
+  node: 556064498
+  note: simplify routing into M'Saken from Sousse (Line 12)
+- op: tag_route
+  from: 555023109
+  to: 555071107
+  set:
+    line: 'Line 13: Ghraiba - Tozeur'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555071105
+  to: 555114105
+  set:
+    line: 'Line 17: Founi - El Hamada'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: Line 17 Founi - El Hamada
+- op: tag_route
+  from: 558000002
+  to: 556060747
+  set:
+    line: 'Line 14: Aguila - M''dhilla'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: freight only from M'dhilla to Sehib phosphate mine.
+- op: tag_route
+  from: 556060747
+  to: 555017802
+  set:
+    line: 'Line 14: M''dhilla - Sehib Mine'
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555085509
+  to: 555017817
+  set:
+    line: M'dhilla - M'dhilla Mine
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: M'dhilla to M'dhilla mine (freight)
+- op: tag_route
+  from: 555085510
+  to: 555017810
+  set:
+    line: ' M''dhilla to M''dhilla Phosphate Works'
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: M'dhilla to M'dhilla Phosphate Works (freight)
+- op: insert_edge
+  source: 555055078
+  target: 555016261
+  oid: 556000030
+  note: simplify routing from Kasserine onto Line 15 (Metlaoui)
+- op: set_edge
+  edge: 556000030
+  set:
+    type: conventional
+    gauge: '1000'
+    status: open
+- op: tag_route
+  from: 555055078
+  to: 556062228
+  set:
+    line: 'Line 15: Kasserine - Tabeditt'
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555085744
+  to: 555062230
+  set:
+    line: 'Line 16: Tabediit - Redayef'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: 'Line 16: Tabediit - Redayef'
+- op: insert_edge
+  source: 555085801
+  target: 555085781
+  oid: 556000031
+  note: Redeyef Mine
+- op: set_edge
+  edge: 556000031
+  set:
+    type: conventional
+    gauge: '1000'
+    status: open
+- op: tag_route
+  from: 555062230
+  to: 555085780
+  set:
+    line: Redayef - Redayef Mine
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 556062228
+  to: 555071169
+  set:
+    line: 'Line 15: Tabeditt - Metlaoui'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: 'Line 15: Tabeditt - Metlaoui'
+- op: insert_edge
+  source: 555017833
+  target: 555071169
+  oid: 556000032
+  note: Metlaoui Phosphate Washing Plant
+- op: set_edge
+  edge: 556000032
+  set:
+    type: conventional
+    gauge: '1000'
+    status: open
+- op: insert_edge
+  source: 555064497
+  target: 555002662
+  oid: 556000033
+  note: unclear whether used for freight at all
+- op: set_edge
+  edge: 556000033
+  set:
+    type: conventional
+    gauge: '1000'
+    status: disused
+- op: tag_route
+  from: 555064497
+  to: 555064505
+  set:
+    line: 'Line 18: M''Saken - Moknine'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: disused
+    comment: Could be used for freight?
+- op: insert_edge
+  source: 555070155
+  target: 555029728
+  oid: 556000034
+  note: Link to route from Sousse Sud to Mahdia line
+- op: set_edge
+  edge: 556000034
+  set:
+    type: conventional
+    gauge: '1000'
+    status: open
+- op: tag_route
+  from: 555070155
+  to: 555022961
+  set:
+    line: 'Line 22: Sousse - Monastir (Sahel Metro)'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: to Monastir
+- op: tag_route
+  from: 555095691
+  to: 555010695
+  set:
+    line: 'Line 22: Monastir - Mahdia (Sahel Metro)'
+    mode: mixed
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: to Mahdia
+- op: tag_route
+  from: 555085641
+  to: 555118020
+  set:
+    line: 'Line 21: Gafsa - El Aouinet'
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: appears to be freight only
+- op: tag_route
+  from: 555078198
+  to: 555078177
+  set:
+    line: Beja - Food Manufacturers
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Beja Tunisian Sugar Company, Tunisian Yeast Company
+- op: insert_edge
+  source: 555086757
+  target: 556055347
+  oid: 556000036
+  note: Ginor (Ben Bachir) - Sugar Manufacture And Refining
+- op: set_edge
+  edge: 556000036
+  set:
+    type: conventional
+    gauge: '1435'
+    status: open
+- op: tag_route
+  from: 556055347
+  to: 555086758
+  set:
+    line: Ginor (Sugar Manufacture/Refining)
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555078008
+  to: 555012925
+  set:
+    line: Bizerte Cement
+    mode: freight
+    type: conventional
+    gauge: '1435'
+    status: open
+    comment: ''
+  note: Bizerte Cement
+- op: insert_edge
+  source: 555013268
+  target: 555086266
+  oid: 556000037
+  note: Enfidha Cement
+- op: set_edge
+  edge: 556000037
+  set:
+    type: conventional
+    gauge: '1000'
+    status: open
+- op: tag_route
+  from: 555086266
+  to: 555086349
+  set:
+    line: Enfidha Cement
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555085985
+  to: 555017951
+  set:
+    line: Sfax Zone Industrielle Poudrière 1
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: Appears to serve a specific facility but name and function unknown.
+  note: Sfax Zone Industrielle Poudrière 1
+- op: tag_route
+  from: 555085939
+  to: 555017902
+  set:
+    line: Thyna salt works
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: Thyna salt works
+- op: tag_route
+  from: 555081131
+  to: 555015049
+  set:
+    line: Tunisian Chemical Group and TIFERT
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: Tunisian Chemical Group and TIFERT
+- op: tag_route
+  from: 555085891
+  to: 555017888
+  set:
+    line: Tunisian Chemical Group and TIFERT
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: insert_edge
+  source: 556085460
+  target: 555085425
+  oid: 556000038
+  note: Gabès Cement Company
+- op: set_edge
+  edge: 556000038
+  set:
+    type: conventional
+    gauge: '1000'
+    status: open
+- op: tag_route
+  from: 556085460
+  to: 555017763
+  set:
+    line: Gabès Cement Company
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555082943
+  to: 555082944
+  set:
+    line: Umm al-Arais Phosphate Mine
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: Umm al-Arais Phosphate Mine
+- op: tag_route
+  from: 555087300
+  to: 555118034
+  set:
+    line: Jérissa Iron Ore Mine
+    mode: freight
+    type: conventional
+    gauge: '1000'
+    status: open
+    comment: ''
+  note: Jérissa Iron Ore Mine
+- op: set_nodes_on_edges
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1435'
+  set:
+    gauge: '1435'
+- op: set_nodes_on_edges
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1000'
+  set:
+    gauge: '1000'
+- op: set_nodes_on_edges
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1000'
+  set:
+    gauge: dual
+- op: split_name_script
+  countries:
+  - Tunisia
+  column: name_arabic
+  keep: arabic
+  note: decided to split out arabic and english/latin names to separate fields
+- op: split_name_script
+  countries:
+  - Tunisia
+  column: name
+  keep: latin

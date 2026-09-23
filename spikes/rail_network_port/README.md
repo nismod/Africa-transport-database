@@ -14,17 +14,23 @@ against the original, on the real data:
 - **Stage 2** (`apply_country_edits.py`) replays a country's edits from a data
   file. Gabon reproduces the published network exactly - all three lines,
   matching on both edge count and length - in 1.3 seconds.
+- **All 24 country scripts are now transcribed.** `parse_country_sql.py` turns
+  35,390 lines of SQL into 3,825 edits as data, leaving 49 statements
+  untranscribed and named. Replaying the twenty continental files onto one
+  network applies 3,651 of 3,685 edits and reproduces **822 of 906 lines** on
+  both edge count and length - 96.7% of the published route km.
 
-That settles feasibility. What is left is transcription: the 24 country
-scripts hold roughly 3,200 edits that have to be read out of a notebook and
-written down as data.
+That settles feasibility, and the transcription that was the bulk of the
+estimate is done. What is left is a tail of 38 lines and 34 edits, and stages
+3 to 6.
 
 "Port the SQL" is still two different projects, and only one of them is a
 port:
 
 - **Replaying the recorded build** on the inputs it was written against.
-  Everything it needs is in the trg-rail repository. Estimate: **3-6 weeks**,
-  almost all of it transcription, and partly automatable - see below.
+  Everything it needs is in the trg-rail repository. Estimated at **3-6
+  weeks**, almost all transcription; the transcription turned out to be
+  automatable and is done - see below.
 - **Rebuilding from a current OSM extract** is not a port. The 4,503
   hand-picked feature ids the country scripts are keyed on are row numbers
   from a 2021 snkit run, and cannot be reproduced from a 2026 extract. This
@@ -217,43 +223,127 @@ Five operations covered Gabon: `copy_node`, `split_edge`, `tag_route`,
 `insert_edge` and `change_source`/`change_target` (138 calls between them),
 which `primitives.py` already implements and checks.
 
-## What the remaining work looks like
+## All 24 scripts, transcribed
 
-The 3,196 edits are not uniform in difficulty. 1,899 of them - the routes,
-splits and copies - are written in a handful of rigid shapes:
+The estimate below turned out to be the pessimistic one. `parse_country_sql.py`
+reads a script and writes out the statements that change the published network
+as an edits file; `transcribe_all.py` does all 24 and writes
+[`edits/README.md`](edits/README.md), the status table. **35,390 lines of SQL
+become 3,825 edits**, with 49 statements left untranscribed and named.
 
-```sql
-select rn_copy_node(array[555022945], array[555094368]);
+The parser is built so that nothing is dropped quietly. Every statement lands
+in exactly one of three places: an edit, a *skip* in one of six named
+categories that cannot reach the published network (exploratory select, the
+`update rubbish` trap, an unfilled template, a backup table, a pasted function
+body, a routing test), or *unhandled*, listed with its line number. A country
+with no unhandled statements has been transcribed completely.
 
-with tmp as (SELECT X.* FROM pgr_dijkstra('SELECT oid as id, ...', A, B, false) ...)
-update africa_osm_edges set line = '...', gauge = '...' where oid in (select edge from tmp);
-```
+Gabon is the regression test rather than an output. `edits/gabon.yaml` was
+written by hand before the parser existed, and the parser reproduces its 19
+operations exactly, in order. `transcribe_all.py` re-checks that on every run
+and fails if it stops agreeing.
 
-A parser for those shapes would produce most of each country's edit file
-mechanically, leaving the 1,159 real `update` statements and the 15 anonymous
-`DO` blocks to be read by hand. That is the difference between the low and
-high ends of the 3-6 week estimate, and it is worth writing the parser first
-against Gabon, where the answer is already known.
+### Replayed against the published network
 
-Per-country, so the work can be split up:
+`verify_all.py` replays all twenty continental files onto one prepared network
+- which is what the original build does, since every script edits the same
+`africa_osm_edges` - and compares by line:
 
-| Country | Lines | Updates | Routes | Splits | Copies |
-| --- | --- | --- | --- | --- | --- |
-| south africa | 11,085 | 719 | 419 | 279 | 196 |
-| tunisia | 2,824 | 273 | 53 | 0 | 0 |
-| zimbabwe | 2,308 | 128 | 63 | 63 | 29 |
-| mozambique | 2,274 | 103 | 47 | 32 | 70 |
-| egypt | 1,969 | 153 | 62 | 49 | 12 |
-| algeria | 1,887 | 144 | 48 | 0 | 0 |
-| west_africa_ex_nigeria | 1,800 | 130 | 52 | 27 | 20 |
-| morocco | 1,079 | 71 | 32 | 0 | 0 |
-| malawi | 1,015 | 60 | 33 | 21 | 4 |
-| drc | 1,004 | 63 | 33 | 23 | 9 |
-| *14 others* | 6,127 | 385 | 218 | 70 | 112 |
-| **total** | **35,372** | **2,329** | **1,060** | **564** | **452** |
+| | |
+| --- | --- |
+| Edits applied | **3,651 of 3,685** (34 failed), in 213s |
+| Scripts replaying with no failure | **13 of 20** |
+| Lines matching on edge count *and* length | **822 of 906** |
+| Lines missing entirely | 38 |
+| Lines in the replay only | 7 |
+| Route km | **67,671 of 69,951 published (96.7%)** |
 
-(Raw counts including comments, which is why they exceed the live-statement
-table above.) South Africa alone is a third of it.
+Per script, applied against transcribed:
+
+| script | edits | applied | script | edits | applied |
+| --- | ---: | ---: | --- | ---: | ---: |
+| algeria | 228 | 228 | namibia | 88 | 88 |
+| angola | 101 | 101 | nigeria | 67 | 60 |
+| botswana | 44 | 44 | south_africa | 1,296 | 1,290 |
+| cameroon | 29 | 29 | sudan | 56 | 56 |
+| congo_brazzaville | 21 | 21 | tunisia | 410 | 402 |
+| drc | 95 | 95 | west_africa_ex_nigeria | 174 | 172 |
+| egypt | 234 | 233 | zimbabwe | 273 | 270 |
+| eritrea_djibouti_ethiopia | 51 | 51 | eswatini | 38 | 38 |
+| gabon | 19 | 19 | malawi | 98 | 95 |
+| morocco | 104 | 102 | mozambique | 259 | 257 |
+
+The 34 remaining failures are all of one kind: an edit naming a node or edge
+that is not there when it runs, or a split of something that is no longer a
+line. They cluster in the scripts with the most hand-surgery, and each one is
+reported with its index so it can be read against the SQL.
+
+### Sixteen operations cover the corpus
+
+Gabon needed five. The whole corpus needs sixteen, all implemented in
+`primitives.py` and `apply_country_edits.py`:
+
+`tag_route` (1,015, with an optional edge filter - 294 routes restrict the
+graph to a country, and a few exclude named edges to force a path),
+`set_node` (983), `split_edge` (671+), `copy_node` (465+),
+`insert_edge` (158), `insert_node_at` (105), `set_edge` (64),
+`set_nodes_on_edges` (40), `set_nodes` (26), `set_edges` (20),
+`change_target` (20), `change_source` (19), `split_name_script` (6),
+`set_all_edges` (4), `delete_edge` (3), `delete_node` (2),
+`copy_node_column` (1).
+
+### Four things the transcription turned up
+
+**The four HVT scripts are a different pipeline.** Kenya, Tanzania, Uganda and
+Zambia edit their own `<country>_osm_*` tables, built from per-country OSM
+extracts the repo does not ship, which `data/old_hvt/generate_combined_network
+.sql` unions into `hvt_rail_network` before the current combine re-keys it
+(`oid + 666600000000`). Their ids are in a different space from every other
+script's. They do not need replaying: their output *is* shipped, as
+`data/old_hvt/network.geojson` - 6,276 edges, Tanzania 2,650, Kenya 1,716,
+Zambia 1,112, Uganda 798 - which is exactly what the published network carries
+for those four. The port reads it as an input, as the original build does.
+
+**The recorded build is missing an ALTER.** `afrn.sql` gives nodes only `gauge`
+and `facility`, but the country scripts set `comment`, `name_arabic` and
+`status` on nodes, and the published `africa_rail_nodes.geojson` carries all
+three. Those columns were added by a step that is not in the repo.
+`prepare_network.py` now creates them, along with the `speed_freight` and
+`speed_passenger` columns `afrn.sql` does add to edges and this port had
+missed.
+
+**Six batches survive only as comments.** Seven `DO $$ ... $$` blocks in the
+continental scripts are `rn_copy_node` and `rn_split_edge` written out inline
+and run over a pair of arrays. The author edited the arrays and re-ran, so the
+file holds the *last* pair - one id each - with the full pair commented out
+above it. The full pair is what was executed: the ids it creates (`oid +
+1000000`) are what later statements route to, and the active single is its last
+element. Transcribing the commented arrays took Algeria from 27 failures to 0
+and the whole corpus from 788 matching lines to 822. Each batch says in its
+note where it came from.
+
+**The scripts are missing semicolons in about a dozen places**, which runs two
+statements together, and two array literals are mistyped (`arary[`, and one
+closed with the wrong bracket). A naive split on `;` also truncates the
+statements whose comment field contains a semicolon, or the word "where". The
+parser handles all of these, and says so where it does.
+
+### What is left
+
+Three things, in order of size:
+
+1. **38 lines still missing and 34 edits still failing.** Each failure names
+   its script and index. This is reading them against the SQL one at a time;
+   the machinery is all there.
+2. **Two statements no parser should guess at.** Egypt joins station names
+   from `osm_railway_stations_egypt`, a table the repo does not ship. Morocco
+   has one `ST_RemovePoint(geom, 25)` - bespoke vertex surgery - and Algeria a
+   `DO` block that removes the last vertex of one edge four times.
+3. **Stages 3 to 6**: the combine, the HVT merge, normalisation and
+   electrification, from `generate_combined_network.sql`.
+
+The original estimate was 3-6 weeks, most of it transcription. The
+transcription is done. What is left is the tail.
 
 ## Proposed decomposition
 
@@ -263,9 +353,14 @@ Six rules, each reading files and writing files:
    Inputs: the snkit GeoPackage and the boundaries. Output: prepared nodes and
    edges.
 2. `rail_country_edits` - one wildcard rule per country, applying that
-   country's edit file. **Written**, `apply_country_edits.py`; one of 24 edit
-   files exists.
-3. `rail_combine_countries` - concatenate the 24 outputs.
+   country's edit file. **Written**, `apply_country_edits.py`; all 24 edit
+   files exist, and `parse_country_sql.py` regenerates them from the SQL.
+   Note that the edits are not independent - every script edits the same
+   table, and a few lines cross a border - so this is one rule over the set
+   rather than a wildcard over countries, which is what `verify_all.py` does.
+3. `rail_combine_countries` - the union and normalisation, reading
+   `data/old_hvt/network.geojson` as the fourth input rather than replaying
+   Kenya, Tanzania, Uganda and Zambia.
 4. `rail_merge_hvt` - the East Africa merge and renumbering from
    `generate_combined_network.sql`, including the three border joins.
 5. `rail_normalise` - the facility, status and country-name lookups. These are
@@ -274,9 +369,11 @@ Six rules, each reading files and writing files:
    the comment text and part three routed paths.
 
 Keeping the edits as data rather than Python is what makes this worth doing:
-`edits/gabon.yaml` is diffable, reviewable by someone who knows the railways
+`edits/*.yaml` is diffable, reviewable by someone who knows the railways
 rather than the code, and re-keyable to OSM ids later without touching the
-code that applies it.
+code that applies it. The transcription preserved the research along with the
+ids - each edit carries the comment the author wrote above it, sources and
+all.
 
 ## Why a rebuild from current OSM is a different project
 
@@ -336,6 +433,18 @@ python apply_country_edits.py --database /tmp/rail.duckdb \
     --edits edits/gabon.yaml \
     --compare $RAIL/network/africa_rail_network.geojson
 ```
+
+To re-transcribe every country from the SQL, and replay the lot:
+
+```bash
+python transcribe_all.py --scripts $RAIL/countries_sql_scripts
+python verify_all.py --database /tmp/rail.duckdb \
+    --published $RAIL/network/africa_rail_network.geojson
+```
+
+`transcribe_all.py` fails if the parser stops reproducing the hand-written
+`edits/gabon.yaml`. `parse_country_sql.py --verbose` lists, with line numbers,
+every statement in one script that it would not guess at.
 
 Both exit non-zero if they stop matching the original. Stage 1 takes fifteen
 seconds on SedonaDB and nine minutes on DuckDB - but stage 2 needs the tables

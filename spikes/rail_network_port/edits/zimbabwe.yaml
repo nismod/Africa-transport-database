@@ -1,0 +1,1678 @@
+# Zimbabwe rail network edits.
+#
+# Derived from zimbabwe.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 2,309 lines of SQL: 273 edits,
+# 17 statements skipped as unable to reach the published network
+# (2 backup, 7 exploratory, 1 routing test, 6 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Zimbabwe
+edits:
+- op: insert_node_at
+  oid: 558000019
+  lon: 25.85716
+  lat: -17.92837
+  set:
+    country: Zimbabwe
+  note: add station
+- op: copy_node
+  node: 558000019
+  edge: 555003219
+- op: insert_node_at
+  oid: 558000019
+  lon: 25.85716
+  lat: -17.92837
+  set:
+    country: Zimbabwe
+  note: add node at border
+- op: copy_node
+  node: 558000019
+  edge: 555003219
+- op: set_edge
+  edge: 5550032191
+  set:
+    line: Livingstone - Ndola
+    mode: mixed
+    gauge: '1067'
+    status: open
+    country: Zambia
+  note: update edge into Zambia
+- op: insert_node_at
+  oid: 558000020
+  lon: 28.56176
+  lat: -20.13576
+  set:
+    country: Zimbabwe
+  note: add nodes for routing into Bulawayo junction
+- op: copy_node
+  node: 558000020
+  edge: 555068323
+- op: insert_node_at
+  oid: 558000021
+  lon: 28.56171
+  lat: -20.13563
+  set:
+    country: Zimbabwe
+  note: node 559000020
+- op: copy_node
+  node: 558000021
+  edge: 555017951
+- op: insert_edge
+  source: 559000020
+  target: 559000021
+  oid: 556000070
+  note: add link
+- op: split_edge
+  edge: 555068187
+  node: 555104386
+- op: split_edge
+  edge: 555068336
+  node: 555104191
+- op: split_edge
+  edge: 5550683362
+  node: 555104433
+- op: split_edge
+  edge: 555068188
+  node: 555104432
+- op: set_node
+  node: 555084216
+  set:
+    name: Bulawayo Station
+    railway: station
+- op: tag_route
+  from: 555084216
+  to: 559000019
+  set:
+    line: Bulawayo - Victoria Falls (Zambia border)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: null
+  where: oid != 5550179511
+- op: split_edge
+  edge: 555068347
+  node: 555104836
+- op: tag_route
+  from: 555084216
+  to: 559000018
+  set:
+    line: Bulawayo - Plumtree (Botswana border)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Passenger services currently suspended
+  note: Bulawayo - Plumtree (Botswana border)
+- op: set_node
+  node: 555064270
+  set:
+    name: Harare Station
+    railway: station
+  note: Bulawayo - Plumtree (Botswana border)
+- op: tag_route
+  from: 555104386
+  to: 555064270
+  set:
+    line: Beira-Bulawayo Railway (Bulawayo - Harare)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Passenger services currently suspended
+- op: tag_route
+  from: 555064270
+  to: 555013377
+  set:
+    line: Beira-Bulawayo Railway (Harare - Mutare)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Passenger services currently suspended
+  note: Beira-Bulawayo Railway (Harare - Mutare)
+- op: insert_node_at
+  oid: 558000022
+  lon: 32.71318
+  lat: -19.00096
+  set:
+    country: Zimbabwe
+  note: node on border
+- op: copy_node
+  node: 558000022
+  edge: 555037138
+- op: tag_route
+  from: 555013377
+  to: 559000022
+  set:
+    line: Beira-Bulawayo Railway (Mutare - Mozambique border)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555124341
+  node: 555126359
+  note: status unclear
+- op: tag_route
+  from: 555126359
+  to: 555080103
+  set:
+    line: Beitbridge Bulawayo Railway (BBR)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'See: https://bbr.co.zw'
+- op: set_node
+  node: 555081299
+  set:
+    name: Beitbridge (BBR)
+    railway: stop
+    facility: Marshalling Yard
+  note: BBR Marshalling Yard
+- op: tag_route
+  from: 555041303
+  to: 555044850
+  set:
+    line: Limpopo railway (Somabhula – Sango/Chicualacuala (Mozambique border))
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Passenger service currently suspended
+  note: Limpopo railway (Somabhula – Sango (Mozambique border))
+- op: insert_node_at
+  oid: 558000023
+  lon: 28.68572
+  lat: -20.11316
+  set:
+    railway: station
+    name: Cement
+    country: Zimbabwe
+  note: http://www.gomapper.com/travel/where-is/cement-station-located.html
+- op: copy_node
+  node: 558000023
+  edge: 555069295
+- op: insert_node_at
+  oid: 558000024
+  lon: 28.78557
+  lat: -20.08156
+  set:
+    railway: station
+    name: Heany Junction
+    country: Zimbabwe
+  note: "Heany Junction\t13:16\t13:18"
+- op: copy_node
+  node: 558000024
+  edge: 5551243412
+- op: insert_node_at
+  oid: 558000025
+  lon: 29.36881
+  lat: -19.77907
+  set:
+    railway: station
+    name: Shangani
+    country: Zimbabwe
+  note: 29.36881,-19.77907
+- op: copy_node
+  node: 558000025
+  edge: 555068597
+- op: insert_node_at
+  oid: 558000026
+  lon: 29.66302
+  lat: -19.69739
+  set:
+    railway: station
+    name: Somabhula
+    country: Zimbabwe
+  note: https://tracks4africa.co.za/listings/item/w367397/somabhula/
+- op: copy_node
+  node: 558000026
+  edge: 555099636
+- op: insert_node_at
+  oid: 558000027
+  lon: 29.87175
+  lat: -20.29125
+  set:
+    railway: station
+    name: Bannockburn
+    country: Zimbabwe
+  note: "Bannockburn\t18:43\t18:48"
+- op: copy_node
+  node: 558000027
+  edge: 555123649
+- op: insert_node_at
+  oid: 558000028
+  lon: 30.39979
+  lat: -20.57852
+  set:
+    railway: station
+    name: Ngezi
+    country: Zimbabwe
+  note: "Ngezi\t21:00\t21:06"
+- op: copy_node
+  node: 558000028
+  edge: 555123802
+- op: insert_node_at
+  oid: 558000029
+  lon: 30.43704
+  lat: -20.77154
+  set:
+    railway: station
+    name: Ngungubane (Ngungumbane)
+    country: Zimbabwe
+  note: "Ngungubane (Ngungumbane)\t22:12\t22:13"
+- op: copy_node
+  node: 558000029
+  edge: 555084127
+- op: insert_node_at
+  oid: 558000030
+  lon: 30.54485
+  lat: -20.99085
+  set:
+    railway: station
+    name: Sarahuru
+    country: Zimbabwe
+  note: "Sarahuru\t22:49\t22:50"
+- op: copy_node
+  node: 558000030
+  edge: 555033603
+- op: copy_node
+  node: 555147424
+  edge: 555033590
+  note: "Rutenga\t23:50\t00:50"
+- op: set_node
+  node: 556147424
+  set:
+    name: Rutenga
+    railway: station
+- op: copy_node
+  node: 555056834
+  edge: 555034995
+  note: "Mbizi\t01:56\t02:01"
+- op: set_node
+  node: 556056834
+  set:
+    name: Mbizi
+    railway: station
+- op: insert_node_at
+  oid: 558000031
+  lon: 31.38954
+  lat: -21.51943
+  set:
+    railway: station
+    name: Makambe siding
+    country: Zimbabwe
+  note: "Makambe siding\t03:04\t03:05"
+- op: copy_node
+  node: 558000031
+  edge: 555033528
+- op: set_node
+  node: 555080718
+  set:
+    name: Sango
+    railway: station
+  note: "Sango 06:25\t07:00"
+- op: split_edge
+  edge: 555034862
+  node: 555064677
+  note: Assumed Freight only
+- op: tag_route
+  from: 555014685
+  to: 555064677
+  set:
+    line: Rutenga-Beitbridge railway
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000032
+  lon: 31.14813
+  lat: -21.29288
+  set:
+    railway: station
+    name: Chingwizi siding
+    country: Zimbabwe
+  note: "Chingwizi\tsiding 08:56\t08:57"
+- op: copy_node
+  node: 558000032
+  edge: 555086950
+- op: insert_node_at
+  oid: 558000033
+  lon: 31.28519
+  lat: -21.15879
+  set:
+    railway: station
+    name: Lundi siding
+    country: Zimbabwe
+  note: "Lundi siding\t09:33\t09:34"
+- op: copy_node
+  node: 558000033
+  edge: 555033541
+- op: insert_node_at
+  oid: 558000034
+  lon: 31.46807
+  lat: -21.02233
+  set:
+    railway: station
+    name: Triangle
+    country: Zimbabwe
+  note: "Triangle\t11:11\t11:20"
+- op: copy_node
+  node: 558000034
+  edge: 5550335531
+- op: set_node
+  node: 555119677
+  set:
+    name: Chiredzi
+    railway: station
+  note: Chiredzi
+- op: set_node
+  node: 555091456
+  set:
+    comment: Sugar cane estate. Cut cane transported by rail to sugar mills at Hippo Valley and Triangle
+    name: Mkwasine Sugar Estate
+    railway: stop
+    facility: Agriculture
+- op: tag_route
+  from: 555014686
+  to: 555119677
+  set:
+    line: Mbizi - Chiredzi (Chiredzi Branch)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Passenger services ran prior to Covid-19 between Mbizi and Chiredzi
+- op: tag_route
+  from: 555119677
+  to: 555091456
+  set:
+    line: Chiredzi - Mkwasine (Chiredzi Branch)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: Primarily serves Sugar cane estates and mills
+- op: set_node
+  node: 555102831
+  set:
+    name: Triangle sugarcane processing mill (Tongaat Hullet)
+    railway: stop
+    facility: Food manufacturing
+  note: Triangle
+- op: split_edge
+  edge: 555033553
+  node: 555102824
+- op: split_edge
+  edge: 555066385
+  node: 555102833
+- op: split_edge
+  edge: 555066393
+  node: 555102825
+- op: tag_route
+  from: 555102824
+  to: 555102831
+  set:
+    line: Triangle sugarcane processing mill
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555119922
+  set:
+    name: Hippo Valley sugarcane processing mill (Tongaat Hullet)
+    railway: stop
+    facility: Food manufacturing
+  note: Hippo Valley
+- op: split_edge
+  edge: 555086565
+  node: 555147437
+- op: tag_route
+  from: 555147437
+  to: 555119922
+  set:
+    line: Hippo Valley sugarcane processing mill
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555063796
+  to: 555029061
+  set:
+    line: Gweru - Masvingo branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: freight only
+- op: set_node
+  node: 555064694
+  set:
+    name: Masvingo industrial area
+    railway: stop
+    facility: industrial area
+  note: Masvingo industrial area
+- op: tag_route
+  from: 555029061
+  to: 555064694
+  set:
+    line: Gweru - Masvingo branch (industrial area)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555101596
+  set:
+    name: Shurugwi
+    railway: stop
+  note: freight only
+- op: tag_route
+  from: 555063793
+  to: 555101596
+  set:
+    line: Shurugwi Branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555103070
+  set:
+    comment: 'presumed disused as the mine is closed. See: https://www.thezimbabwean.co/2011/01/zimasco-closes-chrome-mine/'
+    name: Railway Block chrome mine
+    railway: stop
+    facility: mine
+  note: assume spur is disused
+- op: tag_route
+  from: 555026498
+  to: 555103070
+  set:
+    line: Railway Block chrome mine spur
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'presumed disused as the mine is closed. See: https://www.thezimbabwean.co/2011/01/zimasco-closes-chrome-mine/'
+- op: set_nodes_on_edges
+  countries:
+  - Zimbabwe
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'
+- op: set_node
+  node: 555101601
+  set:
+    name: Shurugwi Peak Railway
+    railway: stop
+    facility: mine railway
+  note: as mine has closed, assume disused
+- op: tag_route
+  from: 555101601
+  to: 555097082
+  set:
+    line: Shurugwi Peak Railway
+    mode: freight
+    type: conventional
+    gauge: '610'
+    status: disused
+    comment: 'presumed disused as the mine is closed. See: https://www.thezimbabwean.co/2011/01/zimasco-closes-chrome-mine/'
+- op: set_node
+  node: 555087971
+  set:
+    name: Zave (Zawi)
+    railway: station
+  note: Kildonan/Zave (Zawi)
+- op: insert_node_at
+  oid: 558000035
+  lon: 30.02215
+  lat: -17.26764
+  set:
+    railway: station
+    name: Lion's Den
+    country: Zimbabwe
+- op: copy_node
+  node: 558000035
+  edge: 555044098
+- op: tag_route
+  from: 555107605
+  to: 555087971
+  set:
+    line: Harare - Zave (Chinhoyi Branch)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Freight only, though there have been passenger services in the 2000s: https://allafrica.com/stories/200705220623.html'
+- op: set_node
+  node: 555091464
+  set:
+    comment: Ferrochrome ore is transferred here by road from mines at Mutorashanga (largely owned by
+      Zimasco)
+    name: Kildonan siding
+    railway: stop
+  note: Maryland Junction - Kildonan
+- op: tag_route
+  from: 555088896
+  to: 555091464
+  set:
+    line: Maryland Junction - Kildonan
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555082767
+  set:
+    name: Shamva
+    railway: stop
+  note: Mount Hampden Junction - Shamva
+- op: split_edge
+  edge: 555101539
+  node: 555082767
+- op: tag_route
+  from: 555065133
+  to: 555082767
+  set:
+    line: Mount Hampden Junction - Shamva (Shamva Branch)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000036
+  lon: 30.99281
+  lat: -17.86046
+  set:
+    railway: stop
+    name: Manica container depot
+    country: Zimbabwe
+    facility: Container terminal
+  note: https://www.freightnews.co.za/article/new-manica-terminal-harare
+- op: copy_node
+  node: 558000036
+  edge: 555072215
+- op: split_edge
+  edge: 555048810
+  node: 555090877
+- op: split_edge
+  edge: 555072214
+  node: 555090833
+- op: tag_route
+  from: 555090878
+  to: 559000036
+  set:
+    line: Manica container depot, Harare
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000037
+  lon: 31.02967
+  lat: -17.84457
+  set:
+    railway: stop
+    name: Harare Thermal Power Station
+    country: Zimbabwe
+    facility: Power station
+  note: Harare Thermal Power Station
+- op: copy_node
+  node: 558000037
+  edge: 555068088
+- op: split_edge
+  edge: 555075351
+  node: 555104060
+- op: split_edge
+  edge: 555068087
+  node: 555104059
+- op: split_edge
+  edge: 5550680872
+  node: 555104057
+- op: tag_route
+  from: 555109636
+  to: 559000037
+  set:
+    line: Harare Thermal Power Station
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555120311
+  set:
+    comment: 'Largest grain store in Zimbabwe ("third largest in world") see: https://www.herald.co.zw/gmb-needs-3m-for-lions-den-silos/'
+    name: Grain Silos (Grain Marketing Board)
+    railway: stop
+    facility: food storage
+  note: 'see: https://www.herald.co.zw/gmb-needs-3m-for-lions-den-silos/'
+- op: split_edge
+  edge: 5550440982
+  node: 555120310
+- op: tag_route
+  from: 555120310
+  to: 555120311
+  set:
+    line: Lion's Den Grain Silos (Grain Marketing Board)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000038
+  lon: 30.18258
+  lat: -17.37476
+  set:
+    country: Zimbabwe
+  note: Chinhoyi
+- op: copy_node
+  node: 558000038
+  edge: 555044116
+- op: delete_node
+  node: 558000038
+- op: insert_node_at
+  oid: 558000039
+  lon: 30.18433
+  lat: -17.37458
+  set:
+    railway: stop
+    name: Grain depot (Grain Marketing Board)
+    country: Zimbabwe
+    facility: food storage
+- op: insert_edge
+  source: 559000038
+  target: 558000039
+  oid: 556000071
+- op: split_edge
+  edge: 555044109
+  node: 555087975
+- op: tag_route
+  from: 555087975
+  to: 558000039
+  set:
+    line: Chinhoyi grain depot (Grain Marketing Board)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555088904
+  set:
+    name: Darwendale Tunnels Military Cantonment
+    railway: stop
+    facility: military
+  note: Darwendale Tunnels Military Cantonment
+- op: split_edge
+  edge: 555095716
+  node: 555088905
+- op: tag_route
+  from: 555088901
+  to: 555088904
+  set:
+    line: Darwendale Tunnels Military Cantonment
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555080935
+  set:
+    comment: 'Nickel mine. See: https://miningdataonline.com/property/1249/Trojan-Mine.aspx'
+    name: Trojan Nickel Mine
+    railway: stop
+    facility: mine
+  note: https://miningdataonline.com/property/1249/Trojan-Mine.aspx
+- op: tag_route
+  from: 555080933
+  to: 555080935
+  set:
+    line: Trojan Nickel Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555090978
+  set:
+    name: Bundura grain and cotton depots
+    railway: stop
+    facility: storage
+  note: Bundura grain and cotton depots
+- op: split_edge
+  edge: 555034028
+  node: 555014831
+- op: split_edge
+  edge: 5550340281
+  node: 555090977
+- op: tag_route
+  from: 555014831
+  to: 555090978
+  set:
+    line: Bundura grain and cotton depots
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: status unclear.
+- op: set_node
+  node: 555065152
+  set:
+    name: Asplindale business area (Harare)
+    railway: stop
+    facility: Business area
+  note: Asplindale business area (Harare)
+- op: tag_route
+  from: 555065151
+  to: 555065152
+  set:
+    line: Asplindale business area (Harare)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: status unclear.
+- op: set_node
+  node: 555109635
+  set:
+    name: Workington business area (Harare)
+    railway: stop
+    facility: Business area
+  note: Workington Business area (Harare)
+- op: tag_route
+  from: 555104060
+  to: 555109635
+  set:
+    line: Workington business area (Harare)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: status unclear.
+- op: set_node
+  node: 555119316
+  set:
+    name: Southerton business area (Harare)
+    railway: stop
+    facility: Business area
+  note: Southerton business area (Harare)
+- op: insert_edge
+  source: 555109636
+  target: 555109605
+  oid: 556000072
+- op: split_edge
+  edge: 555001335
+  node: 555109636
+- op: split_edge
+  edge: 555003302
+  node: 555109605
+- op: split_edge
+  edge: 555003301
+  node: 555064809
+- op: split_edge
+  edge: 555003294
+  node: 555119315
+- op: tag_route
+  from: 555109636
+  to: 555119316
+  set:
+    line: Southerton business area (Harare)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: status unclear.
+- op: set_node
+  node: 555109542
+  set:
+    name: Willowvale business area (Harare)
+    railway: stop
+    facility: Business Area
+  note: Willowvale Industrial area (Harare)
+- op: split_edge
+  edge: 555004258
+  node: 555109541
+- op: tag_route
+  from: 555109541
+  to: 555109542
+  set:
+    line: Willowvale business area (Harare)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: status unclear.
+- op: set_node
+  node: 555101996
+  set:
+    comment: 'There is a petroleum pipeline from Beira in Mozambique to Msasa depot in Harare. See: https://allafrica.com/stories/201503270241.html'
+    name: Msasa Fuel Depot (NOIC)
+    railway: stop
+    facility: Fuel depot
+  note: Msasa Fuel Depot, Harare (NOIC)
+- op: split_edge
+  edge: 555037064
+  node: 555101999
+- op: split_edge
+  edge: 555064836
+  node: 555101998
+- op: tag_route
+  from: 555101999
+  to: 555101996
+  set:
+    line: Msasa Fuel Depot, Harare (NOIC)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555109550
+  set:
+    name: Manresa cement plant (Lafarge)
+    railway: stop
+    facility: Cement plant
+  note: Manresa cement plant (Lafarge)
+- op: tag_route
+  from: 555109547
+  to: 555109550
+  set:
+    line: Manresa cement plant (Lafarge)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555020668
+  set:
+    name: Marondera
+  note: Marondera business area
+- op: insert_edge
+  source: 555020668
+  target: 555108601
+  oid: 556000073
+  note: simplify routing from Marondera station
+- op: set_node
+  node: 555108574
+  set:
+    name: Marondera business area
+    railway: stop
+    facility: Business area
+- op: split_edge
+  edge: 555073283
+  node: 555108601
+- op: split_edge
+  edge: 555073282
+  node: 555108575
+- op: tag_route
+  from: 555020668
+  to: 555108574
+  set:
+    line: Marondera business area
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555095110
+  set:
+    name: Nyakamete Industrial Area (Mutare)
+    railway: stop
+    facility: Business area
+  note: Nyakamete Industrial Area (Mutare)
+- op: split_edge
+  edge: 555083429
+  node: 555084676
+- op: split_edge
+  edge: 555039151
+  node: 555084151
+- op: split_edge
+  edge: 5550391511
+  node: 555084150
+- op: split_edge
+  edge: 555039167
+  node: 555084651
+- op: split_edge
+  edge: 555039157
+  node: 555084650
+- op: split_edge
+  edge: 5550391572
+  node: 555084135
+- op: split_edge
+  edge: 555039156
+  node: 555084153
+- op: split_edge
+  edge: 555039173
+  node: 555095109
+- op: tag_route
+  from: 555084676
+  to: 555095110
+  set:
+    line: Nyakamete Industrial Area (Mutare)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555084154
+  set:
+    name: Mutare grain store (Grain Marketing Board)
+    railway: stop
+    facility: Food storage
+  note: Mutare grain store (Grain Marketing Board)
+- op: tag_route
+  from: 555095109
+  to: 555084154
+  set:
+    line: Mutare grain store (Grain Marketing Board)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555091018
+  set:
+    comment: 'Connected by the Feruka Pipeline to Beira in Mozambique where Zimbabwe''s fuel imports are
+      shipped via. See: http://bit.ly/3lB735N'
+    name: Feruka Oil Refinery
+    railway: stop
+    facility: Oil refinery
+  note: Feruka Oil Refinery
+- op: split_edge
+  edge: 555036924
+  node: 555091019
+- op: tag_route
+  from: 555091019
+  to: 555091018
+  set:
+    line: Feruka Oil Refinery
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Spur built 2021. See: http://bit.ly/3lB735N'
+- op: set_node
+  node: 555118565
+  set:
+    name: Grain depot, Rusape (Grain Marketing Board)
+    railway: stop
+    facility: Food storage
+  note: Grain Marketing Board - Rusape
+- op: split_edge
+  edge: 555084894
+  node: 555118566
+- op: split_edge
+  edge: 555084897
+  node: 555118569
+- op: split_edge
+  edge: 555084899
+  node: 555118573
+- op: split_edge
+  edge: 555084900
+  node: 555118575
+- op: split_edge
+  edge: 555037117
+  node: 555118577
+- op: tag_route
+  from: 555118577
+  to: 555118565
+  set:
+    line: Grain depot, Rusape (GMB)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555107410
+  set:
+    name: Grain silos, Chegutu (Grain Marketing Board)
+    railway: stop
+    facility: Food storage
+  note: Grain silos (GMB) Chegutu
+- op: insert_edge
+  source: 555107402
+  target: 555029212
+  oid: 556000074
+  note: simplify routing
+- op: split_edge
+  edge: 555071994
+  node: 555107402
+- op: split_edge
+  edge: 555072006
+  node: 555107400
+- op: split_edge
+  edge: 555071993
+  node: 555107409
+- op: tag_route
+  from: 555029212
+  to: 555107410
+  set:
+    line: Grain silos, Chegutu (Grain Marketing Board)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555106830
+  set:
+    comment: 'see: https://www.riozim.co.zw/?page_id=231'
+    name: Empress Nickel Refinery, Kadoma
+    railway: stop
+    facility: manufacturing
+  note: Empress Nickel Refinery, Kadoma
+- op: split_edge
+  edge: 555037080
+  node: 555106829
+- op: tag_route
+  from: 555106829
+  to: 555106830
+  set:
+    line: Empress Nickel Refinery, Kadoma
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555138781
+  set:
+    name: Kadona paper mills
+    railway: stop
+    facility: manufacturing
+  note: Kadona paper mills
+- op: split_edge
+  edge: 555037076
+  node: 555138775
+- op: split_edge
+  edge: 555111692
+  node: 555138768
+- op: insert_edge
+  source: 555138775
+  target: 555138768
+  oid: 556000075
+  note: simplify
+- op: split_edge
+  edge: 5551116921
+  node: 555138781
+- op: tag_route
+  from: 555138775
+  to: 555138781
+  set:
+    line: Kadona paper mills
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555120589
+  set:
+    comment: 'manufacturer of nitrogen-based fertilizer, see: https://en.wikipedia.org/wiki/Sable_Chemicals'
+    name: Sable Chemical Industries, Kwekwe
+    railway: stop
+    facility: manufacturing
+  note: manufacturer of nitrogen-based fertilizer
+- op: split_edge
+  edge: 555037096
+  node: 555120588
+- op: tag_route
+  from: 555120588
+  to: 555120589
+  set:
+    line: Sable Chemical Industries, Kwekwe
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555109398
+  set:
+    comment: Chrome smelting (production of ferrochrome)
+    name: Zimasco Kwekwe
+    railway: stop
+  note: Chrome smelting (production of ferrochrome)
+- op: split_edge
+  edge: 555074818
+  node: 555109395
+- op: split_edge
+  edge: 555074875
+  node: 555109397
+- op: tag_route
+  from: 555082833
+  to: 555109398
+  set:
+    line: Zimasco Kwekwe
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555030351
+  set:
+    name: Kweke industrial area
+    railway: stop
+    facility: Industrial area
+  note: Kweke industrial area
+- op: insert_edge
+  source: 555109333
+  target: 555109355
+  oid: 556000076
+  note: simplify routing
+- op: split_edge
+  edge: 555074809
+  node: 555109333
+- op: tag_route
+  from: 555109333
+  to: 555030351
+  set:
+    line: Kweke industrial area
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555129030
+  set:
+    comment: 'Reported in 2022 that has been closed since 2008 but hopes of operations starting again,
+      perhaps in 2023. See: https://bit.ly/3K5EnMi'
+    name: Zisco steel plant (Redcliff)
+    railway: stop
+    facility: manufacturing
+  note: assume currently disused.
+- op: split_edge
+  edge: 555050136
+  node: 555129030
+- op: split_edge
+  edge: 555037099
+  node: 555091905
+- op: split_edge
+  edge: 555050122
+  node: 555091906
+- op: tag_route
+  from: 555091905
+  to: 555129030
+  set:
+    line: Zisco steel plant, Redcliff
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'Reported in 2022 that the plant has been closed since 2008 but hopes of operations starting
+      again, perhaps in 2023. See: https://bit.ly/3K5EnMi. Assume that the rail spur is disused currently'
+- op: set_node
+  node: 555118401
+  set:
+    name: Grain depot, Gweru (Grain Marketing Board)
+    railway: stop
+    facility: food storage
+  note: Grain depot, Gweru (Grain Marketing Board)
+- op: split_edge
+  edge: 555039205
+  node: 555118406
+- op: split_edge
+  edge: 555039212
+  node: 555084185
+- op: split_edge
+  edge: 555084610
+  node: 555118403
+- op: split_edge
+  edge: 5550846101
+  node: 555118402
+- op: tag_route
+  from: 555063796
+  to: 555118401
+  set:
+    line: Grain depot, Gweru (Grain Marketing Board)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555118399
+  set:
+    name: Zimbabwe Alloys chrome mine and smelting plant
+    railway: stop
+    facility: mine
+  note: Zimbabwe Alloys (ZimAlloys) Chrome mine and smelting plant
+- op: split_edge
+  edge: 55508461011
+  node: 555118400
+- op: tag_route
+  from: 555118402
+  to: 555118399
+  set:
+    line: Zimbabwe Alloys chrome mine and smelting plant
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555104955
+  set:
+    name: Zuva Gweru Terminal
+    railway: stop
+    facility: fuel storage terminal
+  note: Zuva Gweru Terminal (petroleum storage)
+- op: split_edge
+  edge: 555001200
+  node: 555084193
+- op: split_edge
+  edge: 555039213
+  node: 555104956
+- op: tag_route
+  from: 555084193
+  to: 555104955
+  set:
+    line: Zimbabwe Alloys chrome mine and smelting plant
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555128160
+  set:
+    comment: 'Nickel mine. See: http://bit.ly/40S3qse'
+    name: Shangani Mine
+    railway: stop
+    facility: mine
+  note: see http://bit.ly/40S3qse
+- op: split_edge
+  edge: 555068591
+  node: 555128161
+- op: tag_route
+  from: 555128161
+  to: 555128160
+  set:
+    line: Shangani Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555104218
+  set:
+    name: Kelvin industrial area, Bulawayo
+    railway: stop
+    facility: Industrial area
+  note: Kelvin industrial area, Bulawayo
+- op: split_edge
+  edge: 555095685
+  node: 555104224
+- op: split_edge
+  edge: 555068234
+  node: 555104218
+- op: tag_route
+  from: 555104426
+  to: 555104218
+  set:
+    line: Kelvin industrial area, Bulawayo
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555123520
+  set:
+    name: Stone quarry (Davis Granite)
+    railway: stop
+    facility: quarry
+  note: stone quarry (Davis Granite)
+- op: split_edge
+  edge: 555068233
+  node: 555123519
+- op: tag_route
+  from: 555123519
+  to: 555123520
+  set:
+    line: Stone quarry (Davis Granite)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555104219
+  set:
+    name: Bulawayo grain silos (Grain Marketing Board)
+    railway: stop
+    facility: food storage
+  note: Bulawayo grain silos (Grain Marketing Board)
+- op: tag_route
+  from: 555104218
+  to: 555104219
+  set:
+    line: Bulawayo grain silos (Grain Marketing Board)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555104469
+  set:
+    name: Fuel storage terminals (ZUVA and Total)
+    railway: stop
+    facility: fuel storage
+  note: Fuel storage terminals (ZUVA and Total)
+- op: split_edge
+  edge: 5550683472
+  node: 555104866
+- op: split_edge
+  edge: 555068194
+  node: 555104867
+- op: split_edge
+  edge: 555068236
+  node: 555104156
+- op: split_edge
+  edge: 555068237
+  node: 555104469
+- op: tag_route
+  from: 555104866
+  to: 555104469
+  set:
+    line: Fuel storage terminals (ZUVA and Total)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555084170
+  set:
+    name: Bulawayo Power Station
+    railway: stop
+    facility: power station
+  note: Bulawayo Power Station
+- op: split_edge
+  edge: 555039192
+  node: 555104891
+- op: insert_edge
+  source: 555104836
+  target: 555104891
+  oid: 556000077
+  note: simplify
+- op: tag_route
+  from: 555104836
+  to: 555084170
+  set:
+    line: Bulawayo Power Station
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555077131
+  set:
+    name: Belmont and Donnington industrial areas, Bulawayo
+    railway: stop
+    facility: industrial area
+  note: Belmont and Donnington industrial areas, Bulawayo
+- op: split_edge
+  edge: 555095684
+  node: 555104851
+- op: split_edge
+  edge: 555068199
+  node: 555104622
+- op: split_edge
+  edge: 555027136
+  node: 555077131
+- op: insert_edge
+  source: 555091546
+  target: 555104622
+  oid: 556000078
+- op: tag_route
+  from: 555104851
+  to: 555077131
+  set:
+    line: Belmont and Donnington industrial areas, Bulawayo
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555097008
+  set:
+    comment: Coal mine
+    name: Hwange Colliery
+    railway: stop
+    facility: mine
+  note: 'see: https://en.wikipedia.org/wiki/Hwange_Colliery'
+- op: split_edge
+  edge: 555020913
+  node: 555119549
+- op: split_edge
+  edge: 555036939
+  node: 555097004
+- op: split_edge
+  edge: 5550369392
+  node: 555097011
+- op: split_edge
+  edge: 555057381
+  node: 555096996
+- op: split_edge
+  edge: 555057329
+  node: 555096997
+- op: split_edge
+  edge: 555057330
+  node: 555096940
+- op: split_edge
+  edge: 555057326
+  node: 555096966
+- op: tag_route
+  from: 555119549
+  to: 555097008
+  set:
+    line: Hwange Colliery Railway
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Privately owned railway - exchange with NRZ at Thomson Junction. See: https://en.wikipedia.org/wiki/Hwange_Colliery'
+- op: set_node
+  node: 555082775
+  set:
+    comment: 'See: https://en.wikipedia.org/wiki/Hwange_Thermal_Power_Station'
+    name: Hwange Thermal Power Station
+    railway: stop
+    facility: power station
+  note: 'see: https://en.wikipedia.org/wiki/Hwange_Thermal_Power_Station'
+- op: split_edge
+  edge: 555036938
+  node: 555082774
+- op: tag_route
+  from: 555097004
+  to: 555082775
+  set:
+    line: Hwange Thermal Power Station
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555117041
+  set:
+    name: ZUVA Hwange fuel terminal
+    railway: stop
+    facility: fuel storage
+  note: Zuva Hwange fuel terminal
+- op: insert_edge
+  source: 555117042
+  target: 555028021
+  oid: 556000079
+  note: insert (simplified) missing connection to main line
+- op: tag_route
+  from: 555028021
+  to: 555117041
+  set:
+    line: Zuva Hwange fuel terminal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555091004
+  set:
+    comment: 'Limestone mine. See: https://en.wikipedia.org/wiki/Colleen_Bawn'
+    name: Colleen Bawn limestone mine (Pretoria Portland Cement)
+    railway: stop
+    facility: mine
+  note: Colleen Bawn Limestone mine (Pretoria Portland Cement)
+- op: set_node
+  node: 555091005
+  set:
+    comment: 'Cement plant. See: https://en.wikipedia.org/wiki/Colleen_Bawn'
+    name: Colleen Bawn cement plant (Pretoria Portland Cement)
+    railway: stop
+    facility: manufacturing
+  note: Colleen Bawn Cement Plant (Pretoria Portland Cement)
+- op: split_edge
+  edge: 555091633
+  node: 555091007
+- op: split_edge
+  edge: 555049222
+  node: 555091006
+- op: tag_route
+  from: 555091007
+  to: 555091004
+  set:
+    line: Colleen Bawn Limestone mine (Pretoria Portland Cement)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555091006
+  to: 555091005
+  set:
+    line: Colleen Bawn Cement Plant (Pretoria Portland Cement)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555107879
+  set:
+    name: Gwanda grain depot (Grain Marketing Board)
+    railway: stop
+    facility: food storage
+  note: Gwanda grain depot (Grain Marketing Board)
+- op: split_edge
+  edge: 555033610
+  node: 555107878
+- op: tag_route
+  from: 555107878
+  to: 555107879
+  set:
+    line: Gwanda grain depot (Grain Marketing Board)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555147288
+  set:
+    name: Zvishavane
+    railway: stop
+  note: freight only
+- op: tag_route
+  from: 555027634
+  to: 555147288
+  set:
+    line: Zvishavane Branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: split
+- op: copy_node
+  node: 555062516
+  edge: 555037043
+  note: Chegutu
+- op: copy_node
+  node: 555062592
+  edge: 555074812
+  note: Kwekwe
+- op: copy_node
+  node: 555062222
+  edge: 555095708
+  note: Gweru
+- op: copy_node
+  node: 555008697
+  edge: 555074962
+  note: Plumtree
+- op: copy_node
+  node: 555050506
+  edge: 555099014
+  note: Mpopoma
+- op: set_nodes_on_edges
+  countries:
+  - Zimbabwe
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'
+- op: set_nodes_on_edges
+  countries:
+  - Zimbabwe
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '610'
+  set:
+    gauge: '610'

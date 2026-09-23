@@ -1,0 +1,527 @@
+# Namibia rail network edits.
+#
+# Derived from namibia.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 742 lines of SQL: 88 edits,
+# 16 statements skipped as unable to reach the published network
+# (2 backup, 7 exploratory, 1 routing test, 5 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Namibia
+edits:
+- op: split_edge
+  edge: 555034810
+  node: 555122387
+  note: passenger services and freight on this section
+- op: tag_route
+  from: 555062151
+  to: 555009480
+  set:
+    line: Karasburg – Windhoek
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000016
+  lon: 19.99921
+  lat: -28.10065
+  set:
+    country: Namibia
+  note: add station
+- op: copy_node
+  node: 558000016
+  edge: 555052688
+- op: set_edge
+  edge: 5550526882
+  set:
+    country: Namibia
+- op: tag_route
+  from: 555009480
+  to: 559000016
+  set:
+    line: Karasburg – Nakop (and SA border)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: No passenger services on this section of line (apart from tourist cruise trains)
+- op: set_node
+  node: 555039533
+  set:
+    name: Luderitz Port
+    railway: stop
+    facility: port
+  note: freight use only
+- op: split_edge
+  edge: 555012889
+  node: 555126590
+- op: tag_route
+  from: 555002232
+  to: 555039533
+  set:
+    line: Seeheim Junction - Luderitz Port
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'No passenger services on this section line. Aus - Luderitz section reopened in 2019. Port
+      connected to network, see: http://bit.ly/3GQgaXb'
+- op: tag_route
+  from: 555072720
+  to: 555012220
+  set:
+    line: Gobabis Branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: No passenger services on this line.
+  note: Freight only
+- op: tag_route
+  from: 555081309
+  to: 555072721
+  set:
+    line: Gobabis Branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: No passenger services on this line.
+- op: split_edge
+  edge: 555067036
+  node: 555103150
+  note: passenger services on this section (and on to Walvis Bay)
+- op: change_target
+  edge: 555090771
+  node: 555081305
+- op: split_edge
+  edge: 555090763
+  node: 555081305
+- op: tag_route
+  from: 555062151
+  to: 555018535
+  set:
+    line: Windhoek - Kranzberg
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555018535
+  to: 555000195
+  set:
+    line: Kranzberg - Walvis Bay
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: In operational but poor condition and slow speeds. A rehabilitation has commenced post covid.
+      IN two parts. Part 1 (Walvis Bay to Arandis) and Part 2 (Arandis to Kranzberg). Three year project
+      will enable when finished freight at 80 km/h and passenger at up to 100 km/h.
+  note: open to pedestrian and freight
+- op: set_node
+  node: 555132396
+  set:
+    name: Walvis Bay Port (New Container Terminal)
+    railway: stop
+    facility: Container Terminal
+  note: Walvis Bay New Container Terminal
+- op: set_node
+  node: 555031220
+  set:
+    name: Walvis Bay Port
+    railway: stop
+    facility: Port
+  note: Walvis Bay Port
+- op: split_edge
+  edge: 555104134
+  node: 555132390
+- op: split_edge
+  edge: 555104130
+  node: 555112953
+- op: tag_route
+  from: 555000195
+  to: 555132396
+  set:
+    line: Walvis Bay Port
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555031263
+  to: 555031220
+  set:
+    line: Walvis Bay Port
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555018535
+  to: 555009722
+  set:
+    line: Kranzberg - Tsumeb
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: No passenger services on this section of line
+  note: Freight only (no passenger services at present)
+- op: tag_route
+  from: 555009722
+  to: 555012414
+  set:
+    line: Tsumeb - Ondangwa
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Pasenger and freight
+- op: tag_route
+  from: 555012414
+  to: 555016165
+  set:
+    line: Ondangwa – Oshikango
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: passenger and freight
+- op: split_edge
+  edge: 555034968
+  node: 555064060
+  note: freight only
+- op: tag_route
+  from: 555064060
+  to: 555018543
+  set:
+    line: Otavi - Grootfontein
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555096485
+  node: 555123094
+  note: disused - see https://www.youtube.com/watch?v=zrGtT-W7j_4
+- op: tag_route
+  from: 555123094
+  to: 555018542
+  set:
+    line: Otjiwarongo - Outjo
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'Probably closed in 1993. See: https://www.youtube.com/watch?v=zrGtT-W7j_4'
+- op: set_node
+  node: 555123575
+  set:
+    comment: 'Former mine, now believed to be primarily a complex copper concentrate smelter. See: http://bit.ly/3Wkuvkx.
+      Rail connection said to be in use.'
+    name: Ongopolo Mine
+    railway: stop
+    facility: Copper Smelter
+  note: Ongopolo mine
+- op: tag_route
+  from: 555009722
+  to: 555123575
+  set:
+    line: Ongopolo Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555087786
+  set:
+    comment: Uranium mining and processing
+    name: Rössing Uranium Mine
+    railway: stop
+    facility: Mine
+  note: Uranium mine
+- op: split_edge
+  edge: 555000561
+  node: 555123071
+- op: split_edge
+  edge: 555091818
+  node: 555087787
+- op: tag_route
+  from: 555123071
+  to: 555087786
+  set:
+    line: Rössing Uranium Mine
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555077928
+  set:
+    name: Grootfontein Air Force Base
+    railway: stop
+    facility: Military
+  note: Grootfontein Air Force Base
+- op: tag_route
+  from: 555018543
+  to: 555077928
+  set:
+    line: Grootfontein Air Force Base
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+- op: set_node
+  node: 555087579
+  set:
+    comment: A maize and mahangu mill
+    name: Namib Mills, Otavi
+    railway: stop
+    facility: manufacturing
+  note: Namib Mills, Otavi
+- op: insert_edge
+  source: 555064060
+  target: 555087566
+  oid: 556000068
+  note: simplify routing
+- op: tag_route
+  from: 555064060
+  to: 555087579
+  set:
+    line: Namib Mills, Otavi
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+- op: set_node
+  node: 555017425
+  set:
+    name: Namcor fuel depot (Otjiwarongon)
+    railway: stop
+    facility: Fuel depot
+  note: Namcor fuel depot (Otjiwarongon)
+- op: split_edge
+  edge: 5550964851
+  node: 555084862
+- op: split_edge
+  edge: 555040079
+  node: 555084854
+- op: split_edge
+  edge: 555040084
+  node: 555084858
+- op: split_edge
+  edge: 555040087
+  node: 555084857
+- op: split_edge
+  edge: 5550400791
+  node: 555084861
+- op: tag_route
+  from: 555084862
+  to: 555017425
+  set:
+    line: Namcor fuel depot (Otjiwarongon)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+- op: set_node
+  node: 555087618
+  set:
+    name: Namcor fuel depot (Ondangwa)
+    railway: stop
+    facility: Fuel depot
+  note: Namcor fuel depot (Ondangwa)
+- op: split_edge
+  edge: 555037041
+  node: 555087619
+- op: tag_route
+  from: 555087619
+  to: 555087618
+  set:
+    line: Namcor fuel depot (Ondangwa)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+- op: set_node
+  node: 555104948
+  set:
+    name: Northern Industrial Area, Windhoek
+    railway: stop
+    facility: Industrial Area
+  note: Northern Industrial Area, Windhoek
+- op: split_edge
+  edge: 555090771
+  node: 555122389
+- op: split_edge
+  edge: 555015282
+  node: 555104942
+- op: split_edge
+  edge: 555068786
+  node: 555104944
+- op: tag_route
+  from: 555122389
+  to: 555104948
+  set:
+    line: Northern Industrial Area, Windhoek
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+- op: set_node
+  node: 555132505
+  set:
+    name: TransNamib Windhoek Container Depot (WINCON)
+    railway: stop
+    facility: Container Terminal (inland)
+  note: TransNamib Windhoek Container Depot (WINCON)
+- op: split_edge
+  edge: 555085585
+  node: 555070267
+- op: split_edge
+  edge: 555015283
+  node: 555132505
+- op: tag_route
+  from: 555070267
+  to: 555132505
+  set:
+    line: TransNamib Windhoek Container Depot (WINCON)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+- op: copy_node
+  node: 555030609
+  edge: 555021865
+  note: Ohangwena
+- op: copy_node
+  node: 555018654
+  edge: 555001735
+  note: Uchab
+- op: copy_node
+  node: 555018564
+  edge: 555001714
+  note: Kaalkop
+- op: copy_node
+  node: 555018563
+  edge: 555078711
+  note: Otuwe
+- op: copy_node
+  node: 555018565
+  edge: 555086691
+  note: Okozongoro
+- op: copy_node
+  node: 555018566
+  edge: 555011175
+  note: Epako
+- op: copy_node
+  node: 555018567
+  edge: 555021326
+- op: copy_node
+  node: 555012256
+  edge: 555021327
+  note: Omaruru
+- op: copy_node
+  node: 555018571
+  edge: 555078572
+  note: Okanono
+- op: copy_node
+  node: 555018570
+  edge: 555063894
+- op: copy_node
+  node: 555018569
+  edge: 555063895
+  note: Etiro
+- op: copy_node
+  node: 555018568
+  edge: 555066414
+- op: copy_node
+  node: 555018591
+  edge: 5550005611
+  note: Arandis
+- op: copy_node
+  node: 555037129
+  edge: 555000563
+  note: Rössing
+- op: copy_node
+  node: 555037115
+  edge: 555000570
+  note: Swakopmund
+- op: copy_node
+  node: 555012257
+  edge: 555078576
+  note: Karibib
+- op: copy_node
+  node: 555018586
+  edge: 555071835
+  note: Hoffnung
+- op: copy_node
+  node: 555018584
+  edge: 555056167
+  note: Neudamm (Ondekaremba)
+- op: copy_node
+  node: 555017571
+  edge: 555054319
+- op: copy_node
+  node: 555018582
+  edge: 555054315
+  note: Seeis
+- op: copy_node
+  node: 555018651
+  edge: 555103855
+  note: Witvlei
+- op: copy_node
+  node: 555018649
+  edge: 555087858
+  note: Asab
+- op: copy_node
+  node: 555018681
+  edge: 555070808
+  note: Feldschuhhorn
+- op: copy_node
+  node: 555018680
+  edge: 555070947
+  note: Konkiep
+- op: copy_node
+  node: 555017173
+  edge: 555039442
+  note: Buchholzbrunn
+- op: copy_node
+  node: 555018527
+  edge: 555076702
+  note: Holoog
+- op: copy_node
+  node: 555018530
+  edge: 555039417
+  note: Grünau
+- op: set_node
+  node: 555041062
+  set:
+    name: null
+    railway: null
+  note: Seeheim Noor duplicate
+- op: set_nodes_on_edges
+  countries:
+  - Namibia
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'

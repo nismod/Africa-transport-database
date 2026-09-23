@@ -1,0 +1,275 @@
+# Eswatini rail network edits.
+#
+# Derived from eswatini.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 484 lines of SQL: 38 edits,
+# 16 statements skipped as unable to reach the published network
+# (2 backup, 7 exploratory, 1 routing test, 5 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Eswatini
+edits:
+- op: split_edge
+  edge: 555016856
+  node: 555076347
+  note: Goba Line – Matsapha – Mlawula – [Maputo]
+- op: set_node
+  node: 555011601
+  set:
+    name: Matsapha
+- op: set_node
+  node: 555023803
+  set:
+    name: null
+    railway: null
+- op: set_node
+  node: 555007757
+  set:
+    name: Mpaka
+    railway: station
+- op: tag_route
+  from: 555011601
+  to: 555007760
+  set:
+    line: Goba line (Matsapha - Mlawula)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555007760
+  to: 555078710
+  set:
+    line: Goba line (Mlawula - Mozambique border)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000092
+  lon: 31.79322
+  lat: -25.95332
+  set:
+    country: Eswatini
+  note: South Africa Border
+- op: copy_node
+  node: 558000092
+  edge: 555026062
+- op: set_edge
+  edge: 5550260622
+  set:
+    country: Eswatini
+  note: '559000092'
+- op: tag_route
+  from: 555068248
+  to: 559000092
+  set:
+    line: Komatipoort line (Mpaka - SA border)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555070389
+  to: 555081227
+  set:
+    line: Richards Bay Line (Phuzumoya - SA border)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Richards Bay Line – Richards Bay (SA) – Siphofaneni/Phuzumoya
+- op: set_node
+  node: 555078712
+  set:
+    comment: ESA have a warehouse and siding at Mlawula and export the raw sugar to overseas markets via
+      Maputo port.
+    name: Eswatini Sugar Association (warehouse)
+    railway: stop
+    facility: food storage
+  note: Eswatini Sugar Association warehouse
+- op: split_edge
+  edge: 555029665
+  node: 555078703
+- op: split_edge
+  edge: 555029655
+  node: 555078711
+- op: tag_route
+  from: 555078703
+  to: 555078712
+  set:
+    line: Eswatini Sugar Association (warehouse)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555150285
+  set:
+    comment: 'This siding serves Maloma Colliery which is about 28km west. Transfer of coal from road
+      to rail. See: https://maloma.co.sz/markets/'
+    name: Maloma Colliery siding
+    railway: stop
+    facility: road-rail transfer
+  note: 'see: https://maloma.co.sz/markets/'
+- op: split_edge
+  edge: 555020224
+  node: 555150286
+- op: tag_route
+  from: 555150286
+  to: 555150285
+  set:
+    line: Maloma Colliery siding
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555130506
+  set:
+    name: Cement works (Afrisam Eswatini)
+    railway: stop
+    facility: manufacturing
+  note: cement works
+- op: tag_route
+  from: 555043266
+  to: 555130506
+  set:
+    line: Cement works (Afrisam Eswatini)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555116322
+  set:
+    comment: 'Project staled in 2017 but road and railway spur appears to be in place. See: http://bit.ly/3J28mno'
+    name: Phuzumoya fuel storage facility (proposed)
+    railway: stop
+    facility: fuel storage
+  note: but railway spur appears to be in place.
+- op: split_edge
+  edge: 555019685
+  node: 555116328
+- op: tag_route
+  from: 555116328
+  to: 555116322
+  set:
+    line: Phuzumoya fuel storage facility
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: disused
+    comment: 'Project staled in 2017 but road and railway spur appears to be in place. See: http://bit.ly/3J28mno'
+- op: set_node
+  node: 555097462
+  set:
+    comment: 'Brick manufacture. See: https://www.facebook.com/langabrick/'
+    name: Langa Bricks
+    railway: stop
+    facility: manufacturing
+  note: https://www.facebook.com/langabrick/
+- op: split_edge
+  edge: 555072014
+  node: 555097461
+- op: tag_route
+  from: 555097461
+  to: 555097462
+  set:
+    line: Langa Bricks
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000093
+  lon: 31.29264
+  lat: -26.51178
+  set:
+    country: Eswatini
+  note: Ngwane Mills
+- op: copy_node
+  node: 558000093
+  edge: 555016860
+- op: insert_node_at
+  oid: 558000094
+  lon: 31.29326
+  lat: -26.51107
+  set:
+    country: Eswatini
+  note: '559000093'
+- op: insert_node_at
+  oid: 558000095
+  lon: 31.2951
+  lat: -26.50965
+  set:
+    railway: stop
+    name: Ngwane Mills
+    country: Eswatini
+    facility: food manufacturing
+- op: insert_edge
+  source: 559000093
+  target: 558000094
+  oid: 556000082
+- op: insert_edge
+  source: 558000094
+  target: 558000095
+  oid: 556000083
+- op: tag_route
+  from: 559000093
+  to: 558000095
+  set:
+    line: Ngwane Mills
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000096
+  lon: 31.30921
+  lat: -26.49581
+  set:
+    country: Eswatini
+- op: copy_node
+  node: 558000096
+  edge: 555026109
+- op: set_node
+  node: 559000096
+  set:
+    comment: 'Dry port (Container terminal). See: https://bit.ly/3J348fl'
+    name: Matsapha Inland Clearance Depot (ICD)
+    railway: stop
+    facility: dry port
+- op: tag_route
+  from: 555011601
+  to: 559000096
+  set:
+    line: Matsapha Inland Clearance Depot (ICD)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_nodes_on_edges
+  countries:
+  - Eswatini
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'

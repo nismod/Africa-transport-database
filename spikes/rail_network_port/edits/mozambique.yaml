@@ -1,0 +1,1607 @@
+# Mozambique rail network edits.
+#
+# Derived from mozambique.sql in trg-rail/africa_rail_network, adapted with the
+# author's permission.
+#
+# Transcribed by parse_country_sql.py from 2,275 lines of SQL: 259 edits,
+# 22 statements skipped as unable to reach the published network
+# (2 backup, 7 exploratory, 1 routing test, 11 template, 1 trap).
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id used
+# further down may be one an earlier edit created.
+
+country: Mozambique
+edits:
+- op: set_node
+  node: 555043650
+  set:
+    name: Nacala Coal Terminal (Nacala-a-Velha)
+    railway: stop
+    facility: Coal Terminal (port)
+  note: Nacala Coal Terminal (Nacala-a-Velha)
+- op: split_edge
+  edge: 555064756
+  node: 555112788
+  note: Nacala Port
+- op: split_edge
+  edge: 5550647561
+  node: 555112777
+- op: split_edge
+  edge: 555077864
+  node: 555101884
+- op: split_edge
+  edge: 555064643
+  node: 555112778
+- op: split_edge
+  edge: 555077865
+  node: 555112780
+- op: set_node
+  node: 555112781
+  set:
+    name: Nacala Port (container terminal)
+    railway: stop
+    facility: Container Terminal
+  note: Container Terminal
+- op: set_node
+  node: 555112788
+  set:
+    name: Nacala Port
+    railway: stop
+    facility: Port
+  note: general port
+- op: tag_route
+  from: 555026542
+  to: 555112788
+  set:
+    line: Nacala - Cuamba
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Appear to be no passenger services on this Nacala - Napula section. See: http://bit.ly/3Zbj7t5'
+  note: Nacala Port - Nampula (Freight only)
+- op: tag_route
+  from: 555112777
+  to: 555112781
+  set:
+    line: Nacala Port (Container Terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Nacala container terminal
+- op: split_edge
+  edge: 555064714
+  node: 555145211
+  note: Nacala Coal Terminal (Nacala-a-Velha)
+- op: split_edge
+  edge: 5550647141
+  node: 555145288
+- op: tag_route
+  from: 555101973
+  to: 555043650
+  set:
+    line: Nacala Coal Terminal (Nacala-a-Velha)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: change_target
+  edge: 555049018
+  node: 555130594
+  note: correct gap
+- op: tag_route
+  from: 555026542
+  to: 555031149
+  set:
+    line: Nacala - Cuamba
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Passenger services on this section. See: http://bit.ly/3Zbj7t5'
+- op: insert_edge
+  source: 555112622
+  target: 555031149
+  oid: 556000080
+  note: simplify
+- op: split_edge
+  edge: 555077768
+  node: 555112622
+- op: tag_route
+  from: 555031149
+  to: 555031150
+  set:
+    line: Cuamba - Lichinga
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Passenger services on this section. See: http://bit.ly/3Zbj7t5'
+- op: insert_node_at
+  oid: 558000040
+  lon: 35.87807
+  lat: -14.98191
+  set:
+    country: Mozambique
+  note: split edge at border with Malawi
+- op: copy_node
+  node: 558000040
+  edge: 555015140
+- op: tag_route
+  from: 555031149
+  to: 555006758
+  set:
+    line: Cuamba - Entre Lagos
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Passenger services on this section. See: http://bit.ly/3Zbj7t5'
+  note: '559000040'
+- op: tag_route
+  from: 555006758
+  to: 559000040
+  set:
+    line: Entre Lagos - Malawi border
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: assumed freight only
+- op: set_node
+  node: 555035481
+  set:
+    name: Catur
+- op: set_node
+  node: 555031168
+  set:
+    name: Lóchue
+- op: set_node
+  node: 555020548
+  set:
+    name: Nataleia
+- op: set_node
+  node: 555024351
+  set:
+    name: Namecuna
+- op: set_node
+  node: 555031169
+  set:
+    name: Liala
+- op: set_node
+  node: 555028803
+  set:
+    name: Iapala
+- op: set_node
+  node: 555024356
+  set:
+    name: Nicupi
+- op: set_node
+  node: 555031170
+  set:
+    name: Meconta
+- op: set_node
+  node: 555031172
+  set:
+    name: Anchilo
+- op: set_node
+  node: 555031173
+  set:
+    name: unnamed
+- op: split_edge
+  edge: 555050156
+  node: 555113026
+  note: Sena line (Dondo - Mutarara)
+- op: tag_route
+  from: 555071734
+  to: 555113026
+  set:
+    line: Sena Line (Dondo - Mutarara)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Passenger services between Beira and Mutarara. See: https://bit.ly/3IJlKN9'
+- op: copy_node
+  node: 555026535
+  edge: 555100923
+  note: add new Moatize station node
+- op: tag_route
+  from: 555113026
+  to: 556026535
+  set:
+    line: Mutarara - Moatize
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Passenger services between Mutarara and Moatize. See: https://bit.ly/3IJlKN9'
+- op: set_node
+  node: 555102738
+  set:
+    name: Moatize Coal Mine
+    railway: stop
+    facility: mine
+  note: Moatize Coal Mine
+- op: split_edge
+  edge: 555066299
+  node: 555126149
+- op: split_edge
+  edge: 555095414
+  node: 555087802
+- op: tag_route
+  from: 555087801
+  to: 555126149
+  set:
+    line: Moatize Coal Mine (Mutarara - Moatize line access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Moatize Coal Mine (Sena Line)
+- op: tag_route
+  from: 555102738
+  to: 555064183
+  set:
+    line: Moatize Coal Mine (Mozambique) - Nyaka (Malawi)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Part of Nacala Logistics Corridor. Main purpose to transport coal from Moatize coal mines
+      to the port of Nacala via Malawi. The section between Moatize and Nyaka was a new line and was first
+      used in 2015. See: https://en.wikipedia.org/wiki/Nacala_Logistics_Corridor'
+  note: Moatize Coal Mine (Mozambique) - Nyaka (Malawi)
+- op: insert_node_at
+  oid: 558000041
+  lon: 35.19423
+  lat: -17.12829
+  set:
+    country: Mozambique
+  note: insert node at Malawui border
+- op: copy_node
+  node: 558000041
+  edge: 555120258
+- op: tag_route
+  from: 555113026
+  to: 559000041
+  set:
+    line: Sena Line (Mutarara - Vila Nova da Fronteira)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Line was rehabilitated and opened to traffic in 2023 to transport construction materials
+      to Malawi for rehabilitation work on the line in Malawi. See: https://bit.ly/3SipKaC'
+- op: insert_node_at
+  oid: 558000042
+  lon: 35.72936
+  lat: -18.26844
+  set:
+    railway: station
+    name: Km 70
+    country: Mozambique
+  note: add missing station
+- op: copy_node
+  node: 558000042
+  edge: 555037502
+- op: split_edge
+  edge: 555053211
+  node: 555083036
+  note: '559000042'
+- op: tag_route
+  from: 555083036
+  to: 555016393
+  set:
+    line: Inhamitanga - Marromeu
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Passenger services. See: https://bit.ly/3IJlKN9, Reconstruction completed in 2008. See:
+      https://allafrica.com/stories/200806060924.html'
+- op: set_node
+  node: 555113090
+  set:
+    name: Sena Sugar Mill
+    railway: stop
+    facility: food manufacturing
+  note: Sena Sugar Mill
+- op: split_edge
+  edge: 555049893
+  node: 555113090
+- op: tag_route
+  from: 555016393
+  to: 555113090
+  set:
+    line: Sena Sugar Mill
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555042540
+  set:
+    name: Beira
+    railway: station
+  note: Passenger services on this stretch
+- op: copy_node
+  node: 555130742
+  edge: 555102101
+  note: Dondo station
+- op: set_node
+  node: 556130742
+  set:
+    name: Dondo
+    railway: station
+- op: tag_route
+  from: 555042540
+  to: 556130742
+  set:
+    line: Beira-Bulawayo Railway (Beira - Dondo)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Scheduled passenger services on this section. See: https://bit.ly/3IJlKN9'
+- op: insert_node_at
+  oid: 558000043
+  lon: 32.72819
+  lat: -18.99204
+  set:
+    railway: station
+    name: Machipanda
+    country: Mozambique
+  note: add stations
+- op: copy_node
+  node: 558000043
+  edge: 555037153
+- op: insert_node_at
+  oid: 558000044
+  lon: 32.81749
+  lat: -18.93098
+  set:
+    railway: station
+    name: Chainca
+    country: Mozambique
+  note: '559000043'
+- op: copy_node
+  node: 558000044
+  edge: 555053179
+- op: insert_node_at
+  oid: 558000045
+  lon: 32.8674
+  lat: -18.93596
+  set:
+    railway: station
+    name: Manica
+    country: Mozambique
+  note: '559000044'
+- op: copy_node
+  node: 558000045
+  edge: 555086939
+- op: insert_node_at
+  oid: 558000046
+  lon: 33.0238
+  lat: -18.96694
+  set:
+    railway: station
+    name: Revue
+    country: Mozambique
+  note: '559000045'
+- op: copy_node
+  node: 558000046
+  edge: 555053190
+- op: insert_node_at
+  oid: 558000047
+  lon: 33.07574
+  lat: -18.97222
+  set:
+    railway: station
+    name: Elvas
+    country: Mozambique
+  note: '559000046'
+- op: copy_node
+  node: 558000047
+  edge: 555071973
+- op: insert_node_at
+  oid: 558000048
+  lon: 33.14019
+  lat: -19.01269
+  set:
+    railway: station
+    name: Bandula
+    country: Mozambique
+  note: '559000047'
+- op: copy_node
+  node: 558000048
+  edge: 555036906
+- op: set_node
+  node: 555016123
+  set:
+    name: Garuso
+  note: '559000048'
+- op: insert_node_at
+  oid: 558000049
+  lon: 33.21874
+  lat: -18.94512
+  set:
+    railway: station
+    name: Belas
+    country: Mozambique
+- op: copy_node
+  node: 558000049
+  edge: 555086904
+- op: set_node
+  node: 555013378
+  set:
+    name: Matsinho
+  note: '559000049'
+- op: insert_node_at
+  oid: 558000050
+  lon: 33.32207
+  lat: -18.9682
+  set:
+    railway: station
+    name: Almada
+    country: Mozambique
+- op: copy_node
+  node: 558000050
+  edge: 555036893
+- op: set_node
+  node: 555020699
+  set:
+    name: Charamba
+  note: '559000050'
+- op: insert_node_at
+  oid: 558000051
+  lon: 33.42978
+  lat: -19.03257
+  set:
+    railway: station
+    name: Tembe
+    country: Mozambique
+- op: copy_node
+  node: 558000051
+  edge: 555036898
+- op: set_node
+  node: 555025742
+  set:
+    railway: null
+  note: '559000051'
+- op: insert_node_at
+  oid: 558000052
+  lon: 33.56857
+  lat: -19.10185
+  set:
+    railway: station
+    name: Gafumpe
+    country: Mozambique
+- op: copy_node
+  node: 558000052
+  edge: 555030072
+- op: insert_node_at
+  oid: 558000053
+  lon: 33.60872
+  lat: -19.07819
+  set:
+    railway: station
+    name: Bengo
+    country: Mozambique
+  note: '559000052'
+- op: copy_node
+  node: 558000053
+  edge: 555101325
+- op: insert_node_at
+  oid: 558000054
+  lon: 33.64641
+  lat: -19.08593
+  set:
+    railway: station
+    name: Gondola
+    country: Mozambique
+  note: '559000053'
+- op: copy_node
+  node: 558000054
+  edge: 555086899
+- op: insert_node_at
+  oid: 558000055
+  lon: 33.77379
+  lat: -19.10011
+  set:
+    railway: station
+    name: Amatongas
+    country: Mozambique
+  note: '559000054'
+- op: copy_node
+  node: 558000055
+  edge: 555029684
+- op: insert_node_at
+  oid: 558000056
+  lon: 33.88771
+  lat: -19.19697
+  set:
+    railway: station
+    name: Inchope
+    country: Mozambique
+  note: '559000055'
+- op: copy_node
+  node: 558000056
+  edge: 555053195
+- op: insert_node_at
+  oid: 558000057
+  lon: 33.99458
+  lat: -19.23523
+  set:
+    railway: station
+    name: Jasse
+    country: Mozambique
+  note: '559000056'
+- op: copy_node
+  node: 558000057
+  edge: 555104849
+- op: insert_node_at
+  oid: 558000058
+  lon: 34.02596
+  lat: -19.24441
+  set:
+    railway: station
+    name: Siluvo
+    country: Mozambique
+  note: '559000057'
+- op: copy_node
+  node: 558000058
+  edge: 555104792
+- op: insert_node_at
+  oid: 558000059
+  lon: 34.13134
+  lat: -19.25688
+  set:
+    railway: station
+    name: Nharichonga
+    country: Mozambique
+  note: '559000058'
+- op: copy_node
+  node: 558000059
+  edge: 555053255
+- op: set_node
+  node: 555062965
+  set:
+    name: Nhamatanda
+  note: '559000059'
+- op: insert_node_at
+  oid: 558000060
+  lon: 34.3168
+  lat: -19.33225
+  set:
+    railway: station
+    name: Lamego
+    country: Mozambique
+- op: copy_node
+  node: 558000060
+  edge: 555102059
+- op: insert_node_at
+  oid: 558000061
+  lon: 34.43658
+  lat: -19.40658
+  set:
+    railway: station
+    name: Tica
+    country: Mozambique
+  note: '559000060'
+- op: copy_node
+  node: 558000061
+  edge: 555102010
+- op: insert_node_at
+  oid: 558000062
+  lon: 34.52287
+  lat: -19.47651
+  set:
+    railway: station
+    name: Ponte do Púngoè
+    country: Mozambique
+  note: '559000061'
+- op: copy_node
+  node: 558000062
+  edge: 555053220
+- op: insert_node_at
+  oid: 558000063
+  lon: 34.61889
+  lat: -19.54607
+  set:
+    railway: station
+    name: Mafambisse
+    country: Mozambique
+  note: '559000062'
+- op: copy_node
+  node: 558000063
+  edge: 555101237
+- op: set_node
+  node: 559000063
+  set:
+    comment: Satellite imagery indicates a station and platform at this location, it may not be known
+      as Mafambisse station
+- op: tag_route
+  from: 556130742
+  to: 559000043
+  set:
+    line: Beira-Bulawayo Railway (Dondo - Machipanda)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'There do not appear to be passenger services on this section of line currently. However,
+      there are plans to refurbish stations and reinstate services. See: http://bit.ly/3xIEMNl. This line
+      has be rehabilitated recently to improve freight speeds and wagon weight; see: https://bit.ly/3kinzYb
+      and http://bit.ly/3Kvs641.'
+  note: Beira-Bulawayo Railway (Dondo - Machipanda)
+- op: set_edge
+  edge: 5550371382
+  set:
+    country: Mozambique
+  note: Beira-Bulawayo Railway (Machipanda - Zimbabwe border)
+- op: tag_route
+  from: 559000043
+  to: 559000022
+  set:
+    line: Beira-Bulawayo Railway (Machipanda - Zimbabwe border)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'There do not appear to be passenger services on this section of line currently. However,
+      there are plans to refurbish stations and reinstate services. See: http://bit.ly/3xIEMNl. This line
+      has be rehabilitated recently to improve freight speeds and wagon weight; see: https://bit.ly/3kinzYb
+      and http://bit.ly/3Kvs641.'
+- op: split_edge
+  edge: 555017986
+  node: 555095234
+  note: terminal access
+- op: split_edge
+  edge: 555054879
+  node: 555095230
+- op: split_edge
+  edge: 555054875
+  node: 555084816
+- op: split_edge
+  edge: 555040030
+  node: 555106137
+- op: split_edge
+  edge: 555070274
+  node: 555130444
+- op: split_edge
+  edge: 555101552
+  node: 555130445
+- op: tag_route
+  from: 555095234
+  to: 555130445
+  set:
+    line: Beira Port (access to terminals)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555130072
+  set:
+    comment: Storage. Various operators
+    name: Beira Port - Fuel Terminal
+    railway: stop
+    facility: Fuel terminal
+  note: Beira fuel terminal (storage)
+- op: split_edge
+  edge: 555054878
+  node: 555106140
+- op: split_edge
+  edge: 555070277
+  node: 555130071
+- op: tag_route
+  from: 555095230
+  to: 555130072
+  set:
+    line: Beira Port - Fuel Terminal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555130446
+  set:
+    comment: https://www.cornelder.co.mz
+    name: Beira Port - Grain Terminal
+    railway: stop
+    facility: food storage
+  note: Beira Grain Terminal (https://www.cornelder.co.mz)
+- op: tag_route
+  from: 555130445
+  to: 555130446
+  set:
+    line: Beira Port - Grain Terminal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555043194
+  set:
+    comment: https://www.cornelder.co.mz
+    name: Beira Port - General Cargo Terminal
+    railway: stop
+    facility: port
+  note: Beira Port (General Cargo Terminal)
+- op: tag_route
+  from: 555130445
+  to: 555043194
+  set:
+    line: Beira Port - General Cargo Terminal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555095229
+  set:
+    comment: https://nectargroup.co.uk/case-study/beira-coal-terminal/
+    name: Beira Port - Coal Terminal
+    railway: stop
+    facility: port
+  note: Beira coal terminal (https://nectargroup.co.uk/case-study/beira-coal-terminal/)
+- op: set_node
+  node: 555101949
+  set:
+    name: Cement Plant, Inhaminga (Intercement Dondo)
+    railway: stop
+    facility: manufacturing
+  note: Cement Plant, Inhaminga (Intercement Dondo)
+- op: tag_route
+  from: 555130591
+  to: 555101949
+  set:
+    line: Cement Plant, Inhaminga (Intercement Dondo)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555130731
+  set:
+    name: Mafambisse Sugar Mill
+    railway: stop
+    facility: food production
+  note: Mafambisse Sugar Mill
+- op: split_edge
+  edge: 555101236
+  node: 555101957
+- op: tag_route
+  from: 555101957
+  to: 555130731
+  set:
+    line: Mafambisse Sugar Mill
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: tag_route
+  from: 555084816
+  to: 555095229
+  set:
+    line: Beira Port - Coal Terminal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555017403
+  set:
+    comment: https://www.cornelder.co.mz
+    name: Beira Port - Container Terminal
+    railway: stop
+    facility: port
+  note: Beira container terminal (https://www.cornelder.co.mz)
+- op: tag_route
+  from: 555106137
+  to: 555017403
+  set:
+    line: Beira Port - Container Terminal
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000064
+  lon: 34.86124
+  lat: -19.76062
+  set:
+    railway: station
+    country: Mozambique
+  note: additional stations on the Beira - Moatize line
+- op: copy_node
+  node: 558000064
+  edge: 555017992
+- op: insert_node_at
+  oid: 558000065
+  lon: 34.72379
+  lat: -19.21182
+  set:
+    railway: station
+    name: Semacuesa
+    country: Mozambique
+  note: '559000064'
+- op: copy_node
+  node: 558000065
+  edge: 555065974
+- op: insert_node_at
+  oid: 558000066
+  lon: 34.80663
+  lat: -19.07415
+  set:
+    railway: station
+    name: Derunde
+    country: Mozambique
+  note: '559000065'
+- op: copy_node
+  node: 558000066
+  edge: 555065972
+- op: set_node
+  node: 555026566
+  set:
+    name: Muanza
+  note: '559000066'
+- op: insert_node_at
+  oid: 558000067
+  lon: 34.84447
+  lat: -18.72312
+  set:
+    railway: station
+    name: Condué
+    country: Mozambique
+- op: copy_node
+  node: 558000067
+  edge: 555065966
+- op: insert_node_at
+  oid: 558000068
+  lon: 34.95797
+  lat: -18.58351
+  set:
+    railway: station
+    name: Mazamba
+    country: Mozambique
+  note: '559000067'
+- op: copy_node
+  node: 558000068
+  edge: 5550659661
+- op: insert_node_at
+  oid: 558000069
+  lon: 35.31925
+  lat: -17.90177
+  set:
+    railway: station
+    name: Nangue
+    country: Mozambique
+  note: '559000068'
+- op: copy_node
+  node: 558000069
+  edge: 555053209
+- op: set_node
+  node: 555034356
+  set:
+    name: Caia
+  note: '559000069'
+- op: insert_node_at
+  oid: 558000070
+  lon: 35.25095
+  lat: -17.7099
+  set:
+    railway: station
+    name: Murraça
+    country: Mozambique
+- op: copy_node
+  node: 558000070
+  edge: 555012112
+- op: insert_node_at
+  oid: 558000071
+  lon: 35.12587
+  lat: -17.61942
+  set:
+    railway: station
+    name: Magagade
+    country: Mozambique
+  note: '559000070'
+- op: copy_node
+  node: 558000071
+  edge: 555012113
+- op: insert_node_at
+  oid: 558000072
+  lon: 35.05093
+  lat: -17.49999
+  set:
+    railway: station
+    name: Inharuca
+    country: Mozambique
+  note: '559000071'
+- op: copy_node
+  node: 558000072
+  edge: 555120290
+- op: insert_node_at
+  oid: 558000073
+  lon: 35.01608
+  lat: -17.26534
+  set:
+    railway: station
+    name: Chavandira
+    country: Mozambique
+  note: '559000072'
+- op: copy_node
+  node: 558000073
+  edge: 555050184
+- op: insert_node_at
+  oid: 558000074
+  lon: 34.90775
+  lat: -17.037
+  set:
+    railway: station
+    name: Sinjal
+    country: Mozambique
+  note: '559000073'
+- op: copy_node
+  node: 558000074
+  edge: 555050189
+- op: insert_node_at
+  oid: 558000075
+  lon: 34.53257
+  lat: -16.52025
+  set:
+    railway: station
+    name: Chiueza
+    country: Mozambique
+  note: '559000074'
+- op: copy_node
+  node: 558000075
+  edge: 555050214
+- op: insert_node_at
+  oid: 558000076
+  lon: 34.34032
+  lat: -16.29471
+  set:
+    railway: station
+    name: Mecito
+    country: Mozambique
+  note: '559000075'
+- op: copy_node
+  node: 558000076
+  edge: 555050221
+- op: insert_node_at
+  oid: 558000077
+  lon: 34.26463
+  lat: -16.17139
+  set:
+    railway: station
+    name: Necungas
+    country: Mozambique
+  note: '559000076'
+- op: copy_node
+  node: 558000077
+  edge: 555055160
+- op: insert_node_at
+  oid: 558000078
+  lon: 34.23648
+  lat: -16.08679
+  set:
+    railway: station
+    name: Mecondezi
+    country: Mozambique
+  note: '559000077'
+- op: copy_node
+  node: 558000078
+  edge: 5550551602
+- op: set_node
+  node: 555031295
+  set:
+    name: Cambulatsitsi
+  note: '559000078'
+- op: insert_node_at
+  oid: 558000079
+  lon: 37.76216
+  lat: -15.00426
+  set:
+    railway: station
+    name: Riane
+    country: Mozambique
+  note: add stations - Nacala - Cuamba line
+- op: copy_node
+  node: 558000079
+  edge: 555099779
+- op: insert_node_at
+  oid: 558000080
+  lon: 38.23099
+  lat: -15.10361
+  set:
+    railway: station
+    name: Outeiro
+    country: Mozambique
+  note: '559000079'
+- op: copy_node
+  node: 558000080
+  edge: 555059018
+- op: insert_node_at
+  oid: 558000081
+  lon: 38.51334
+  lat: -14.99282
+  set:
+    railway: station
+    name: Rente
+    country: Mozambique
+  note: '559000080'
+- op: copy_node
+  node: 558000081
+  edge: 555059028
+- op: insert_node_at
+  oid: 558000082
+  lon: 38.74615
+  lat: -14.90988
+  set:
+    railway: station
+    name: Muapaliua
+    country: Mozambique
+  note: '559000081'
+- op: copy_node
+  node: 558000082
+  edge: 555059041
+- op: insert_node_at
+  oid: 558000083
+  lon: 38.96358
+  lat: -15.00286
+  set:
+    railway: station
+    name: Multivaze
+    country: Mozambique
+  note: '559000082'
+- op: copy_node
+  node: 558000083
+  edge: 555117209
+- op: tag_route
+  from: 555020778
+  to: 555095353
+  set:
+    line: Maputo (in/out)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+  note: Maputo
+- op: split_edge
+  edge: 555095683
+  node: 555103622
+- op: split_edge
+  edge: 555078241
+  node: 555103621
+- op: set_node
+  node: 555080707
+  set:
+    name: Chicualacuala
+    railway: station
+- op: split_edge
+  edge: 555086981
+  node: 555113104
+- op: split_edge
+  edge: 5550869812
+  node: 555113108
+- op: split_edge
+  edge: 555078221
+  node: 555113109
+- op: tag_route
+  from: 555113109
+  to: 555083219
+  set:
+    line: Limpopo Railway (Maputo - Chicualacuala)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Passenger services, see: http://bit.ly/3Z3521e'
+- op: tag_route
+  from: 555103622
+  to: 555080707
+  set:
+    line: Limpopo Railway (Maputo - Chicualacuala)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Passenger services, see: http://bit.ly/3Z3521e'
+- op: tag_route
+  from: 555080707
+  to: 555044850
+  set:
+    line: Limpopo Railway (Chicualacuala - Zimbabwe border)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'No direct passenger trains across the border - necessary to cross border by foot. See: http://bit.ly/41la7TW'
+- op: copy_node
+  node: 555062380
+  edge: 555101320
+  note: copy ressano garcia station
+- op: tag_route
+  from: 555095353
+  to: 556062380
+  set:
+    line: Ressano Garcia Line (Maputo - Ressano Garcia)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Passenger services, see: http://bit.ly/3Z3521e'
+- op: insert_node_at
+  oid: 558000084
+  lon: 31.98728
+  lat: -25.43914
+  set:
+    country: Mozambique
+  note: add node for border with SA
+- op: copy_node
+  node: 558000084
+  edge: 555016141
+- op: set_edge
+  edge: 5550161411
+  set:
+    country: Mozambique
+  note: '559000084'
+- op: tag_route
+  from: 556062380
+  to: 559000084
+  set:
+    line: Ressano Garcia Line (Ressano Garcia - SA Border)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'No direct passenger trains across the border - necessary to cross border by foot. See: http://bit.ly/3ZdLxm7
+      . Freight can cross border, see: https://bit.ly/3kluKPl'
+- op: tag_route
+  from: 555095353
+  to: 555016503
+  set:
+    line: Goba line (Maputo - Goba)
+    mode: mixed
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Passenger services, see: http://bit.ly/3Z3521e'
+  note: Goba line
+- op: tag_route
+  from: 555016503
+  to: 555078710
+  set:
+    line: Goba line (Goba - Eswatini border)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: 'Freight only across border. See: https://bit.ly/3kluKPl'
+- op: set_node
+  node: 555083227
+  set:
+    name: Salamanga limestone quarry
+    railway: stop
+    facility: quarry
+  note: freight only
+- op: tag_route
+  from: 555083225
+  to: 555083227
+  set:
+    line: Salamanga Branch
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 5550956831
+  node: 555091423
+  note: Maputo Port
+- op: split_edge
+  edge: 555049550
+  node: 555103620
+- op: split_edge
+  edge: 555067621
+  node: 555103623
+- op: split_edge
+  edge: 555078240
+  node: 555103631
+- op: tag_route
+  from: 555091423
+  to: 555103631
+  set:
+    line: Maputo Port (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000085
+  lon: 32.54824
+  lat: -25.95847
+  set:
+    country: Mozambique
+  note: simplify missing line
+- op: insert_edge
+  source: 555103631
+  target: 558000085
+  oid: 556000081
+- op: set_node
+  node: 558000085
+  set:
+    name: Maputo Port (Container Terminal)
+    railway: stop
+    facility: port
+- op: tag_route
+  from: 555103631
+  to: 558000085
+  set:
+    line: Maputo Port (Container Terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555027831
+  set:
+    name: Maputo Port (Ferrochrome Terminal)
+    railway: stop
+    facility: port
+  note: Maputo Port (Ferrochrome Terminal)
+- op: tag_route
+  from: 555103631
+  to: 555027831
+  set:
+    line: Maputo Port (Ferrochrome Terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555103624
+  set:
+    name: Maputo Port (Sugar Terminal)
+    railway: stop
+    facility: port
+  note: Maputo Port (Sugar Terminal)
+- op: split_edge
+  edge: 5550782401
+  node: 555069353
+- op: split_edge
+  edge: 555013107
+  node: 555103625
+- op: tag_route
+  from: 555103631
+  to: 555103624
+  set:
+    line: Maputo Port (Sugar Terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 555067860
+  node: 555095373
+  note: Matola Port (access)
+- op: split_edge
+  edge: 555055169
+  node: 555091425
+- op: split_edge
+  edge: 555067862
+  node: 555091426
+- op: split_edge
+  edge: 5550678622
+  node: 555103824
+- op: split_edge
+  edge: 55506786022
+  node: 555091431
+- op: tag_route
+  from: 555006411
+  to: 555091430
+  set:
+    line: Matola Port (access)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555095358
+  set:
+    name: Matola Port (Coal Terminal)
+    railway: stop
+    facility: port
+  note: Matola Coal Terminal
+- op: split_edge
+  edge: 555055173
+  node: 555095372
+- op: tag_route
+  from: 555095373
+  to: 555095358
+  set:
+    line: Matola Port (Coal Terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: split_edge
+  edge: 5550678602
+  node: 555094183
+  note: Grain, Aluminium, Fuel
+- op: set_node
+  node: 555022157
+  set:
+    comment: 'Berths for Grain, aluminium and fuel. See: http://bit.ly/3Ize275'
+    name: Matola Port (Bulk Terminal)
+    railway: stop
+    facility: port
+- op: tag_route
+  from: 555095373
+  to: 555022157
+  set:
+    line: Matola Port (Bulk Terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555091438
+  set:
+    name: Matola Port Grain Terminal (STEMA)
+    railway: stop
+    facility: food storage
+  note: Matola Port (Grain Terminal -STEMA)
+- op: split_edge
+  edge: 555067861
+  node: 555091430
+- op: tag_route
+  from: 555091431
+  to: 555091438
+  set:
+    line: Matola Port (Grain Terminal -STEMA)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555091420
+  set:
+    name: Matola Port (Fuel Terminal)
+    railway: stop
+    facility: fuel terminal
+  note: Fuel Terminal
+- op: split_edge
+  edge: 555049557
+  node: 555091421
+- op: tag_route
+  from: 555091431
+  to: 555091420
+  set:
+    line: Matola Port (Fuel Terminal)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555103825
+  set:
+    name: Matola Port (cement works - Cimentos de Moçambique)
+    railway: stop
+    facility: manufacturing
+  note: cement works
+- op: tag_route
+  from: 555091430
+  to: 555103825
+  set:
+    line: Matola Port (cement works - Cimentos de Moçambique)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: insert_node_at
+  oid: 558000086
+  lon: 32.54845
+  lat: -25.9535
+  set:
+    railway: station
+    name: Cabine B
+    country: Mozambique
+  note: Cabine B
+- op: copy_node
+  node: 558000086
+  edge: 555067625
+- op: insert_node_at
+  oid: 558000087
+  lon: 32.52828
+  lat: -25.9368
+  set:
+    railway: station
+    name: Infulene
+    country: Mozambique
+  note: Infulene
+- op: copy_node
+  node: 558000087
+  edge: 5550782211
+- op: copy_node
+  node: 555025670
+  edge: 5550551691
+  note: Machava
+- op: set_node
+  node: 555037490
+  set:
+    railway: station
+  note: Beluluane
+- op: insert_node_at
+  oid: 558000088
+  lon: 32.45093
+  lat: -25.82881
+  set:
+    railway: station
+    name: Matola Gare
+    country: Mozambique
+  note: matola gare
+- op: copy_node
+  node: 558000088
+  edge: 555016131
+- op: insert_node_at
+  oid: 558000089
+  lon: 32.34649
+  lat: -25.69495
+  set:
+    railway: station
+    name: Pessene
+    country: Mozambique
+  note: Pessene Station
+- op: copy_node
+  node: 558000089
+  edge: 555053316
+- op: set_node
+  node: 555034827
+  set:
+    name: Movene
+    railway: stop
+  note: Movene
+- op: set_node
+  node: 555034826
+  set:
+    name: Incomati
+    railway: stop
+  note: Movene
+- op: insert_node_at
+  oid: 558000090
+  lon: 32.59746
+  lat: -25.92415
+  set:
+    railway: station
+    name: Gare De Mercadorias
+    country: Mozambique
+  note: Gare De Mercadorias
+- op: copy_node
+  node: 558000090
+  edge: 555037839
+- op: insert_node_at
+  oid: 558000091
+  lon: 32.61369
+  lat: -25.91644
+  set:
+    railway: station
+    name: Bairro Ferroviário
+    country: Mozambique
+  note: Bairro Ferroviário
+- op: copy_node
+  node: 558000091
+  edge: 555016071
+- op: set_node
+  node: 555062414
+  set:
+    railway: null
+  note: '559000091'
+- op: set_node
+  node: 555126623
+  set:
+    name: Quarry (Hipermaquinas Moc Lda)
+    railway: stop
+    facility: quarry
+  note: Stone quarry (Hipermaquinas Moc Lda)
+- op: split_edge
+  edge: 555037874
+  node: 555126622
+- op: tag_route
+  from: 555126622
+  to: 555126623
+  set:
+    line: Quarry (Hipermaquinas Moc Lda)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: set_node
+  node: 555094178
+  set:
+    comment: 'Manufactures pozzolanic cement. See: https://www.suneracimentos.com'
+    name: Cement works (Sunera cimentos LDA, Boane)
+    railway: stop
+    facility: manufacturing
+  note: Cement works (Sunera cimentos LDA, Boane)
+- op: tag_route
+  from: 555083228
+  to: 555094178
+  set:
+    line: Cement works (Sunera cimentos LDA, Boane)
+    mode: freight
+    type: conventional
+    gauge: '1067'
+    status: open
+    comment: ''
+- op: copy_node
+  node: 555027385
+  edge: 555078192
+  note: cateme
+- op: copy_node
+  node: 555031295
+  edge: 55505516022
+  note: Cambulatsitsi
+- op: copy_node
+  node: 555034955
+  edge: 555120276
+  note: Sena
+- op: copy_node
+  node: 555062965
+  edge: 555053233
+  note: Nhamatanda
+- op: copy_node
+  node: 555019330
+  edge: 555038767
+  note: Chokwe
+- op: copy_node
+  node: 555023246
+  edge: 555047730
+  note: Manhica
+- op: copy_node
+  node: 555011565
+  edge: 555049537
+  note: Maputo
+- op: copy_node
+  node: 555031304
+  edge: 555037877
+  note: Boane
+- op: set_nodes_on_edges
+  countries:
+  - Mozambique
+  node_railway:
+  - station
+  - halt
+  - stop
+  where_edge:
+    gauge: '1067'
+  set:
+    gauge: '1067'

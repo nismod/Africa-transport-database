@@ -215,6 +215,13 @@ def main(rail_network, boundaries, engine, database):
                 a.osm_id, a.name, a.railway, c.country,
                 cast(null as varchar) as gauge,
                 cast(null as varchar) as facility,
+                -- afrn.sql adds only gauge and facility, but the country
+                -- scripts set these three as well and the published nodes
+                -- file carries them, so the recorded build is missing an
+                -- ALTER somewhere. See README.md.
+                cast(null as varchar) as status,
+                cast(null as varchar) as comment,
+                cast(null as varchar) as name_arabic,
                 a.geom
             from raw_nodes a left join node_country c on c.id = a.id;
 
@@ -238,6 +245,8 @@ def main(rail_network, boundaries, engine, database):
                 cast(null as varchar) as line,
                 cast(null as varchar) as gauge,
                 cast(null as varchar) as comment,
+                cast(null as integer) as speed_freight,
+                cast(null as integer) as speed_passenger,
                 a.geom
             from raw_edges a
             join edge_one_country c on c.id = a.id
