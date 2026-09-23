@@ -1,9 +1,5 @@
-"""Functions for preprocessing road data
-WILL MODIFY LATER
-"""
+"""Helper functions for building and analysing the transport networks"""
 
-import json
-import os
 from math import asin, cos, radians, sin, sqrt
 
 import geopandas as gpd
@@ -11,12 +7,11 @@ import igraph as ig
 import networkx
 import numpy as np
 import pandas as pd
+import snkit.network
 from haversine import haversine
 from scipy.spatial import cKDTree
 from shapely.geometry import LineString, shape
 from tqdm import tqdm
-
-import aftdb.preprocess.network as ntx
 
 tqdm.pandas()
 
@@ -82,17 +77,9 @@ def add_attributes(dataframe, columns_attributes):
     return dataframe
 
 
-def add_iso_code(df, df_id_column, incoming_data_path, epsg=4326):
-    # Insert countries' ISO CODE
-    africa_boundaries = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Africa_GIS Supporting Data",
-            "a. Africa_GIS Shapefiles",
-            "AFR_Political_ADM0_Boundaries.shp",
-            "AFR_Political_ADM0_Boundaries.shp",
-        )
-    )
+def add_iso_code(df, df_id_column, africa_adm0, epsg=4326):
+    """Insert each row's country ISO3 code, from the Africa ADM0 boundaries"""
+    africa_boundaries = gpd.read_file(africa_adm0)
     africa_boundaries.rename(
         columns={"DsgAttr03": "iso3", "Country": "country"}, inplace=True
     )
@@ -124,28 +111,28 @@ def link_nodes_to_nearest_edge(network, condition=None, tolerance=1e-9):
         network.nodes.itertuples(index=False), desc="link", total=len(network.nodes)
     ):
         # for each node, find edges within
-        edge = ntx.nearest_edge(node.geometry, network.edges)
+        edge = snkit.network.nearest_edge(node.geometry, network.edges)
         if condition is not None and not condition(node, edge):
             continue
         # add nodes at points-nearest
-        point = ntx.nearest_point_on_line(node.geometry, edge.geometry)
+        point = snkit.network.nearest_point_on_line(node.geometry, edge.geometry)
         if point != node.geometry:
             new_node_geoms.append(point)
             # add edges linking
             line = LineString([node.geometry, point])
             new_edge_geoms.append(line)
 
-    new_nodes = ntx.matching_gdf_from_geoms(network.nodes, new_node_geoms)
-    all_nodes = ntx.concat_dedup([network.nodes, new_nodes])
+    new_nodes = snkit.network.matching_gdf_from_geoms(network.nodes, new_node_geoms)
+    all_nodes = snkit.network.concat_dedup([network.nodes, new_nodes])
 
-    new_edges = ntx.matching_gdf_from_geoms(network.edges, new_edge_geoms)
-    all_edges = ntx.concat_dedup([network.edges, new_edges])
+    new_edges = snkit.network.matching_gdf_from_geoms(network.edges, new_edge_geoms)
+    all_edges = snkit.network.concat_dedup([network.edges, new_edges])
 
     # split edges as necessary after new node creation
-    unsplit = ntx.Network(nodes=all_nodes, edges=all_edges)
+    unsplit = snkit.network.Network(nodes=all_nodes, edges=all_edges)
 
     # this step is typically the majority of processing time
-    split = ntx.split_edges_at_nodes(unsplit, tolerance=tolerance)
+    split = snkit.network.split_edges_at_nodes(unsplit, tolerance=tolerance)
 
     return split
 
@@ -218,49 +205,6 @@ def ckdnearest(gdA, gdB):
     return gdf
 
 
-def gdf_geom_clip(gdf_in, clip_geom):
-    """Filter a dataframe to contain only features within a clipping geometry
-
-    Parameters
-    ---------
-    gdf_in
-        geopandas dataframe to be clipped in
-    province_geom
-        shapely geometry of province for what we do the calculation
-
-    Returns
-    -------
-    filtered dataframe
-    """
-    return gdf_in.loc[
-        gdf_in["geometry"].apply(lambda x: x.within(clip_geom))
-    ].reset_index(drop=True)
-
-
-def get_nearest_values(x, input_gdf, column_name):
-    polygon_index = input_gdf.distance(x.geometry).sort_values().index[0]
-    return input_gdf.loc[polygon_index, column_name]
-
-
-def extract_gdf_values_containing_nodes(x, input_gdf, column_name):
-    a = input_gdf.loc[list(input_gdf.geometry.contains(x.geometry))]
-    if len(a.index) > 0:
-        return a[column_name].values[0]
-    else:
-        polygon_index = input_gdf.distance(x.geometry).sort_values().index[0]
-        return input_gdf.loc[polygon_index, column_name]
-
-
-def load_config():
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-
-    config_path = os.path.join(script_dir, "..", "..", "config.json")
-
-    with open(config_path, "r") as config_fh:
-        config = json.load(config_fh)
-    return config
-
-
 def create_network_from_nodes_and_edges(
     nodes,
     edges,
@@ -268,7 +212,35 @@ def create_network_from_nodes_and_edges(
     snap_distance=None,
     geometry_precision=False,
     by=None,
+    drop_duplicate_nodes=False,
+    check_linestrings=True,
 ):
+    """Build a topological network from node and edge geodataframes
+
+    Parameters
+    ----------
+    nodes, edges : geopandas.GeoDataFrame
+        Nodes may be None, in which case endpoints are derived from the edges.
+    node_edge_prefix : str
+        Prefix for the generated node and edge ids.
+    snap_distance : float, optional
+        If given, link nodes to their nearest edge rather than snapping them.
+    geometry_precision : bool, default False
+        Round geometries to 5 decimal places.
+    by : list, optional
+        Columns to merge edges on.
+    drop_duplicate_nodes : bool, default False
+        Drop nodes sharing a geometry after adding endpoints.
+    check_linestrings : bool, default True
+        Assert that every edge is a LineString once edges have been split.
+
+    Notes
+    -----
+    ``drop_duplicate_nodes`` and ``check_linestrings`` exist because the two
+    copies of this function that used to live in the scripts differed in these
+    two steps only. The defaults keep each caller's behaviour unchanged; the
+    two should be reconciled once a full run confirms which is wanted.
+    """
     edges.columns = map(str.lower, edges.columns)
     if "id" in edges.columns.values.tolist():
         edges.rename(columns={"id": "e_id"}, inplace=True)
@@ -281,46 +253,50 @@ def create_network_from_nodes_and_edges(
         print(empty_edges)
         edges = edges[~empty_idx].copy()
 
-    network = ntx.Network(nodes, edges)
+    network = snkit.network.Network(nodes, edges)
     print("* Done with network creation")
 
-    network = ntx.split_multilinestrings(network)
+    network = snkit.network.split_multilinestrings(network)
     print("* Done with splitting multilines")
     if geometry_precision is True:
-        network = ntx.round_geometries(network, precision=5)
+        network = snkit.network.round_geometries(network, precision=5)
         print("* Done with rounding off geometries")
 
     if nodes is not None:
         if snap_distance is not None:
-            # network = ntx.link_nodes_to_edges_within(network, snap_distance, tolerance=1e-10)
+            # network = snkit.network.link_nodes_to_edges_within(network, snap_distance, tolerance=1e-10)
             network = link_nodes_to_nearest_edge(network, tolerance=1e-9)
             print("* Done with joining nodes to edges")
         else:
-            network = ntx.snap_nodes(network)
+            network = snkit.network.snap_nodes(network)
             print("* Done with snapping nodes to edges")
-        # network.nodes = ntx.drop_duplicate_geometries(network.nodes)
+        # network.nodes = snkit.network.drop_duplicate_geometries(network.nodes)
         # print ('* Done with dropping same geometries')
 
-        # network = ntx.split_edges_at_nodes(network,tolerance=9e-10)
+        # network = snkit.network.split_edges_at_nodes(network,tolerance=9e-10)
         # print ('* Done with splitting edges at nodes')
 
-    network = ntx.add_endpoints(network)
+    network = snkit.network.add_endpoints(network)
     print("* Done with adding endpoints")
 
-    network.nodes = ntx.drop_duplicate_geometries(network.nodes)
-    print("* Done with dropping same geometries")
+    if drop_duplicate_nodes:
+        network.nodes = snkit.network.drop_duplicate_geometries(network.nodes)
+        print("* Done with dropping same geometries")
 
-    network = ntx.split_edges_at_nodes(network, tolerance=1e-9)
+    network = snkit.network.split_edges_at_nodes(network, tolerance=1e-9)
     print("* Done with splitting edges at nodes")
 
-    network = ntx.add_ids(
+    if check_linestrings:
+        assert set(network.edges.geometry.type.values) == {"LineString"}
+
+    network = snkit.network.add_ids(
         network, edge_prefix=f"{node_edge_prefix}e", node_prefix=f"{node_edge_prefix}n"
     )
-    network = ntx.add_topology(network, id_col="id")
+    network = snkit.network.add_topology(network, id_col="id")
     print("* Done with network topology")
 
     if by is not None:
-        network = ntx.merge_edges(network, by=by)
+        network = snkit.network.merge_edges(network, by=by)
         print("* Done with merging network")
 
     network.edges.rename(
