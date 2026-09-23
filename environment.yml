@@ -5,19 +5,24 @@ channels:
 dependencies:
   - python=3.14
   - cartopy
+  - click
   - country_converter
+  - curl
   - fiona
   - geopandas
   - haversine
   - jenkspy
+  - jq
   - mapclassify
   - matplotlib
-  - matplotlib-scalebar
   - networkx
   - numpy
+  - openpyxl
+  - osmium-tool
   - pandas
   - pip:
       - -e .
+  - pyarrow
   - pyrosm
   - python-igraph
   - quackosm
@@ -26,5 +31,7 @@ dependencies:
   - scipy
   - seaborn
   - shapely
+  - snakemake
   - snkit
   - tqdm
+  - unzip
