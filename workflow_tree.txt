@@ -1,0 +1,202 @@
+Files named by the rules in Snakefile.
+Regenerate with: python tools/workflow_tree.py
+
+incoming_data
+├── africa-station-google-points
+│   ├── location_proximity_final.gpkg
+│   └── stations_with_google_api_points.csv
+├── africa_corridor_developments
+│   ├── 17D.1.gpkg
+│   ├── AfricanDevelopmentCorridorDatabase2022.gpkg
+│   ├── conakry-kankan_railway.gpkg
+│   ├── Dar_es.gpkg
+│   ├── east_africa_railway.gpkg
+│   ├── eastafrica_rail.gpkg
+│   ├── ghana_burkina_faso.gpkg
+│   ├── guinea_lines.gpkg
+│   ├── guinea_rail.shp
+│   ├── isaka_kigali_gitega_railway.gpkg
+│   ├── kinsasha_rail.gpkg
+│   ├── kinshasa_ilebo_railway.gpkg
+│   ├── simandou_railway_project.gpkg
+│   ├── standard_gauge_railway.gpkg
+│   ├── tanzania_sgr_lines.gpkg
+│   ├── tanzania_standard_gauge_railway.gpkg
+│   ├── Team.gpkg
+│   ├── togo_lines.gpkg
+│   └── togo_rail.gpkg
+├── Africa_GIS Supporting Data
+│   └── a. Africa_GIS Shapefiles
+│       ├── AFR_Infra_Transport_Ports.shp
+│       │   └── AFR_Infra_Transport_Ports.shp
+│       ├── AFR_Mineral_Facilities.shp
+│       │   └── AFR_Mineral_Facilities.shp
+│       └── AFR_Political_ADM0_Boundaries.shp
+│           └── AFR_Political_ADM0_Boundaries.shp
+├── Africa_osm_rivers
+│   ├── africa_network_edges.geoparquet
+│   ├── africa_network_nodes.geoparquet
+│   ├── africa_river_edges.geoparquet
+│   ├── africa_river_nodes.geoparquet
+│   ├── OpenStreetMap_Waterways_for_Africa.geojson
+│   └── OpenStreetMap_Waterways_for_Africa.geoparquet
+├── africa_rail_network
+│   └── network_data
+│       ├── africa_rail_network.geojson
+│       ├── africa_rail_nodes.geojson
+│       └── africa_railways.gpkg
+├── africa_roads
+│   ├── africa_main_roads.gpkg
+│   ├── edges_with_topology.geoparquet
+│   ├── edges_with_topology.gpq
+│   ├── nodes_with_topology.geoparquet
+│   └── nodes_with_topology.gpq
+├── airports
+│   ├── africa_airports_ourairport.gpkg
+│   └── airports.csv
+├── egypt-latest-free.shp
+│   ├── gis_osm_waterways_free_1.shp
+│   ├── suez_canal_ids.csv
+│   └── suez_canal_network.gpkg
+├── Global port supply-chains
+│   ├── Network
+│   │   └── nodes_maritime.gpkg
+│   ├── Port_statistics
+│   │   ├── port_locations_value.csv
+│   │   ├── port_locations_weight.csv
+│   │   └── port_utilization.csv
+│   └── Ports Updated 2025
+│       ├── daily_port_activity.csv
+│       ├── port_calls_average_2019-2024.csv
+│       ├── port_capacity_called_average_2019-2024.csv
+│       ├── port_turn_around_time_average_2019-2024.csv
+│       └── Ports.shp
+├── infrastructure
+│   └── africa_osm_airports_terminals.parquet
+├── IWW_ports
+│   ├── africa_IWW_ports.xlsx
+│   ├── edges_port_IWW_af.gpkg
+│   └── hotosm_ssd_waterways.gpkg
+├── osm
+│   ├── africa-{snapshot}.osm.pbf
+│   ├── africa.geojson
+│   └── planet-{snapshot}.osm.pbf
+├── ports
+│   ├── ne_110m_admin_0_countries
+│   │   ├── ne_110m_admin_0_countries.cpg
+│   │   ├── ne_110m_admin_0_countries.dbf
+│   │   ├── ne_110m_admin_0_countries.prj
+│   │   ├── ne_110m_admin_0_countries.shp
+│   │   └── ne_110m_admin_0_countries.shx
+│   ├── africa_ports.gpkg
+│   ├── all_ports_matches.xlsx
+│   ├── edges_maritime_corrected.gpkg
+│   └── nodes_maritime.gpkg
+├── Randhawaetal_2025_Locations
+│   └── heigit_{iso3}_roadsurface_lines.gpkg
+├── Supplementary 1：mine area polygons
+│   └── 74548 mine polygons
+│       └── 74548_projected.shp
+├── Lobito_corridor.xlsx
+├── Rail_Costs.xlsx
+├── road_corridors.xlsx
+├── Roads_Costs.xlsx
+└── suez_canal_network.gpkg
+
+processed_data
+├── admin_boundaries
+│   ├── gadm36_levels_gpkg
+│   │   ├── gadm36_levels.gpkg
+│   │   └── gadm36_levels_continents.gpkg
+│   ├── ne_10m_admin_0_countries
+│   │   ├── ne_10m_admin_0_countries.cpg
+│   │   ├── ne_10m_admin_0_countries.dbf
+│   │   ├── ne_10m_admin_0_countries.prj
+│   │   ├── ne_10m_admin_0_countries.shp
+│   │   └── ne_10m_admin_0_countries.shx
+│   ├── ne_10m_lakes
+│   │   ├── ne_10m_lakes.cpg
+│   │   ├── ne_10m_lakes.dbf
+│   │   ├── ne_10m_lakes.prj
+│   │   ├── ne_10m_lakes.shp
+│   │   └── ne_10m_lakes.shx
+│   ├── un_urban_population
+│   │   └── un_pop_df.gpkg
+│   ├── country_codes.csv
+│   └── country_codes.xlsx
+├── infrastructure
+│   ├── africa_airport_network.gpkg
+│   ├── africa_airport_network_last.gpkg
+│   ├── africa_airport_network_rev.gpkg
+│   ├── africa_airport_network_withsources.gpkg
+│   ├── africa_airport_ourairport.gpkg
+│   ├── africa_corridors_costs.csv
+│   ├── africa_iww_network.gpkg
+│   ├── africa_iww_network_withsources.gpkg
+│   ├── africa_maritime_network.gpkg
+│   ├── africa_maritime_network_withsources.gpkg
+│   ├── africa_multimodal.gpkg
+│   ├── africa_multimodal_rev.gpkg
+│   ├── africa_multimodal_withsources.gpkg
+│   ├── africa_rails_costs.csv
+│   ├── africa_railways_network.gpkg
+│   ├── africa_railways_network_withsources.gpkg
+│   ├── africa_roads_edges.geoparquet
+│   ├── africa_roads_edges_withcorridors.geoparquet
+│   ├── africa_roads_network.gpkg
+│   ├── africa_roads_network_withsources.gpkg
+│   ├── africa_roads_nodes.geoparquet
+│   ├── africa_roads_nodes_withcorridors.geoparquet
+│   ├── global_maritime_network.gpkg
+│   ├── merged_costs_data.csv
+│   ├── merged_validation_datasets.csv
+│   ├── merged_validation_datasets.parquet
+│   ├── merged_validation_datasets_counts.csv
+│   ├── paved_stats2.csv
+│   ├── rail_stats.csv
+│   ├── validation_file_merge.geoparquet
+│   └── world_bank_global_airports.zip
+├── port_statistics
+│   ├── port_known_commodities_traded.csv
+│   ├── port_utilization.csv
+│   └── port_vessel_types_and_capacities.csv
+├── Validation sets
+│   ├── port_cluster_comparison_k3.csv
+│   └── ports.csv
+├── africa_ports_modified.gpkg
+├── economic results2.csv
+├── merged2.csv
+├── merged_with_iso2.csv
+├── merged_with_iso2.gpkg
+├── missing_coords.csv
+├── non_intersected_from_merged.csv
+├── non_intersected_from_merged.gpkg
+├── output.gpkg
+└── ports_weightvalues.csv
+
+results
+├── africa-station-google-points
+│   └── location_proximity_final.gpkg
+├── merged_validation_datasets.csv
+├── merged_validation_datasets.parquet
+├── merged_validation_datasets_corrected.csv
+├── merged_validation_datasets_differences.csv
+└── rails.xlsx
+
+figures
+├── airports.png
+├── heigit_comparison.png
+├── heigit_difference.png
+├── IWW_and_ports.png
+├── multi_modal_proximity.png
+├── ports_with_edges_last.png
+├── rail_comparisons.png
+├── rail_facility_proximity.png
+├── rail_hist_cap_withgrid.png
+├── rail_test_facility.png
+├── rail_test_gauge.png
+├── roads_corridors_LAST.png
+├── roads_corridors_legend_LAST.png
+├── roads_hist_cap2_grid.png
+├── roads_test.png
+└── roads_typology2_LAST.png
