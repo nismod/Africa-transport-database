@@ -2,16 +2,8 @@
 
 Matching rail facilities to independently mapped locations, and comparing road
 surface and length against the HeiGIT road surface dataset, the CIA factbook
-and other published figures. The charts that report those comparisons live here
-too, next to the rules that produce the numbers behind them, so the scripts
-these rules run come from ``scripts/preprocess``, ``scripts/plot`` and
-``scripts/maps and stats`` alike.
+and other published figures.
 """
-
-
-# ---------------------------------------------------------------------------
-# rail facilities against independently mapped locations
-# ---------------------------------------------------------------------------
 
 
 rule google_api_matches:
@@ -59,11 +51,6 @@ rule plot_rail_facility_proximity:
             --matches "{input.matches}" \
             --output-figure "{output.figure}"
         """
-
-
-# ---------------------------------------------------------------------------
-# road surface and length against the HeiGIT dataset
-# ---------------------------------------------------------------------------
 
 
 rule merge_heigit_data:
@@ -160,12 +147,7 @@ rule plot_heigit_bar_charts:
         """
 
 
-# ---------------------------------------------------------------------------
-# port counts against the CIA factbook
-# ---------------------------------------------------------------------------
-
-
-rule maps_validation:
+rule port_maps_validation:
     """Cluster-compare the maritime port database against CIA port counts."""
     input:
         script=f"{MAPS_AND_STATS}/validation.py",
@@ -178,11 +160,6 @@ rule maps_validation:
             --ports "{input.ports}" \
             --output-clusters "{output.clusters}"
         """
-
-
-# ---------------------------------------------------------------------------
-# multi-modal link lengths
-# ---------------------------------------------------------------------------
 
 
 rule plot_multi_modal_proximity:
