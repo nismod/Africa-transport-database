@@ -2,18 +2,19 @@ import json
 import os
 import re
 
+import click
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 from shapely.geometry import LineString
 from tqdm import tqdm
 
-from aftdb.preprocess.utils_new import (
+from aftdb.utils import (
+    add_iso_code,
     ckdnearest,
     components,
     convert_json_geopandas,
     create_network_from_nodes_and_edges,
-    load_config,
 )
 
 tqdm.pandas()
@@ -33,41 +34,20 @@ def add_attributes(dataframe, columns_attributes):
     return dataframe
 
 
-def add_iso_code(df, df_id_column, incoming_data_path):
-    # Insert countries' ISO CODE
-    africa_boundaries = gpd.read_file(
-        os.path.join(
-            incoming_data_path,
-            "Africa_GIS Supporting Data",
-            "a. Africa_GIS Shapefiles",
-            "AFR_Political_ADM0_Boundaries.shp",
-            "AFR_Political_ADM0_Boundaries.shp",
-        )
-    )
-    africa_boundaries.rename(columns={"DsgAttr03": "iso3"}, inplace=True)
-    # Spatial join
-    m = gpd.sjoin(
-        df, africa_boundaries[["geometry", "iso3"]], how="left", predicate="within"
-    ).reset_index()
-    m = m[~m["iso3"].isna()]
-    un = df[~df[df_id_column].isin(m[df_id_column].values.tolist())]
-    un = gpd.sjoin_nearest(
-        un, africa_boundaries[["geometry", "iso3"]], how="left"
-    ).reset_index()
-    m = pd.concat([m, un], axis=0, ignore_index=True)
-    return m
-
-
-def main(config):
-    incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
-
+@click.command()
+@click.option("--africa-adm0", required=True, type=click.Path(exists=True))
+@click.option("--africa-railways", required=True, type=click.Path(exists=True))
+@click.option("--africa-rail-nodes", required=True, type=click.Path(exists=True))
+@click.option("--output-network", required=True, type=click.Path())
+@click.option("--corridor-dir", required=True, type=click.Path())
+def main(africa_adm0, africa_railways, africa_rail_nodes, output_network, corridor_dir):
+    """Build the Africa railway network from OSM and corridor project data"""
     epsg_meters = 3395  # To convert geometries to measure distances in meters
 
     # Read a number of rail network files and convert them to networks first
 
     # from the Africa Corridor development dataset
-    rail_paths = os.path.join(incoming_data_path, "africa_corridor_developments")
+    rail_paths = corridor_dir
     input_descriptions = [
         {
             "project_name": "Conakry-Kankan Railway",
@@ -303,7 +283,12 @@ def main(config):
             df_crs = int(str(df_lines.crs).split(":")[1])
 
             network = create_network_from_nodes_and_edges(
-                df_points, df_lines, "", geometry_precision=True
+                df_points,
+                df_lines,
+                "",
+                geometry_precision=True,
+                drop_duplicate_nodes=True,
+                check_linestrings=False,
             )
 
             edges, nodes = components(
@@ -433,22 +418,12 @@ def main(config):
     processinng_step_two = True
     if processinng_step_two is True:
         rail_edges = gpd.read_file(
-            os.path.join(
-                incoming_data_path,
-                "africa_rail_network",
-                "network_data",
-                "africa_railways.gpkg",
-            ),
+            africa_railways,
             layer="edges",
         )
         max_edge_id = max(rail_edges.oid.values.tolist())
         df_crs = int(str(rail_edges.crs).split(":")[1])
-        rail_nodes_path = os.path.join(
-            incoming_data_path,
-            "africa_rail_network",
-            "network_data",
-            "africa_rail_nodes.geojson",
-        )
+        rail_nodes_path = africa_rail_nodes
         with open(rail_nodes_path, encoding="utf8") as fh:
             rail_nodes = json.load(fh)
         rail_nodes = convert_json_geopandas(rail_nodes)
@@ -560,7 +535,7 @@ def main(config):
         print("* Added components")
 
         nodes = gpd.GeoDataFrame(nodes, geometry="geometry", crs=rail_edges.crs)
-        nodes = add_iso_code(nodes, "oid", incoming_data_path)
+        nodes = add_iso_code(nodes, "oid", africa_adm0)
         for del_col in ["node_id", "index", "index_right"]:
             if del_col in nodes.columns.values.tolist():
                 nodes.drop(del_col, axis=1, inplace=True)
@@ -609,21 +584,16 @@ def main(config):
         )
 
         gpd.GeoDataFrame(nodes, geometry="geometry", crs=rail_edges.crs).to_file(
-            os.path.join(
-                processed_data_path, "infrastructure", "africa_railways_network.gpkg"
-            ),
+            output_network,
             layer="nodes",
             driver="GPKG",
         )
         gpd.GeoDataFrame(edges, geometry="geometry", crs=rail_edges.crs).to_file(
-            os.path.join(
-                processed_data_path, "infrastructure", "africa_railways_network.gpkg"
-            ),
+            output_network,
             layer="edges",
             driver="GPKG",
         )
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

@@ -1,10 +1,9 @@
 import os
 
+import click
 import geopandas as gpd
 import numpy as np
 import pandas as pd
-
-from aftdb.preprocess.utils_new import load_config
 
 
 def create_tag(x):
@@ -20,26 +19,26 @@ def create_tag(x):
         return 3
 
 
-def main(config):
-    input_folder = config["paths"]["incoming_data"]
-    output_folder = config["paths"]["data"]
-
+@click.command()
+@click.option("--database-lines", required=True, type=click.Path(exists=True))
+@click.option("--boundaries", required=True, type=click.Path(exists=True))
+@click.option("--heigit-folder", required=True, type=click.Path(exists=True))
+@click.option("--output-merged", required=True, type=click.Path())
+@click.option("--output-pivot", required=True, type=click.Path())
+@click.option("--output-counts", required=True, type=click.Path())
+def main(
+    database_lines,
+    boundaries,
+    heigit_folder,
+    output_merged,
+    output_pivot,
+    output_counts,
+):
+    """Clip database and HeiGIT roads by country and compare paved lengths"""
     epsg_meters = 32736
     # Write to a new GeoPackage
-    heigit_folder = os.path.join(input_folder, "Randhawaetal_2025_Locations")
-    database_lines = gpd.read_parquet(
-        os.path.join(
-            output_folder, "infrastructure", "africa_roads_edges_FINAL_last.geoparquet"
-        )
-    )
-    global_boundaries = gpd.read_file(
-        os.path.join(
-            output_folder,
-            "admin_boundaries",
-            "gadm36_levels_gpkg",
-            "gadm36_levels_continents.gpkg",
-        )
-    )
+    database_lines = gpd.read_parquet(database_lines)
+    global_boundaries = gpd.read_file(boundaries)
     countries = list(
         set(
             database_lines["from_iso_a3"].values.tolist()
@@ -71,8 +70,6 @@ def main(config):
 
             # Select and clip HEIGIT lines for each country boundary
             if len(h_df.index) > 0:
-                # df = gpd.clip(b_df,boundary_df)
-                # hf = h_df.intersection(boundary_df)
                 hf = gpd.overlay(h_df, boundary_df, how="intersection")
                 if len(hf.index) > 0:
                     hf["length"] = hf.geometry.length
@@ -86,8 +83,6 @@ def main(config):
         b_df["country_iso_a3"] = country
         database_clipped_df.append(b_df[b_df["border_road"] == 0])
         b_df = b_df[b_df["border_road"] == 1]
-        # df = gpd.clip(b_df,boundary_df)
-        # df = b_df.intersection(boundary_df)
         df = gpd.overlay(b_df, boundary_df, how="intersection")
         if len(df.index) > 0:
             df["length_m"] = df.geometry.length
@@ -129,14 +124,10 @@ def main(config):
     merged["combined_surface_DL_priority"] = merged[
         "combined_surface_DL_priority"
     ].str.lower()
-    # merged['paved'] = merged['paved'].astype(str).str.lower()
 
     merged.rename(
         columns={"length": "length_heigit_m", "length_m": "length_db_m"}, inplace=True
     )
-
-    # Filter only matches
-    # matches = merged[merged['paved_match'] == 1]
 
     # Group by ISO3 and surface class
     # Heigit grouping
@@ -162,16 +153,10 @@ def main(config):
 
     # Select the columns you're interested in
     # Export the full merged dataset
-    merged.to_parquet(
-        os.path.join(
-            output_folder, "infrastructure", "merged_validation_datasets.parquet"
-        )
-    )
+    merged.to_parquet(output_merged)
 
     # Export the pivot table
-    pivot_table.to_csv(
-        os.path.join(output_folder, "infrastructure", "merged_validation_datasets.csv")
-    )
+    pivot_table.to_csv(output_pivot)
 
     merged["check"] = merged.apply(lambda x: create_tag(x), axis=1)
     merged = merged.value_counts(
@@ -182,13 +167,8 @@ def main(config):
     )
     merged["proportion"] = 100.0 * merged["count"] / merged["country_total"]
 
-    merged.to_csv(
-        os.path.join(
-            output_folder, "infrastructure", "merged_validation_datasets_counts.csv"
-        )
-    )
+    merged.to_csv(output_counts)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

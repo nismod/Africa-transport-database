@@ -1,25 +1,24 @@
-import os
 import re
 
+import click
 import geopandas as gpd
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.preprocess.utils import add_lines, ckdnearest, load_config
+from aftdb.utils import add_lines, ckdnearest
 
 tqdm.pandas()
 
 
-def main(config):
-    incoming_data_path = config["paths"]["incoming_data"]
-    processed_data_path = config["paths"]["data"]
+@click.command()
+@click.option("--africa-ports", required=True, type=click.Path(exists=True))
+@click.option("--non-intersected", required=True, type=click.Path(exists=True))
+@click.option("--output-modified", required=True, type=click.Path())
+def main(africa_ports, non_intersected, output_modified):
+    """Attach the non-intersected port points to the Africa port network"""
     # Read the ports nodes and edges data
-    port_nodes = gpd.read_file(
-        os.path.join(incoming_data_path, "ports", "africa_ports.gpkg"), layer="nodes"
-    )
-    port_edges = gpd.read_file(
-        os.path.join(incoming_data_path, "ports", "africa_ports.gpkg"), layer="edges"
-    )
+    port_nodes = gpd.read_file(africa_ports, layer="nodes")
+    port_edges = gpd.read_file(africa_ports, layer="edges")
 
     # Get the maximum number of the port edges ID because we want to create new edges in the sequence
     max_edge_id = max(
@@ -27,9 +26,7 @@ def main(config):
     )
 
     # Read the results of the non-interesected points
-    non_intersected = gpd.read_file(
-        os.path.join(processed_data_path, "non_intersected_from_merged.gpkg")
-    )
+    non_intersected = gpd.read_file(non_intersected)
     print(non_intersected.crs)
     non_intersected = non_intersected.reset_index(drop=True)
     print("Duplicate indices in port_nodes:", port_nodes.index.duplicated().sum())
@@ -50,14 +47,8 @@ def main(config):
     ]
     print(duplicated_node_ids)
 
-    # This should have point geometry, not points with buffer geometry
-    # non_intersected["geometry"]  = non_intersected.geometry.centroid
-    # Also it should be just 1 point at one location, so probably
     # Group by FeatureUID
     non_intersected = non_intersected.groupby("FeatureUID").first().reset_index()
-    # non_intersected = non_intersected.set_crs(epsg=3395)
-    # Also probabble have to project this to EPSG = 4326 because the other data is in that system
-    # non_intersected = non_intersected.to_crs(epsg=4326)
     print(non_intersected)
 
     # Extract nodes for the port networkthat are not ports
@@ -92,7 +83,7 @@ def main(config):
         crs="EPSG:4326",
     )
     port_edges.to_file(
-        os.path.join(processed_data_path, "africa_ports_modified.gpkg"),
+        output_modified,
         layer="edges",
         driver="GPKG",
     )
@@ -109,12 +100,11 @@ def main(config):
         crs="EPSG:4326",
     )
     port_nodes.to_file(
-        os.path.join(processed_data_path, "africa_ports_modified.gpkg"),
+        output_modified,
         layer="nodes",
         driver="GPKG",
     )
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()
