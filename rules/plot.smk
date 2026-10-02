@@ -1,19 +1,5 @@
-"""Map and chart the database.
-
-The scripts under ``scripts/plot`` and ``scripts/maps and stats`` that draw the
-finished network layers; the ones that chart a comparison against another
-dataset are in ``validate.smk`` instead.
-
-Every rule that draws a basemap reads the Natural Earth country and lake layers
-through ``aftdb.plot.maps.plot_africa_basemap()`` and friends, so those are
-declared as inputs even where the script itself does not name them.
+"""Map and chart the database
 """
-
-
-# ---------------------------------------------------------------------------
-# maps
-# ---------------------------------------------------------------------------
-
 
 
 rule plot_airports:
@@ -121,7 +107,7 @@ rule plot_roads_typology:
     """Map the road network coloured by highway typology."""
     input:
         script=f"{PLOT}/africa_maps_roads.py",
-        road_edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
+        road_edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
         countries=BASEMAP_COUNTRIES,
         lakes=BASEMAP_LAKES,
     output:
@@ -140,7 +126,7 @@ rule plot_roads_corridors:
     """Map the road network coloured by development corridor."""
     input:
         script=f"{PLOT}/africa_maps_roads_corridors.py",
-        road_edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
+        road_edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
         countries=BASEMAP_COUNTRIES,
         lakes=BASEMAP_LAKES,
     output:
@@ -181,7 +167,7 @@ rule plot_roads_histogram:
     """Stacked bar chart of road length by corridor and typology."""
     input:
         script=f"{PLOT}/africa_hist_roads.py",
-        road_edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
+        road_edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
     output:
         figure=f"{FIGURES}/roads_hist_cap2_grid.png",
     shell:
@@ -193,7 +179,7 @@ rule plot_roads_histogram:
 
 
 # ---------------------------------------------------------------------------
-# scripts/maps and stats
+# scripts/stats
 # ---------------------------------------------------------------------------
 
 
@@ -203,7 +189,7 @@ rule maps_graphs_transport:
     """
     input:
         script=f"{MAPS_AND_STATS}/graphs_transport.py",
-        road_edges=f"{DATA}/infrastructure/africa_roads_edges_FINAL.geoparquet",
+        road_edges=f"{DATA}/infrastructure/africa_roads_edges.geoparquet",
         countries=BASEMAP_COUNTRIES,
         lakes=BASEMAP_LAKES,
         ccg_countries=COUNTRY_CODES,
@@ -218,4 +204,3 @@ rule maps_graphs_transport:
             --ccg-countries "{input.ccg_countries}" \
             --output-figure "{output.figure}"
         """
-

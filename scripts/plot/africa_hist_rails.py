@@ -1,27 +1,26 @@
+import click
+
 """Road network risks and adaptation maps"""
 
-import os
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
 from tqdm import tqdm
 
-from aftdb.map.map_plotting_utils import load_config, save_fig
+from aftdb.plot.maps import save_fig
 
 tqdm.pandas()
 
 
-def main(config):
-    data_path = config["paths"]["data"]
-    figure_path = config["paths"]["figures"]
-
-    figures = os.path.join(figure_path)
-    if os.path.exists(figures) is False:
-        os.mkdir(figures)
+@click.command()
+@click.option("--railways", required=True, type=click.Path(exists=True))
+@click.option("--output-figure", required=True, type=click.Path())
+def main(railways, output_figure):
+    """Stacked bar chart of railway length by country and status"""
 
     rail_df = gpd.read_file(
-        os.path.join(data_path, "infrastructure", "africa_railways_network.gpkg"),
+        railways,
         layer="edges",
     )
 
@@ -41,19 +40,6 @@ def main(config):
 
     # Create a font property for bold text
     bold_font = font_manager.FontProperties(weight="bold")
-    # Select a colormap (e.g., 'viridis', 'plasma', 'tab20', 'Set1', etc.)
-    # colormap = [
-    # '#fddbcc',
-    # '#f97306',
-    # '#c1272d',
-    # '#801515',
-    # '#fbb03b',
-    # '#d0e4f7',
-    # '#8c8ccf',
-    # '#6a5acd',
-    # '#800080',
-    # '#d3d3d3',
-    # ]
     colormap = {
         "Abandoned": "#fddbcc",
         "Disused": "#f97306",
@@ -68,8 +54,6 @@ def main(config):
     }
 
     # Get color values from the colormap
-    # num_colors = len(pivot_data.columns)
-    # colors = [colormap[i] for i in range(num_colors)]
     colors = [colormap[status] for status in pivot_data.columns]
 
     # Plot with colormap
@@ -87,9 +71,8 @@ def main(config):
     plt.subplots_adjust(bottom=0.1)
     plt.tight_layout()
 
-    save_fig(os.path.join(figures, "rail_hist_cap_withgrid.png"))
+    save_fig(output_figure)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

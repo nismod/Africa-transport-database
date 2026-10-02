@@ -1,6 +1,7 @@
+import click
+
 """Road network risks and adaptation maps"""
 
-import os
 
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -9,9 +10,8 @@ from matplotlib import font_manager
 from matplotlib.colors import ListedColormap
 from tqdm import tqdm
 
-from aftdb.plot.map_plotting_utils import (
+from aftdb.plot.maps import (
     get_projection,
-    load_config,
     plot_africa_basemap2,
     save_fig,
 )
@@ -19,13 +19,13 @@ from aftdb.plot.map_plotting_utils import (
 tqdm.pandas()
 
 
-def main(config):
-    data_path = config["paths"]["data"]
-    figure_path = config["paths"]["figures"]
-
-    figures = os.path.join(figure_path)
-    if os.path.exists(figures) is False:
-        os.mkdir(figures)
+@click.command()
+@click.option("--railways", required=True, type=click.Path(exists=True))
+@click.option("--countries", required=True, type=click.Path(exists=True))
+@click.option("--lakes", required=True, type=click.Path(exists=True))
+@click.option("--output-figure", required=True, type=click.Path())
+def main(railways, countries, lakes, output_figure):
+    """Map the railway network coloured by gauge"""
 
     map_epsg = 4326
     ax_proj = get_projection(epsg=map_epsg)
@@ -33,15 +33,10 @@ def main(config):
         1, 1, subplot_kw={"projection": ax_proj}, figsize=(12, 12), dpi=500
     )
 
-    # save_fig(os.path.join(figures,"africa_basemap.png"))
-    # plt.close()
-
     rail_df = gpd.read_file(
-        os.path.join(data_path, "infrastructure", "africa_railways_network.gpkg"),
+        railways,
         layer="edges",
     )
-
-    # roads_df["geometry"] = roads_df.geometry.centroid
 
     output_column = "gauge"
 
@@ -49,46 +44,12 @@ def main(config):
 
     rail_df[output_column] = rail_df[output_column].cat.add_categories("Not Known")
     rail_df[output_column] = rail_df[output_column].fillna("Not Known")
-    # rail_df.status = pd.Categorical(
-    #         rail_df.status,
-    #         categories=["abandoned", "disused", "razed", "suspended", "open",
-    #             "planned", "proposed", "construction", "rehabilitation", "unknown"],
-    #         ordered=True
-    #         )
-
-    # Sort the DataFrame based on the ordered category
-    # rail_df = rail_df.sort_values(by="status")
-    # values_range = roads_df[output_column].values.tolist()
-    # null_types = ["NULL"]
-    # main_rails = rail_df[
-    #                     rail_df[output_column].isin(['open'])
-    #                     ]
-    # main_rails2 = rail_df[
-    #                     rail_df[output_column].isin(['construction'])
-    #                     ]
-    # main_rails3 = rail_df[
-    #                     rail_df[output_column].isin(['disused'])
-    #                     ]
-
-    # ax_proj = get_projection(epsg=4326)
-    # fig, ax_plots = plt.subplots(1,1,
-    #                      subplot_kw={'projection': ax_proj},
-    #                      figsize=(12,12),
-    #                      dpi=500)
-    # ax_plots = ax_plots.flatten()
 
     # Create a font property for bold text
     bold_font = font_manager.FontProperties(weight="bold", size=18)
-    # colors = ['orange','grey']
-    # lines = [Line2D([0], [0], color=c, linewidth=3, linestyle='-') for c in colors]
-    # labels = ['Lines','Other (disused)']
 
-    ax = plot_africa_basemap2(ax_plots)
+    ax = plot_africa_basemap2(ax_plots, countries, lakes)
 
-    # colors1 = ['black','blue','blue','red']
-    # main_rails.plot(ax=ax,zorder=4, column=output_column, color='black', linewidth=3)
-    # main_rails2.plot(ax=ax,zorder=4, column=output_column, color='blue', linewidth=3)
-    # main_rails3.plot(ax=ax,zorder=4, column=output_column, color='red', linewidth=3)
     num_colors = len(rail_df["gauge"].unique())
     colormap = [
         "#9e0142",
@@ -129,9 +90,8 @@ def main(config):
         text.set_text(text.get_text().capitalize())
 
     plt.tight_layout()
-    save_fig(os.path.join(figures, "rail_test_gauge.png"))
+    save_fig(output_figure)
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()

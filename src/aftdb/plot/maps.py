@@ -1,4 +1,4 @@
-"""Basemaps for the database's maps and charts.
+"""Basemaps for the database's charts.
 
 Every rule that draws a map calls one of the ``plot_*_basemap`` functions
 here; the rest of this module is what they are built from.

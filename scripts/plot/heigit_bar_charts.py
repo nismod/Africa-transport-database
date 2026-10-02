@@ -1,6 +1,7 @@
+import click
+
 """Generate bar plots"""
 
-import os
 
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
@@ -8,17 +9,10 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from aftdb.map.map_plotting_utils import load_config, save_fig
+from aftdb.plot.maps import save_fig
 
 pd.options.mode.copy_on_write = True
 tqdm.pandas()
-
-# mpl.style.use('ggplot')
-# mpl.rcParams['font.size'] = 10.
-# mpl.rcParams['font.family'] = 'tahoma'
-# mpl.rcParams['axes.labelsize'] = 12.
-# mpl.rcParams['xtick.labelsize'] = 10.
-# mpl.rcParams['ytick.labelsize'] = 10.
 
 
 def plot_clustered_stacked(
@@ -60,7 +54,6 @@ def plot_clustered_stacked(
     n_df = len(dfall)
     n_col = len(dfall[0].columns)
     n_ind = len(dfall[0].index)
-    # axe = plt.subplot(111)
 
     for d in range(len(dfall)):  # for each data frame
         df = dfall[d]
@@ -86,9 +79,7 @@ def plot_clustered_stacked(
                     rect.set_hatch(H * int(i / n_col))  # edited part
                 rect.set_width(1 / float(n_df + 1))
 
-    # sec.set_xticks([5, 15, 25], labels=['\nOughts', '\nTeens', '\nTwenties'])
     axe.set_xticks((np.arange(0, 2 * n_ind, 2) + 1 / float(n_df + 1)) / 2.0)
-    # axe.set_xticks(np.arange(0,n_ind, 1))
     axe.set_xticklabels(
         df.index, rotation=90, ma="left", fontsize=10, fontweight="bold"
     )
@@ -129,17 +120,28 @@ def plot_clustered_stacked(
     return axe
 
 
-def main(config):
-    processed_data_path = config["paths"]["data"]
-    output_data_path = config["paths"]["results"]
-    figure_path = config["paths"]["figures"]
-
+@click.command()
+@click.option("--validation", required=True, type=click.Path(exists=True))
+@click.option("--country-codes", required=True, type=click.Path(exists=True))
+@click.option("--rails", required=True, type=click.Path(exists=True))
+@click.option("--output-comparison", required=True, type=click.Path())
+@click.option("--output-differences-csv", required=True, type=click.Path())
+@click.option("--output-differences", required=True, type=click.Path())
+@click.option("--output-rail-comparisons", required=True, type=click.Path())
+def main(
+    validation,
+    country_codes,
+    rails,
+    output_comparison,
+    output_differences_csv,
+    output_differences,
+    output_rail_comparisons,
+):
+    """Bar charts comparing this database against HeiGIT and rail references"""
     make_plot = True
     if make_plot is True:
         multiply_factor = 0.001
-        results_file = os.path.join(
-            output_data_path, "merged_validation_datasets_corrected.csv"
-        )
+        results_file = validation
         road_columns = [
             ["length_db_m_paved", "length_db_m_unpaved"],
             ["length_heigit_m_paved", "length_heigit_m_unpaved"],
@@ -153,9 +155,9 @@ def main(config):
 
         fig, ax = plt.subplots(1, 1, figsize=(18, 9), dpi=500)
         data_df = pd.read_csv(results_file)
-        country_name = pd.read_excel(
-            os.path.join(processed_data_path, "admin_boundaries", "country_codes.xlsx")
-        )[["country_name_full", "iso_3digit_alpha"]]
+        country_name = pd.read_excel(country_codes)[
+            ["country_name_full", "iso_3digit_alpha"]
+        ]
         country_name.rename(columns={"iso_3digit_alpha": iso_column}, inplace=True)
         data_df = pd.merge(data_df, country_name)
         data_df = data_df.sort_values(by="country_name_full", ascending=True)
@@ -176,7 +178,7 @@ def main(config):
         )
         plt.grid()
         plt.tight_layout()
-        save_fig(os.path.join(figure_path, "heigit_comparison.png"))
+        save_fig(output_comparison)
         plt.close()
 
         road_columns = [["length_paved_diff"], ["length_unpaved_diff"]]
@@ -198,9 +200,7 @@ def main(config):
             0,
         )
 
-        data_df.to_csv(
-            os.path.join(output_data_path, "merged_validation_datasets_differences.csv")
-        )
+        data_df.to_csv(output_differences_csv)
         fig, ax = plt.subplots(1, 1, figsize=(18, 9), dpi=500)
         multiply_factor = 1.0
         dfall = []
@@ -221,12 +221,12 @@ def main(config):
         )
         plt.grid()
         plt.tight_layout()
-        save_fig(os.path.join(figure_path, "heigit_difference.png"))
+        save_fig(output_differences)
         plt.close()
 
     make_plot = True
     if make_plot is True:
-        results_file = os.path.join(output_data_path, "rails.xlsx")
+        results_file = rails
         multiply_factor = 1.0
         rail_columns = [["CIA"], ["WorldPop Review"], ["Railway network database "]]
         rail_colors = [["#41b6c4"], ["#99d8c9"], ["#014636"]]
@@ -252,10 +252,9 @@ def main(config):
         )
         plt.grid()
         plt.tight_layout()
-        save_fig(os.path.join(figure_path, "rail_comparisons.png"))
+        save_fig(output_rail_comparisons)
         plt.close()
 
 
 if __name__ == "__main__":
-    CONFIG = load_config()
-    main(CONFIG)
+    main()
