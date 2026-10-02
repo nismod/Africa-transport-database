@@ -1,0 +1,132 @@
+# Gabon rail network edits.
+#
+# Derived from countries_sql_scripts/gabon/gabon.sql in
+# trg-rail/africa_rail_network, adapted with the author's permission.
+#
+# The whole 211-line script reduces to the 19 operations below. The rest of it
+# is a notebook: 15 exploratory selects, 5 unfilled templates, a deliberate
+# syntax error to stop anyone running the file, two backup table copies and a
+# routing test with its endpoints left blank.
+#
+# Order matters. Splitting an edge replaces it with two new ones, so an id
+# used further down may be one this file created: 5550579902 is the first part
+# of the split of 555057990, and 55505799021 the first part of the split of
+# that. Copying a node numbers the copy oid + 1000000, which is where
+# 556022945 comes from.
+
+country: Gabon
+
+edits:
+  # Trans-Gabon Railway
+  - op: copy_node
+    node: 555022945
+    edge: 555094368
+    note: Owendo station onto the alignment
+
+  - op: tag_route
+    from: 556022945
+    to: 555017527
+    set:
+      line: Trans-Gabon Railway
+      mode: mixed
+      type: conventional
+      gauge: "1435"
+      status: open
+      comment: Single track
+
+  # Owendo port branch
+  - op: split_edge
+    edge: 555025328
+    node: 555125285
+
+  - op: set_node
+    node: 555075602
+    set:
+      name: Port of Owendo
+      facility: port
+      railway: stop
+
+  - op: tag_route
+    from: 556022945
+    to: 555075602
+    set:
+      line: Port of Owendo
+      mode: freight
+      type: conventional
+      gauge: "1435"
+      status: open
+      comment: ""
+
+  # Moanda manganese mine branch
+  - op: set_node
+    node: 555104826
+    set:
+      name: Moanda Mine (Manganese)
+      railway: stop
+      facility: mine
+
+  - op: split_edge
+    edge: 555083184
+    node: 555104827
+
+  - op: split_edge
+    edge: 555057990
+    node: 555130808
+
+  - op: split_edge
+    edge: 5550579902
+    node: 555117099
+
+  - op: tag_route
+    from: 555130808
+    to: 555104826
+    set:
+      line: Moanda Mine
+      mode: freight
+      type: conventional
+      gauge: "1435"
+      status: open
+      comment: ""
+
+  # Stations, each copied onto the line it serves
+  - op: copy_node
+    node: 555034875
+    edge: 555098687
+    note: Andem
+  - op: copy_node
+    node: 555034874
+    edge: 555120025
+    note: Gare d'Abanga
+  - op: copy_node
+    node: 555034889
+    edge: 555098678
+    note: Gare de Bissouma
+  - op: copy_node
+    node: 555034873
+    edge: 555087395
+    note: Gare de Ayem
+  - op: copy_node
+    node: 555034879
+    edge: 555087376
+    note: Gare de La Lopé
+  - op: copy_node
+    node: 555034878
+    edge: 555087378
+    note: Gare d'Offoué
+  - op: copy_node
+    node: 555034882
+    edge: 555102465
+    note: Gare de Lastoursville
+  - op: copy_node
+    node: 555033246
+    edge: 55505799021
+    note: Gare de Moanda
+
+  # Every station on a standard gauge line is standard gauge
+  - op: set_nodes_on_edges
+    country: Gabon
+    node_railway: [station, halt, stop]
+    where_edge:
+      gauge: "1435"
+    set:
+      gauge: "1435"
