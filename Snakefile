@@ -27,18 +27,18 @@ MAPS_AND_STATS = "scripts/stats"
 
 # Data layers read inside aftdb.plot.maps.plot_africa_basemap(),
 # plot_africa_basemap2(), plot_global_basemap() and plot_ccg_basemap().
-BASEMAP_COUNTRIES = f"{DATA}/admin_boundaries/ne_10m_admin_0_countries/ne_10m_admin_0_countries.shp"
-BASEMAP_LAKES = f"{DATA}/admin_boundaries/ne_10m_lakes/ne_10m_lakes.shp"
-COUNTRY_CODES = f"{DATA}/admin_boundaries/country_codes.csv"
+BASEMAP_COUNTRIES = f"{INCOMING}/natural_earth/ne_10m_admin_0_countries.shp"
+BASEMAP_LAKES = f"{INCOMING}/natural_earth/ne_10m_lakes.shp"
+COUNTRY_CODES = f"{INCOMING}/natural_earth/country_codes.csv"
 
 # Frequently reused source datasets.
 AFRICA_ADM0 = (
-    f"{INCOMING}/Africa_GIS Supporting Data/a. Africa_GIS Shapefiles/"
-    "AFR_Political_ADM0_Boundaries.shp/AFR_Political_ADM0_Boundaries.shp"
+    f"{INCOMING}/usgs_2021_africa/a. Africa_GIS Shapefiles/"
+    "AFR_Political_ADM0_Boundaries.shp"
 )
 USGS_PORTS = (
-    f"{INCOMING}/Africa_GIS Supporting Data/a. Africa_GIS Shapefiles/"
-    "AFR_Infra_Transport_Ports.shp/AFR_Infra_Transport_Ports.shp"
+    f"{INCOMING}/usgs_2021_africa/a. Africa_GIS Shapefiles/"
+    "AFR_Infra_Transport_Ports.shp"
 )
 CORRIDOR_DB = (
     f"{INCOMING}/africa_corridor_developments/"
@@ -49,7 +49,7 @@ NE_110M_COUNTRIES = f"{INCOMING}/ports/ne_110m_admin_0_countries/ne_110m_admin_0
 # The OpenStreetMap snapshot to build from, as yymmdd. Planet files are cut on
 # Mondays, so this has to be a Monday - rules/download.smk cuts the Africa
 # extract out of the planet file for this date.
-OSM_SNAPSHOT = config.get("osm_snapshot", "260216")
+OSM_SNAPSHOT = config.get("osm_snapshot", "260928")
 OSM_AFRICA_PBF = f"{INCOMING}/osm/africa-{OSM_SNAPSHOT}.osm.pbf"
 
 

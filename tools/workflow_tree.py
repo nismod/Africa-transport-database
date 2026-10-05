@@ -156,10 +156,6 @@ def roots_in_order(config, paths):
 
 HEADER = """\
 Files named by the rules in {snakefile}. Paths set by {config_source}.
-
-    in            read by a rule
-    out <- rule   written by that rule
-
 Regenerate with: python tools/workflow_tree.py
 """
 
@@ -174,10 +170,11 @@ Regenerate with: python tools/workflow_tree.py
     "names its own config.",
 )
 @click.option("--output", required=True, type=click.Path())
+@click.option("--annotate", is_flag=True, default=False, help="Include rule annotations.")
 @click.option(
     "--cores", default=1, show_default=True, help="Only to satisfy the parse."
 )
-def main(snakefile, configfile, output, cores):
+def main(snakefile, configfile, output, annotate, cores):
     """Write the workflow's input and output files out as a tree"""
     if configfile is None and Path(DEFAULT_CONFIGFILE).exists():
         configfile = DEFAULT_CONFIGFILE
@@ -194,10 +191,13 @@ def main(snakefile, configfile, output, cores):
 
     width = max(len(text) for text, note in lines if note)
 
-    body = [
-        f"{text.ljust(width + 2)}{note}".rstrip() if note else text
-        for text, note in lines
-    ]
+    if annotate:
+        body = [
+            f"{text.ljust(width + 2)}{note}".rstrip() if note else text
+            for text, note in lines
+        ]
+    else:
+        body = [text for text, _ in lines]
     Path(output).parent.mkdir(parents=True, exist_ok=True)
     Path(output).write_text(
         HEADER.format(
