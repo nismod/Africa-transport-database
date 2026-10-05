@@ -9,10 +9,12 @@ dependencies:
   - country_converter
   - curl
   - fiona
+  - gdal
   - geopandas
   - haversine
   - jenkspy
   - jq
+  - libgdal-arrow-parquet
   - mapclassify
   - matplotlib
   - networkx
@@ -31,7 +33,7 @@ dependencies:
   - scipy
   - seaborn
   - shapely
-  - snakemake
+  - bioconda::snakemake
   - snkit
   - tqdm
   - unzip
