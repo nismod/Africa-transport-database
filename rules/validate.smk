@@ -12,9 +12,9 @@ rule google_api_matches:
         script=f"{PREPROCESS}/google_api_matches.py",
         rail_network=f"{DATA}/infrastructure/africa_railways_network.gpkg",
         google_points=f"{INCOMING}/africa-station-google-points/stations_with_google_api_points.csv",
-        global_mines=f"{INCOMING}/Supplementary 1：mine area polygons/74548 mine polygons/74548_projected.shp",
+        global_mines=f"{INCOMING}/tang_2023_mines/74548 mine polygons/74548_projected.shp",
         usgs_facilities=(
-            f"{INCOMING}/Africa_GIS Supporting Data/a. Africa_GIS Shapefiles/"
+            f"{INCOMING}/usgs_2021_africa/a. Africa_GIS Shapefiles/"
             "AFR_Mineral_Facilities.shp/AFR_Mineral_Facilities.shp"
         ),
         airports=f"{DATA}/infrastructure/africa_airport_network.gpkg",

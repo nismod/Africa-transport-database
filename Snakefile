@@ -56,12 +56,12 @@ OSM_AFRICA_PBF = f"{INCOMING}/osm/africa-{OSM_SNAPSHOT}.osm.pbf"
 rule all:
     """Build the published multi-modal network layers."""
     input:
-        f"{DATA}/infrastructure/africa_roads_network.gpkg",
-        f"{DATA}/infrastructure/africa_railways_network.gpkg",
-        f"{DATA}/infrastructure/africa_maritime_network.gpkg",
-        f"{DATA}/infrastructure/africa_iww_network.gpkg",
-        f"{DATA}/infrastructure/africa_airport_network.gpkg",
-        f"{DATA}/infrastructure/africa_multimodal.gpkg",
+        f"{DATA}/zenodo/next/africa_roads_network.gpkg",
+        f"{DATA}/zenodo/next/africa_railways_network.gpkg",
+        f"{DATA}/zenodo/next/africa_maritime_network.gpkg",
+        f"{DATA}/zenodo/next/africa_iww_network.gpkg",
+        f"{DATA}/zenodo/next/africa_airport_network.gpkg",
+        f"{DATA}/zenodo/next/africa_multimodal.gpkg",
 
 
 include: "rules/download.smk"

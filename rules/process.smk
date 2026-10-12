@@ -35,13 +35,13 @@ rule extract_suez:
     """Turn the Suez Canal OSM waterways into a topological network.
 
     Potential future case to expand this and handle similar crossings like
-    the Panama Canal, to refine Global port supply-chains network.
+    the Panama Canal, to refine verschuur_2022_global_ports network.
     """
     input:
         script=f"{PREPROCESS}/extract_suez.py",
         waterways=f"{INCOMING}/egypt-latest-free.shp/gis_osm_waterways_free_1.shp",
         suez_ids=f"{INCOMING}/egypt-latest-free.shp/suez_canal_ids.csv",
-        global_ports=f"{INCOMING}/Global port supply-chains/Network/nodes_maritime.gpkg",
+        global_ports=f"{INCOMING}/verschuur_2022_global_ports/Network/nodes_maritime.gpkg",
     output:
         # Layers "nodes" and "edges" are written into the same GeoPackage.
         network=f"{INCOMING}/egypt-latest-free.shp/suez_canal_network.gpkg",
@@ -65,7 +65,7 @@ rule ports_data_cleaning:
     """
     input:
         script=f"{PREPROCESS}/ports_data_cleaning.py",
-        global_ports=f"{INCOMING}/Global port supply-chains/Network/nodes_maritime.gpkg",
+        global_ports=f"{INCOMING}/verschuur_2022_global_ports/Network/nodes_maritime.gpkg",
         usgs_ports=USGS_PORTS,
         corridor_db=CORRIDOR_DB,
         africa_adm0=AFRICA_ADM0,
@@ -93,10 +93,10 @@ rule ports_new_merge:
     input:
         script=f"{PREPROCESS}/ports_new_merge.py",
         global_network=f"{DATA}/infrastructure/global_maritime_network.gpkg",
-        ports_2025=f"{INCOMING}/Global port supply-chains/Ports Updated 2025/Ports.shp",
-        port_calls=f"{INCOMING}/Global port supply-chains/Ports Updated 2025/port_calls_average_2019-2024.csv",
-        port_capacity=f"{INCOMING}/Global port supply-chains/Ports Updated 2025/port_capacity_called_average_2019-2024.csv",
-        port_turnaround=f"{INCOMING}/Global port supply-chains/Ports Updated 2025/port_turn_around_time_average_2019-2024.csv",
+        ports_2025=f"{INCOMING}/portwatch/Ports.shp",
+        port_calls=f"{INCOMING}/portwatch/port_calls_average_2019-2024.csv",
+        port_capacity=f"{INCOMING}/portwatch/port_capacity_called_average_2019-2024.csv",
+        port_turnaround=f"{INCOMING}/portwatch/port_turn_around_time_average_2019-2024.csv",
     output:
         global_network=f"{DATA}/infrastructure/global_maritime_network_PROVA_NEW1.gpkg",
         africa_network=f"{DATA}/infrastructure/africa_maritime_network_PROVA_NEW1.gpkg",
@@ -184,9 +184,9 @@ rule economic:
     input:
         script=f"{PREPROCESS}/economic.py",
         usgs_ports=USGS_PORTS,
-        ports_weight=f"{INCOMING}/Global port supply-chains/Port_statistics/port_locations_weight.csv",
-        ports_value=f"{INCOMING}/Global port supply-chains/Port_statistics/port_locations_value.csv",
-        ports_utilization=f"{INCOMING}/Global port supply-chains/Port_statistics/port_utilization.csv",
+        ports_weight=f"{INCOMING}/verschuur_2022_global_ports/Port_statistics/port_locations_weight.csv",
+        ports_value=f"{INCOMING}/verschuur_2022_global_ports/Port_statistics/port_locations_value.csv",
+        ports_utilization=f"{INCOMING}/verschuur_2022_global_ports/Port_statistics/port_utilization.csv",
         merged_csv=f"{DATA}/merged_with_iso2.csv",
     output:
         weightvalues=f"{DATA}/ports_weightvalues.csv",
